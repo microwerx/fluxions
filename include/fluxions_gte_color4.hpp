@@ -48,6 +48,9 @@ class TColor4
 	//};
 	T r, g, b, a;
 
+	constexpr T *v() noexcept { return &r; }
+	constexpr const T *v() const noexcept { return &r; }
+
 	using type = T;
 
 	TColor4()

@@ -49,6 +49,9 @@ class TColor3
 
 	T r, g, b;
 
+	constexpr T *v() noexcept { return &r; }
+	constexpr const T *v() const noexcept { return &r; }
+
 	using type = T;
 
 	TColor3()
@@ -491,7 +494,7 @@ inline Color3i ToColor3i(const Color3f color, float scale = 255.0f, int min_valu
 // Scales the color by 255 and then clamps to 0 to 255
 inline Color3ub ToColor3ub(const Color3f color, float scale = 255.99f, int min_value = 0, int max_value = 255)
 {
-	return color.ToColor3<unsigned char, float>(scale, (unsigned char)min_value, http://www.adfg.alaska.gov/index.cfm?adfg=huntlicense.drawsupplementsmax_value);
+	return color.ToColor3<unsigned char, float>(scale, (unsigned char)min_value, (unsigned char)max_value);
 }
 
 // Scales the color by 1/255 and then clamps to 0 to 1

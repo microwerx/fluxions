@@ -148,7 +148,6 @@ namespace Fluxions
 		return ostr;
 	}
 
-
 	ostream & XmlInt64(ostream &ostr, const string &tagName, long long val, int numtabs)
 	{
 		for (int i = 0; i < numtabs; i++) ostr << "\t";
@@ -158,6 +157,14 @@ namespace Fluxions
 		return ostr;
 	}
 
+	ostream & XmlSize(ostream & ostr, const string &tagName, size_t val, int numtabs)
+	{
+		for (int i = 0; i < numtabs; i++) ostr << "\t";
+		ostr << "<" << tagName << ">";
+		ostr << val;
+		ostr << "</" << tagName << ">";
+		return ostr;
+	}
 
 	ostream & XmlFloat(ostream &ostr, const string &tagName, float val, int numtabs)
 	{

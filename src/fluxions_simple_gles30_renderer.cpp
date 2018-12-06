@@ -2,18 +2,18 @@
 // Copyright (C) 2017 Jonathan Metzgar
 // All rights reserved.
 //
-// This program is free software : you can redistribute it and/or modify
+// This program_ is free software : you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
 // published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// This program_ is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
 // GNU Affero General Public License for more details.
 //
 // You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
+// along with this program_.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
@@ -92,22 +92,22 @@ namespace Fluxions
 		if (renderConfig.GetClearBits())
 			glClear(renderConfig.GetClearBits());
 
-		Matrix4f projectionMatrix;
-		Matrix4f cameraMatrix;
+		Matrix4f projectionMatrix_;
+		Matrix4f cameraMatrix_;
 
 		if (renderConfig.useSceneCamera)
 		{
-			projectionMatrix.LoadIdentity();
-			projectionMatrix.PerspectiveY((float)ssg.camera.fov, renderConfig.viewportRect.aspectRatiof(), (float)ssg.camera.imageNearZ, (float)ssg.camera.imageFarZ);
-			cameraMatrix = renderConfig.preCameraMatrix * ssg.camera.viewMatrix * renderConfig.postCameraMatrix;
+			projectionMatrix_.LoadIdentity();
+			projectionMatrix_.PerspectiveY((float)ssg.camera.fov, renderConfig.viewportRect.aspectRatiof(), (float)ssg.camera.imageNearZ, (float)ssg.camera.imageFarZ);
+			cameraMatrix_ = renderConfig.preCameraMatrix * ssg.camera.viewMatrix * renderConfig.postCameraMatrix;
 		}
 		else
 		{
-			projectionMatrix.LoadIdentity();
-			projectionMatrix.PerspectiveY((float)renderConfig.fov, renderConfig.viewportRect.aspectRatiof(), (float)renderConfig.znear, (float)renderConfig.zfar);
-			cameraMatrix = renderConfig.preCameraMatrix * renderConfig.postCameraMatrix;
+			projectionMatrix_.LoadIdentity();
+			projectionMatrix_.PerspectiveY((float)renderConfig.fov, renderConfig.viewportRect.aspectRatiof(), (float)renderConfig.znear, (float)renderConfig.zfar);
+			cameraMatrix_ = renderConfig.preCameraMatrix * renderConfig.postCameraMatrix;
 		}
-		renderConfig.cameraMatrix = cameraMatrix;
+		renderConfig.cameraMatrix = cameraMatrix_;
 
 		glViewport(renderConfig.viewportRect.x, renderConfig.viewportRect.y, renderConfig.viewportRect.w, renderConfig.viewportRect.h);		
 
@@ -116,11 +116,11 @@ namespace Fluxions
 			renderConfig.projectionMatrix.LoadIdentity();
 			renderConfig.projectionMatrix.PerspectiveY(renderConfig.fov, (float)renderConfig.viewportRect.aspectRatio(), renderConfig.znear, renderConfig.zfar);
 		}
-		projectionMatrix = renderConfig.projectionMatrix;
+		projectionMatrix_ = renderConfig.projectionMatrix;
 
-		program->ApplyUniform("CameraPosition", (SimpleUniform)(cameraMatrix.AsInverse()).col4());
-		program->ApplyUniform("CameraMatrix", (SimpleUniform)cameraMatrix);
-		program->ApplyUniform("ProjectionMatrix", (SimpleUniform)projectionMatrix);
+		program->ApplyUniform("CameraPosition", (SimpleUniform)(cameraMatrix_.AsInverse()).col4());
+		program->ApplyUniform("CameraMatrix", (SimpleUniform)cameraMatrix_);
+		program->ApplyUniform("ProjectionMatrix", (SimpleUniform)projectionMatrix_);
 
 		return true;
 	}
@@ -253,7 +253,7 @@ namespace Fluxions
 							continue;
 						GLint loc = glGetAttribLocation(program, name);
 						if (loc < 0) {
-							//hflog.warning("%s(): Program %i does not have attrib %s", __FUNCTION__, program, name);
+							//hflog.warning("%s(): Program %i does not have attrib %s", __FUNCTION__, program_, name);
 							continue;
 						}
 						glVertexAttribPointer(loc, 4, GL_FLOAT, mesh.IsAttribNormalized(i), sizeof SimpleGeometryMesh::Vertex, cast_to_pointer(mesh.GetVertexOffset(i)));
@@ -297,7 +297,7 @@ namespace Fluxions
 				}
 				
 				//glBindBuffer(GL_ARRAY_BUFFER, 0);
-				//glVertexArrayElementBuffer(vao, eabo);
+				//glVertexArrayElementBuffer(vao, eabo_);
 				glBindVertexArray(0);
 			}
 		}
@@ -339,10 +339,10 @@ namespace Fluxions
 		renderConfig.shaderProgram->ApplyUniform("WorldMatrix", (SimpleUniform)modelViewMatrix);
 
 		// create a vbo
-		BufferObject abo(GL_ARRAY_BUFFER, (GLsizei)mesh.GetVertexDataSize(), mesh.GetVertexData(), GL_STATIC_DRAW);
-		BufferObject eabo(GL_ELEMENT_ARRAY_BUFFER, (GLsizei)mesh.GetIndexDataSize(), mesh.GetIndexData(), GL_STATIC_DRAW);
+		BufferObject abo_(GL_ARRAY_BUFFER, (GLsizei)mesh.GetVertexDataSize(), mesh.GetVertexData(), GL_STATIC_DRAW);
+		BufferObject eabo_(GL_ELEMENT_ARRAY_BUFFER, (GLsizei)mesh.GetIndexDataSize(), mesh.GetIndexData(), GL_STATIC_DRAW);
 
-		VertexArrayObject vao(mesh, renderConfig.shaderProgram->GetProgram(), abo.buffer, eabo.buffer);
+		VertexArrayObject vao(mesh, renderConfig.shaderProgram->GetProgram(), abo_.buffer, eabo_.buffer);
 		vao.Draw();
 	}
 
@@ -504,21 +504,21 @@ namespace Fluxions
 	}
 
 
-	void SimpleGLES30Renderer::Render(SimpleProgram &program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix, Matrix4f &cameraMatrix)
+	void SimpleGLES30Renderer::Render(SimpleProgram &program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix_, Matrix4f &cameraMatrix_)
 	{
-		Matrix4f inverseCameraMatrix = cameraMatrix.AsInverse();
+		Matrix4f inverseCameraMatrix = cameraMatrix_.AsInverse();
 		Vector4f cameraPosition(0, 0, 0, 1);
 		cameraPosition = inverseCameraMatrix * cameraPosition;
 
-		SimpleUniform InverseCameraMatrix = cameraMatrix.AsInverse();
-		SimpleUniform CameraMatrix = cameraMatrix;
-		SimpleUniform ProjectionMatrix = projectionMatrix;
+		SimpleUniform InverseCameraMatrix = cameraMatrix_.AsInverse();
+		SimpleUniform CameraMatrix = cameraMatrix_;
+		SimpleUniform ProjectionMatrix = projectionMatrix_;
 		SimpleUniform CameraPosition = cameraPosition;
 
-		program.ApplyUniform("ProjectionMatrix", ProjectionMatrix);
-		program.ApplyUniform("CameraMatrix", CameraMatrix);
-		program.ApplyUniform("InverseCameraMatrix", (SimpleUniform)cameraMatrix.AsInverse());
-		program.ApplyUniform("CameraPosition", CameraPosition);
+		program_.ApplyUniform("ProjectionMatrix", ProjectionMatrix);
+		program_.ApplyUniform("CameraMatrix", CameraMatrix);
+		program_.ApplyUniform("InverseCameraMatrix", (SimpleUniform)cameraMatrix_.AsInverse());
+		program_.ApplyUniform("CameraPosition", CameraPosition);
 
 		// apply each material separately (use the idea that material state changes are worse than geometry ones
 		for (auto libIt = ssg.materials.begin(); libIt != ssg.materials.end(); libIt++)
@@ -561,11 +561,11 @@ namespace Fluxions
 					SunShadowViewMatrix = ssg.environment.sunShadowViewMatrix;
 					SunShadowInverseViewMatrix = ssg.environment.sunShadowInverseViewMatrix;
 
-					program.ApplyUniform("ModelViewMatrix", ModelViewMatrix);
-					program.ApplyUniform("SunShadowBiasMatrix", SunShadowBiasMatrix);
-					program.ApplyUniform("SunShadowProjectionMatrix", SunShadowProjectionMatrix);
-					program.ApplyUniform("SunShadowViewMatrix", SunShadowViewMatrix);
-					program.ApplyUniform("SunShadowInverseViewMatrix", SunShadowInverseViewMatrix);
+					program_.ApplyUniform("ModelViewMatrix", ModelViewMatrix);
+					program_.ApplyUniform("SunShadowBiasMatrix", SunShadowBiasMatrix);
+					program_.ApplyUniform("SunShadowProjectionMatrix", SunShadowProjectionMatrix);
+					program_.ApplyUniform("SunShadowViewMatrix", SunShadowViewMatrix);
+					program_.ApplyUniform("SunShadowInverseViewMatrix", SunShadowInverseViewMatrix);
 
 					// Now iterate through each object and render it with this material
 					if (objectId && groupId && mtllibId && mtlId)
@@ -649,7 +649,7 @@ namespace Fluxions
 			}
 		}
 
-		// Apply Material Uniforms to the program shader
+		// Apply Material Uniforms to the program_ shader
 		if (locs.Ka >= 0) glUniform3fv(locs.Ka, 1, mtl.Ka.v);
 		if (locs.Kd >= 0) glUniform3fv(locs.Kd, 1, mtl.Kd.v);
 		if (locs.Ks >= 0) glUniform3fv(locs.Ks, 1, mtl.Ks.v);
@@ -676,7 +676,7 @@ namespace Fluxions
 
 	void SimpleGLES30Renderer::DisableCurrentTextures()
 	{
-		// Turn off textures and reset program unit bindings to 0
+		// Turn off textures and reset program_ unit bindings to 0
 		for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++)
 		{
 			SimpleMap *pMap = tmapIt->second;
@@ -774,7 +774,7 @@ namespace Fluxions
 		GLuint vbo = 0;
 		GLint vloc = -1;
 		GLint tloc = -1;
-		GLuint program = 0;
+		GLuint programId = 0;
 		GLint uCubeTexture = -1;
 		GLint uWorldMatrix = -1;
 		GLint uCameraMatrix = -1;
@@ -785,7 +785,7 @@ namespace Fluxions
 
 		auto it = renderer.programs.find("skybox");
 		if (it != renderer.programs.end()) {
-			program = it->second->GetProgram();
+			programId = it->second->GetProgram();
 			uCubeTexture = it->second->GetUniformLocation("uCubeTexture");
 			uWorldMatrix = it->second->GetUniformLocation("WorldMatrix");
 			uCameraMatrix = it->second->GetUniformLocation("CameraMatrix");
@@ -795,20 +795,20 @@ namespace Fluxions
 			uSunDirTo = it->second->GetUniformLocation("SunDirTo");
 		}
 
-		if (program == 0) return;
+		if (programId == 0) return;
 
-		vloc = glGetAttribLocation(program, "aPosition");
-		tloc = glGetAttribLocation(program, "aTexCoord");
+		vloc = glGetAttribLocation(programId, "aPosition");
+		tloc = glGetAttribLocation(programId, "aTexCoord");
 
-		glUseProgram(program);
+		glUseProgram(programId);
 		if (uCubeTexture >= 0) {
 			glutBindTextureAndSampler(ssg.environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, ssg.environment.pbskyColorMapId, ssg.environment.pbskyColorMapSamplerId);
 			glUniform1i(uCubeTexture, ssg.environment.pbskyColorMapUnit);
 		}
 		if (uProjectionMatrix >= 0) {
-			Matrix4f projectionMatrix = ssg.camera.projectionMatrix;
-			//projectionMatrix.MakePerspective(ssg.camera.fov, aspectRatio, ssg.camera.imageNearZ, ssg.camera.imageFarZ);
-			glUniformMatrix4fv(uProjectionMatrix, 1, GL_FALSE, projectionMatrix.m);
+			Matrix4f projectionMatrix_ = ssg.camera.projectionMatrix;
+			//projectionMatrix_.MakePerspective(ssg.camera.fov, aspectRatio, ssg.camera.imageNearZ, ssg.camera.imageFarZ);
+			glUniformMatrix4fv(uProjectionMatrix, 1, GL_FALSE, projectionMatrix_.m);
 		}
 		if (uCameraMatrix >= 0) {
 			Matrix4f viewMatrix = renderConfig.preCameraMatrix * ssg.camera.viewMatrix;

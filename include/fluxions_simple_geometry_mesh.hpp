@@ -52,7 +52,7 @@ namespace Fluxions
 				}
 			}
 
-			union {
+			//union {
 			//	struct {
 			//		tvec4<float> attrib0;
 			//		tvec4<float> attrib1;

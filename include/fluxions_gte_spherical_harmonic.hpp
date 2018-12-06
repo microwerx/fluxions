@@ -63,10 +63,10 @@ namespace Fluxions
 		{ }
 
 		void reset() { resize(maxDegree, VectorType(0)); }
-		void reset(int maxDegree) { resize(maxDegree, VectorType(0)); }
-		void reset(int maxDegree, const VectorType & value) { resize(maxDegree, value); }
-		void resize(int maxDegree);
-		void resize(int maxDegree, const VectorType & value);
+		void reset(int maxDegree_) { resize(maxDegree_, VectorType(0)); }
+		void reset(int maxDegree_, const VectorType & value) { resize(maxDegree_, value); }
+		void resize(int maxDegree_);
+		void resize(int maxDegree_, const VectorType & value);
 		void readFromString(const string &data);
 		void readFromFile(const string &filename);
 
@@ -210,6 +210,14 @@ namespace Fluxions
 				return VectorType();
 		}
 
+		constexpr VectorType getCoefficient(size_t lm) const
+		{
+			if (lm < coefficients.size())
+				return coefficients[lm];
+			else
+				return VectorType();
+		}
+
 		inline void setCoefficient(int l, int m, const VectorType x)
 		{
 			int index = getCoefficientIndex(l, m);
@@ -220,6 +228,12 @@ namespace Fluxions
 		inline void setCoefficient(int lm, const VectorType x)
 		{
 			if (lm >= 0 && lm < coefficients.size())
+				coefficients[lm] = x;
+		}
+
+		inline void setCoefficient(size_t lm, const VectorType x)
+		{
+			if (lm < coefficients.size())
 				coefficients[lm] = x;
 		}
 
@@ -282,30 +296,30 @@ namespace Fluxions
 
 
 	template<typename VectorType, typename ScalarType>
-	void TSphericalHarmonic<VectorType, ScalarType>::resize(int maxDegree)
+	void TSphericalHarmonic<VectorType, ScalarType>::resize(int maxDegree_)
 	{
-		if (maxDegree < 0 || maxDegree > 10)
+		if (maxDegree_ < 0 || maxDegree_ > 10)
 		{
 			throw std::out_of_range("TSphericalHarmonic<VectorType>::resize(maxDegree): maxDegree must be in the range 0 <= maxDegree <= 10");
 		}
 
-		this->maxDegree = maxDegree;
-		maxCoefficients = maxDegree * (maxDegree + 1) + maxDegree + 1; // don't forget to reserve room for the 0th degree.
+		maxDegree = maxDegree_;
+		maxCoefficients = maxDegree_ * (maxDegree_ + 1) + maxDegree_ + 1; // don't forget to reserve room for the 0th degree.
 		if (maxCoefficients > coefficients.size())
 			coefficients.resize(maxCoefficients);
 	}
 
 
 	template<typename VectorType, typename ScalarType>
-	void TSphericalHarmonic<VectorType, ScalarType>::resize(int maxDegree, const VectorType & value)
+	void TSphericalHarmonic<VectorType, ScalarType>::resize(int maxDegree_, const VectorType & value)
 	{
-		if (maxDegree < 0 || maxDegree > 10)
+		if (maxDegree_ < 0 || maxDegree_ > 10)
 		{
 			throw std::out_of_range("TSphericalHarmonic<VectorType>::resize(maxDegree): maxDegree must be in the range 0 <= maxDegree <= 10");
 		}
 
-		this->maxDegree = maxDegree;
-		maxCoefficients = maxDegree * (maxDegree + 1) + maxDegree + 1; // don't forget to reserve room for the 0th degree.
+		maxDegree = maxDegree_;
+		maxCoefficients = maxDegree_ * (maxDegree_ + 1) + maxDegree_ + 1; // don't forget to reserve room for the 0th degree.
 		if (maxCoefficients > coefficients.size())
 			coefficients.resize(maxCoefficients);
 		fill(coefficients.begin(), coefficients.end(), value);

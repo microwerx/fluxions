@@ -19,36 +19,33 @@
 #ifndef UNICORNFISH_CURL_HPP
 #define UNICORNFISH_CURL_HPP
 
-
 #include <string>
 #include <future>
 #include <unicornfish.hpp>
 
-
 namespace Uf
 {
-	using namespace std;
+using namespace std;
 
+class Curl
+{
+  public:
+	using StringTimePair = pair<string, double>;
+	using StringTimePairFuture = future<pair<string, double>>;
 
-	class Curl
-	{
-	public:
-		using StringTimePair = pair<string, double>;
-		using StringTimePairFuture = future<pair<string, double>>;
+	Curl();
+	~Curl();
 
-		Curl();
-		~Curl();
+	string Get(const string &url);
+	StringTimePairFuture AsyncGet(const string &url);
 
-		string Get(const string &url);
-		StringTimePairFuture AsyncGet(const string &url);
-	private:
-		CURL *curl;
-		string get_data;
-		string post_data;
+  private:
+	CURL *curl;
+	string get_data;
+	string post_data;
 
-		static size_t write_callback(char *buffer, size_t size, size_t nitems, void *instream);
-	};
-}
-
+	static size_t write_callback(char *buffer, size_t size, size_t nitems, void *instream);
+};
+} // namespace Uf
 
 #endif

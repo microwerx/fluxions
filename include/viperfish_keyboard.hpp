@@ -24,40 +24,61 @@
 
 namespace Viperfish
 {
-	using namespace std;
+using namespace std;
 
-	struct KeyboardState
+struct KeyboardState
+{
+	//map<int, bool> keys;
+	//map<int, bool> modkeys;
+	map<string, bool> keys;
+	int modifiers;
+
+	static const int ShiftKeyBit = 1;
+	static const int CtrlKeyBit = 2;
+	static const int AltKeyBit = 4;
+	static const int ShiftCtrlBits = 3;
+	static const int ShiftAltBits = 5;
+	static const int CtrlAltBits = 6;
+	static const int ShiftCtrlAltBits = 7;
+
+	inline bool ctrlKey() const { return modifiers & CtrlKeyBit; }
+	inline bool altKey() const { return modifiers & AltKeyBit; }
+	inline bool shiftKey() const { return modifiers & ShiftKeyBit; }
+	inline bool ctrlAlt() const { return modifiers & (CtrlKeyBit | AltKeyBit); }
+	inline bool shiftAlt() const { return modifiers & (ShiftKeyBit | AltKeyBit); }
+	inline bool shiftCtrlAlt() const { return modifiers & (ShiftKeyBit | CtrlKeyBit | AltKeyBit); }
+
+	inline void Clear()
 	{
-		//map<int, bool> keys;
-		//map<int, bool> modkeys;
-		map<string, bool> keys;
-		int modifiers;
-
-		static const int ShiftKeyBit = 1;
-		static const int CtrlKeyBit = 2;
-		static const int AltKeyBit = 4;
-		static const int ShiftCtrlBits = 3;
-		static const int ShiftAltBits = 5;
-		static const int CtrlAltBits = 6;
-		static const int ShiftCtrlAltBits = 7;
-
-		inline bool ctrlKey() const { return modifiers & CtrlKeyBit; }
-		inline bool altKey() const { return modifiers & AltKeyBit; }
-		inline bool shiftKey() const { return modifiers & ShiftKeyBit; }
-		inline bool ctrlAlt() const { return modifiers & (CtrlKeyBit | AltKeyBit); }
-		inline bool shiftAlt() const { return modifiers & (ShiftKeyBit | AltKeyBit); }
-		inline bool shiftCtrlAlt() const { return modifiers & (ShiftKeyBit | CtrlKeyBit | AltKeyBit); }
-
-		inline void Clear() { keys.clear(); modifiers = 0; }
-		inline void Reset() { modifiers = 0; for (auto & key : keys) { key.second = false; } }
-		inline void SetKey(const string & key, bool state) { keys[key] = state; }
-		inline void SetKey(const string & key, int keymod, bool state) { modifiers = keymod; keys[key] = state; }
-		void SetKey(unsigned char c, int keymod, bool state);
-		inline bool IsPressed(const string & key) const { auto it = keys.find(key); if (it != keys.end()) return it->second; return false; }
-		inline bool IsPressed(const string & key, int keymod) const { return keymod == modifiers && IsPressed(key); }
-		bool CheckKeyPressed(vector<string> keys);
-		int CountKeysPressed(vector<string> keys);
-	};
-}
+		keys.clear();
+		modifiers = 0;
+	}
+	inline void Reset()
+	{
+		modifiers = 0;
+		for (auto &key : keys)
+		{
+			key.second = false;
+		}
+	}
+	inline void SetKey(const string &key, bool state) { keys[key] = state; }
+	inline void SetKey(const string &key, int keymod, bool state)
+	{
+		modifiers = keymod;
+		keys[key] = state;
+	}
+	void SetKey(unsigned char c, int keymod, bool state);
+	inline bool IsPressed(const string &key) const
+	{
+		auto it = keys.find(key);
+		if (it != keys.end())
+			return it->second;
+		return false;
+	}
+	inline bool IsPressed(const string &key, int keymod) const { return keymod == modifiers && IsPressed(key); }
+	bool CheckKeyPressed(vector<string> keys);
+	int CountKeysPressed(vector<string> keys);
+};
+} // namespace Viperfish
 
 #endif

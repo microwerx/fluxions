@@ -19,83 +19,83 @@
 #ifndef FLUXIONS_GTE_SCALAR_HPP
 #define FLUXIONS_GTE_SCALAR_HPP
 
-
 namespace Fluxions
 {
-	template <typename T1>
-	class TScalar
-	{
-	public:
-		union {
-			T1 x;
-			T1 v[1];
-		};
-
-		TScalar()
-			: x(0)
-		{ }
-
-		TScalar(const T1 x_)
-			: x(x_)
-		{ }
-
-		TScalar(const TScalar<T1> & value)
-			: x(value.x)
-		{ }
-
-		// template <typename OtherType> constexpr TScalar<OtherType> OtherType()
-		// {
-		// 	return TScalar<OtherType>(x);
-		// }
-
-		//constexpr TScalar<T1> pow(T1 y)
-		//{
-		//	return TScalar<T1>(::pow(X, y));
-		//}
-
-		//constexpr TScalar<T1> cos()
-		//{
-		//	return TScalar<T1>(cos(X));
-		//}
-
-		//constexpr TScalar<T1> sin()
-		//{
-		//	return TScalar<T1>(sin(X));
-		//}
-
-		//constexpr TScalar<T1> tan()
-		//{
-		//	return TScalar<T1>(tan(X));
-		//}
-
-		//constexpr TScalar<T1> sqrt()
-		//{
-		//	return TScalar<T1>(sqrt(X));
-		//}
-
-		// constexpr enable_if_t<is_arithmetic_v<T1>, TScalar<T1>> abs()
-		// {
-		// 	return TScalar<T1>(x < 0 ? -x : x);
-		// }
-
-		// constexpr enable_if_t<is_arithmetic_v<T1>, TScalar<T1>> sgn()
-		// {
-		// 	return TScalar<T1>(x < 0 ? T1(-1) : x > 0 ? T1(1) : 0);
-		// }
-
-		// constexpr enable_if_t<is_arithmetic_v<T1>, TScalar<T1>> operator - () noexcept
-		// {
-		// 	return TScalar<T1>(-x);
-		// }
+template <typename T>
+class TScalar
+{
+  public:
+	union {
+		T x;
+		T v[1];
 	};
 
+	TScalar()
+		: x(0)
+	{
+	}
 
-	using Scalarf = TScalar<float>;
-	using Scalard = TScalar<double>;
+	TScalar(const T x_)
+		: x(x_)
+	{
+	}
 
-	extern template class TScalar<float>;
-	extern template class TScalar<double>;
-}
+	TScalar(const TScalar<T> &value)
+		: x(value.x)
+	{
+	}
 
+	// template <typename OtherType> constexpr TScalar<OtherType> OtherType()
+	// {
+	// 	return TScalar<OtherType>(x);
+	// }
+
+	//constexpr TScalar<T> pow(T y)
+	//{
+	//	return TScalar<T>(::pow(X, y));
+	//}
+
+	//constexpr TScalar<T> cos()
+	//{
+	//	return TScalar<T>(cos(X));
+	//}
+
+	//constexpr TScalar<T> sin()
+	//{
+	//	return TScalar<T>(sin(X));
+	//}
+
+	//constexpr TScalar<T> tan()
+	//{
+	//	return TScalar<T>(tan(X));
+	//}
+
+	//constexpr TScalar<T> sqrt()
+	//{
+	//	return TScalar<T>(sqrt(X));
+	//}
+
+	// constexpr enable_if_t<is_arithmetic_v<T>, TScalar<T>> abs()
+	// {
+	// 	return TScalar<T>(x < 0 ? -x : x);
+	// }
+
+	// constexpr enable_if_t<is_arithmetic_v<T>, TScalar<T>> sgn()
+	// {
+	// 	return TScalar<T>(x < 0 ? T(-1) : x > 0 ? T(1) : 0);
+	// }
+
+	// constexpr enable_if_t<is_arithmetic_v<T>, TScalar<T>> operator - () noexcept
+	// {
+	// 	return TScalar<T>(-x);
+	// }
+};
+
+using Scalarf = TScalar<float>;
+using Scalard = TScalar<double>;
+
+extern template class TScalar<float>;
+extern template class TScalar<double>;
+} // namespace Fluxions
 
 #endif

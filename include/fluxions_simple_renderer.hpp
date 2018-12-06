@@ -70,113 +70,113 @@ namespace Fluxions
 			return *this;
 		}
 
-		inline SimpleUniform & operator=(const TMatrix2<GLfloat> &m) { UniformMatrix2fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix3<GLfloat> &m) { UniformMatrix3fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix4<GLfloat> &m) { UniformMatrix4fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix2x3<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix2x4<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix3x2<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix3x4<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix4x2<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
-		inline SimpleUniform & operator=(const TMatrix4x3<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
+		inline SimpleUniform & operator=(const TMatrix2<GLfloat> &m) { UniformMatrix2fv(m.m()); return *this; }
+		inline SimpleUniform & operator=(const TMatrix3<GLfloat> &m) { UniformMatrix3fv(m.m()); return *this; }
+		inline SimpleUniform & operator=(const TMatrix4<GLfloat> &m) { UniformMatrix4fv(m.m()); return *this; }
+		//inline SimpleUniform & operator=(const TMatrix2x3<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
+		//inline SimpleUniform & operator=(const TMatrix2x4<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
+		//inline SimpleUniform & operator=(const TMatrix3x2<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
+		//inline SimpleUniform & operator=(const TMatrix3x4<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
+		//inline SimpleUniform & operator=(const TMatrix4x2<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
+		//inline SimpleUniform & operator=(const TMatrix4x3<GLfloat> &m) { UniformMatrix2x3fv(m.m); return *this; }
 
 		inline SimpleUniform & operator=(const TMatrix2<double> &m) { return *this = (TMatrix2<float>)(m); }
 		inline SimpleUniform & operator=(const TMatrix3<double> &m) { return *this = (TMatrix3<float>)(m); }
 		inline SimpleUniform & operator=(const TMatrix4<double> &m) { return *this = (TMatrix4<float>)(m); }
-		inline SimpleUniform & operator=(const TMatrix2x3<double> &m) { return *this = (TMatrix2x3<float>)(m); }
-		inline SimpleUniform & operator=(const TMatrix2x4<double> &m) { return *this = (TMatrix2x4<float>)(m); }
-		inline SimpleUniform & operator=(const TMatrix3x2<double> &m) { return *this = (TMatrix3x2<float>)(m); }
-		inline SimpleUniform & operator=(const TMatrix3x4<double> &m) { return *this = (TMatrix3x4<float>)(m); }
-		inline SimpleUniform & operator=(const TMatrix4x2<double> &m) { return *this = (TMatrix4x2<float>)(m); }
-		inline SimpleUniform & operator=(const TMatrix4x3<double> &m) { return *this = (TMatrix4x3<float>)(m); }
+		//inline SimpleUniform & operator=(const TMatrix2x3<double> &m) { return *this = (TMatrix2x3<float>)(m); }
+		//inline SimpleUniform & operator=(const TMatrix2x4<double> &m) { return *this = (TMatrix2x4<float>)(m); }
+		//inline SimpleUniform & operator=(const TMatrix3x2<double> &m) { return *this = (TMatrix3x2<float>)(m); }
+		//inline SimpleUniform & operator=(const TMatrix3x4<double> &m) { return *this = (TMatrix3x4<float>)(m); }
+		//inline SimpleUniform & operator=(const TMatrix4x2<double> &m) { return *this = (TMatrix4x2<float>)(m); }
+		//inline SimpleUniform & operator=(const TMatrix4x3<double> &m) { return *this = (TMatrix4x3<float>)(m); }
 
-		inline SimpleUniform & operator=(const TVector2<GLfloat> &v) { Uniform2fv(v.v); return *this; }
-		inline SimpleUniform & operator=(const TVector3<GLfloat> &v) { Uniform3fv(v.v); return *this; }
-		inline SimpleUniform & operator=(const TVector4<GLfloat> &v) { Uniform4fv(v.v); return *this; }
+		inline SimpleUniform & operator=(const TVector2<GLfloat> &v) { Uniform2fv(v.v()); return *this; }
+		inline SimpleUniform & operator=(const TVector3<GLfloat> &v) { Uniform3fv(v.v()); return *this; }
+		inline SimpleUniform & operator=(const TVector4<GLfloat> &v) { Uniform4fv(v.v()); return *this; }
 
 		inline SimpleUniform & operator=(const TVector2<double> &v) { return *this = (TVector2<float>)(v); }
 		inline SimpleUniform & operator=(const TVector3<double> &v) { return *this = (TVector3<float>)(v); }
 		inline SimpleUniform & operator=(const TVector4<double> &v) { return *this = (TVector4<float>)(v); }
 
-		inline SimpleUniform & operator=(const TVector2<GLint> &v) { Uniform2iv(v.v); return *this; }
-		inline SimpleUniform & operator=(const TVector3<GLint> &v) { Uniform3iv(v.v); return *this; }
-		inline SimpleUniform & operator=(const TVector4<GLint> &v) { Uniform4iv(v.v); return *this; }
+		inline SimpleUniform & operator=(const TVector2<GLint> &v) { Uniform2iv(v.v()); return *this; }
+		inline SimpleUniform & operator=(const TVector3<GLint> &v) { Uniform3iv(v.v()); return *this; }
+		inline SimpleUniform & operator=(const TVector4<GLint> &v) { Uniform4iv(v.v()); return *this; }
 
-		inline SimpleUniform & operator=(const TVector2<GLuint> &v) { Uniform2uiv(v.v); return *this; }
-		inline SimpleUniform & operator=(const TVector3<GLuint> &v) { Uniform3uiv(v.v); return *this; }
-		inline SimpleUniform & operator=(const TVector4<GLuint> &v) { Uniform4uiv(v.v); return *this; }
+		inline SimpleUniform & operator=(const TVector2<GLuint> &v) { Uniform2uiv(v.v()); return *this; }
+		inline SimpleUniform & operator=(const TVector3<GLuint> &v) { Uniform3uiv(v.v()); return *this; }
+		inline SimpleUniform & operator=(const TVector4<GLuint> &v) { Uniform4uiv(v.v()); return *this; }
 
-		SimpleUniform(const TMatrix2<GLfloat> & m) { UniformMatrix2fv(m.m); }
-		SimpleUniform(const TMatrix3<GLfloat> & m) { UniformMatrix3fv(m.m); }
-		SimpleUniform(const TMatrix4<GLfloat> & m) { UniformMatrix4fv(m.m); }
-		SimpleUniform(const TMatrix2x3<GLfloat> & m) { UniformMatrix2x3fv(m.m); }
-		SimpleUniform(const TMatrix2x4<GLfloat> & m) { UniformMatrix2x4fv(m.m); }
-		SimpleUniform(const TMatrix3x2<GLfloat> & m) { UniformMatrix3x2fv(m.m); }
-		SimpleUniform(const TMatrix3x4<GLfloat> & m) { UniformMatrix3x4fv(m.m); }
-		SimpleUniform(const TMatrix4x2<GLfloat> & m) { UniformMatrix4x2fv(m.m); }
-		SimpleUniform(const TMatrix4x3<GLfloat> & m) { UniformMatrix4x3fv(m.m); }
+		SimpleUniform(const TMatrix2<GLfloat> & m) { UniformMatrix2fv(m.m()); }
+		SimpleUniform(const TMatrix3<GLfloat> & m) { UniformMatrix3fv(m.m()); }
+		SimpleUniform(const TMatrix4<GLfloat> & m) { UniformMatrix4fv(m.m()); }
+		//SimpleUniform(const TMatrix2x3<GLfloat> & m) { UniformMatrix2x3fv(m.m()); }
+		//SimpleUniform(const TMatrix2x4<GLfloat> & m) { UniformMatrix2x4fv(m.m()); }
+		//SimpleUniform(const TMatrix3x2<GLfloat> & m) { UniformMatrix3x2fv(m.m()); }
+		//SimpleUniform(const TMatrix3x4<GLfloat> & m) { UniformMatrix3x4fv(m.m()); }
+		//SimpleUniform(const TMatrix4x2<GLfloat> & m) { UniformMatrix4x2fv(m.m()); }
+		//SimpleUniform(const TMatrix4x3<GLfloat> & m) { UniformMatrix4x3fv(m.m()); }
 
-		SimpleUniform(const TMatrix2<double> & m) { UniformMatrix2fv(((TMatrix2<float>)(m)).m); }
-		SimpleUniform(const TMatrix3<double> & m) { UniformMatrix3fv(((TMatrix3<float>)(m)).m); }
-		SimpleUniform(const TMatrix4<double> & m) { UniformMatrix4fv(((TMatrix4<float>)(m)).m); }
-		SimpleUniform(const TMatrix2x3<double> & m) { UniformMatrix2x3fv(((TMatrix2x3<float>)(m)).m); }
-		SimpleUniform(const TMatrix2x4<double> & m) { UniformMatrix2x4fv(((TMatrix2x4<float>)(m)).m); }
-		SimpleUniform(const TMatrix3x2<double> & m) { UniformMatrix3x2fv(((TMatrix3x2<float>)(m)).m); }
-		SimpleUniform(const TMatrix3x4<double> & m) { UniformMatrix3x4fv(((TMatrix3x4<float>)(m)).m); }
-		SimpleUniform(const TMatrix4x2<double> & m) { UniformMatrix4x2fv(((TMatrix4x2<float>)(m)).m); }
-		SimpleUniform(const TMatrix4x3<double> & m) { UniformMatrix4x3fv(((TMatrix4x3<float>)(m)).m); }
+		SimpleUniform(const TMatrix2<double> & m) { UniformMatrix2fv(((TMatrix2<float>)(m)).m()); }
+		SimpleUniform(const TMatrix3<double> & m) { UniformMatrix3fv(((TMatrix3<float>)(m)).m()); }
+		SimpleUniform(const TMatrix4<double> & m) { UniformMatrix4fv(((TMatrix4<float>)(m)).m()); }
+		//SimpleUniform(const TMatrix2x3<double> & m) { UniformMatrix2x3fv(((TMatrix2x3<float>)(m)).m); }
+		//SimpleUniform(const TMatrix2x4<double> & m) { UniformMatrix2x4fv(((TMatrix2x4<float>)(m)).m); }
+		//SimpleUniform(const TMatrix3x2<double> & m) { UniformMatrix3x2fv(((TMatrix3x2<float>)(m)).m); }
+		//SimpleUniform(const TMatrix3x4<double> & m) { UniformMatrix3x4fv(((TMatrix3x4<float>)(m)).m); }
+		//SimpleUniform(const TMatrix4x2<double> & m) { UniformMatrix4x2fv(((TMatrix4x2<float>)(m)).m); }
+		//SimpleUniform(const TMatrix4x3<double> & m) { UniformMatrix4x3fv(((TMatrix4x3<float>)(m)).m); }
 
-		SimpleUniform(const TVector2<GLfloat> & v) { Uniform2fv(v.v); }
-		SimpleUniform(const TVector3<GLfloat> & v) { Uniform3fv(v.v); }
-		SimpleUniform(const TVector4<GLfloat> & v) { Uniform4fv(v.v); }
+		SimpleUniform(const TVector2<GLfloat> & v) { Uniform2fv(v.v()); }
+		SimpleUniform(const TVector3<GLfloat> & v) { Uniform3fv(v.v()); }
+		SimpleUniform(const TVector4<GLfloat> & v) { Uniform4fv(v.v()); }
 
-		SimpleUniform(const TVector2<double> & v) { Uniform2fv(((TVector2<float>)(v)).v); }
-		SimpleUniform(const TVector3<double> & v) { Uniform3fv(((TVector3<float>)(v)).v); }
-		SimpleUniform(const TVector4<double> & v) { Uniform4fv(((TVector4<float>)(v)).v); }
+		SimpleUniform(const TVector2<double> & v) { TVector2<float> u = (TVector2<float>)v; Uniform2fv(&u.x); }
+		SimpleUniform(const TVector3<double> & v) { TVector3<float> u = (TVector3<float>)v; Uniform2fv(&u.x); }
+		SimpleUniform(const TVector4<double> & v) { TVector4<float> u = (TVector4<float>)v; Uniform2fv(&u.x); }
 
-		SimpleUniform(const TVector2<GLint> & v) { Uniform2iv(v.v); }
-		SimpleUniform(const TVector3<GLint> & v) { Uniform3iv(v.v); }
-		SimpleUniform(const TVector4<GLint> & v) { Uniform4iv(v.v); }
+		SimpleUniform(const TVector2<GLint> & v) { Uniform2iv(v.v()); }
+		SimpleUniform(const TVector3<GLint> & v) { Uniform3iv(v.v()); }
+		SimpleUniform(const TVector4<GLint> & v) { Uniform4iv(v.v()); }
 
-		SimpleUniform(const TVector2<GLuint> & v) { Uniform2uiv(v.v); }
-		SimpleUniform(const TVector3<GLuint> & v) { Uniform3uiv(v.v); }
-		SimpleUniform(const TVector4<GLuint> & v) { Uniform4uiv(v.v); }
+		SimpleUniform(const TVector2<GLuint> & v) { Uniform2uiv(v.v()); }
+		SimpleUniform(const TVector3<GLuint> & v) { Uniform3uiv(v.v()); }
+		SimpleUniform(const TVector4<GLuint> & v) { Uniform4uiv(v.v()); }
 
-		SimpleUniform(TMatrix2<GLfloat> && m) { UniformMatrix2fv(m.m); }
-		SimpleUniform(TMatrix3<GLfloat> && m) { UniformMatrix3fv(m.m); }
-		SimpleUniform(TMatrix4<GLfloat> && m) { UniformMatrix4fv(m.m); }
-		SimpleUniform(TMatrix2x3<GLfloat> && m) { UniformMatrix2x3fv(m.m); }
-		SimpleUniform(TMatrix2x4<GLfloat> && m) { UniformMatrix2x4fv(m.m); }
-		SimpleUniform(TMatrix3x2<GLfloat> && m) { UniformMatrix3x2fv(m.m); }
-		SimpleUniform(TMatrix3x4<GLfloat> && m) { UniformMatrix3x4fv(m.m); }
-		SimpleUniform(TMatrix4x2<GLfloat> && m) { UniformMatrix4x2fv(m.m); }
-		SimpleUniform(TMatrix4x3<GLfloat> && m) { UniformMatrix4x3fv(m.m); }
+		SimpleUniform(TMatrix2<GLfloat> && m) { UniformMatrix2fv(m.m()); }
+		SimpleUniform(TMatrix3<GLfloat> && m) { UniformMatrix3fv(m.m()); }
+		SimpleUniform(TMatrix4<GLfloat> && m) { UniformMatrix4fv(m.m()); }
+		//SimpleUniform(TMatrix2x3<GLfloat> && m) { UniformMatrix2x3fv(m.m); }
+		//SimpleUniform(TMatrix2x4<GLfloat> && m) { UniformMatrix2x4fv(m.m); }
+		//SimpleUniform(TMatrix3x2<GLfloat> && m) { UniformMatrix3x2fv(m.m); }
+		//SimpleUniform(TMatrix3x4<GLfloat> && m) { UniformMatrix3x4fv(m.m); }
+		//SimpleUniform(TMatrix4x2<GLfloat> && m) { UniformMatrix4x2fv(m.m); }
+		//SimpleUniform(TMatrix4x3<GLfloat> && m) { UniformMatrix4x3fv(m.m); }
 
-		SimpleUniform(TMatrix2<double> && m) { UniformMatrix2fv(((TMatrix2<float>)(m)).m); }
-		SimpleUniform(TMatrix3<double> && m) { UniformMatrix3fv(((TMatrix3<float>)(m)).m); }
-		SimpleUniform(TMatrix4<double> && m) { UniformMatrix4fv(((TMatrix4<float>)(m)).m); }
-		SimpleUniform(TMatrix2x3<double> && m) { UniformMatrix2x3fv(((TMatrix2x3<float>)(m)).m); }
-		SimpleUniform(TMatrix2x4<double> && m) { UniformMatrix2x4fv(((TMatrix2x4<float>)(m)).m); }
-		SimpleUniform(TMatrix3x2<double> && m) { UniformMatrix3x2fv(((TMatrix3x2<float>)(m)).m); }
-		SimpleUniform(TMatrix3x4<double> && m) { UniformMatrix3x4fv(((TMatrix3x4<float>)(m)).m); }
-		SimpleUniform(TMatrix4x2<double> && m) { UniformMatrix4x2fv(((TMatrix4x2<float>)(m)).m); }
-		SimpleUniform(TMatrix4x3<double> && m) { UniformMatrix4x3fv(((TMatrix4x3<float>)(m)).m); }
+		SimpleUniform(TMatrix2<double> && m) { UniformMatrix2fv(((TMatrix2<float>)(m)).m()); }
+		SimpleUniform(TMatrix3<double> && m) { UniformMatrix3fv(((TMatrix3<float>)(m)).m()); }
+		SimpleUniform(TMatrix4<double> && m) { UniformMatrix4fv(((TMatrix4<float>)(m)).m()); }
+		//SimpleUniform(TMatrix2x3<double> && m) { UniformMatrix2x3fv(((TMatrix2x3<float>)(m)).m); }
+		//SimpleUniform(TMatrix2x4<double> && m) { UniformMatrix2x4fv(((TMatrix2x4<float>)(m)).m); }
+		//SimpleUniform(TMatrix3x2<double> && m) { UniformMatrix3x2fv(((TMatrix3x2<float>)(m)).m); }
+		//SimpleUniform(TMatrix3x4<double> && m) { UniformMatrix3x4fv(((TMatrix3x4<float>)(m)).m); }
+		//SimpleUniform(TMatrix4x2<double> && m) { UniformMatrix4x2fv(((TMatrix4x2<float>)(m)).m); }
+		//SimpleUniform(TMatrix4x3<double> && m) { UniformMatrix4x3fv(((TMatrix4x3<float>)(m)).m); }
 
-		SimpleUniform(TVector2<GLfloat> && v) { Uniform2fv(v.v); }
-		SimpleUniform(TVector3<GLfloat> && v) { Uniform3fv(v.v); }
-		SimpleUniform(TVector4<GLfloat> && v) { Uniform4fv(v.v); }
+		SimpleUniform(TVector2<GLfloat> && v) { Uniform2fv(v.v()); }
+		SimpleUniform(TVector3<GLfloat> && v) { Uniform3fv(v.v()); }
+		SimpleUniform(TVector4<GLfloat> && v) { Uniform4fv(v.v()); }
 
-		SimpleUniform(TVector2<double> && v) { Uniform2fv(((TVector2<float>)(v)).v); }
-		SimpleUniform(TVector3<double> && v) { Uniform3fv(((TVector3<float>)(v)).v); }
-		SimpleUniform(TVector4<double> && v) { Uniform4fv(((TVector4<float>)(v)).v); }
+		SimpleUniform(TVector2<double> && v) { Uniform2fv(((TVector2<float>)(v)).v()); }
+		SimpleUniform(TVector3<double> && v) { Uniform3fv(((TVector3<float>)(v)).v()); }
+		SimpleUniform(TVector4<double> && v) { Uniform4fv(((TVector4<float>)(v)).v()); }
 
-		SimpleUniform(TVector2<GLint> && v) { Uniform2iv(v.v); }
-		SimpleUniform(TVector3<GLint> && v) { Uniform3iv(v.v); }
-		SimpleUniform(TVector4<GLint> && v) { Uniform4iv(v.v); }
+		SimpleUniform(TVector2<GLint> && v) { Uniform2iv(v.v()); }
+		SimpleUniform(TVector3<GLint> && v) { Uniform3iv(v.v()); }
+		SimpleUniform(TVector4<GLint> && v) { Uniform4iv(v.v()); }
 
-		SimpleUniform(TVector2<GLuint> && v) { Uniform2uiv(v.v); }
-		SimpleUniform(TVector3<GLuint> && v) { Uniform3uiv(v.v); }
-		SimpleUniform(TVector4<GLuint> && v) { Uniform4uiv(v.v); }
+		SimpleUniform(TVector2<GLuint> && v) { Uniform2uiv(v.v()); }
+		SimpleUniform(TVector3<GLuint> && v) { Uniform3uiv(v.v()); }
+		SimpleUniform(TVector4<GLuint> && v) { Uniform4uiv(v.v()); }
 
 
 		inline void SetProgramUniform(GLint uniformLocation)

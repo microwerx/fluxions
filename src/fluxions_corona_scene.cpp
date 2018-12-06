@@ -281,7 +281,7 @@ void CoronaSceneFile::writeSun(ostream &ostr, const SimpleSceneGraph &ssg)
 		XmlComment(ostr, name.str(), 1);
 		XmlBeginTag(ostr, "geometryGroup", 1) << endl;
 		XmlBeginTag(ostr, "object", "sphere", 2) << endl;
-		XmlInt(ostr, "materialId", i, 3) << endl;
+		XmlSize(ostr, "materialId", i, 3) << endl;
 		XmlEndTag(ostr, "object", 2) << endl;
 		XmlBeginTag(ostr, "instance", 2) << endl;
 		XmlBeginTag(ostr, "material", "Reference", 3) << "PointLight" << i;
@@ -534,7 +534,7 @@ void CoronaSceneFile::WriteCache(const SimpleSceneGraph &ssg)
 	}
 }
 
-void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph &ssg, bool enableKs)
+void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph &ssg, bool enableKs_)
 {
 	map<string, int> written_materials;
 	map<string, string> written_maps;
@@ -579,7 +579,7 @@ void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph &ssg, bool enableKs)
 					mtl_fout << "Kd ";
 					WriteVector3f(mtl_fout, mtl->Kd);
 					mtl_fout << endl;
-					if (enableKs)
+					if (enableKs_)
 					{
 						mtl_fout << "Ks ";
 						WriteVector3f(mtl_fout, mtl->Ks);
@@ -620,7 +620,7 @@ void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph &ssg, bool enableKs)
 							XmlVector3f(mtlxml_fout, "diffuse", mtl->Kd, 3) << endl;
 					}
 
-					if (enableKs)
+					if (enableKs_)
 					{
 						XmlBeginTag(mtlxml_fout, "reflect", 3) << endl;
 						XmlVector3f(mtlxml_fout, "color", mtl->Ks, 4) << endl;
@@ -829,29 +829,29 @@ void CoronaJob::Start(CoronaSceneFile &coronaScene, SimpleSceneGraph &ssg)
 #endif
 }
 
-void CoronaJob::CopySPH(const Sph4f &sph)
+void CoronaJob::CopySPH(const Sph4f &sph_)
 {
 	if (!IsFinished() && !IsGEN() && !IsVIZ())
 		return;
-	memset(this->sph, 0, sizeof(float) * 484);
-	for (size_t i = 0; i < sph.size(); i++)
+	memset(sph, 0, sizeof(float) * 484);
+	for (size_t i = 0; i < sph_.size(); i++)
 	{
-		this->sph[121 * 0 + i] = sph.r().getCoefficient(i);
-		this->sph[121 * 1 + i] = sph.g().getCoefficient(i);
-		this->sph[121 * 2 + i] = sph.g().getCoefficient(i);
-		this->sph[121 * 3 + i] = sph.a().getCoefficient(i);
+		sph[121 * 0 + i] = sph_.r().getCoefficient(i);
+		sph[121 * 1 + i] = sph_.g().getCoefficient(i);
+		sph[121 * 2 + i] = sph_.g().getCoefficient(i);
+		sph[121 * 3 + i] = sph_.a().getCoefficient(i);
 	}
 }
 
-void CoronaJob::CopySPHToSph4f(Sph4f &sph)
+void CoronaJob::CopySPHToSph4f(Sph4f &sph_)
 {
-	sph.resize(MaxSphlDegree);
-	for (size_t i = 0; i < sph.size(); i++)
+	sph_.resize(MaxSphlDegree);
+	for (size_t i = 0; i < sph_.size(); i++)
 	{
-		sph.r().setCoefficient(i, this->sph[121 * 0 + i]);
-		sph.g().setCoefficient(i, this->sph[121 * 1 + i]);
-		sph.b().setCoefficient(i, this->sph[121 * 2 + i]);
-		sph.a().setCoefficient(i, this->sph[121 * 3 + i]);
+		sph_.r().setCoefficient(i, sph[121 * 0 + i]);
+		sph_.g().setCoefficient(i, sph[121 * 1 + i]);
+		sph_.b().setCoefficient(i, sph[121 * 2 + i]);
+		sph_.a().setCoefficient(i, sph[121 * 3 + i]);
 	}
 }
 

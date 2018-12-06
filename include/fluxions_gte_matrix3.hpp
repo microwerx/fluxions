@@ -23,72 +23,91 @@
 
 namespace Fluxions
 {
-template <typename T1>
+template <typename T>
 class TMatrix3
 {
   public:
-	union {
-		// normal access (column major)
-		struct
-		{
-			T1 m11, m21, m31;
-			T1 m12, m22, m32;
-			T1 m13, m23, m33;
-		};
+	//union {
+	//	// normal access (column major)
+	//	struct
+	//	{
+	//		T m11, m21, m31;
+	//		T m12, m22, m32;
+	//		T m13, m23, m33;
+	//	};
 
-		// transposed access
-		struct
-		{
-			T1 t11, t12, t13;
-			T1 t21, t22, t23;
-			T1 t31, t32, t33;
-		};
+	//	// transposed access
+	//	struct
+	//	{
+	//		T t11, t12, t13;
+	//		T t21, t22, t23;
+	//		T t31, t32, t33;
+	//	};
 
-		// 2D array form
-		T1 mm[3][3];
+	//	// 2D array form
+	//	T mm[3][3];
 
-		// array form
-		T1 m[9];
-		T1 v[9];
-	};
+	//	// array form
+	//	T m[9];
+	//	T v[9];
+	//};
+
+	// normal access (column major)
+	T m11, m21, m31;
+	T m12, m22, m32;
+	T m13, m23, m33;
+
+	constexpr T *m() noexcept { return &m11; }
+	constexpr const T *m() const noexcept { return &m11; }
+
+	constexpr T operator()(size_t i, size_t j) const noexcept
+	{
+		T *e = &m11;
+		if (row == 1)
+			e += 3;
+		else if (row == 2)
+			e += 6;
+		e += j;
+		return *e;
+	}
 
 	TMatrix3();
 	// a[row][col], 1-indexed ex: a32 = row 3, col 2, a11 = row 1, col 1 (no 0 row or col)
 	TMatrix3(
-		const T1 a11, const T1 a12, const T1 a13,
-		const T1 a21, const T1 a22, const T1 a23,
-		const T1 a31, const T1 a32, const T1 a33);
-	TMatrix3(const TMatrix3<T1> &M);
-	TMatrix3(const T1 M[3][3]);
-	TMatrix3(const T1 M[9]);
-	const TMatrix3<T1> &operator=(const TMatrix3<T1> &M);
+		const T a11, const T a12, const T a13,
+		const T a21, const T a22, const T a23,
+		const T a31, const T a32, const T a33);
+	TMatrix3(const TMatrix3<T> &M);
+	TMatrix3(const T M[3][3]);
+	TMatrix3(const T M[9]);
+	const TMatrix3<T> &operator=(const TMatrix3<T> &M);
 
 	template <typename T2>
 	operator TMatrix3<T2>() const;
 
 	void LoadIdentity();
-	void MultMatrix(const TMatrix3<T1> &M);
+	void MultMatrix(const TMatrix3<T> &M);
 	template <typename T2>
-	const TMatrix3<T1> &operator*=(const TMatrix3<T2> &M);
-	const TMatrix3<T1> &operator+=(const TMatrix3<T1> &M);
-	const TMatrix3<T1> &operator-=(const TMatrix3<T1> &M);
+	const TMatrix3<T> &operator*=(const TMatrix3<T2> &M);
+	const TMatrix3<T> &operator+=(const TMatrix3<T> &M);
+	const TMatrix3<T> &operator-=(const TMatrix3<T> &M);
 
 	template <typename T2>
-	const TMatrix3<T1> operator*(const TMatrix3<T2> &M) const;
-	const TMatrix3<T1> operator+(const TMatrix3<T1> &M) const;
-	const TMatrix3<T1> operator-(const TMatrix3<T1> &M) const;
+	const TMatrix3<T> operator*(const TMatrix3<T2> &M) const;
+	const TMatrix3<T> operator+(const TMatrix3<T> &M) const;
+	const TMatrix3<T> operator-(const TMatrix3<T> &M) const;
 
-	const TMatrix3<T1> &scale(double x);
+	const TMatrix3<T> &scale(double x);
 
-	const TMatrix3<T1> &Rotate(double angleInDegrees);
-	const TMatrix3<T1> &Rotate(double angleInDegrees, double x, double y, double z);
-	const TMatrix3<T1> &Scale(double x, double y);
+	const TMatrix3<T> &Rotate(double angleInDegrees);
+	const TMatrix3<T> &Rotate(double angleInDegrees, double x, double y, double z);
+	const TMatrix3<T> &Scale(double x, double y);
 
-	const T1 Determinant() const;
-	const T1 Trace() const;
+	const T Determinant() const;
+	const T Trace() const;
 	bool Invert();
 	void Transpose();
-	const TMatrix3<T1> AsTranspose() const;
+	const TMatrix3<T> AsTranspose() const;
 	void Adjugate();
 };
 
@@ -96,8 +115,8 @@ class TMatrix3
 // I M P L E M E N T2 A T2 I O N ///////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-template <typename T1>
-TMatrix3<T1>::TMatrix3()
+template <typename T>
+TMatrix3<T>::TMatrix3()
 {
 	m11 = 1;
 	m12 = 0;
@@ -110,11 +129,11 @@ TMatrix3<T1>::TMatrix3()
 	m33 = 1;
 }
 
-template <typename T1>
-TMatrix3<T1>::TMatrix3(
-	const T1 a11, const T1 a12, const T1 a13,
-	const T1 a21, const T1 a22, const T1 a23,
-	const T1 a31, const T1 a32, const T1 a33)
+template <typename T>
+TMatrix3<T>::TMatrix3(
+	const T a11, const T a12, const T a13,
+	const T a21, const T a22, const T a23,
+	const T a31, const T a32, const T a33)
 {
 	m11 = a11;
 	m12 = a12;
@@ -127,8 +146,8 @@ TMatrix3<T1>::TMatrix3(
 	m33 = a33;
 }
 
-template <typename T1>
-TMatrix3<T1>::TMatrix3(const TMatrix3<T1> &M)
+template <typename T>
+TMatrix3<T>::TMatrix3(const TMatrix3<T> &M)
 {
 	m11 = M.m11;
 	m12 = M.m12;
@@ -141,8 +160,8 @@ TMatrix3<T1>::TMatrix3(const TMatrix3<T1> &M)
 	m33 = M.m33;
 }
 
-template <typename T1>
-TMatrix3<T1>::TMatrix3(const T1 M[3][3])
+template <typename T>
+TMatrix3<T>::TMatrix3(const T M[3][3])
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -153,8 +172,8 @@ TMatrix3<T1>::TMatrix3(const T1 M[3][3])
 	}
 }
 
-template <typename T1>
-TMatrix3<T1>::TMatrix3(const T1 M[9])
+template <typename T>
+TMatrix3<T>::TMatrix3(const T M[9])
 {
 	for (int i = 0; i < 9; i++)
 	{
@@ -162,8 +181,8 @@ TMatrix3<T1>::TMatrix3(const T1 M[9])
 	}
 }
 
-template <typename T1>
-const TMatrix3<T1> &TMatrix3<T1>::operator=(const TMatrix3<T1> &M)
+template <typename T>
+const TMatrix3<T> &TMatrix3<T>::operator=(const TMatrix3<T> &M)
 {
 	m11 = M.m11;
 	m12 = M.m12;
@@ -177,18 +196,18 @@ const TMatrix3<T1> &TMatrix3<T1>::operator=(const TMatrix3<T1> &M)
 	return *this;
 }
 
-template <typename T1>
+template <typename T>
 template <typename T2>
-TMatrix3<T1>::operator TMatrix3<T2>() const
+TMatrix3<T>::operator TMatrix3<T2>() const
 {
-	return TMatrix3<T1>(
-		(T1)m11, (T1)m12, (T1)m13,
-		(T1)m21, (T1)m22, (T1)m23,
-		(T1)m31, (T1)m32, (T1)m33);
+	return TMatrix3<T>(
+		(T)m11, (T)m12, (T)m13,
+		(T)m21, (T)m22, (T)m23,
+		(T)m31, (T)m32, (T)m33);
 }
 
-template <typename T1>
-void TMatrix3<T1>::LoadIdentity()
+template <typename T>
+void TMatrix3<T>::LoadIdentity()
 {
 	m11 = 1;
 	m12 = 0;
@@ -201,10 +220,10 @@ void TMatrix3<T1>::LoadIdentity()
 	m33 = 1;
 }
 
-template <typename T1>
-void TMatrix3<T1>::MultMatrix(const TMatrix3<T1> &M)
+template <typename T>
+void TMatrix3<T>::MultMatrix(const TMatrix3<T> &M)
 {
-	TMatrix3<T1> u;
+	TMatrix3<T> u;
 	u.m11 = m11 * M.m11 + m12 * M.m21 + m13 * M.m31;
 	u.m12 = m11 * M.m12 + m12 * M.m22 + m13 * M.m32;
 	u.m13 = m11 * M.m13 + m12 * M.m23 + m13 * M.m33;
@@ -217,27 +236,27 @@ void TMatrix3<T1>::MultMatrix(const TMatrix3<T1> &M)
 	*this = u;
 }
 
-template <typename T1>
+template <typename T>
 template <typename T2>
-const TMatrix3<T1> &TMatrix3<T1>::operator*=(const TMatrix3<T2> &M)
+const TMatrix3<T> &TMatrix3<T>::operator*=(const TMatrix3<T2> &M)
 {
-	return *this = TMatrix3<T1>(
-			   (T1)(m11 * M.m11 + m12 * M.m21 + m13 * M.m31),
-			   (T1)(m11 * M.m12 + m12 * M.m22 + m13 * M.m32),
-			   (T1)(m11 * M.m13 + m12 * M.m23 + m13 * M.m33),
-			   (T1)(m21 * M.m11 + m22 * M.m21 + m23 * M.m31),
-			   (T1)(m21 * M.m12 + m22 * M.m22 + m23 * M.m32),
-			   (T1)(m21 * M.m13 + m22 * M.m23 + m23 * M.m33),
-			   (T1)(m31 * M.m11 + m32 * M.m21 + m33 * M.m31),
-			   (T1)(m31 * M.m12 + m32 * M.m22 + m33 * M.m32),
-			   (T1)(m31 * M.m13 + m32 * M.m23 + m33 * M.m33));
+	return *this = TMatrix3<T>(
+			   (T)(m11 * M.m11 + m12 * M.m21 + m13 * M.m31),
+			   (T)(m11 * M.m12 + m12 * M.m22 + m13 * M.m32),
+			   (T)(m11 * M.m13 + m12 * M.m23 + m13 * M.m33),
+			   (T)(m21 * M.m11 + m22 * M.m21 + m23 * M.m31),
+			   (T)(m21 * M.m12 + m22 * M.m22 + m23 * M.m32),
+			   (T)(m21 * M.m13 + m22 * M.m23 + m23 * M.m33),
+			   (T)(m31 * M.m11 + m32 * M.m21 + m33 * M.m31),
+			   (T)(m31 * M.m12 + m32 * M.m22 + m33 * M.m32),
+			   (T)(m31 * M.m13 + m32 * M.m23 + m33 * M.m33));
 }
 
-template <typename T1>
+template <typename T>
 template <typename T2>
-const TMatrix3<T1> TMatrix3<T1>::operator*(const TMatrix3<T2> &M) const
+const TMatrix3<T> TMatrix3<T>::operator*(const TMatrix3<T2> &M) const
 {
-	return TMatrix3<T1>(
+	return TMatrix3<T>(
 		m11 * M.m11 + m12 * M.m21 + m13 * M.m31,
 		m11 * M.m12 + m12 * M.m22 + m13 * M.m32,
 		m11 * M.m13 + m12 * M.m23 + m13 * M.m33,
@@ -249,8 +268,8 @@ const TMatrix3<T1> TMatrix3<T1>::operator*(const TMatrix3<T2> &M) const
 		m31 * M.m13 + m32 * M.m23 + m33 * M.m33);
 }
 
-template <typename T1>
-const TMatrix3<T1> &TMatrix3<T1>::operator+=(const TMatrix3<T1> &M)
+template <typename T>
+const TMatrix3<T> &TMatrix3<T>::operator+=(const TMatrix3<T> &M)
 {
 	m11 += M.m11;
 	m12 += M.m12;
@@ -264,8 +283,8 @@ const TMatrix3<T1> &TMatrix3<T1>::operator+=(const TMatrix3<T1> &M)
 	return *this;
 }
 
-template <typename T1>
-const TMatrix3<T1> &TMatrix3<T1>::operator-=(const TMatrix3<T1> &M)
+template <typename T>
+const TMatrix3<T> &TMatrix3<T>::operator-=(const TMatrix3<T> &M)
 {
 	m11 -= M.m11;
 	m21 -= M.m21;
@@ -279,41 +298,41 @@ const TMatrix3<T1> &TMatrix3<T1>::operator-=(const TMatrix3<T1> &M)
 	return *this;
 }
 
-template <typename T1>
-const TMatrix3<T1> TMatrix3<T1>::operator+(const TMatrix3<T1> &M) const
+template <typename T>
+const TMatrix3<T> TMatrix3<T>::operator+(const TMatrix3<T> &M) const
 {
-	return TMatrix3<T1>(
+	return TMatrix3<T>(
 		m11 + M.m11, m12 + M.m12, m13 + M.m13,
 		m21 + M.m21, m22 + M.m22, m23 + M.m23,
 		m31 + M.m31, m32 + M.m32, m33 + M.m33);
 }
 
-template <typename T1>
-const TMatrix3<T1> TMatrix3<T1>::operator-(const TMatrix3<T1> &M) const
+template <typename T>
+const TMatrix3<T> TMatrix3<T>::operator-(const TMatrix3<T> &M) const
 {
-	return TMatrix3<T1>(
+	return TMatrix3<T>(
 		m11 - M.m11, m12 - M.m12, m13 - M.m13,
 		m21 - M.m21, m22 - M.m22, m23 - M.m23,
 		m31 - M.m31, m32 - M.m32, m33 - M.m33);
 }
 
-template <typename T1>
-const TMatrix3<T1> &TMatrix3<T1>::scale(double x)
+template <typename T>
+const TMatrix3<T> &TMatrix3<T>::scale(double x)
 {
-	m11 *= (T1)x;
-	m12 *= (T1)x;
-	m13 *= (T1)x;
-	m21 *= (T1)x;
-	m22 *= (T1)x;
-	m23 *= (T1)x;
-	m31 *= (T1)x;
-	m32 *= (T1)x;
-	m33 *= (T1)x;
+	m11 *= (T)x;
+	m12 *= (T)x;
+	m13 *= (T)x;
+	m21 *= (T)x;
+	m22 *= (T)x;
+	m23 *= (T)x;
+	m31 *= (T)x;
+	m32 *= (T)x;
+	m33 *= (T)x;
 	return *this;
 }
 
-template <typename T1>
-const TMatrix3<T1> &TMatrix3<T1>::Rotate(double angleInDegrees)
+template <typename T>
+const TMatrix3<T> &TMatrix3<T>::Rotate(double angleInDegrees)
 {
 	double c = cos(angleInDegrees * FX_DEGREES_TO_RADIANS);
 	double s = sin(angleInDegrees * FX_DEGREES_TO_RADIANS);
@@ -324,8 +343,8 @@ const TMatrix3<T1> &TMatrix3<T1>::Rotate(double angleInDegrees)
 			   0.0, 0.0, 1.0);
 }
 
-template <typename T1>
-const TMatrix3<T1> &TMatrix3<T1>::Rotate(double angleInDegrees, double x, double y, double z)
+template <typename T>
+const TMatrix3<T> &TMatrix3<T>::Rotate(double angleInDegrees, double x, double y, double z)
 {
 	double c = cos(angleInDegrees * FX_DEGREES_TO_RADIANS);
 	double s = sin(angleInDegrees * FX_DEGREES_TO_RADIANS);
@@ -340,8 +359,8 @@ const TMatrix3<T1> &TMatrix3<T1>::Rotate(double angleInDegrees, double x, double
 			   x * z * (1 - c) - y * s, y * z * (1 - c) + x * s, z * z * (1 - c) + c);
 }
 
-template <typename T1>
-const TMatrix3<T1> &TMatrix3<T1>::Scale(double x, double y)
+template <typename T>
+const TMatrix3<T> &TMatrix3<T>::Scale(double x, double y)
 {
 	return *this *= TMatrix3<double>(
 			   x, 0.0, 0.0,
@@ -349,27 +368,27 @@ const TMatrix3<T1> &TMatrix3<T1>::Scale(double x, double y)
 			   0.0, 0.0, 1.0);
 }
 
-template <typename T1>
-void TMatrix3<T1>::Transpose()
+template <typename T>
+void TMatrix3<T>::Transpose()
 {
 	*this = AsTranspose();
 }
 
-template <typename T1>
-const TMatrix3<T1> TMatrix3<T1>::AsTranspose() const
+template <typename T>
+const TMatrix3<T> TMatrix3<T>::AsTranspose() const
 {
-	TMatrix3<T1> u = *this;
+	TMatrix3<T> u = *this;
 
-	return TMatrix3<T1>(
+	return TMatrix3<T>(
 		t11, t12, t13,
 		t21, t22, t23,
 		t31, t32, t33);
 }
 
-template <typename T1>
-const T1 TMatrix3<T1>::Determinant() const
+template <typename T>
+const T TMatrix3<T>::Determinant() const
 {
-	T1 det;
+	T det;
 
 	det = 0;
 	det += m11 * (m22 * m33 - m32 * m23);
@@ -379,18 +398,18 @@ const T1 TMatrix3<T1>::Determinant() const
 	return det;
 }
 
-template <typename T1>
-const T1 TMatrix3<T1>::Trace() const
+template <typename T>
+const T TMatrix3<T>::Trace() const
 {
 	return m11 + m22 + m33;
 }
 
-template <typename T1>
-void TMatrix3<T1>::Adjugate()
+template <typename T>
+void TMatrix3<T>::Adjugate()
 {
-	T1 c00, c10, c20;
-	T1 c01, c11, c21;
-	T1 c02, c12, c22;
+	T c00, c10, c20;
+	T c01, c11, c21;
+	T c02, c12, c22;
 
 	c00 = m22 * m33 - m23 * m32;
 	c10 = m13 * m32 - m12 * m33;
@@ -415,10 +434,10 @@ void TMatrix3<T1>::Adjugate()
 	m33 = c22;
 }
 
-template <typename T1>
-bool TMatrix3<T1>::Invert()
+template <typename T>
+bool TMatrix3<T>::Invert()
 {
-	T1 det;
+	T det;
 
 	det = Determinant();
 	if (det == 0)

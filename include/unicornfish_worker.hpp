@@ -19,63 +19,61 @@
 #ifndef UNICORNFISH_WORKER_HPP
 #define UNICORNFISH_WORKER_HPP
 
-
 #include <unicornfish.hpp>
 #include <unicornfish_socket.hpp>
 #include <unicornfish_message.hpp>
 
-
 namespace Uf
 {
-	using namespace std;
+using namespace std;
 
+class Worker
+{
+  public:
+	Worker();
+	Worker(const char *endpoint, const char *service);
+	virtual ~Worker();
 
-	class Worker
-	{
-	public:
-		Worker();
-		Worker(const char *endpoint, const char *service);
-		virtual ~Worker();
+	operator bool() const { return workerSocket; }
 
-		operator bool() const { return workerSocket; }
+	void Run();
+	virtual void OnProcessRequest(const Message &request, Message &reply);
 
-		void Run();
-		virtual void OnProcessRequest(const Message &request, Message &reply);
+	bool ConnectToBroker(const char *endpoint, const char *service);
+	void Disconnect();
+	bool SendReplyWaitRequest(const Message &reply);
+	bool SendReply(const Message &reply);
+	bool WaitRequest();
+	const string &GetServiceName() const { return serviceName; }
+	const string &GetBrokerEndpoint() const { return brokerEndpoint; }
+	// const string &GetRequestHeader() const { return requestHeader; }
+	// const string &GetRequestCommand() const { return requestCommand; }
+	Message &GetRequest() { return requestMessage; }
+	const Message &GetRequest() const { return requestMessage; }
 
-		bool ConnectToBroker(const char *endpoint, const char *service);
-		void Disconnect();
-		bool SendReplyWaitRequest(const Message & reply);
-		bool SendReply(const Message & reply);
-		bool WaitRequest();
-		const string &GetServiceName() const { return serviceName; }
-		const string &GetBrokerEndpoint() const { return brokerEndpoint; }
-		// const string &GetRequestHeader() const { return requestHeader; }
-		// const string &GetRequestCommand() const { return requestCommand; }
-		Message &GetRequest() { return requestMessage; }
-		const Message &GetRequest() const { return requestMessage; }
-	private:
-		Message requestMessage;
-		Message replyMessage;
-		Frame replyTo;
-		string replyToHexAddress;
+  private:
+	Message requestMessage;
+	Message replyMessage;
+	Frame replyTo;
+	string replyToHexAddress;
 
-		string brokerEndpoint;
-		string serviceName;
-		Socket workerSocket;
+	string brokerEndpoint;
+	string serviceName;
+	Socket workerSocket;
 
-		//string requestHeader;
-		//string requestCommand;
+	//string requestHeader;
+	//string requestCommand;
 
-		int64_t heartbeatTime;
-		size_t liveness = 3;
-		size_t retries = 3;
-		bool expectReply = false;
-		bool verbose = false;
+	int64_t heartbeatTime;
+	size_t liveness = 3;
+	size_t retries = 3;
+	bool expectReply = false;
+	bool verbose = false;
 
-		bool ConnectToBroker();
-		bool SendCommandToBroker(Majordomo::Command command);
-		bool SendCommandToBroker(Majordomo::Command command, Message & msg);
-		bool SendCommandToClient(Majordomo::Command command, Message & msg);
-	};
-}
+	bool ConnectToBroker();
+	bool SendCommandToBroker(Majordomo::Command command);
+	bool SendCommandToBroker(Majordomo::Command command, Message &msg);
+	bool SendCommandToClient(Majordomo::Command command, Message &msg);
+};
+} // namespace Uf
 #endif

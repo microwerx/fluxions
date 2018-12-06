@@ -19,50 +19,48 @@
 #ifndef UNICORNFISH_CLIENT_HPP
 #define UNICORNFISH_CLIENT_HPP
 
-
 #include <unicornfish.hpp>
 #include <unicornfish_socket.hpp>
 #include <unicornfish_message.hpp>
 
-
 namespace Uf
 {
-	using namespace std;
+using namespace std;
 
+class Client
+{
+  public:
+	Client();
+	Client(const char *endpoint);
+	~Client();
 
-	class Client
-	{
-	public:
-		Client();
-		Client(const char *endpoint);
-		~Client();
+	operator bool() const { return clientSocket; }
 
-		operator bool() const { return clientSocket; }
+	bool ConnectToBroker(const char *endpoint);
+	void Disconnect();
+	void ClearReply();
 
-		bool ConnectToBroker(const char *endpoint);
-		void Disconnect();
-		void ClearReply();
+	bool SendRequest(const char *service, const Message &msg);
+	bool PollReply();
+	bool WaitReply();
 
-		bool SendRequest(const char *service, const Message & msg);
-		bool PollReply();
-		bool WaitReply();
+	bool SendWaitReply(const char *service, const Message &request);
+	Message &GetReply() { return replyMessage; }
+	const string &GetReplyService() { return replyService; }
+	const string &GetReplyHeader() { return replyHeader; }
 
-		bool SendWaitReply(const char *service, const Message &request);
-		Message &GetReply() { return replyMessage; }
-		const string &GetReplyService() { return replyService; }
-		const string &GetReplyHeader() { return replyHeader; }
-	private:
-		string brokerEndpoint;
-		Socket clientSocket;
-		Message replyMessage;
-		string replyHeader;
-		string replyService;
-		const int requestTimeoutMsec = 2500;
-		const int requestRetries = 3;
-		bool verbose = false;
+  private:
+	string brokerEndpoint;
+	Socket clientSocket;
+	Message replyMessage;
+	string replyHeader;
+	string replyService;
+	const int requestTimeoutMsec = 2500;
+	const int requestRetries = 3;
+	bool verbose = false;
 
-		bool SendRequestToBroker(const char *service, const Message & msg);
-	};
-}
+	bool SendRequestToBroker(const char *service, const Message &msg);
+};
+} // namespace Uf
 
 #endif

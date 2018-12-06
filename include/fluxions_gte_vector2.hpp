@@ -29,21 +29,26 @@ namespace Fluxions
 	class TVector2
 	{
 	public:
-		union
-		{
-			struct
-			{
-				T x, y;
-			};
-			struct
-			{
-				T s, t;
-			};
-			struct
-			{
-				T v[2];
-			};
-		};
+		//union
+		//{
+		//	struct
+		//	{
+		//		T x, y;
+		//	};
+		//	struct
+		//	{
+		//		T s, t;
+		//	};
+		//	struct
+		//	{
+		//		T v[2];
+		//	};
+		//};
+
+		T x, y;
+
+		T *v() { return &x; }
+		constexpr const T *v() const noexcept { return &x; }
 
 		constexpr TVector2() noexcept
 		{

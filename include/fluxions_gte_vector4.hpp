@@ -41,26 +41,36 @@ namespace Fluxions
 	class TVector4
 	{
 	public:
-		union
-		{
-			struct
-			{
-				T x, y, z, w;
-			};
-			struct
-			{
-				T r, g, b, a;
-			};
-			struct
-			{
-				T s, t, p, q;
-			};
-			struct
-			{
-				T A, B, C, D;
-			};
-			T v[4];
-		};
+		//union
+		//{
+		//	struct
+		//	{
+		//		T x, y, z, w;
+		//	};
+		//	struct
+		//	{
+		//		T r, g, b, a;
+		//	};
+		//	struct
+		//	{
+		//		T s, t, p, q;
+		//	};
+		//	struct
+		//	{
+		//		T A, B, C, D;
+		//	};
+		//	T v[4];
+		//};
+
+		T x, y, z, w;
+
+		constexpr T r() const noexcept { return x; }
+		constexpr T g() const noexcept { return y; }
+		constexpr T b() const noexcept { return z; }
+		constexpr T a() const noexcept { return w; }
+
+		constexpr T *v() noexcept { return &x; }
+		constexpr const T *v() const noexcept { return &x; }
 
 		constexpr TVector4() noexcept
 		{

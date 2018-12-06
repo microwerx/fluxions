@@ -362,14 +362,14 @@ namespace Fluxions
 	{
 		target = GL_TEXTURE_1D;
 
-		SDL_Surface *image = IMG_Load(filename.c_str());
-		if (image == nullptr)
+		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		if (imageSurface == nullptr)
 			return false;
 
-		int width = image->w;
-		void *data = image->pixels;
-		int format = image->format->BitsPerPixel == 24 ? GL_RGB :
-			image->format->BitsPerPixel == 32 ? GL_RGBA : 0;
+		int width = imageSurface->w;
+		void *data = imageSurface->pixels;
+		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB :
+			imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 		if (format == 0)
 			return false;
 
@@ -378,7 +378,7 @@ namespace Fluxions
 		Bind(0);
 		SetTexture1D(format, GL_UNSIGNED_BYTE, width, data, genMipMap);
 		glutBindDefaultTextureAndSampler(target);
-		SDL_FreeSurface(image);
+		SDL_FreeSurface(imageSurface);
 		return true;
 	}
 
@@ -387,20 +387,20 @@ namespace Fluxions
 	{
 		target = GL_TEXTURE_2D;		
 
-		SDL_Surface *image = IMG_Load(filename.c_str());
-		if (image == NULL)
+		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		if (imageSurface == NULL)
 		{
 			cout << "IMG_GetError() reports: " << IMG_GetError() << endl;
 			return false;
 		}
 
-		int width = image->w;
-		int height = image->h;
-		void *data = image->pixels;
-		int format = image->format->BitsPerPixel == 24 ? GL_RGB :
-			image->format->BitsPerPixel == 32 ? GL_RGBA : 0;
-		//int internalformat = image->format->BitsPerPixel == 24 ? GL_RGB8 : image->format->BitsPerPixel == 32 ? GL_RGBA8 : 0;
-		int internalformat = image->format->BitsPerPixel == 24 ? GL_SRGB8 : image->format->BitsPerPixel == 32 ? GL_SRGB_ALPHA : 0;
+		int width = imageSurface->w;
+		int height = imageSurface->h;
+		void *data = imageSurface->pixels;
+		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB :
+			imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
+		//int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA8 : 0;
+		int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_SRGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_SRGB_ALPHA : 0;
 		GLenum type = GL_UNSIGNED_BYTE;
 		if (format == 0)
 			return false;
@@ -419,7 +419,7 @@ namespace Fluxions
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glutBindDefaultTextureAndSampler(target);
-		SDL_FreeSurface(image);
+		SDL_FreeSurface(imageSurface);
 		return true;
 	}
 

@@ -33,17 +33,19 @@ template <typename T = QScalar>
 class TQuaternion
 {
   public:
-	union {
-		struct
-		{
-			T a, b, c, d;
-		};
-		struct
-		{
-			T w, x, y, z;
-		};
-		T v[4];
-	};
+	//union {
+	//	struct
+	//	{
+	//		T a, b, c, d;
+	//	};
+	//	struct
+	//	{
+	//		T w, x, y, z;
+	//	};
+	//	T v[4];
+	//};
+
+	T a, b, c, d;
 
 	TQuaternion()
 		: a(0), b(0), c(0), d(0)

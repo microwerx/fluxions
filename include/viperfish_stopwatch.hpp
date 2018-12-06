@@ -19,41 +19,38 @@
 #ifndef VIPERFISH_STOPWATCH_HPP
 #define VIPERFISH_STOPWATCH_HPP
 
-
 #include <chrono>
-
 
 namespace Viperfish
 {
-	class IStopWatch
-	{
-	public:
-		IStopWatch() { }
-		virtual ~IStopWatch() { };
+class IStopWatch
+{
+  public:
+	IStopWatch() {}
+	virtual ~IStopWatch(){};
 
-		virtual void Start() = 0;
-		virtual void Stop() = 0;
-		virtual double GetMillisecondsElapsed() = 0;
-		virtual double GetSecondsElapsed() = 0;
-	};
+	virtual void Start() = 0;
+	virtual void Stop() = 0;
+	virtual double GetMillisecondsElapsed() = 0;
+	virtual double GetSecondsElapsed() = 0;
+};
 
+// class SteadyStopWatch implements IStopWatch
+class StopWatch : public IStopWatch
+{
+  public:
+	StopWatch();
+	~StopWatch();
 
-	// class SteadyStopWatch implements IStopWatch
-	class StopWatch : public IStopWatch
-	{
-	public:
-		StopWatch();
-		~StopWatch();
+	void Start();
+	void Stop();
+	double GetMillisecondsElapsed();
+	double GetSecondsElapsed();
 
-		void Start();
-		void Stop();
-		double GetMillisecondsElapsed();
-		double GetSecondsElapsed();
-	private:
-		std::chrono::time_point<std::chrono::system_clock> start_timepoint;
-		std::chrono::time_point<std::chrono::system_clock> end_timepoint;
-	};
-}
+  private:
+	std::chrono::time_point<std::chrono::system_clock> start_timepoint;
+	std::chrono::time_point<std::chrono::system_clock> end_timepoint;
+};
+} // namespace Viperfish
 
 #endif
-

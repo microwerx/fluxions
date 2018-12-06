@@ -52,7 +52,7 @@ namespace KASL
 
 		/// <summary>init(programName) Initializes the Python code in its own thread.
 		/// <code>programName</code> is the reference name used by the Python library.</summary>
-		bool init(const ::std::string &programName);
+		bool init(const std::string &programName);
 		/// <summary>Removes any resources and resets the class to its initial conditions.</summary>
 		void kill();
 		/// <summary>run() causes the thread to start and the command queue to begin executing.</summary>
@@ -66,9 +66,9 @@ namespace KASL
 		/// <summary>flush() causes all the commands in the command queue to execute and finish.</summary>
 		void flush();
 		/// <summary>addCommand(cmd) runs a non string command. Is Equivalent to <code>addCommand(cmd, string())</code>.</summary>
-		void addCommand(Command cmd) { addCommand(cmd, ::std::string()); }
+		void addCommand(Command cmd) { addCommand(cmd, std::string()); }
 		/// <summary>addCommand(cmd, str) adds a command string to the command deque.</summary>
-		void addCommand(Command cmd, const ::std::string &str);
+		void addCommand(Command cmd, const std::string &str);
 
 		inline bool isInitialized() const { return currentState != State::InitialState; }
 		inline bool isStarted() const { return currentState == State::Started; }
@@ -93,12 +93,12 @@ namespace KASL
 			Ready,
 			Started
 		};
-		::std::thread myThread;
-		::std::mutex myMutex;
-		::std::string myProgramName;
+		std::thread myThread;
+		std::mutex myMutex;
+		std::string myProgramName;
 		size_t cmdCount;
 
-		std::deque<::std::pair<Command, ::std::string>> commandDeque;
+		std::deque<std::pair<Command, std::string>> commandDeque;
 
 		State currentState = State::InitialState;
 

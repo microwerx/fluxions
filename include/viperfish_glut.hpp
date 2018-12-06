@@ -19,32 +19,30 @@
 #ifndef VIPERFISH_GLUT_HPP
 #define VIPERFISH_GLUT_HPP
 
-
 #include <viperfish_widget.hpp>
 #include <fluxions_opengl.hpp>
 
-
 namespace Viperfish
 {
-	class GLUTWidget : public Widget
-	{
-	public:
-		GLUTWidget() { }
-		GLUTWidget(shared_ptr<Widget> &decoratee) : Widget(decoratee) { }
+class GLUTWidget : public Widget
+{
+  public:
+	GLUTWidget() {}
+	GLUTWidget(shared_ptr<Widget> &decoratee) : Widget(decoratee) {}
 
-		void OnInit(const vector<string> &args);
+	void OnInit(const vector<string> &args);
 
-		void OnMainLoop();
-		void OnLeaveMainLoop();
-	private:
-		int createdWindowId = 0;
-	};
+	void OnMainLoop();
+	void OnLeaveMainLoop();
 
-	void SetGLUTWidget(shared_ptr<Widget> &widget);
-	const char *KeyToHTML5Name(char c);
-	const char *SpecialKeyToHTML5Name(int key);
-	int HTML5NameToKey(const string & key);
-}
+  private:
+	int createdWindowId = 0;
+};
+
+void SetGLUTWidget(shared_ptr<Widget> &widget);
+const char *KeyToHTML5Name(char c);
+const char *SpecialKeyToHTML5Name(int key);
+int HTML5NameToKey(const string &key);
+} // namespace Viperfish
 
 #endif
-

@@ -19,7 +19,6 @@
 #ifndef FLUXIONS_CONFIG_HPP
 #define FLUXIONS_CONFIG_HPP
 
-
 #if _MSC_VER >= 1800
 #define FLUXIONS_CPP11
 #elif __cplusplus == 201103L

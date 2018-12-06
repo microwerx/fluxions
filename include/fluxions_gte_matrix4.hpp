@@ -31,32 +31,41 @@ template <typename T>
 class TMatrix4
 {
   public:
-	union {
-		// normal access (column major)
-		struct
-		{
-			T m11, m21, m31, m41;
-			T m12, m22, m32, m42;
-			T m13, m23, m33, m43;
-			T m14, m24, m34, m44;
-		};
+	//union {
+	//	// normal access (column major)
+	//	struct
+	//	{
+	//		T m11, m21, m31, m41;
+	//		T m12, m22, m32, m42;
+	//		T m13, m23, m33, m43;
+	//		T m14, m24, m34, m44;
+	//	};
 
-		// transposed access
-		struct
-		{
-			T t11, t12, t13, t14;
-			T t21, t22, t23, t24;
-			T t31, t32, t33, t34;
-			T t41, t42, t43, t44;
-		};
+	//	// transposed access
+	//	struct
+	//	{
+	//		T t11, t12, t13, t14;
+	//		T t21, t22, t23, t24;
+	//		T t31, t32, t33, t34;
+	//		T t41, t42, t43, t44;
+	//	};
 
-		// 2D array form
-		T mm[4][4];
+	//	// 2D array form
+	//	T mm[4][4];
 
-		// array form
-		T m[16];
-		T v[16];
-	};
+	//	// array form
+	//	T m[16];
+	//	T v[16];
+	//};
+
+	// normal access (column major)
+	T m11, m21, m31, m41;
+	T m12, m22, m32, m42;
+	T m13, m23, m33, m43;
+	T m14, m24, m34, m44;
+
+	constexpr T *m() noexcept { return &m11; }
+	constexpr const T *m() const noexcept { return &m11; }
 
 	static constexpr size_t size() { return 16; }
 	static constexpr size_t numrows() { return 4; }

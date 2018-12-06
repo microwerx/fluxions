@@ -500,30 +500,30 @@ inline T abs(T x)
 
 // SUPERQUADRIC GENERATOR FUNCTIONS
 /* sqS (v, n)
-	* This function implements the s(v,n) utility function
-	*
-	* s(v,n) = sgn(sin(v)) * |sin(v)|^n
-	*/
+* This function implements the s(v,n) utility function
+*
+* s(v,n) = sgn(sin(v)) * |sin(v)|^n
+*/
 inline double sqS(double v, double n)
 {
 	return sgn(sin(v)) * pow(abs(sin(v)), n);
 }
 
 /* sqC (v, n)
-	* This function implements the c(v,n) utility function
-	*
-	* c(v,n) = sgn(cos(v)) * |cos(v)|^n
-	*/
+* This function implements the c(v,n) utility function
+*
+* c(v,n) = sgn(cos(v)) * |cos(v)|^n
+*/
 inline double sqC(double v, double n)
 {
 	return sgn(cos(v)) * pow(abs(cos(v)), n);
 }
 
 /* sqCT (v, n, alpha)
-	* This function implements the CT(v,n,alpha) utility function
-	*
-	* CT(v,n,alpha) = alpha + c(v,n)
-	*/
+* This function implements the CT(v,n,alpha) utility function
+*
+* CT(v,n,alpha) = alpha + c(v,n)
+*/
 inline double sqCT(double v, double n, double alpha)
 {
 	return alpha + sqC(v, n);

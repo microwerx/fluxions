@@ -53,7 +53,8 @@ namespace ES2
 //};
 
 template <typename T>
-struct TVector3 {
+struct TVector3
+{
 	T x, y, z;
 	TVector3() : x(0), y(0), z(0)
 	{
@@ -87,7 +88,8 @@ struct TVector3 {
 //};
 
 template <typename T>
-struct TVector4 {
+struct TVector4
+{
 	T x, y, z, w;
 
 	TVector4() : x(0), y(0), z(0), w(0)
@@ -197,7 +199,7 @@ struct ColorBlendStateInfo
 	GLenum blendFuncSourceAlpha;
 	GLenum blendFuncDestRGB;
 	GLenum blendFuncDestAlpha;
-	Vector4f blendColor;
+	Color4f blendColor;
 
 	ColorBlendStateInfo() : enabled(false),
 							blendEquationModeRGB(GL_FUNC_ADD),
@@ -221,10 +223,10 @@ struct ColorBlendStateInfo
 			blendFuncSourceAlpha,
 			blendFuncDestAlpha);
 		glBlendColor(
-			blendColor.r(),
-			blendColor.g(),
-			blendColor.b(),
-			blendColor.a());
+			blendColor.r,
+			blendColor.g,
+			blendColor.b,
+			blendColor.a);
 
 		if (enabled)
 			glEnable(GL_BLEND);

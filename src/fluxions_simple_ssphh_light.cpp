@@ -260,7 +260,7 @@ namespace Fluxions
 			json->getMember("coefs")->getElement(2)->IsArray() &&
 			json->getMember("coefs")->getElement(3)->IsArray())
 		{
-			int maxDegree = json->getMember("maxDegree")->AsInt();
+			int jsonMaxDegree = json->getMember("maxDegree")->AsInt();
 			KASL::JSONPtr coefs = json->getMember("coefs");
 			for (int j = 0; j < 4; j++)
 			{
@@ -331,15 +331,15 @@ namespace Fluxions
 	}
 
 
-	bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f & sph, Image4f & lightProbe, int maxDegree)
+	bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f & sph, Image4f & lightProbe, int maxDegree_)
 	{
 		float v_coefs[4][121];
 
-		maxDegree = min(maxDegree, this->maxDegree);
+		maxDegree_ = min(maxDegree_, this->maxDegree);
 
 		for (int j = 0; j < 4; j++)
 		{
-			for (int l = 0; l <= maxDegree; l++)
+			for (int l = 0; l <= maxDegree_; l++)
 			{
 				for (int m = -l; m <= l; m++)
 				{
@@ -365,10 +365,10 @@ namespace Fluxions
 					float theta = v.theta();
 					float phi = v.phi();
 
-					color.r = calc_spherical_harmonic<float>(maxDegree, v_coefs[0], theta, phi);
-					color.g = calc_spherical_harmonic<float>(maxDegree, v_coefs[1], theta, phi);
-					color.b = calc_spherical_harmonic<float>(maxDegree, v_coefs[2], theta, phi);
-					color.a = calc_spherical_harmonic<float>(maxDegree, v_coefs[3], theta, phi);
+					color.r = calc_spherical_harmonic<float>(maxDegree_, v_coefs[0], theta, phi);
+					color.g = calc_spherical_harmonic<float>(maxDegree_, v_coefs[1], theta, phi);
+					color.b = calc_spherical_harmonic<float>(maxDegree_, v_coefs[2], theta, phi);
+					color.a = calc_spherical_harmonic<float>(maxDegree_, v_coefs[3], theta, phi);
 
 					lightProbe.setPixelUnsafe(s, t, face, color);
 				}

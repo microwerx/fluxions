@@ -19,7 +19,6 @@
 #ifndef UNICORNFISH_HPP
 #define UNICORNFISH_HPP
 
-
 #ifdef WIN32
 #pragma comment(lib, "libsodium.lib")
 #pragma comment(lib, "libzmq.lib")
@@ -40,11 +39,9 @@
 #endif
 #include <curl/curl.h>
 
-
 namespace Uf
 {
-	using namespace std;
+using namespace std;
 }
-
 
 #endif

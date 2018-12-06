@@ -30,32 +30,40 @@ template <typename T>
 class TMatrix2
 {
   public:
-	union {
-		// normal access (column major)
-		struct
-		{
-			T m11, m21;
-			T m12, m22;
-		};
+	//union {
+	//	// normal access (column major)
+	//	struct
+	//	{
+	//		T m11, m21;
+	//		T m12, m22;
+	//	};
 
-		// transposed access
-		struct
-		{
-			T t11, t12;
-			T t21, t22;
-		};
+	//	// transposed access
+	//	struct
+	//	{
+	//		T t11, t12;
+	//		T t21, t22;
+	//	};
 
-		// 2D array form
-		T mm[2][2];
+	//	// 2D array form
+	//	T mm[2][2];
 
-		// array form
-		T m[4];
+	//	// array form
+	//	T m[4];
 
-		// alternative name for m
-		T v[4];
-	};
+	//	// alternative name for m
+	//	T v[4];
+	//};
+	// normal access (column major)
+	T m11, m21;
+	T m12, m22;
+
+	constexpr T *m() noexcept { return &m11; }
+	constexpr const T *m() const noexcept { return &m11; }
 
 	static constexpr size_t size() noexcept { return 4; }
+	static constexpr size_t numcols() noexcept { return 2; }
+	static constexpr size_t numrows() noexcept { return 2; }
 
 	constexpr TMatrix2() noexcept
 	{

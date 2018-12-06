@@ -19,66 +19,65 @@
 #ifndef VIPERFISH_GUI_HPP
 #define VIPERFISH_GUI_HPP
 
-
 #include <memory>
 #include <viperfish.hpp>
 #include <imgui.h>
 
-
 namespace Viperfish
 {
-	using namespace std;
+using namespace std;
 
-	class ImGuiWidget : public Widget
-	{
-	protected:
-		ImGuiWidget() { }
-		explicit ImGuiWidget(const ImGuiWidget & widget) = default;
-	public:
-		ImGuiWidget(SharedPtr & decorateeWidget) { decorate(decorateeWidget); }
-		virtual ~ImGuiWidget() { }
+class ImGuiWidget : public Widget
+{
+  protected:
+	ImGuiWidget() {}
+	explicit ImGuiWidget(const ImGuiWidget &widget) = default;
 
-		using SharedPtr = shared_ptr<ImGuiWidget>;
-		using UniquePtr = unique_ptr<ImGuiWidget>;
+  public:
+	ImGuiWidget(SharedPtr &decorateeWidget) { decorate(decorateeWidget); }
+	virtual ~ImGuiWidget() {}
 
-		template <class... _Types> static SharedPtr MakeShared(_Types&&... _Args) { return SharedPtr(new ImGuiWidget(forward<_Types>(_Args)...)); }
-		template <class... _Types> static UniquePtr MakeUnique(_Types&&... _Args) { return UniquePtr(new ImGuiWidget(forward<_Types>(_Args)...)); }
+	using SharedPtr = shared_ptr<ImGuiWidget>;
+	using UniquePtr = unique_ptr<ImGuiWidget>;
 
-		virtual void OnInit(const vector<string> & args) override;
-		virtual void OnKill() override;
-		virtual void OnUpdate(double timeStamp) override;
+	template <class... _Types>
+	static SharedPtr MakeShared(_Types &&... _Args) { return SharedPtr(new ImGuiWidget(forward<_Types>(_Args)...)); }
+	template <class... _Types>
+	static UniquePtr MakeUnique(_Types &&... _Args) { return UniquePtr(new ImGuiWidget(forward<_Types>(_Args)...)); }
 
-		virtual void OnMouseButtonDown(int button) override;
-		virtual void OnMouseButtonUp(int button) override;
-		virtual void OnMouseMove(int x, int y) override;
+	virtual void OnInit(const vector<string> &args) override;
+	virtual void OnKill() override;
+	virtual void OnUpdate(double timeStamp) override;
 
-		virtual void OnKeyDown(const string & key, int keymod) override;
-		virtual void OnKeyUp(const string & key, int keymod) override;
+	virtual void OnMouseButtonDown(int button) override;
+	virtual void OnMouseButtonUp(int button) override;
+	virtual void OnMouseMove(int x, int y) override;
 
-		virtual void OnRender() override;
-		virtual void OnRenderOverlay() override;
+	virtual void OnKeyDown(const string &key, int keymod) override;
+	virtual void OnKeyUp(const string &key, int keymod) override;
 
-	protected:
-		GLuint fontTextureId = 0;
-		GLint program = 0;
-		GLint vshader = 0;
-		GLint fshader = 0;
-		GLint uTextureLoc = 0;
-		GLint uProjMtxLoc = 0;
-		GLint aPositionLoc = 0;
-		GLint aUVLoc = 0;
-		GLint aColorLoc = 0;
-		GLuint abo = 0;
-		GLuint vao = 0;
-		GLuint eabo = 0;
-		ImGuiIO *io = nullptr;
+	virtual void OnRender() override;
+	virtual void OnRenderOverlay() override;
 
-		bool CreateDeviceObjects();
-		void InvalidateDeviceObjects();
-		void RenderDrawLists();
-	};
-}
+  protected:
+	GLuint fontTextureId = 0;
+	GLint program = 0;
+	GLint vshader = 0;
+	GLint fshader = 0;
+	GLint uTextureLoc = 0;
+	GLint uProjMtxLoc = 0;
+	GLint aPositionLoc = 0;
+	GLint aUVLoc = 0;
+	GLint aColorLoc = 0;
+	GLuint abo = 0;
+	GLuint vao = 0;
+	GLuint eabo = 0;
+	ImGuiIO *io = nullptr;
 
+	bool CreateDeviceObjects();
+	void InvalidateDeviceObjects();
+	void RenderDrawLists();
+};
+} // namespace Viperfish
 
 #endif
-

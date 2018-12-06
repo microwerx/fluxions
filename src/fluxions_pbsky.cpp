@@ -91,33 +91,33 @@ namespace Fluxions
 
 
 
-	void HosekWilkiePBSky::Init(Real turbidity, Color4f albedo, Real elevation, Real azimuth)
+	void HosekWilkiePBSky::Init(Real turbidity, Color4f albedo_, Real elevation, Real azimuth)
 	{
 		// offset by -90 degrees because we are measuring from NORTH which is positive Y
 		azimuth = 90.0f - azimuth;
 		elevation *= (float)FX_DEGREES_TO_RADIANS;
 		azimuth *= (float)FX_DEGREES_TO_RADIANS;
 
-		if (this->albedo.r != albedo.r ||
-			this->albedo.g != albedo.g ||
-			this->albedo.b != albedo.b ||
+		if (this->albedo.r != albedo_.r ||
+			this->albedo.g != albedo_.g ||
+			this->albedo.b != albedo_.b ||
 			this->sunTurbidity != turbidity ||
 			this->sunElevation != elevation)
 		{
 			Delete();
 		}
 		
-		if (!rgbRadianceState[0]) rgbRadianceState[0] = arhosek_rgb_skymodelstate_alloc_init(turbidity, albedo.r, elevation);
-		if (!rgbRadianceState[1]) rgbRadianceState[1] = arhosek_rgb_skymodelstate_alloc_init(turbidity, albedo.g, elevation);
-		if (!rgbRadianceState[2]) rgbRadianceState[2] = arhosek_rgb_skymodelstate_alloc_init(turbidity, albedo.b, elevation);
+		if (!rgbRadianceState[0]) rgbRadianceState[0] = arhosek_rgb_skymodelstate_alloc_init(turbidity, albedo_.r, elevation);
+		if (!rgbRadianceState[1]) rgbRadianceState[1] = arhosek_rgb_skymodelstate_alloc_init(turbidity, albedo_.g, elevation);
+		if (!rgbRadianceState[2]) rgbRadianceState[2] = arhosek_rgb_skymodelstate_alloc_init(turbidity, albedo_.b, elevation);
 
-		sunRadianceState = arhosekskymodelstate_alloc_init(elevation, turbidity, albedo.r);
+		sunRadianceState = arhosekskymodelstate_alloc_init(elevation, turbidity, albedo_.r);
 		//for (int i = 0; i < NUM_WAVELENGTHS; i++)
 		//{
-		//	sunRadianceState[i] = arhosekskymodelstate_alloc_init(elevation, turbidity, albedo.r);
+		//	sunRadianceState[i] = arhosekskymodelstate_alloc_init(elevation, turbidity, albedo_.r);
 		//}
 
-		this->albedo = albedo;
+		this->albedo = albedo_;
 		sunTurbidity = turbidity;
 		sunElevation = elevation;
 

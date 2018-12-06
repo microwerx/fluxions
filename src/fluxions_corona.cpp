@@ -150,9 +150,9 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
 					// 2. add indices (triangles)
 					for (auto it = faceList.begin(); it != faceList.end(); it++)
 					{
-						Indices.push_back(it->v[0] + firstVertex);
-						Indices.push_back(it->v[1] + firstVertex);
-						Indices.push_back(it->v[2] + firstVertex);
+						Indices.push_back(it->v()[0] + firstVertex);
+						Indices.push_back(it->v()[1] + firstVertex);
+						Indices.push_back(it->v()[2] + firstVertex);
 					}
 					first = (int)Indices.size();
 					faceList.clear();
@@ -190,9 +190,9 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
 					// 2. add indices (triangles)
 					for (auto it = faceList.begin(); it != faceList.end(); it++)
 					{
-						Indices.push_back(it->v[0] + firstVertex);
-						Indices.push_back(it->v[1] + firstVertex);
-						Indices.push_back(it->v[2] + firstVertex);
+						Indices.push_back(it->v()[0] + firstVertex);
+						Indices.push_back(it->v()[1] + firstVertex);
+						Indices.push_back(it->v()[2] + firstVertex);
 					}
 					first = (int)Indices.size();
 					faceList.clear();
@@ -340,7 +340,7 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
 		if (size < 0)
 			scale = (float)(-2 * size / BoundingBox.MaxSize());
 
-		hflog.info("%s(): %s ... scale is %f", __FUNCTION__, fpi_orig.fname, scale);
+		hflog.info("%s(): %s ... scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), scale);
 		for (auto it = vertexMap.begin(); it != vertexMap.end(); it++)
 		{
 			if (size < 0)
@@ -693,10 +693,10 @@ void OBJStaticModel::ComputeTangentVectors()
 		faceNormal.normalize();
 
 		float s1, t1, s2, t2;
-		s1 = Vertices[indices[1]].texcoord.s - Vertices[indices[0]].texcoord.s;
-		t1 = Vertices[indices[1]].texcoord.t - Vertices[indices[0]].texcoord.t;
-		s2 = Vertices[indices[2]].texcoord.s - Vertices[indices[0]].texcoord.s;
-		t2 = Vertices[indices[2]].texcoord.t - Vertices[indices[0]].texcoord.t;
+		s1 = Vertices[indices[1]].texcoord.x - Vertices[indices[0]].texcoord.x;
+		t1 = Vertices[indices[1]].texcoord.y - Vertices[indices[0]].texcoord.y;
+		s2 = Vertices[indices[2]].texcoord.x - Vertices[indices[0]].texcoord.x;
+		t2 = Vertices[indices[2]].texcoord.x - Vertices[indices[0]].texcoord.y;
 		Vector3f Tx, Ty, Tz;
 		float coef = (float)(1.0 / (s1 * t2 - s2 * t1));
 		Tx.x = coef * (v1.x * t2 - v2.x * t1);

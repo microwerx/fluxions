@@ -43,7 +43,6 @@
 
 namespace Fluxions
 {
-	using namespace std;
 }
 
 #endif

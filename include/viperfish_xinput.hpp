@@ -29,22 +29,29 @@
 
 namespace Viperfish
 {
-	class XInputGamepadState : public GamepadState
-	{
-	public:
-		XInputGamepadState();
-		~XInputGamepadState();
+class XInputGamepadState : public GamepadState
+{
+  public:
+	XInputGamepadState();
+	~XInputGamepadState();
 
-		virtual void Init(unsigned whichStickID);
-		virtual void Poll();
-		virtual bool IsConnected();
-	private:
-		inline double iff(bool status, double trueValue = 1.0, double falseValue = 0.0) const { if (status) return trueValue; else return falseValue; }
-		DWORD lastPacketNumber;
-		XINPUT_STATE gamepadState;
-		XINPUT_VIBRATION vibrationState;
-	};
-}
+	virtual void Init(unsigned whichStickID);
+	virtual void Poll();
+	virtual bool IsConnected();
+
+  private:
+	inline double iff(bool status, double trueValue = 1.0, double falseValue = 0.0) const
+	{
+		if (status)
+			return trueValue;
+		else
+			return falseValue;
+	}
+	DWORD lastPacketNumber;
+	XINPUT_STATE gamepadState;
+	XINPUT_VIBRATION vibrationState;
+};
+} // namespace Viperfish
 
 #endif // WIN32
 

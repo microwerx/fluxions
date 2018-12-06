@@ -19,7 +19,6 @@
 #ifndef VIPERFISH_HPP
 #define VIPERFISH_HPP
 
-
 #include <map>
 #include <vector>
 #include <string>
@@ -38,162 +37,156 @@
 #include <viperfish_widget.hpp>
 #include <viperfish_imgui.hpp>
 
-
 namespace Viperfish
 {
-	using namespace std;
+using namespace std;
 
-	template <class T, class... _Types> static shared_ptr<T> MakeShared(_Types&&... _Args) { return shared_ptr<T>(new T(forward<_Types>(_Args)...)); }
-	template <class T, class... _Types> static unique_ptr<T> MakeUnique(_Types&&... _Args) { return unique_ptr<T>(new T(forward<_Types>(_Args)...)); }
+template <class T, class... _Types>
+static shared_ptr<T> MakeShared(_Types &&... _Args) { return shared_ptr<T>(new T(forward<_Types>(_Args)...)); }
+template <class T, class... _Types>
+static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T(forward<_Types>(_Args)...)); }
 
-	///// <summary>shared_ptr<T> CreateObject(name) returns a smart pointer to a new Object class with the name set.</summary>
-	//template<typename T>
-	//shared_ptr<T> CreateObject(const string &name)
-	//{
-	//	shared_ptr<T> newT;
+///// <summary>shared_ptr<T> CreateObject(name) returns a smart pointer to a new Object class with the name set.</summary>
+//template<typename T>
+//shared_ptr<T> CreateObject(const string &name)
+//{
+//	shared_ptr<T> newT;
 
-	//	newT = make_shared<T>();
-	//	newT->SetClassName(typeid(T).name());
-	//	newT->SetName(name);
-	//	newT->Seal();
+//	newT = make_shared<T>();
+//	newT->SetClassName(typeid(T).name());
+//	newT->SetName(name);
+//	newT->Seal();
 
-	//	return newT;
-	//}
+//	return newT;
+//}
 
+///// <summary>class Object is the base class for all Viperfish classes that require a name.</summary>
+//class Object
+//{
+//private:
+//	string className_;
+//	string name_;
+//	bool isSealed = false;
+//public:
+//	Object() { }
+//	~Object() { }
+//	const string & GetName() const { return name_; }
+//	void SetName(const string &name) { if (!isSealed) name_ = name; }
+//	const string & GetClassName() const { return className_; }
+//	void SetClassName(const string &className) { if (!isSealed) className_ = className; }
+//	void Seal() { isSealed = true; }
+//};
 
-	///// <summary>class Object is the base class for all Viperfish classes that require a name.</summary>
-	//class Object
-	//{
-	//private:
-	//	string className_;
-	//	string name_;
-	//	bool isSealed = false;
-	//public:
-	//	Object() { }
-	//	~Object() { }
-	//	const string & GetName() const { return name_; }
-	//	void SetName(const string &name) { if (!isSealed) name_ = name; }
-	//	const string & GetClassName() const { return className_; }
-	//	void SetClassName(const string &className) { if (!isSealed) className_ = className; }
-	//	void Seal() { isSealed = true; }
-	//};
+//using ObjectPtr = shared_ptr<Object>;
+//using WeakObjectPtr = shared_ptr<Object>;
 
+///// <summary>class Widget is the base class for all Viperfish widget classes.</summary>
+//class AWidget : public enable_shared_from_this<AWidget>, public Object
+//{
+//private:
+//	bool isPaused = false;
+//	bool isStopped = true;
+//	bool isStarted = false;
+//	bool isRecursive = false;
+//	bool isInitialized = false;
 
-	//using ObjectPtr = shared_ptr<Object>;
-	//using WeakObjectPtr = shared_ptr<Object>;
+//	double timeRunning_;
 
+//	bool isEnabled = true;
 
-	///// <summary>class Widget is the base class for all Viperfish widget classes.</summary>
-	//class AWidget : public enable_shared_from_this<AWidget>, public Object
-	//{
-	//private:
-	//	bool isPaused = false;
-	//	bool isStopped = true;
-	//	bool isStarted = false;
-	//	bool isRecursive = false;
-	//	bool isInitialized = false;
+//	using WidgetPtr = shared_ptr<AWidget>;
 
-	//	double timeRunning_;
+//	vector<WidgetPtr> children_;
+//	WidgetPtr parent;
 
-	//	bool isEnabled = true;
+//public:
+//	AWidget();
+//	virtual ~AWidget();
 
-	//	using WidgetPtr = shared_ptr<AWidget>;
+//	WidgetPtr GetParent() { return parent; }
+//	WidgetPtr operator[](int i) { return children_.at(i); }
+//	vector<WidgetPtr>::iterator begin() { return children_.begin(); }
+//	vector<WidgetPtr>::iterator end() { return children_.end(); }
+//	void push_back(WidgetPtr ptr) { children_.push_back(ptr); }
+//	void pop_back() { children_.pop_back(); }
+//	const WidgetPtr & front() { return children_.front(); }
+//	const WidgetPtr & back() { return children_.back(); }
+//	size_t size() { return children_.size(); }
+//	bool empty() { return children_.empty(); }
+//	WidgetPtr *data() { return children_.data(); }
 
-	//	vector<WidgetPtr> children_;
-	//	WidgetPtr parent;
+//	void Init();
+//	void Kill();
+//	void Start();
+//	void Stop();
+//	void Pause();
+//	void Resume();
+//	void Restart();
+//	void Update(double elapsedTime);
 
-	//public:
-	//	AWidget();
-	//	virtual ~AWidget();
+//	void Enable() { isEnabled = true; }
+//	void Disable() { isEnabled = false; }
+//	void ToggledEnabled() { isEnabled = !isEnabled; }
+//	bool IsEnabled() { return isEnabled; }
 
-	//	WidgetPtr GetParent() { return parent; }
-	//	WidgetPtr operator[](int i) { return children_.at(i); }
-	//	vector<WidgetPtr>::iterator begin() { return children_.begin(); }
-	//	vector<WidgetPtr>::iterator end() { return children_.end(); }
-	//	void push_back(WidgetPtr ptr) { children_.push_back(ptr); }
-	//	void pop_back() { children_.pop_back(); }
-	//	const WidgetPtr & front() { return children_.front(); }
-	//	const WidgetPtr & back() { return children_.back(); }
-	//	size_t size() { return children_.size(); }
-	//	bool empty() { return children_.empty(); }
-	//	WidgetPtr *data() { return children_.data(); }
+//	const double GetRunningTime() const { return timeRunning_; }
+//	void ResetClock() { timeRunning_ = 0.0; }
+//	const bool IsStarted() const { return isStarted; }
+//	const bool IsStopped() const { return isStopped; }
+//	const bool IsPaused() const { return isPaused; }
+//	const bool IsRecursive() const { return isRecursive; }
+//	const bool IsInitialized() const { return isInitialized; }
+//	void SetRecursion(bool value) { isRecursive = value; }
 
-	//	void Init();
-	//	void Kill();
-	//	void Start();
-	//	void Stop();
-	//	void Pause();
-	//	void Resume();
-	//	void Restart();
-	//	void Update(double elapsedTime);
+//	/* This was the old code. I think it's too complicated.
+//	 *
+//	std::function<void(shared_ptr<Widget> &)> OnInitOverride;
+//	std::function<void(shared_ptr<Widget> &)> OnKillOverride;
+//	std::function<void(shared_ptr<Widget> &)> OnStartOverride;
+//	std::function<void(shared_ptr<Widget> &)> OnStopOverride;
+//	std::function<void(shared_ptr<Widget> &)> OnPauseOverride;
+//	std::function<void(shared_ptr<Widget> &)> OnResumeOverride;
+//	std::function<void(shared_ptr<Widget> &, double)> OnUpdateOverride;
+//	std::function<void(shared_ptr<Widget> &, void *, unsigned, int, int, int, void *)> OnHandleMessageOverride;
 
-	//	void Enable() { isEnabled = true; }
-	//	void Disable() { isEnabled = false; }
-	//	void ToggledEnabled() { isEnabled = !isEnabled; }
-	//	bool IsEnabled() { return isEnabled; }
+//	virtual void OnInit() { if (isEnabled && OnInitOverride) OnInitOverride(shared_from_this()); }
+//	virtual void OnKill() { if (isEnabled && OnKillOverride) OnKillOverride(shared_from_this()); }
+//	virtual void OnStart() { if (isEnabled && OnStartOverride) OnStartOverride(shared_from_this()); }
+//	virtual void OnStop() { if (isEnabled && OnStopOverride) OnStopOverride(shared_from_this()); }
+//	virtual void OnPause() { if (isEnabled && OnPauseOverride) OnPauseOverride(shared_from_this()); }
+//	virtual void OnResume() { if (isEnabled && OnResumeOverride) OnResumeOverride(shared_from_this()); }
+//	virtual void OnUpdate(double deltaTime) { if (isEnabled && OnUpdateOverride) OnUpdateOverride(shared_from_this(), deltaTime); }
+//	virtual void HandleMessage(void *handle, unsigned msg, int param1, int param2, int param3, void *param4) {
+//		if (isEnabled && OnHandleMessageOverride)
+//			OnHandleMessageOverride(shared_from_this(), handle, msg, param1, param2, param3, param4);
+//	}
+//	*/
 
-	//	const double GetRunningTime() const { return timeRunning_; }
-	//	void ResetClock() { timeRunning_ = 0.0; }
-	//	const bool IsStarted() const { return isStarted; }
-	//	const bool IsStopped() const { return isStopped; }
-	//	const bool IsPaused() const { return isPaused; }
-	//	const bool IsRecursive() const { return isRecursive; }
-	//	const bool IsInitialized() const { return isInitialized; }
-	//	void SetRecursion(bool value) { isRecursive = value; }
+//	virtual void OnInit() { }
+//	virtual void OnKill() { }
+//	virtual void OnStart() { }
+//	virtual void OnStop() { }
+//	virtual void OnPause() { }
+//	virtual void OnResume() { }
+//	virtual void OnUpdate(double deltaTime) { }
+//	virtual void HandleMessage(void *handle, unsigned msg, int param1, int param2, int param3, void *param4) { }
+//};
 
-	//	/* This was the old code. I think it's too complicated.
-	//	 *
-	//	std::function<void(shared_ptr<Widget> &)> OnInitOverride;
-	//	std::function<void(shared_ptr<Widget> &)> OnKillOverride;
-	//	std::function<void(shared_ptr<Widget> &)> OnStartOverride;
-	//	std::function<void(shared_ptr<Widget> &)> OnStopOverride;
-	//	std::function<void(shared_ptr<Widget> &)> OnPauseOverride;
-	//	std::function<void(shared_ptr<Widget> &)> OnResumeOverride;
-	//	std::function<void(shared_ptr<Widget> &, double)> OnUpdateOverride;
-	//	std::function<void(shared_ptr<Widget> &, void *, unsigned, int, int, int, void *)> OnHandleMessageOverride;
+//using WidgetPtr = shared_ptr<Widget>;
+//using WeakWidgetPtr = weak_ptr<Widget>;
 
-	//	virtual void OnInit() { if (isEnabled && OnInitOverride) OnInitOverride(shared_from_this()); }
-	//	virtual void OnKill() { if (isEnabled && OnKillOverride) OnKillOverride(shared_from_this()); }
-	//	virtual void OnStart() { if (isEnabled && OnStartOverride) OnStartOverride(shared_from_this()); }
-	//	virtual void OnStop() { if (isEnabled && OnStopOverride) OnStopOverride(shared_from_this()); }
-	//	virtual void OnPause() { if (isEnabled && OnPauseOverride) OnPauseOverride(shared_from_this()); }
-	//	virtual void OnResume() { if (isEnabled && OnResumeOverride) OnResumeOverride(shared_from_this()); }
-	//	virtual void OnUpdate(double deltaTime) { if (isEnabled && OnUpdateOverride) OnUpdateOverride(shared_from_this(), deltaTime); }
-	//	virtual void HandleMessage(void *handle, unsigned msg, int param1, int param2, int param3, void *param4) {
-	//		if (isEnabled && OnHandleMessageOverride)
-	//			OnHandleMessageOverride(shared_from_this(), handle, msg, param1, param2, param3, param4);
-	//	}
-	//	*/
+//ObjectPtr CreateObjectFromType(const string &className, const string &instanceName);
 
-	//	virtual void OnInit() { }
-	//	virtual void OnKill() { }
-	//	virtual void OnStart() { }
-	//	virtual void OnStop() { }
-	//	virtual void OnPause() { }
-	//	virtual void OnResume() { }
-	//	virtual void OnUpdate(double deltaTime) { }
-	//	virtual void HandleMessage(void *handle, unsigned msg, int param1, int param2, int param3, void *param4) { }
-	//};
+//class ViperfishApplication : public AWidget
+//{
+//public:
+//	ViperfishApplication();
+//	virtual ~ViperfishApplication();
+//};
 
+//using ViperfishApplicationPtr = shared_ptr<ViperfishApplication>;
 
-	//using WidgetPtr = shared_ptr<Widget>;
-	//using WeakWidgetPtr = weak_ptr<Widget>;
-
-
-	//ObjectPtr CreateObjectFromType(const string &className, const string &instanceName);
-
-
-	//class ViperfishApplication : public AWidget
-	//{
-	//public:
-	//	ViperfishApplication();
-	//	virtual ~ViperfishApplication();
-	//};
-
-	//using ViperfishApplicationPtr = shared_ptr<ViperfishApplication>;
-
-	//extern ViperfishApplication VfApp;
-}
-
+//extern ViperfishApplication VfApp;
+} // namespace Viperfish
 
 #endif

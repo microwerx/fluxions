@@ -52,9 +52,12 @@ namespace Fluxions
 
 		T x, y, z;
 
-		T r() { return x; }
-		T g() { return y; }
-		T b() { return z; }
+		constexpr T r() noexcept { return x; }
+		constexpr T g() noexcept { return y; }
+		constexpr T b() noexcept { return z; }
+
+		constexpr T *v() noexcept { return &x; }
+		constexpr const T *v() const noexcept { return &x; }
 
 		constexpr TVector3() noexcept
 		{

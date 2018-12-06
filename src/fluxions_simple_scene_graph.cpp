@@ -593,9 +593,9 @@ namespace Fluxions
 			}
 			else if (str == "newmap")
 			{
-				string name = ReadString(istr);
+				string mapname = ReadString(istr);
 				string texmap = ReadString(istr);
-				bool result = ReadTexmap(name, texmap);
+				bool result = ReadTexmap(mapname, texmap);
 			}
 			else if (str == "sphere")
 			{
@@ -809,7 +809,7 @@ namespace Fluxions
 	}
 
 
-	bool SimpleSceneGraph::ReadObjFile(const string &filename, const string &name)
+	bool SimpleSceneGraph::ReadObjFile(const string &filename, const string &geometryName)
 	{
 		if (geometryObjects.IsAHandle(filename))
 			return true;
@@ -820,12 +820,12 @@ namespace Fluxions
 			return false;
 		}
 
-		geometryObjects[name] = model;		
+		geometryObjects[geometryName] = model;		
 		return true;
 	}
 
 
-	bool SimpleSceneGraph::ReadTexmap(const string &name, const string &texmap)
+	bool SimpleSceneGraph::ReadTexmap(const string &texmapName, const string &texmap)
 	{
 		return false;
 	}
@@ -1941,7 +1941,7 @@ namespace Fluxions
 		// The better way to do this is to first find all the locations for the material, then apply them...
 		for (auto uniform : locs.newLocationList)
 		{
-			// uniform.first = name
+			// uniform.first = mapname
 			// uniform.second = details
 		}
 	}
@@ -2065,7 +2065,7 @@ namespace Fluxions
 
 		for (auto uniform : program.activeUniforms)
 		{
-			// uniform.first is the name of the uniform...
+			// uniform.first is the mapname of the uniform...
 			// uniform.second has the details...
 	
 			newLocationList[uniform.first] = MakeSharedIntProperty(uniform.second.index);

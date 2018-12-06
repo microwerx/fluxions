@@ -49,6 +49,7 @@ namespace Fluxions
 	ostream & XmlBool(ostream &ostr, const string &tagName, bool val, int numtabs = 0);
 	ostream & XmlInt(ostream &ostr, const string &tagName, int val, int numtabs = 0);
 	ostream & XmlInt64(ostream &ostr, const string &tagName, long long val, int numtabs = 0);
+	ostream & XmlSize(ostream &ostr, const string &tagName, size_t val, int numtabs = 0);
 	ostream & XmlFloat(ostream &ostr, const string &tagName, float val, int numtabs = 0);
 	ostream & XmlDouble(ostream &ostr, const string &tagName, double val, int numtabs = 0);
 	ostream & XmlString(ostream &ostr, const string &tagName, const string &str, int numtabs = 0);

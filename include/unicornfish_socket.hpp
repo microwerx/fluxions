@@ -19,102 +19,94 @@
 #ifndef UNICORNFISH_SOCKET_HPP
 #define UNICORNFISH_SOCKET_HPP
 
-
 #include <unicornfish.hpp>
 #include <unicornfish_message.hpp>
 
-
 namespace Uf
 {
-	using namespace std;
+using namespace std;
 
+class Message;
 
-	class Message;
+class Socket
+{
+  public:
+	Socket();
+	~Socket();
 
+	void Delete();
 
-	class Socket
+	// bind to PUB endpoint
+	bool NewPub(const string &endpoint);
+	// connect to SUB endpoint
+	bool NewSub(const string &endpoint, const string &subPrefix);
+	// connect to REQ endpoint
+	bool NewReq(const string &endpoint);
+	// bind to REP endpoint
+	bool NewRep(const string &endpoint);
+	// connect to DEALER endpoint
+	bool NewDealer(const string &endpoint);
+	// bind to ROUTER endpoint
+	bool NewRouter(const string &endpoint);
+	// connect to PUSH endpoint
+	bool NewPush(const string &endpoint);
+	// bind to PULL endpoint
+	bool NewPull(const string &endpoint);
+	// bind to XSUB endpoint
+	bool NewXSub(const string &endpoint);
+	// connect to XPUB endpoint
+	bool NewXPub(const string &endpoint);
+	// to PAIR endpoint
+	bool NewPair(const string &endpoint);
+	// to STREAM endpoint
+	bool NewStream(const string &endpoint);
+
+	bool Send(const char *picture, ...);
+	bool Recv(const char *picture, ...);
+	bool SendMessage(Message &msg);
+	bool RecvMessage(Message &msg);
+	bool Signal(unsigned char status);
+	bool Wait();
+	void Flush();
+	bool Poll(long timeout_ms);
+
+	operator bool() const { return socket != nullptr; }
+	const string &GetEndpoint() const { return endpoint; }
+
+	zsock_t *zsock() { return socket; }
+
+	enum class SocketType
 	{
-	public:
-		Socket();
-		~Socket();
-
-		void Delete();
-
-		// bind to PUB endpoint
-		bool NewPub(const string &endpoint);
-		// connect to SUB endpoint
-		bool NewSub(const string &endpoint, const string &subPrefix);
-		// connect to REQ endpoint
-		bool NewReq(const string &endpoint);
-		// bind to REP endpoint
-		bool NewRep(const string &endpoint);
-		// connect to DEALER endpoint
-		bool NewDealer(const string &endpoint);
-		// bind to ROUTER endpoint
-		bool NewRouter(const string &endpoint);
-		// connect to PUSH endpoint
-		bool NewPush(const string &endpoint);
-		// bind to PULL endpoint
-		bool NewPull(const string &endpoint);
-		// bind to XSUB endpoint
-		bool NewXSub(const string &endpoint);
-		// connect to XPUB endpoint
-		bool NewXPub(const string &endpoint);
-		// to PAIR endpoint
-		bool NewPair(const string &endpoint);
-		// to STREAM endpoint
-		bool NewStream(const string &endpoint);
-
-
-		bool Send(const char *picture, ...);
-		bool Recv(const char *picture, ...);
-		bool SendMessage(Message & msg);
-		bool RecvMessage(Message & msg);
-		bool Signal(unsigned char status);
-		bool Wait();
-		void Flush();
-		bool Poll(long timeout_ms);
-
-
-		operator bool() const { return socket != nullptr; }
-		const string &GetEndpoint() const { return endpoint; }
-
-		zsock_t *zsock() { return socket; }
-
-
-
-		enum class SocketType {
-			NONE,
-			REQ,
-			REP,
-			PUB,
-			SUB,
-			ROUTER,
-			DEALER,
-			PUSH,
-			PULL,
-			XSUB,
-			XPUB,
-			PAIR,
-			STREAM
-		};
-
-		SocketType GetType() const { return socketType; }
-
-	private:
-		string endpoint;
-		string subPrefix;
-		SocketType socketType = SocketType::NONE;
-		zsock_t *socket = nullptr;
-		zpoller_t *poller = nullptr;
-		
-		bool SetupSocket(string endpoint_, string subPrefix_, SocketType socketType_);
+		NONE,
+		REQ,
+		REP,
+		PUB,
+		SUB,
+		ROUTER,
+		DEALER,
+		PUSH,
+		PULL,
+		XSUB,
+		XPUB,
+		PAIR,
+		STREAM
 	};
 
-	using SocketCPtr = Socket *;
-	using SocketPtr = unique_ptr<Socket>;
-	using SocketSharedPtr = shared_ptr<Socket>;
-}
+	SocketType GetType() const { return socketType; }
 
+  private:
+	string endpoint;
+	string subPrefix;
+	SocketType socketType = SocketType::NONE;
+	zsock_t *socket = nullptr;
+	zpoller_t *poller = nullptr;
+
+	bool SetupSocket(string endpoint_, string subPrefix_, SocketType socketType_);
+};
+
+using SocketCPtr = Socket *;
+using SocketPtr = unique_ptr<Socket>;
+using SocketSharedPtr = shared_ptr<Socket>;
+} // namespace Uf
 
 #endif

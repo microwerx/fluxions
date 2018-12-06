@@ -35,11 +35,7 @@ enum class PathType
 
 string ReadTextFile(const string &filename);
 
-#ifdef _TIME64_T_DEFINED
-using TimeValue = __time64_t;
-#else
-using TimeValue = long long;
-#endif
+using TimeValue = time_t;
 
 struct FilePathInfo
 {

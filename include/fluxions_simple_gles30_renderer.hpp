@@ -97,8 +97,8 @@ namespace Fluxions
 			glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDstAlpha);
 			glGetIntegerv(GL_BLEND_EQUATION_RGB, &blendEquationRgb);
 			glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &blendEquationAlpha);
-			glGetIntegerv(GL_VIEWPORT, viewport.v);
-			glGetIntegerv(GL_SCISSOR_BOX, scissorBox.v);
+			glGetIntegerv(GL_VIEWPORT, viewport.v());
+			glGetIntegerv(GL_SCISSOR_BOX, scissorBox.v());
 			glGetIntegerv(GL_DEPTH_FUNC, &depthFunc);
 
 			glGetIntegerv(GL_STENCIL_FUNC, &stencilFunc);
@@ -116,7 +116,7 @@ namespace Fluxions
 			glGetIntegerv(GL_STENCIL_BACK_PASS_DEPTH_PASS, &stencilBackPassDepthPass);
 
 			glGetIntegerv(GL_CULL_FACE_MODE, &cullFaceMode);
-			glGetFloatv(GL_COLOR_CLEAR_VALUE, colorClearValue.v);
+			glGetFloatv(GL_COLOR_CLEAR_VALUE, colorClearValue.v());
 			blendEnabled = glIsEnabled(GL_BLEND);
 			cullFaceEnabled = glIsEnabled(GL_CULL_FACE);
 			depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
