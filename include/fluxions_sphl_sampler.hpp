@@ -19,36 +19,35 @@
 #ifndef FLUXIONS_SPHL_SAMPLER_HPP
 #define FLUXIONS_SPHL_SAMPLER_HPP
 
-
 #include <vector>
 #include <fluxions_gte.hpp>
 #include <fluxions_simple_scene_graph.hpp>
 #include <fluxions_sphl.hpp>
 
-
 using namespace std;
 namespace Fluxions
 {
-	class SphlSampler
-	{
-	public:
-		SphlSampler();
+class SphlSampler
+{
+  public:
+	SphlSampler();
 
-		void resize(int samplesX, int samplesY);
-		void saveSampleMap(const string & path, int pxscale);
-		void sampleCubeMap(const Image4f & cubeMap, MultispectralSph4f & msph);
-	private:
-		const int pxscale = 4;
-		Image3i sampleMap;
-		int ix = 128;// 628;
-		int iy = 64;// 314;
-		int numSamples = 0;
-		vector<Vector3f> randomVectors;
-		vector<double> theta;
-		vector<double> phi;
-		vector<double> sph;
-		vector<int> debug_sides;
-	};
-}
+	void resize(int samplesX, int samplesY);
+	void saveSampleMap(const string &path, int pxscale);
+	void sampleCubeMap(const Image4f &cubeMap, MultispectralSph4f &msph);
+
+  private:
+	const int pxscale = 4;
+	Image3i sampleMap;
+	int ix = 128; // 628;
+	int iy = 64;  // 314;
+	int numSamples = 0;
+	vector<Vector3f> randomVectors;
+	vector<double> theta;
+	vector<double> phi;
+	vector<double> sph;
+	vector<int> debug_sides;
+};
+} // namespace Fluxions
 
 #endif

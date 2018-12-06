@@ -25,66 +25,67 @@
 
 namespace Fluxions
 {
-	struct RenderTarget
-	{
-		GLuint object;
-		GLenum target;
-		GLenum attachment;
-		GLenum internalformat;
-		GLsizei width;
-		GLsizei height;
-		GLint levels;
-		GLenum currentCubeFace;
-		bool useMultisamples;
-		GLsizei samples;
-		GLenum readBufferTarget;
-		bool generateMipmaps;
-		Matrix4f projectionViewMatrix;
-		GLuint unit;
-		GLuint sampler;
-	};
+struct RenderTarget
+{
+	GLuint object;
+	GLenum target;
+	GLenum attachment;
+	GLenum internalformat;
+	GLsizei width;
+	GLsizei height;
+	GLint levels;
+	GLenum currentCubeFace;
+	bool useMultisamples;
+	GLsizei samples;
+	GLenum readBufferTarget;
+	bool generateMipmaps;
+	Matrix4f projectionViewMatrix;
+	GLuint unit;
+	GLuint sampler;
+};
 
-	class FramebufferObject
-	{
-		GLint lastBoundUnit;
-	public:
-		FramebufferObject();
-		~FramebufferObject();
+class FramebufferObject
+{
+	GLint lastBoundUnit;
 
-		void Delete	();
-		void DeleteBuffers();
-		bool Make();
-		void UseForWriting();
-		void UseForReading();
-		void Use();
-		void GenerateMipmaps();
-		void RestoreGLState();
-		void BindTextures(int unit);
-		void UnbindTextures();
-		void SetDimensions(GLsizei newWidth, GLsizei newHeight);
-		void SetMultisamples(GLsizei newSamples, bool newUseMultisamples);
-		void SetProjectionViewMatrix(const Matrix4f &M);
-		void SetAllProjectionViewMatrices(const Matrix4f &M);
-		void SetCurrentCubeFace(GLenum face);
-		void AddRenderbuffer(GLenum attachment, GLenum internalformat);
-		void AddTexture2D(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
-		void AddTextureCubeMap(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
-		void Enable(GLenum target) { enables.push_back(target); }
+  public:
+	FramebufferObject();
+	~FramebufferObject();
 
-		bool dirty;
-		GLuint fbo;
-		GLint width;
-		GLint height;
-		GLsizei samples;
-		bool useMultisamples;
-		GLenum internalformat;
-		GLenum currentCubeFace;
-		Matrix4f projectionViewMatrix;
-		vector<pair<GLenum, RenderTarget>> renderTargets;
-		vector<GLenum> enables;
-	};
+	void Delete();
+	void DeleteBuffers();
+	bool Make();
+	void UseForWriting();
+	void UseForReading();
+	void Use();
+	void GenerateMipmaps();
+	void RestoreGLState();
+	void BindTextures(int unit);
+	void UnbindTextures();
+	void SetDimensions(GLsizei newWidth, GLsizei newHeight);
+	void SetMultisamples(GLsizei newSamples, bool newUseMultisamples);
+	void SetProjectionViewMatrix(const Matrix4f &M);
+	void SetAllProjectionViewMatrices(const Matrix4f &M);
+	void SetCurrentCubeFace(GLenum face);
+	void AddRenderbuffer(GLenum attachment, GLenum internalformat);
+	void AddTexture2D(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
+	void AddTextureCubeMap(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
+	void Enable(GLenum target) { enables.push_back(target); }
 
-	string GetFramebufferStatusAsString(GLenum status);
-}
+	bool dirty;
+	GLuint fbo;
+	GLint width;
+	GLint height;
+	GLsizei samples;
+	bool useMultisamples;
+	GLenum internalformat;
+	GLenum currentCubeFace;
+	Matrix4f projectionViewMatrix;
+	vector<pair<GLenum, RenderTarget>> renderTargets;
+	vector<GLenum> enables;
+};
+
+string GetFramebufferStatusAsString(GLenum status);
+} // namespace Fluxions
 
 #endif

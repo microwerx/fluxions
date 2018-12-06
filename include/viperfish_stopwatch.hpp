@@ -25,7 +25,7 @@ namespace Viperfish
 {
 class IStopWatch
 {
-  public:
+public:
 	IStopWatch() {}
 	virtual ~IStopWatch(){};
 
@@ -38,7 +38,7 @@ class IStopWatch
 // class SteadyStopWatch implements IStopWatch
 class StopWatch : public IStopWatch
 {
-  public:
+public:
 	StopWatch();
 	~StopWatch();
 
@@ -47,7 +47,7 @@ class StopWatch : public IStopWatch
 	double GetMillisecondsElapsed();
 	double GetSecondsElapsed();
 
-  private:
+private:
 	std::chrono::time_point<std::chrono::system_clock> start_timepoint;
 	std::chrono::time_point<std::chrono::system_clock> end_timepoint;
 };

@@ -30,65 +30,64 @@
 #include <string>
 #include <hatchetfish.hpp>
 
-
 namespace Fluxions
 {
-	using namespace std;
+using namespace std;
 
-	class OpenGLNameTranslator
+class OpenGLNameTranslator
+{
+	map<string, int> enums;
+	map<int, string> enum_strings;
+	const string empty_string;
+
+  public:
+	OpenGLNameTranslator();
+
+	inline int GetEnum(const string &name) const
 	{
-		map<string, int> enums;
-		map<int, string> enum_strings;
-		const string empty_string;
-	public:
-		OpenGLNameTranslator();
+		auto it = enums.find(name);
+		if (it == enums.end())
+			it = enums.find(string("GL_") + name);
+		if (it == enums.end())
+			return 0;
+		return it->second;
+	}
 
-		inline int GetEnum(const string &name) const {
-			auto it = enums.find(name);
-			if (it == enums.end())
-				it = enums.find(string("GL_") + name);
-			if (it == enums.end())
-				return 0;
-			return it->second;
-		}
-
-		inline const char * GetString(int id) const
-		{
-			auto it = enum_strings.find(id);
-			if (it != enum_strings.end())
-				return it->second.c_str();
-			return empty_string.c_str();
-		}
-	};
-
-
-	extern OpenGLNameTranslator glNameTranslator;
-
-
-	class QuickGLErrorChecker
+	inline const char *GetString(int id) const
 	{
-	public:
-		QuickGLErrorChecker() { e = glGetError(); }
+		auto it = enum_strings.find(id);
+		if (it != enum_strings.end())
+			return it->second.c_str();
+		return empty_string.c_str();
+	}
+};
 
-		bool IsError()
-		{
-			e = glGetError();
-			if (e != GL_NO_ERROR)
-			{
-				hflog.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
-				return true;
-			}
-			return false;
-		}
+extern OpenGLNameTranslator glNameTranslator;
 
-		void Reset()
+class QuickGLErrorChecker
+{
+  public:
+	QuickGLErrorChecker() { e = glGetError(); }
+
+	bool IsError()
+	{
+		e = glGetError();
+		if (e != GL_NO_ERROR)
 		{
-			e = glGetError();
+			hflog.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
+			return true;
 		}
-	private:
-		GLenum e;
-	};
-}
+		return false;
+	}
+
+	void Reset()
+	{
+		e = glGetError();
+	}
+
+  private:
+	GLenum e;
+};
+} // namespace Fluxions
 
 #endif
-

@@ -47,7 +47,8 @@ bool glutDebugBindTexture(GLenum target, GLuint texture);
 void glutBitmapString(void *font, const char *string);
 void glutStrokeString(void *font, const char *string);
 
-enum GLUT_JUSTIFICATION {
+enum GLUT_JUSTIFICATION
+{
 	LEFT,
 	RIGHT,
 	CENTER

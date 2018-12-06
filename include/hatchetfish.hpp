@@ -19,18 +19,15 @@
 #ifndef HATCHETFISH_HPP
 #define HATCHETFISH_HPP
 
-
 #include <vector>
 #include <tuple>
 #include <map>
 #include <string>
 #include <chrono>
 
-
 class Hatchetfish
 {
-private:
-
+  private:
 	FILE *fout = stdout;
 	std::string timeStamp;
 	std::string dtg;
@@ -46,15 +43,16 @@ private:
 	bool logErrorEnabled = true;
 	bool logDebugEnabled = true;
 
-	const std::string & makeMessage(const char *category, const char *msg, va_list args);
-	const std::string & makeMessagefn(const char *category, const char *fn, const char *msg, va_list args);
+	const std::string &makeMessage(const char *category, const char *msg, va_list args);
+	const std::string &makeMessagefn(const char *category, const char *fn, const char *msg, va_list args);
 
 	mutable std::chrono::time_point<std::chrono::high_resolution_clock> t0;
 	mutable std::chrono::time_point<std::chrono::high_resolution_clock> t1;
 
 	std::vector<std::string> history;
 	size_t maxHistoryLines = 10;
-public:
+
+  public:
 	struct TimeDataPoint
 	{
 		double timeMeasured;
@@ -75,7 +73,7 @@ public:
 			xbar = 0.0;
 			rbar = 0.0;
 			int i = 0;
-			for (auto & datapoint : X)
+			for (auto &datapoint : X)
 			{
 				if (i == 0)
 					X[0].r = 0.0;
@@ -94,11 +92,11 @@ public:
 			ucl = xbar + 2.66 * rbar;
 		}
 	};
-private:
+
+  private:
 	std::map<std::string, TimeDataPoints> stats;
 
-public:
-
+  public:
 	Hatchetfish();
 	~Hatchetfish();
 
@@ -116,7 +114,7 @@ public:
 
 	std::string makeTimeStamp();
 	std::string makeDTG();
-	const std::vector<std::string> & getHistory() const { return history; }
+	const std::vector<std::string> &getHistory() const { return history; }
 	void setMaxHistory(size_t lines) { maxHistoryLines = lines > 100 ? 100 : lines; }
 
 	void setOutputFile(FILE *fileStream = NULL);
@@ -151,12 +149,12 @@ public:
 	double getMicrosecondsElapsed();
 	void resetClock();
 
-	void saveStats(const std::string & filenameprefix);
-	void takeStat(const std::string & name);
-	void takeStat(const std::string & name, double xval);
-	void resetStat(const std::string & name);
-	void computeStat(const std::string & name, bool filter = true);
-	const TimeDataPoints & getStat(const std::string & name);
+	void saveStats(const std::string &filenameprefix);
+	void takeStat(const std::string &name);
+	void takeStat(const std::string &name, double xval);
+	void resetStat(const std::string &name);
+	void computeStat(const std::string &name, bool filter = true);
+	const TimeDataPoints &getStat(const std::string &name);
 };
 
 extern Hatchetfish hflog;

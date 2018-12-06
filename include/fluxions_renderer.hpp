@@ -28,263 +28,263 @@
 
 namespace Fluxions
 {
-	using namespace std;
+using namespace std;
 
 
-	struct CoronaScene
-	{
-		struct Camera
-		{
+struct CoronaScene
+{
+struct Camera
+{
 
-		};
+};
 
-		struct Sphere
-		{
+struct Sphere
+{
 
-		};
-	};
-		
-	// SCENE INTERFACE
+};
+};
 
-
-	class IScene
-	{
-	public:
-		virtual bool Load(const char *filename) = 0;
-		virtual bool Save(const char *filename) = 0;
-
-		struct Light
-		{
-
-		};
-
-		struct Camera
-		{
-
-		};
-
-		struct Mesh
-		{
-
-		};
-
-		struct MtlLib
-		{
-
-		};
-
-		vector<CoronaScene> Scenes;
-		vector<Camera> Cameras;
-		vector<Mesh> Meshes;
-		vector<MtlLib> MtlLibs;
-	};
+// SCENE INTERFACE
 
 
-	// RENDERER INTERFACE
+class IScene
+{
+public:
+virtual bool Load(const char *filename) = 0;
+virtual bool Save(const char *filename) = 0;
+
+struct Light
+{
+
+};
+
+struct Camera
+{
+
+};
+
+struct Mesh
+{
+
+};
+
+struct MtlLib
+{
+
+};
+
+vector<CoronaScene> Scenes;
+vector<Camera> Cameras;
+vector<Mesh> Meshes;
+vector<MtlLib> MtlLibs;
+};
 
 
-	class IRenderer
-	{
-	public:
-		virtual bool UploadCompileLink() = 0;
-		virtual void Render(const IScene *pScene) = 0;
-		virtual void Reset() = 0;
-
-		virtual bool IsConfig(const string &name) const = 0;
-		virtual bool UseConfig(const string &name) = 0;
-		virtual bool LoadConfig(const string &filename) = 0;
-	};
-
-	class Renderer : public IRenderer
-	{
-	public:
-		struct RenderConfig
-		{
-			struct Program
-			{
-				struct VertexAttrib
-				{
-					int index;
-					string name;
-
-					VertexAttrib() { }
-					VertexAttrib(int _index, const string &_name) : index(_index), name(_name) { }
-				};
-
-				string name;
-				string vertshader;
-				string geomshader;
-				string fragshader;
-				vector<VertexAttrib> vertex_attribs;
-
-				SimpleProgramPtr program;
-
-				Program() { }
-				Program(const string &_name) : name(_name) { }
-			};
-
-			string name;
-			vector<Program> programs;
-
-			RenderConfig() { };
-			RenderConfig(const string &_name) : name(_name) { }
-		};
-
-		using RenderConfigPtr = RenderConfig *;
-
-		struct Texture
-		{
-			string name;
-			vector<pair<GLenum, string>> files;
-			GLenum target;
-			int level;
-			GLenum internalformat;
-			int width;
-			int height;
-			GLenum format;
-			GLenum type;
-			bool genmipmap;
-		};
-
-		struct Sampler
-		{
-			string name;
-			vector<pair<GLenum, GLenum>> parameters;
-		};
-
-		struct Renderbuffer
-		{
-			string name;
-			GLenum internalformat;
-			int width;
-			int height;
-			int samples;
-		};
-
-		struct Framebuffer
-		{
-			string name;
-			// attachment, renderbuffer
-			vector<tuple<GLenum, string>> renderbuffers;
-			// attachment, target, texture_, level
-			vector<tuple<GLenum, GLenum, string, int>> textures;
-		};
+// RENDERER INTERFACE
 
 
-		Renderer();
-		virtual ~Renderer();
+class IRenderer
+{
+public:
+virtual bool UploadCompileLink() = 0;
+virtual void Render(const IScene *pScene) = 0;
+virtual void Reset() = 0;
 
-		virtual bool UploadCompileLink();
-		virtual void Render(const IScene *pScene);
-		virtual void Reset();
+virtual bool IsConfig(const string &name) const = 0;
+virtual bool UseConfig(const string &name) = 0;
+virtual bool LoadConfig(const string &filename) = 0;
+};
 
-		virtual void LoadShaders();
+class Renderer : public IRenderer
+{
+public:
+struct RenderConfig
+{
+struct Program
+{
+struct VertexAttrib
+{
+int index;
+string name;
 
-		// Render Configurations
-		virtual bool LoadConfig(const string &filename);
-		virtual bool IsConfig(const string &name) const { return RenderConfigs.find(name) != RenderConfigs.end(); }
-		virtual bool UseConfig(const string &name) { return use_renderconfig(name); }
-		virtual RenderConfigPtr GetConfig(const string & name) { return IsConfig(name) ? &RenderConfigs.find(name)->second : nullptr; }
+VertexAttrib() { }
+VertexAttrib(int _index, const string &_name) : index(_index), name(_name) { }
+};
 
+string name;
+string vertshader;
+string geomshader;
+string fragshader;
+vector<VertexAttrib> vertex_attribs;
 
-		// G-Buffer and Deferred Renderers
-		virtual bool SetGbufferRenderConfig(const string &name) { gbufferConfig = GetConfig(name); return gbufferConfig != nullptr; }
-		virtual RenderConfigPtr GetGbufferRenderConfig() { return gbufferConfig; }
-		virtual SimpleProgramPtr GetGbufferProgram() { return gbufferProgram; }
-		virtual void RenderGbuffer();
+SimpleProgramPtr program;
 
-		using Quadrant = Recti::Quadrant;
+Program() { }
+Program(const string &_name) : name(_name) { }
+};
 
-		virtual bool SetDeferredRenderConfig(Quadrant quadrant, const string &rc, const string &program) {
-			deferredConfigs[quadrant] = GetConfig(rc);
-			deferredPrograms[quadrant] = FindProgram(rc, program);
-			return deferredConfigs[quadrant] != nullptr && deferredPrograms[quadrant] != nullptr;
-		}
-		virtual RenderConfigPtr GetDeferredRenderConfig(Quadrant quadrant) { return deferredConfigs[quadrant]; }
-		virtual SimpleProgramPtr GetDeferredProgram(Quadrant quadrant) { return deferredPrograms[quadrant]; }
-		virtual void SetDeferredRect(const Recti & rect) { deferredRect = rect; deferredSplitPoint = deferredRect.Clamp(deferredSplitPoint); }
-		virtual void SetDeferredSplit(const Vector2i & position) { deferredSplitPoint = deferredRect.Clamp(position); }
-		virtual void SetDeferredSplitPercent(const Vector2f & pct) { deferredSplitPoint = deferredRect.percent(pct); }
-		virtual const Vector2i & GetDeferredSplitPoint() const { return deferredSplitPoint; }
-		virtual const Recti & GetDeferredRect() const { return deferredRect; }
-		virtual void RenderDeferred(Quadrant quadrant = Recti::UpperLeft);
+string name;
+vector<Program> programs;
 
-		vector<SimpleProgramPtr> Programs;
+RenderConfig() { };
+RenderConfig(const string &_name) : name(_name) { }
+};
 
-		map<string, RenderConfig> RenderConfigs;
-		map<string, Texture> Textures;
-		map<string, Sampler> Samplers;
-		map<string, Framebuffer> Framebuffers;
-		map<string, Renderbuffer> Renderbuffers;
-		vector<string> Paths;
-		KASL::VariableList VarList;
+using RenderConfigPtr = RenderConfig *;
 
-		SimpleProgramPtr FindProgram(const string &renderConfigName, const string &name);
+struct Texture
+{
+string name;
+vector<pair<GLenum, string>> files;
+GLenum target;
+int level;
+GLenum internalformat;
+int width;
+int height;
+GLenum format;
+GLenum type;
+bool genmipmap;
+};
 
-	private:
-		TSimpleResourceManager<GLuint> textureUnits;
-		void InitTexUnits();
-		void KillTexUnits();
-	public:
-		GLuint GetTexUnit() { return textureUnits.Create(); }
-		void FreeTexUnit(GLuint id) { textureUnits.Delete(id); }
+struct Sampler
+{
+string name;
+vector<pair<GLenum, GLenum>> parameters;
+};
 
-	private:
-		RenderConfigPtr gbufferConfig = nullptr;
-		SimpleProgramPtr gbufferProgram = nullptr;
-		RenderConfigPtr deferredConfigs[4] = { nullptr, nullptr, nullptr, nullptr };
-		SimpleProgramPtr deferredPrograms[4] = { nullptr, nullptr, nullptr, nullptr };
-		Vector2i deferredSplitPoint = Vector2i(0, 0);
-		Recti deferredRect = Recti(0, 0, 0, 0);
+struct Renderbuffer
+{
+string name;
+GLenum internalformat;
+int width;
+int height;
+int samples;
+};
 
-		string basepath;
-		RenderConfig *pcur_renderconfig;
-		RenderConfig::Program *pcur_program;
-		string cur_sampler;
-		string cur_texture;
-		Framebuffer *pcur_fbo;
-
-		virtual bool new_renderconfig(const string &name);
-		virtual bool use_renderconfig(const string &name);
-		virtual bool new_program(const string &name);
-		virtual bool use_program(const string &name);
-
-		bool k_renderconfig(const KASL::TokenVector &args);
-		bool k_path(const KASL::TokenVector &args);
-		bool k_program(const KASL::TokenVector &args);
-		bool k_vertshader(const KASL::TokenVector &args);
-		bool k_fragshader(const KASL::TokenVector &args);
-		bool k_geomshader(const KASL::TokenVector &args);
-		bool k_vertattrib(const KASL::TokenVector &args);
-		bool k_sampler(const KASL::TokenVector &args);
-		bool k_texture(const KASL::TokenVector &args);
-		bool k_fbo(const KASL::TokenVector &args);
-		bool k_renderbuffer(const KASL::TokenVector &args);
-	};
+struct Framebuffer
+{
+string name;
+// attachment, renderbuffer
+vector<tuple<GLenum, string>> renderbuffers;
+// attachment, target, texture_, level
+vector<tuple<GLenum, GLenum, string, int>> textures;
+};
 
 
-	// INaivePathTracer
-	/*
-	class INaivePathTracer
-	{
-	public:
-		struct Ray
-		{
-			Vector3f origin;
-			Vector3f dir;
-		};
+Renderer();
+virtual ~Renderer();
 
-		struct Intersection
-		{
-			Vector3f position;
-		};
+virtual bool UploadCompileLink();
+virtual void Render(const IScene *pScene);
+virtual void Reset();
 
-	public:
-		virtual ~INaivePathTracer() = 0;
+virtual void LoadShaders();
 
-		virtual Intersection Evaluate(Ray &ray, const IScene &scene) = 0;
-	};
-	*/
+// Render Configurations
+virtual bool LoadConfig(const string &filename);
+virtual bool IsConfig(const string &name) const { return RenderConfigs.find(name) != RenderConfigs.end(); }
+virtual bool UseConfig(const string &name) { return use_renderconfig(name); }
+virtual RenderConfigPtr GetConfig(const string & name) { return IsConfig(name) ? &RenderConfigs.find(name)->second : nullptr; }
+
+
+// G-Buffer and Deferred Renderers
+virtual bool SetGbufferRenderConfig(const string &name) { gbufferConfig = GetConfig(name); return gbufferConfig != nullptr; }
+virtual RenderConfigPtr GetGbufferRenderConfig() { return gbufferConfig; }
+virtual SimpleProgramPtr GetGbufferProgram() { return gbufferProgram; }
+virtual void RenderGbuffer();
+
+using Quadrant = Recti::Quadrant;
+
+virtual bool SetDeferredRenderConfig(Quadrant quadrant, const string &rc, const string &program) {
+deferredConfigs[quadrant] = GetConfig(rc);
+deferredPrograms[quadrant] = FindProgram(rc, program);
+return deferredConfigs[quadrant] != nullptr && deferredPrograms[quadrant] != nullptr;
+}
+virtual RenderConfigPtr GetDeferredRenderConfig(Quadrant quadrant) { return deferredConfigs[quadrant]; }
+virtual SimpleProgramPtr GetDeferredProgram(Quadrant quadrant) { return deferredPrograms[quadrant]; }
+virtual void SetDeferredRect(const Recti & rect) { deferredRect = rect; deferredSplitPoint = deferredRect.Clamp(deferredSplitPoint); }
+virtual void SetDeferredSplit(const Vector2i & position) { deferredSplitPoint = deferredRect.Clamp(position); }
+virtual void SetDeferredSplitPercent(const Vector2f & pct) { deferredSplitPoint = deferredRect.percent(pct); }
+virtual const Vector2i & GetDeferredSplitPoint() const { return deferredSplitPoint; }
+virtual const Recti & GetDeferredRect() const { return deferredRect; }
+virtual void RenderDeferred(Quadrant quadrant = Recti::UpperLeft);
+
+vector<SimpleProgramPtr> Programs;
+
+map<string, RenderConfig> RenderConfigs;
+map<string, Texture> Textures;
+map<string, Sampler> Samplers;
+map<string, Framebuffer> Framebuffers;
+map<string, Renderbuffer> Renderbuffers;
+vector<string> Paths;
+KASL::VariableList VarList;
+
+SimpleProgramPtr FindProgram(const string &renderConfigName, const string &name);
+
+private:
+TSimpleResourceManager<GLuint> textureUnits;
+void InitTexUnits();
+void KillTexUnits();
+public:
+GLuint GetTexUnit() { return textureUnits.Create(); }
+void FreeTexUnit(GLuint id) { textureUnits.Delete(id); }
+
+private:
+RenderConfigPtr gbufferConfig = nullptr;
+SimpleProgramPtr gbufferProgram = nullptr;
+RenderConfigPtr deferredConfigs[4] = { nullptr, nullptr, nullptr, nullptr };
+SimpleProgramPtr deferredPrograms[4] = { nullptr, nullptr, nullptr, nullptr };
+Vector2i deferredSplitPoint = Vector2i(0, 0);
+Recti deferredRect = Recti(0, 0, 0, 0);
+
+string basepath;
+RenderConfig *pcur_renderconfig;
+RenderConfig::Program *pcur_program;
+string cur_sampler;
+string cur_texture;
+Framebuffer *pcur_fbo;
+
+virtual bool new_renderconfig(const string &name);
+virtual bool use_renderconfig(const string &name);
+virtual bool new_program(const string &name);
+virtual bool use_program(const string &name);
+
+bool k_renderconfig(const KASL::TokenVector &args);
+bool k_path(const KASL::TokenVector &args);
+bool k_program(const KASL::TokenVector &args);
+bool k_vertshader(const KASL::TokenVector &args);
+bool k_fragshader(const KASL::TokenVector &args);
+bool k_geomshader(const KASL::TokenVector &args);
+bool k_vertattrib(const KASL::TokenVector &args);
+bool k_sampler(const KASL::TokenVector &args);
+bool k_texture(const KASL::TokenVector &args);
+bool k_fbo(const KASL::TokenVector &args);
+bool k_renderbuffer(const KASL::TokenVector &args);
+};
+
+
+// INaivePathTracer
+/*
+class INaivePathTracer
+{
+public:
+struct Ray
+{
+Vector3f origin;
+Vector3f dir;
+};
+
+struct Intersection
+{
+Vector3f position;
+};
+
+public:
+virtual ~INaivePathTracer() = 0;
+
+virtual Intersection Evaluate(Ray &ray, const IScene &scene) = 0;
+};
+*/
 }
 
 #endif

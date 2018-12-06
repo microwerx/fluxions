@@ -43,7 +43,7 @@
 //   - fluxions_renderer_gles30 -- Renderer targeting more advanced shader based graphics (for cross platform GLES 3.0/GL 4.3 Desktop systems)
 //                              -- GL_ARB_ES3_compatibility
 //   - fluxions_renderer_gles32 -- Renderer targeting more advanced shader based graphics and compute (for cross platform GLES 3.2/GL 4.5 Desktop systems)
-//                              -- GL_ARB_ES3_2_compatibility 
+//                              -- GL_ARB_ES3_2_compatibility
 //   - fluxions_renderer_vulkan -- Renderer targeting advanced graphics and compute...
 // * Future modules:
 //   - XOR 2D/3D graphics -- Depends on GLES 2.0 based renderer
@@ -63,18 +63,16 @@
 #include <fluxions_multiple_render_target.hpp>
 #include <fluxions_corona.hpp>
 
-
 namespace Fluxions
 {
-	extern bool debugging;
-	extern const string BlankString;
+extern bool debugging;
+extern const string BlankString;
 
+string GetPathTracerName(const string &sceneName, bool ks, int mrd, int pl);
+string GetSphlRenderName(const string &sceneName, int md);
+string GetPathTracerSphlRenderName(const string &sceneName, bool ks, int mrd, int pl, int md);
+string GetStatsName(const string &sceneName, bool ks, int mrd, int pl, int md);
 
-	string GetPathTracerName(const string & sceneName, bool ks, int mrd, int pl);
-	string GetSphlRenderName(const string & sceneName, int md);
-	string GetPathTracerSphlRenderName(const string & sceneName, bool ks, int mrd, int pl, int md);
-	string GetStatsName(const string & sceneName, bool ks, int mrd, int pl, int md);
-
-}
+} // namespace Fluxions
 
 #endif
