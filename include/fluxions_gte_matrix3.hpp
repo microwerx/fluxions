@@ -60,7 +60,7 @@ class TMatrix3
 	constexpr T *m() noexcept { return &m11; }
 	constexpr const T *m() const noexcept { return &m11; }
 
-	constexpr T operator()(size_t i, size_t j) const noexcept
+	constexpr T operator()(size_t row, size_t col) const noexcept
 	{
 		T *e = &m11;
 		if (row == 1)

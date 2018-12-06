@@ -684,9 +684,9 @@ class TMatrix4
 	constexpr auto AsQuickInverse() const noexcept
 	{
 		return TMatrix4<T>(
-			t11, t12, t13, -m14,
-			t21, t22, t23, -m24,
-			t31, t32, t33, -m34,
+			m11, m21, m31, -m14,
+			m12, m22, m32, -m24,
+			m13, m23, m33, -m34,
 			T(0), T(0), T(0), T(1));
 	}
 

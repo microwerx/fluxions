@@ -77,9 +77,9 @@ class TImage
 	bool empty() const noexcept { return pixels.empty(); }
 	bool IsCubeMap() const noexcept { return imageWidth == imageHeight && imageDepth == 6; }
 	TImage<ColorType> &ToSRGB();
-	// TImage<ColorType> & ReverseSRGB();
-	// TImage<ColorType> & ToneMap(float exposure);
-	// TImage<ColorType> & ReverseToneMap(float exposure);
+	TImage<ColorType> & ReverseSRGB();
+	TImage<ColorType> & ToneMap(float exposure);
+	TImage<ColorType> & ReverseToneMap(float exposure);
 	void scaleColors(float x);
 	TImage<ColorType> ScaleImage(int newWidth, int newHeight, bool bilinear = false);
 

@@ -36,29 +36,29 @@ class Socket
 
 	void Delete();
 
-	// bind to PUB endpoint
+	// bind to PUB m_endpoint
 	bool NewPub(const string &endpoint);
-	// connect to SUB endpoint
+	// connect to SUB m_endpoint
 	bool NewSub(const string &endpoint, const string &subPrefix);
-	// connect to REQ endpoint
+	// connect to REQ m_endpoint
 	bool NewReq(const string &endpoint);
-	// bind to REP endpoint
+	// bind to REP m_endpoint
 	bool NewRep(const string &endpoint);
-	// connect to DEALER endpoint
+	// connect to DEALER m_endpoint
 	bool NewDealer(const string &endpoint);
-	// bind to ROUTER endpoint
+	// bind to ROUTER m_endpoint
 	bool NewRouter(const string &endpoint);
-	// connect to PUSH endpoint
+	// connect to PUSH m_endpoint
 	bool NewPush(const string &endpoint);
-	// bind to PULL endpoint
+	// bind to PULL m_endpoint
 	bool NewPull(const string &endpoint);
-	// bind to XSUB endpoint
+	// bind to XSUB m_endpoint
 	bool NewXSub(const string &endpoint);
-	// connect to XPUB endpoint
+	// connect to XPUB m_endpoint
 	bool NewXPub(const string &endpoint);
-	// to PAIR endpoint
+	// to PAIR m_endpoint
 	bool NewPair(const string &endpoint);
-	// to STREAM endpoint
+	// to STREAM m_endpoint
 	bool NewStream(const string &endpoint);
 
 	bool Send(const char *picture, ...);
@@ -71,7 +71,7 @@ class Socket
 	bool Poll(long timeout_ms);
 
 	operator bool() const { return socket != nullptr; }
-	const string &GetEndpoint() const { return endpoint; }
+	const string &GetEndpoint() const { return m_endpoint; }
 
 	zsock_t *zsock() { return socket; }
 
@@ -92,12 +92,12 @@ class Socket
 		STREAM
 	};
 
-	SocketType GetType() const { return socketType; }
+	SocketType GetType() const { return m_socketType; }
 
   private:
-	string endpoint;
-	string subPrefix;
-	SocketType socketType = SocketType::NONE;
+	string m_endpoint;
+	string m_subPrefix;
+	SocketType m_socketType = SocketType::NONE;
 	zsock_t *socket = nullptr;
 	zpoller_t *poller = nullptr;
 

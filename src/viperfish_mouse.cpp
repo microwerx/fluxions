@@ -24,9 +24,9 @@ namespace Viperfish
 {
 	// @class MouseDragState
 
-	void MouseDragState::Start(int button, Vector2i newPosition, double currentTime)
+	void MouseDragState::Start(int whichButton, Vector2i newPosition, double currentTime)
 	{
-		button = button;
+		button = whichButton;
 		startPosition = newPosition;
 		endPosition = newPosition;
 		currentPosition = newPosition;
@@ -52,7 +52,7 @@ namespace Viperfish
 
 	// @class MouseClickState
 
-	void MouseClickState::FillFromDrag(int button, const MouseDragState &mds)
+	void MouseClickState::FillFromDrag(int whichButton, const MouseDragState &mds)
 	{
 		button = mds.button;
 		startPosition = mds.startPosition;
@@ -63,9 +63,9 @@ namespace Viperfish
 
 	// @class MouseDoubleClickState
 
-	void MouseDoubleClickState::FillFromClicks(int button, const MouseClickState &mcs1, const MouseClickState &mcs2)
+	void MouseDoubleClickState::FillFromClicks(int whichButton, const MouseClickState &mcs1, const MouseClickState &mcs2)
 	{
-		button = button;
+		button = whichButton;
 		position = mcs2.position;
 		deltaPosition = mcs2.position - mcs1.position;
 		deltaTime = mcs2.clickTime - mcs1.clickTime;

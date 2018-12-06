@@ -44,20 +44,20 @@ namespace Uf
 		if (poller) zpoller_destroy(&poller);
 		poller = nullptr;
 
-		endpoint.clear();
-		subPrefix.clear();
-		socketType = SocketType::NONE;
+		m_endpoint.clear();
+		m_subPrefix.clear();
+		m_socketType = SocketType::NONE;
 	}
 
 	
-	bool Socket::SetupSocket(string endpoint_, string subPrefix_, SocketType socketType_)
+	bool Socket::SetupSocket(string endpoint, string subPrefix, SocketType socketType)
 	{
 		if (!socket) return false;
 		poller = zpoller_new(socket, NULL);
 		if (!poller) return false;
-		endpoint = endpoint_;
-		subPrefix = subPrefix_;
-		socketType = socketType_;
+		m_endpoint = endpoint;
+		m_subPrefix = subPrefix;
+		m_socketType = socketType;
 		return true;
 	}
 
@@ -70,8 +70,8 @@ namespace Uf
 
 		if (!socket) return false;
 
-		socketType = SocketType::PUB;
-		this->endpoint = endpoint;
+		m_socketType = SocketType::PUB;
+		m_endpoint = endpoint;
 		return true;
 	}
 
@@ -84,9 +84,9 @@ namespace Uf
 
 		if (!socket) return false;
 
-		socketType = SocketType::SUB;
-		this->endpoint = endpoint;
-		this->subPrefix = subPrefix;
+		m_socketType = SocketType::SUB;
+		m_endpoint = endpoint;
+		m_subPrefix = subPrefix;
 		return true;
 	}
 
@@ -98,8 +98,8 @@ namespace Uf
 		socket = zsock_new_req(endpoint.c_str());
 		if (!socket) return false;
 
-		socketType = SocketType::REQ;
-		this->endpoint = endpoint;
+		m_socketType = SocketType::REQ;
+		m_endpoint = endpoint;
 		return true;
 	}
 
@@ -111,8 +111,8 @@ namespace Uf
 		socket = zsock_new_rep(endpoint.c_str());
 		if (!socket) return false;
 
-		socketType = SocketType::REP;
-		this->endpoint = endpoint;
+		m_socketType = SocketType::REP;
+		m_endpoint = endpoint;
 		return true;
 	}
 

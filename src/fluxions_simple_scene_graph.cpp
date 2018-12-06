@@ -1429,7 +1429,7 @@ namespace Fluxions
 					cubeShadowMatrices[face] = Matrix4f::MakePerspective(90.0f, 1.0f, rc.znear, rc.zfar) *
 						Matrix4f::MakeCubeMatrixPosition(face, rc.cameraPosition.xyz());
 				}
-				SimpleUniform shadowmats(GL_FLOAT_MAT4, 6, 0, cubeShadowMatrices[0].v);
+				SimpleUniform shadowmats(GL_FLOAT_MAT4, 6, 0, cubeShadowMatrices[0].v());
 
 				program->Use();
 				program->ApplyUniform("LightPosition", (SimpleUniform)rc.cameraPosition.xyz());
@@ -1620,7 +1620,7 @@ namespace Fluxions
 					Matrix4f::MakeCubeMatrixPosition(face, rc.cameraPosition.xyz());
 			}
 			SimpleUniform shadowmats;
-			shadowmats.UniformMatrix2x4fv(6, 0, cubeShadowMatrices[0].v);
+			shadowmats.UniformMatrix2x4fv(6, 0, cubeShadowMatrices[0].v());
 			// upload cube shadow matrices
 			program->Use();
 			program->ApplyUniform("LightPosition", (SimpleUniform)rc.cameraPosition.xyz());

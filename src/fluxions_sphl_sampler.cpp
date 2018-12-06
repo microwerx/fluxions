@@ -112,16 +112,16 @@ namespace Fluxions
 	}
 
 
-	void SphlSampler::saveSampleMap(const string & path, int pxscale)
+	void SphlSampler::saveSampleMap(const string & path, int pixelScale)
 	{
 		Color3i White(255);
 
 		sampleMap.reset();
-		sampleMap.resize(ix * pxscale, iy * pxscale);
+		sampleMap.resize(ix * pixelScale, iy * pixelScale);
 		for (int i = 0; i < numSamples; i++)
 		{
-			int px = (int)(ix * pxscale * (phi[i] / FX_PI));
-			int py = (int)(iy * pxscale * (theta[i] + FX_PI) / FX_TWOPI);
+			int px = (int)(ix * pixelScale * (phi[i] / FX_PI));
+			int py = (int)(iy * pixelScale * (theta[i] + FX_PI) / FX_TWOPI);
 
 			sampleMap.setPixel(px, py, White);
 		}

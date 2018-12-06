@@ -310,21 +310,21 @@ void Hatchetfish::saveStats(const string & filenameprefix)
 	for (auto & stat : stats)
 	{
 		computeStat(stat.first);
-		ofstream fout(filenameprefix + stat.first + ".csv", ios::app);
+		ofstream fout_(filenameprefix + stat.first + ".csv", ios::app);
 
-		fout << "scene,i,time,x,mr,xbar,mrbar,lcl,ucl" << endl;
-		fout << fixed << setprecision(6);
+		fout_ << "scene,i,time,x,mr,xbar,mrbar,lcl,ucl" << endl;
+		fout_ << fixed << setprecision(6);
 
 		int i = 0;
 		for (auto & datapoint : stat.second.X)
 		{
 			if (i > 300)
 				break;
-			fout << filenameprefix << "," << i++ << "," << datapoint.timeMeasured << ",";
-			fout << setprecision(4) << datapoint.x << "," << datapoint.r << "," << stat.second.xbar << "," << stat.second.rbar << "," << stat.second.lcl << "," << stat.second.ucl << endl;
+			fout_ << filenameprefix << "," << i++ << "," << datapoint.timeMeasured << ",";
+			fout_ << setprecision(4) << datapoint.x << "," << datapoint.r << "," << stat.second.xbar << "," << stat.second.rbar << "," << stat.second.lcl << "," << stat.second.ucl << endl;
 		}
 
-		fout.close();
+		fout_.close();
 	}
 }
 

@@ -211,12 +211,12 @@ namespace Fluxions
 				int v0 = k * model.vertexCount + model.triangles[i].v[0];
 				int v1 = k * model.vertexCount + model.triangles[i].v[1];
 				int v2 = k * model.vertexCount + model.triangles[i].v[2];
-				Vector3f dp1 = sph_model.GetVertex(v1).attrib0.xyz() - sph_model.GetVertex(v0).attrib0.xyz();
-				Vector3f dp2 = sph_model.GetVertex(v2).attrib0.xyz() - sph_model.GetVertex(v0).attrib0.xyz();
+				Vector3f dp1 = sph_model.GetVertex(v1).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
+				Vector3f dp2 = sph_model.GetVertex(v2).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 				Vector3f N = dp1.cross(dp2).norm();
-				sph_model.GetVertex(v0).attrib1 += N;
-				sph_model.GetVertex(v1).attrib1 += N;
-				sph_model.GetVertex(v2).attrib1 += N;
+				sph_model.GetVertex(v0).attribs[1] += N;
+				sph_model.GetVertex(v1).attribs[1] += N;
+				sph_model.GetVertex(v2).attribs[1] += N;
 
 				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].v[0]);
 				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].v[1]);
@@ -233,9 +233,9 @@ namespace Fluxions
 				int v0 = j * model.vertexCount + model.triangles[i].v[0];
 				int v1 = j * model.vertexCount + model.triangles[i].v[1];
 				int v2 = j * model.vertexCount + model.triangles[i].v[2];
-				sph_model.GetVertex(v0).attrib1.normalize();
-				sph_model.GetVertex(v1).attrib1.normalize();
-				sph_model.GetVertex(v2).attrib1.normalize();
+				sph_model.GetVertex(v0).attribs[1].normalize();
+				sph_model.GetVertex(v1).attribs[1].normalize();
+				sph_model.GetVertex(v2).attribs[1].normalize();
 			}
 		}
 

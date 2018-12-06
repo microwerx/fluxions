@@ -72,7 +72,7 @@ class ImGuiWidget : public Widget
 	GLuint abo = 0;
 	GLuint vao = 0;
 	GLuint eabo = 0;
-	ImGuiIO *io = nullptr;
+	ImGuiIO *pIO = nullptr;
 
 	bool CreateDeviceObjects();
 	void InvalidateDeviceObjects();

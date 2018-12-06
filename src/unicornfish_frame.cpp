@@ -153,8 +153,8 @@ namespace Uf
 	const void * Frame::GetData() const
 	{
 		if (!frame) return nullptr;
-		void *data = zframe_data(frame);
-		return data;
+		void *pdata = zframe_data(frame);
+		return pdata;
 	}
 
 

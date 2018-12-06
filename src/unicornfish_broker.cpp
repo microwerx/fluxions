@@ -41,13 +41,13 @@ namespace Uf
 	}
 
 
-	bool Broker::Create(const char *endpoint)
+	bool Broker::Create(const char *endpoint_)
 	{
 		Delete();
-		if (!brokerSocket.NewRouter(endpoint)) {
+		if (!brokerSocket.NewRouter(endpoint_)) {
 			return false;
 		}
-		this->endpoint = endpoint;
+		endpoint = endpoint_;
 		heartbeatTime = zclock_time() + Majordomo::DefaultHeartbeatIntervalMS;
 		return true;
 	}

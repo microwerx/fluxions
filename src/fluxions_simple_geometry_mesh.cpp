@@ -64,7 +64,7 @@ namespace Fluxions
 
 		for (auto & v : vertices)
 		{
-			objout << "v " << v.attrib0.x << " " << v.attrib0.y << " " << v.attrib0.z << endl;
+			objout << "v " << v.attribs[0].x << " " << v.attribs[0].y << " " << v.attribs[0].z << endl;
 		}
 		objout << endl;
 
@@ -72,7 +72,7 @@ namespace Fluxions
 		{
 			for (auto & v : vertices)
 			{
-				objout << "v " << v.attrib1.x << " " << v.attrib1.y << " " << v.attrib1.z << endl;
+				objout << "v " << v.attribs[1].x << " " << v.attribs[1].y << " " << v.attribs[1].z << endl;
 			}
 			objout << endl;
 		}
@@ -81,7 +81,7 @@ namespace Fluxions
 		{
 			for (auto & v : vertices)
 			{
-				objout << "v " << v.attrib3.x << " " << v.attrib3.y << " " << v.attrib3.z << endl;
+				objout << "v " << v.attribs[3].x << " " << v.attribs[3].y << " " << v.attribs[3].z << endl;
 			}
 			objout << endl;
 		}

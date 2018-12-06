@@ -24,30 +24,30 @@ namespace Viperfish
 {
 	void ImGuiWidget::OnInit(const vector<string> & args)
 	{
-		io = &ImGui::GetIO();
-		io->DisplaySize.x = 640.0f;
-		io->DisplaySize.y = 480.0f;
-		io->DeltaTime = 0.0f;
+		pIO = &ImGui::GetIO();
+		pIO->DisplaySize.x = 640.0f;
+		pIO->DisplaySize.y = 480.0f;
+		pIO->DeltaTime = 0.0f;
 
-		io->KeyMap[ImGuiKey_Tab] = 0x09;                         // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
-		io->KeyMap[ImGuiKey_LeftArrow] = 0x100 + GLUT_KEY_LEFT;
-		io->KeyMap[ImGuiKey_RightArrow] = 0x100 + GLUT_KEY_RIGHT;
-		io->KeyMap[ImGuiKey_UpArrow] = 0x100 + GLUT_KEY_UP;
-		io->KeyMap[ImGuiKey_DownArrow] = 0x100 + GLUT_KEY_DOWN;
-		io->KeyMap[ImGuiKey_PageUp] = 0x100 + GLUT_KEY_PAGE_UP;
-		io->KeyMap[ImGuiKey_PageDown] = 0x100 + GLUT_KEY_PAGE_DOWN;
-		io->KeyMap[ImGuiKey_Home] = 0x100 + GLUT_KEY_HOME;
-		io->KeyMap[ImGuiKey_End] = 0x100 + GLUT_KEY_END;
-		io->KeyMap[ImGuiKey_Delete] = 0x100 + GLUT_KEY_DELETE;
-		io->KeyMap[ImGuiKey_Backspace] = 0x08;
-		io->KeyMap[ImGuiKey_Enter] = 0x10;
-		io->KeyMap[ImGuiKey_Escape] = 0x27;
-		io->KeyMap[ImGuiKey_A] = 'a';
-		io->KeyMap[ImGuiKey_C] = 'c';
-		io->KeyMap[ImGuiKey_V] = 'v';
-		io->KeyMap[ImGuiKey_X] = 'x';
-		io->KeyMap[ImGuiKey_Y] = 'y';
-		io->KeyMap[ImGuiKey_Z] = 'z';
+		pIO->KeyMap[ImGuiKey_Tab] = 0x09;                         // Keyboard mapping. ImGui will use those indices to peek into the pIO.KeyDown[] array.
+		pIO->KeyMap[ImGuiKey_LeftArrow] = 0x100 + GLUT_KEY_LEFT;
+		pIO->KeyMap[ImGuiKey_RightArrow] = 0x100 + GLUT_KEY_RIGHT;
+		pIO->KeyMap[ImGuiKey_UpArrow] = 0x100 + GLUT_KEY_UP;
+		pIO->KeyMap[ImGuiKey_DownArrow] = 0x100 + GLUT_KEY_DOWN;
+		pIO->KeyMap[ImGuiKey_PageUp] = 0x100 + GLUT_KEY_PAGE_UP;
+		pIO->KeyMap[ImGuiKey_PageDown] = 0x100 + GLUT_KEY_PAGE_DOWN;
+		pIO->KeyMap[ImGuiKey_Home] = 0x100 + GLUT_KEY_HOME;
+		pIO->KeyMap[ImGuiKey_End] = 0x100 + GLUT_KEY_END;
+		pIO->KeyMap[ImGuiKey_Delete] = 0x100 + GLUT_KEY_DELETE;
+		pIO->KeyMap[ImGuiKey_Backspace] = 0x08;
+		pIO->KeyMap[ImGuiKey_Enter] = 0x10;
+		pIO->KeyMap[ImGuiKey_Escape] = 0x27;
+		pIO->KeyMap[ImGuiKey_A] = 'a';
+		pIO->KeyMap[ImGuiKey_C] = 'c';
+		pIO->KeyMap[ImGuiKey_V] = 'v';
+		pIO->KeyMap[ImGuiKey_X] = 'x';
+		pIO->KeyMap[ImGuiKey_Y] = 'y';
+		pIO->KeyMap[ImGuiKey_Z] = 'z';
 
 		CreateDeviceObjects();
 		//ImGui::NewFrame();
@@ -61,7 +61,7 @@ namespace Viperfish
 		Widget::OnKill();
 
 		InvalidateDeviceObjects();
-		io = nullptr;
+		pIO = nullptr;
 		ImGui::Shutdown();
 	}
 
@@ -69,26 +69,26 @@ namespace Viperfish
 	void ImGuiWidget::OnMouseButtonDown(int button)
 	{
 		Widget::OnMouseButtonDown(button);
-		if (within(button, 0, 4) && io != nullptr)
-			io->MouseDown[button] = true;
+		if (within(button, 0, 4) && pIO != nullptr)
+			pIO->MouseDown[button] = true;
 	}
 
 
 	void ImGuiWidget::OnMouseButtonUp(int button)
 	{
 		Widget::OnMouseButtonUp(button);
-		if (within(button, 0, 4) && io != nullptr)
-			io->MouseDown[button] = false;
+		if (within(button, 0, 4) && pIO != nullptr)
+			pIO->MouseDown[button] = false;
 	}
 
 
 	void ImGuiWidget::OnMouseMove(int x, int y)
 	{
 		Widget::OnMouseMove(x, y);
-		if (io != nullptr)
+		if (pIO != nullptr)
 		{
-			io->MousePos.x = (float)x;
-			io->MousePos.y = (float)y;
+			pIO->MousePos.x = (float)x;
+			pIO->MousePos.y = (float)y;
 		}
 	}
 
@@ -96,16 +96,16 @@ namespace Viperfish
 	void ImGuiWidget::OnKeyDown(const string & key, int keymod)
 	{
 		Widget::OnKeyDown(key, keymod);
-		if (io == nullptr || key.empty())
+		if (pIO == nullptr || key.empty())
 			return;
 
-		io->KeyAlt = keymod & KeyboardState::AltKeyBit;
-		io->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
-		io->KeyShift = keymod & KeyboardState::ShiftKeyBit;
+		pIO->KeyAlt = keymod & KeyboardState::AltKeyBit;
+		pIO->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
+		pIO->KeyShift = keymod & KeyboardState::ShiftKeyBit;
 
 		if (within(HTML5NameToKey(key), 0, 511))
 		{
-			io->KeysDown[HTML5NameToKey(key)] = true;
+			pIO->KeysDown[HTML5NameToKey(key)] = true;
 		}
 	}
 
@@ -113,27 +113,27 @@ namespace Viperfish
 	void ImGuiWidget::OnKeyUp(const string & key, int keymod)
 	{
 		Widget::OnKeyUp(key, keymod);
-		if (io == nullptr || key.empty())
+		if (pIO == nullptr || key.empty())
 			return;
 
-		io->KeyAlt = keymod & KeyboardState::AltKeyBit;
-		io->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
-		io->KeyShift = keymod & KeyboardState::ShiftKeyBit;
+		pIO->KeyAlt = keymod & KeyboardState::AltKeyBit;
+		pIO->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
+		pIO->KeyShift = keymod & KeyboardState::ShiftKeyBit;
 
 		if (within(HTML5NameToKey(key), 0, 511))
 		{
-			io->KeysDown[HTML5NameToKey(key)] = false;
+			pIO->KeysDown[HTML5NameToKey(key)] = false;
 		}
 	}
 
 
 	void ImGuiWidget::OnUpdate(double timeStamp)
 	{
-		if (io != nullptr)
+		if (pIO != nullptr)
 		{
-			io->DisplaySize.x = (float)windowRect().w;
-			io->DisplaySize.y = (float)windowRect().h;
-			io->DeltaTime = fabsf((float)(timeStamp - getT1()));
+			pIO->DisplaySize.x = (float)windowRect().w;
+			pIO->DisplaySize.y = (float)windowRect().h;
+			pIO->DeltaTime = fabsf((float)(timeStamp - getT1()));
 		}
 
 		Widget::OnUpdate(timeStamp);
@@ -166,7 +166,7 @@ namespace Viperfish
 		unsigned char *pixels;
 		int w;
 		int h;
-		io->Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
+		pIO->Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
 		glGenTextures(1, &fontTextureId);
 		glBindTexture(GL_TEXTURE_2D, fontTextureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -176,7 +176,7 @@ namespace Viperfish
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		long long id = fontTextureId;
-		io->Fonts->TexID = (ImTextureID)id;
+		pIO->Fonts->TexID = (ImTextureID)id;
 
 		const GLchar *vertex_shader =
 			"#version 330\n"

@@ -337,7 +337,7 @@ struct ImGuiIniData
     bool        Collapsed;
 };
 
-// Mouse cursor data (used when io.MouseDrawCursor is set)
+// Mouse cursor data (used when pIO.MouseDrawCursor is set)
 struct ImGuiMouseCursorData
 {
     ImGuiMouseCursor    Type;
@@ -422,7 +422,7 @@ struct ImGuiContext
     ImDrawData              RenderDrawData;                     // Main ImDrawData instance to pass render information to the user
     ImVector<ImDrawList*>   RenderDrawLists[3];
     float                   ModalWindowDarkeningRatio;
-    ImDrawList              OverlayDrawList;                    // Optional software render of mouse cursors, if io.MouseDrawCursor is set + a few debug overlays
+    ImDrawList              OverlayDrawList;                    // Optional software render of mouse cursors, if pIO.MouseDrawCursor is set + a few debug overlays
     ImGuiMouseCursor        MouseCursor;
     ImGuiMouseCursorData    MouseCursorData[ImGuiMouseCursor_Count_];
 

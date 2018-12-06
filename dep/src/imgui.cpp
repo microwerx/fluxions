@@ -88,7 +88,7 @@
 
  - getting started:
    - init: call ImGui::GetIO() to retrieve the ImGuiIO structure and fill the fields marked 'Settings'.
-   - init: call io.Fonts->GetTexDataAsRGBA32(...) and load the font texture_ pixels into graphics memory.
+   - init: call pIO.Fonts->GetTexDataAsRGBA32(...) and load the font texture_ pixels into graphics memory.
    - every frame:
       1/ in your mainloop or right after you got your keyboard/mouse info, call ImGui::GetIO() and fill the fields marked 'Input'
       2/ call ImGui::NewFrame() as early as you can!
@@ -102,32 +102,32 @@
    - a typical application skeleton may be:
 
         // Application init
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize.X = 1920.0f;
-        io.DisplaySize.y = 1280.0f;
-        io.IniFilename = "imgui.ini";
-        io.RenderDrawListsFn = my_render_function;  // Setup a render function, or set to NULL and call GetDrawData() after Render() to access the render data.
-        // TODO: Fill others settings of the io structure
+        ImGuiIO& pIO = ImGui::GetIO();
+        pIO.DisplaySize.X = 1920.0f;
+        pIO.DisplaySize.y = 1280.0f;
+        pIO.IniFilename = "imgui.ini";
+        pIO.RenderDrawListsFn = my_render_function;  // Setup a render function, or set to NULL and call GetDrawData() after Render() to access the render data.
+        // TODO: Fill others settings of the pIO structure
 
         // Load texture_ atlas
         // There is a default font so you don't need to care about choosing a font yet
         unsigned char* pixels;
         int width, height;
-        io.Fonts->GetTexDataAsRGBA32(pixels, &width, &height);
+        pIO.Fonts->GetTexDataAsRGBA32(pixels, &width, &height);
         // TODO: At this points you've got a texture_ pointed to by 'pixels' and you need to upload that your your graphic system
-        // TODO: Store your texture_ pointer/identifier (whatever your engine uses) in 'io.Fonts->TexID'
+        // TODO: Store your texture_ pointer/identifier (whatever your engine uses) in 'pIO.Fonts->TexID'
 
         // Application main loop
         while (true)
         {
             // 1) get low-level inputs (e.g. on Win32, GetKeyboardState(), or poll your events, etc.)
             // TODO: fill all fields of IO structure and call NewFrame
-            ImGuiIO& io = ImGui::GetIO();
-            io.DeltaTime = 1.0f/60.0f;
-            io.MousePos = mouse_pos;
-            io.MouseDown[0] = mouse_button_0;
-            io.MouseDown[1] = mouse_button_1;
-            io.KeysDown[i] = ...
+            ImGuiIO& pIO = ImGui::GetIO();
+            pIO.DeltaTime = 1.0f/60.0f;
+            pIO.MousePos = mouse_pos;
+            pIO.MouseDown[0] = mouse_button_0;
+            pIO.MouseDown[1] = mouse_button_1;
+            pIO.KeysDown[i] = ...
 
             // 2) call NewFrame(), after this point you can use ImGui::* functions anytime
             ImGui::NewFrame();
@@ -141,7 +141,7 @@
             SwapBuffers();
         }
 
-   - You can read back 'io.WantCaptureMouse', 'io.WantCaptureKeybord' etc. flags from the IO structure to tell how ImGui intends to use your
+   - You can read back 'pIO.WantCaptureMouse', 'pIO.WantCaptureKeybord' etc. flags from the IO structure to tell how ImGui intends to use your
      inputs and to know if you should share them or hide them from the rest of your application. Read the FAQ below for more information.
 
 
@@ -155,7 +155,7 @@
  - 2017/05/26 (1.50) - Removed ImFontConfig::MergeGlyphCenterV in favor of a more multipurpose ImFontConfig::GlyphOffset.
  - 2017/05/01 (1.50) - Renamed ImDrawList::PathFill() (rarely used directly) to ImDrawList::PathFillConvex() for clarity.
  - 2016/11/06 (1.50) - BeginChild(const char*) now applies the stack id to the provided label, consistently with other functions as it should always have been. It shouldn't affect you unless (extremely unlikely) you were appending multiple times to a same child from different locations of the stack id. If that's the case, generate an id with GetId() and use it instead of passing string to BeginChild().
- - 2016/10/15 (1.50) - avoid 'void* user_data' parameter to io.SetClipboardTextFn/io.GetClipboardTextFn pointers. We pass io.ClipboardUserData to it.
+ - 2016/10/15 (1.50) - avoid 'void* user_data' parameter to pIO.SetClipboardTextFn/pIO.GetClipboardTextFn pointers. We pass pIO.ClipboardUserData to it.
  - 2016/09/25 (1.50) - style.WindowTitleAlign is now a ImVec2 (ImGuiAlign enum was removed). set to (0.5f,0.5f) for horizontal+vertical centering, (0.0f,0.0f) for upper-left, etc.
  - 2016/07/30 (1.50) - SameLine(X) with X>0.0f is now relative to left of column/group if any, and not always to left of window. This was sort of always the intent and hopefully breakage should be minimal.
  - 2016/05/12 (1.49) - title bar (using ImGuiCol_TitleBg/ImGuiCol_TitleBgActive colors) isn't rendered over a window background (ImGuiCol_WindowBg color) anymore. 
@@ -190,7 +190,7 @@
  - 2015/07/08 (1.43) - switched rendering data to use indexed rendering. this is saving a fair amount of CPU/GPU and enables us to get anti-aliasing for a marginal cost.
                        this necessary change will break your rendering function! the fix should be very easy. sorry for that :(
                      - if you are using a vanilla copy of one of the imgui_impl_XXXX.cpp provided in the example, you just need to update your copy and you can ignore the rest.
-                     - the signature of the io.RenderDrawListsFn handler has changed!
+                     - the signature of the pIO.RenderDrawListsFn handler has changed!
                             ImGui_XXXX_RenderDrawLists(ImDrawList** const cmd_lists, int cmd_lists_count)
                        became:
                             ImGui_XXXX_RenderDrawLists(ImDrawData* draw_data).
@@ -232,7 +232,7 @@
  - 2015/02/01 (1.31) - removed IO.MemReallocFn (unused)
  - 2015/01/19 (1.30) - renamed ImGuiStorage::GetIntPtr()/GetFloatPtr() to GetIntRef()/GetIntRef() because Ptr was conflicting with actual pointer storage functions.
  - 2015/01/11 (1.30) - big font/image API change! now loads TTF file. allow for multiple fonts. no need for a PNG loader.
-              (1.30) - removed GetDefaultFontData(). uses io.Fonts->GetTextureData*() API to retrieve uncompressed pixels.
+              (1.30) - removed GetDefaultFontData(). uses pIO.Fonts->GetTextureData*() API to retrieve uncompressed pixels.
                        this sequence:
                            const void* png_data;
                            unsigned int png_size;
@@ -241,12 +241,12 @@
                        became:
                            unsigned char* pixels;
                            int width, height;
-                           io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+                           pIO.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
                            // <Copy to GPU>
-                           io.Fonts->TexID = (your_texture_identifier);
+                           pIO.Fonts->TexID = (your_texture_identifier);
                        you now have much more flexibility to load multiple TTF fonts and manage the texture_ buffer for internal needs.
                        it is now recommended that you sample the font texture_ with bilinear interpolation.
-              (1.30) - added texture_ identifier in ImDrawCmd passed to your render function (we can now render images). make sure to set io.Fonts->TexID.
+              (1.30) - added texture_ identifier in ImDrawCmd passed to your render function (we can now render images). make sure to set pIO.Fonts->TexID.
               (1.30) - removed IO.PixelCenterOffset (unnecessary, can be handled in user projection matrix)
               (1.30) - removed ImGui::IsItemFocused() in favor of ImGui::IsItemActive() which handles all widgets
  - 2014/12/10 (1.18) - removed SetNewWindowDefaultPos() in favor of new generic API SetNextWindowPos(pos, ImGuiSetCondition_FirstUseEver)
@@ -297,7 +297,7 @@
 
  Q: I integrated ImGui in my engine and the text or lines are blurry..
  A: In your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f).
-    Also make sure your orthographic projection matrix and io.DisplaySize matches your actual framebuffer dimension.
+    Also make sure your orthographic projection matrix and pIO.DisplaySize matches your actual framebuffer dimension.
 
  Q: I integrated ImGui in my engine and some elements are clipping or disappearing when I move windows around..
  A: Most likely you are mishandling the clipping rectangles in your render function. Rectangles provided by ImGui are defined as (x1=left,y1=top,x2=right,y2=bottom) and NOT as (x1,y1,width,height).
@@ -396,19 +396,19 @@
       e.g. when displaying a list of objects, using indices or pointers as ID will preserve the node open/closed state differently. experiment and see what makes more sense!
 
  Q: How can I tell when ImGui wants my mouse/keyboard inputs and when I can pass them to my application?
- A: You can read the 'io.WantCaptureXXX' flags in the ImGuiIO structure. Preferably read them after calling ImGui::NewFrame() to avoid those flags lagging by one frame, but either should be fine.
-    When 'io.WantCaptureMouse' or 'io.WantCaptureKeyboard' flags are set you may want to discard/hide the inputs from the rest of your application.
-    When 'io.WantInputsCharacters' is set to may want to notify your OS to popup an on-screen keyboard, if available.
-    ImGui is tracking dragging and widget activity that may occur outside the boundary of a window, so 'io.WantCaptureMouse' is a more accurate and complete than testing for ImGui::IsMouseHoveringAnyWindow().
-    (Advanced note: text input releases focus on Return 'KeyDown', so the following Return 'KeyUp' event that your application receive will typically have 'io.WantcaptureKeyboard=false'. 
+ A: You can read the 'pIO.WantCaptureXXX' flags in the ImGuiIO structure. Preferably read them after calling ImGui::NewFrame() to avoid those flags lagging by one frame, but either should be fine.
+    When 'pIO.WantCaptureMouse' or 'pIO.WantCaptureKeyboard' flags are set you may want to discard/hide the inputs from the rest of your application.
+    When 'pIO.WantInputsCharacters' is set to may want to notify your OS to popup an on-screen keyboard, if available.
+    ImGui is tracking dragging and widget activity that may occur outside the boundary of a window, so 'pIO.WantCaptureMouse' is a more accurate and complete than testing for ImGui::IsMouseHoveringAnyWindow().
+    (Advanced note: text input releases focus on Return 'KeyDown', so the following Return 'KeyUp' event that your application receive will typically have 'pIO.WantcaptureKeyboard=false'. 
      Depending on your application logic it may or not be inconvenient. You might want to track which key-downs were for ImGui (e.g. with an array of bool) and filter out the corresponding key-ups.)
 
  Q: How can I load a different font than the default? (default is an embedded version of ProggyClean.ttf, rendered at size 13)
  A: Use the font atlas to load the TTF file you want:
 
-      ImGuiIO& io = ImGui::GetIO();
-      io.Fonts->AddFontFromFileTTF("myfontfile.ttf", size_in_pixels);
-      io.Fonts->GetTexDataAsRGBA32() or GetTexDataAsAlpha8()
+      ImGuiIO& pIO = ImGui::GetIO();
+      pIO.Fonts->AddFontFromFileTTF("myfontfile.ttf", size_in_pixels);
+      pIO.Fonts->GetTexDataAsRGBA32() or GetTexDataAsAlpha8()
 
  Q: How can I easily use icons in my application?
  A: The most convenient and practical way is to merge an icon font such as FontAwesome inside you main font. Then you can refer to icons within your strings.
@@ -418,11 +418,11 @@
  A: Use the font atlas to pack them into a single texture_:
     (Read extra_fonts/README.txt and the code in ImFontAtlas for more details.)
 
-      ImGuiIO& io = ImGui::GetIO();
-      ImFont* font0 = io.Fonts->AddFontDefault();
-      ImFont* font1 = io.Fonts->AddFontFromFileTTF("myfontfile.ttf", size_in_pixels);
-      ImFont* font2 = io.Fonts->AddFontFromFileTTF("myfontfile2.ttf", size_in_pixels);
-      io.Fonts->GetTexDataAsRGBA32() or GetTexDataAsAlpha8()
+      ImGuiIO& pIO = ImGui::GetIO();
+      ImFont* font0 = pIO.Fonts->AddFontDefault();
+      ImFont* font1 = pIO.Fonts->AddFontFromFileTTF("myfontfile.ttf", size_in_pixels);
+      ImFont* font2 = pIO.Fonts->AddFontFromFileTTF("myfontfile2.ttf", size_in_pixels);
+      pIO.Fonts->GetTexDataAsRGBA32() or GetTexDataAsAlpha8()
       // the first loaded font gets used by default
       // use ImGui::PushFont()/ImGui::PopFont() to change the font at runtime
 
@@ -431,15 +431,15 @@
       config.OversampleH = 3;
       config.OversampleV = 1;
       config.GlyphExtraSpacing.X = 1.0f;
-      io.Fonts->LoadFromFileTTF("myfontfile.ttf", size_pixels, &config);
+      pIO.Fonts->LoadFromFileTTF("myfontfile.ttf", size_pixels, &config);
 
       // Combine multiple fonts into one (e.g. for icon fonts)
       ImWchar ranges[] = { 0xf000, 0xf3ff, 0 };
       ImFontConfig config;
       config.MergeMode = true;
-      io.Fonts->AddFontDefault();
-      io.Fonts->LoadFromFileTTF("fontawesome-webfont.ttf", 16.0f, &config, ranges); // Merge icon font
-      io.Fonts->LoadFromFileTTF("myfontfile.ttf", size_pixels, NULL, &config, io.Fonts->GetGlyphRangesJapanese()); // Merge japanese glyphs
+      pIO.Fonts->AddFontDefault();
+      pIO.Fonts->LoadFromFileTTF("fontawesome-webfont.ttf", 16.0f, &config, ranges); // Merge icon font
+      pIO.Fonts->LoadFromFileTTF("myfontfile.ttf", size_pixels, NULL, &config, pIO.Fonts->GetGlyphRangesJapanese()); // Merge japanese glyphs
 
  Q: How can I display and input non-Latin characters such as Chinese, Japanese, Korean, Cyrillic?
  A: When loading a font, pass custom Unicode ranges to specify the glyphs to load. 
@@ -447,11 +447,11 @@
     In C++11 you can encode a string literal in UTF-8 by using the u8"hello" syntax. Otherwise you can convert yourself to UTF-8 or load text data from file already saved as UTF-8.
     You can also try to remap your local codepage characters to their Unicode codepoint using font->AddRemapChar(), but international users may have problems reading/editing your source code.
 
-      io.Fonts->AddFontFromFileTTF("myfontfile.ttf", size_in_pixels, NULL, io.Fonts->GetGlyphRangesJapanese());  // Load Japanese characters
-      io.Fonts->GetTexDataAsRGBA32() or GetTexDataAsAlpha8()
-      io.ImeWindowHandle = MY_HWND;      // To input using Microsoft IME, give ImGui the hwnd of your application
+      pIO.Fonts->AddFontFromFileTTF("myfontfile.ttf", size_in_pixels, NULL, pIO.Fonts->GetGlyphRangesJapanese());  // Load Japanese characters
+      pIO.Fonts->GetTexDataAsRGBA32() or GetTexDataAsAlpha8()
+      pIO.ImeWindowHandle = MY_HWND;      // To input using Microsoft IME, give ImGui the hwnd of your application
 
-    As for text input, depends on you passing the right character code to io.AddInputCharacter(). The example applications do that.
+    As for text input, depends on you passing the right character code to pIO.AddInputCharacter(). The example applications do that.
 
  Q: How can I use the drawing facilities without an ImGui window? (using ImDrawList API)
  A: The easiest way is to create a dummy window. Call Begin() with NoTitleBar|NoResize|NoMove|NoScrollbar|NoSavedSettings|NoInputs flag, zero background alpha, 
@@ -2133,8 +2133,8 @@ void ImGui::NewFrame()
     // Check user data
     IM_ASSERT(g.IO.DeltaTime >= 0.0f);               // Need a positive DeltaTime (zero is tolerated but will cause some timing issues)
     IM_ASSERT(g.IO.DisplaySize.x >= 0.0f && g.IO.DisplaySize.y >= 0.0f);
-    IM_ASSERT(g.IO.Fonts->Fonts.Size > 0);           // Font Atlas not created. Did you call io.Fonts->GetTexDataAsRGBA32 / GetTexDataAsAlpha8 ?
-    IM_ASSERT(g.IO.Fonts->Fonts[0]->IsLoaded());     // Font Atlas not created. Did you call io.Fonts->GetTexDataAsRGBA32 / GetTexDataAsAlpha8 ?
+    IM_ASSERT(g.IO.Fonts->Fonts.Size > 0);           // Font Atlas not created. Did you call pIO.Fonts->GetTexDataAsRGBA32 / GetTexDataAsAlpha8 ?
+    IM_ASSERT(g.IO.Fonts->Fonts[0]->IsLoaded());     // Font Atlas not created. Did you call pIO.Fonts->GetTexDataAsRGBA32 / GetTexDataAsAlpha8 ?
     IM_ASSERT(g.Style.CurveTessellationTol > 0.0f);  // Invalid style setting
 
     if (!g.Initialized)
@@ -3160,7 +3160,7 @@ int ImGui::GetKeyIndex(ImGuiKey imgui_key)
     return GImGui->IO.KeyMap[imgui_key];
 }
 
-// Note that imgui doesn't know the semantic of each entry of io.KeyDown[]. Use your own indices/enums according to how your backend/engine stored them into KeyDown[]!
+// Note that imgui doesn't know the semantic of each entry of pIO.KeyDown[]. Use your own indices/enums according to how your backend/engine stored them into KeyDown[]!
 bool ImGui::IsKeyDown(int user_key_index)
 {
     if (user_key_index < 0) return false;
@@ -4649,7 +4649,7 @@ static ImFont* GetDefaultFont()
 static void SetCurrentFont(ImFont* font)
 {
     ImGuiContext& g = *GImGui;
-    IM_ASSERT(font && font->IsLoaded());    // Font Atlas not created. Did you call io.Fonts->GetTexDataAsRGBA32 / GetTexDataAsAlpha8 ?
+    IM_ASSERT(font && font->IsLoaded());    // Font Atlas not created. Did you call pIO.Fonts->GetTexDataAsRGBA32 / GetTexDataAsAlpha8 ?
     IM_ASSERT(font->Scale > 0.0f);
     g.Font = font;
     g.FontBaseSize = g.IO.FontGlobalScale * g.Font->FontSize * g.Font->Scale;

@@ -428,15 +428,15 @@ namespace Fluxions
 	{
 		target = GL_TEXTURE_1D_ARRAY;
 
-		SDL_Surface *image = IMG_Load(filename.c_str());
-		if (image == nullptr)
+		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		if (imageSurface == nullptr)
 			return false;
 
-		int width = image->w;
-		int height = image->h;
-		void *data = image->pixels;
-		int format = image->format->BitsPerPixel == 24 ? GL_RGB :
-			image->format->BitsPerPixel == 32 ? GL_RGBA : 0;
+		int width = imageSurface->w;
+		int height = imageSurface->h;
+		void *data = imageSurface->pixels;
+		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB :
+			imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 		if (format == 0)
 			return false;
 
@@ -477,29 +477,29 @@ namespace Fluxions
 
 		for (int i = 0; i < count; i++)
 		{
-			SDL_Surface *image = IMG_Load(filenames[i].c_str());
-			if (image == nullptr)
+			SDL_Surface *imageSurface = IMG_Load(filenames[i].c_str());
+			if (imageSurface == nullptr)
 			{
 				badData = true;
 				continue;
 			}
 
-			int imageFormat = image->format->BitsPerPixel == 24 ? GL_RGB :
-				image->format->BitsPerPixel == 32 ? GL_RGBA : 0;
+			int imageFormat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB :
+				imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 			if (imageFormat == 0)
 				badData = true;
 			if (i == 0)
 			{
-				width = image->w;
-				height = image->h;
-				bpp = image->format->BitsPerPixel / 8;
+				width = imageSurface->w;
+				height = imageSurface->h;
+				bpp = imageSurface->format->BitsPerPixel / 8;
 				format = imageFormat;
 
 				data = new unsigned char[width * height * count * bpp];
 			}
 			else
 			{
-				if (image->w != width || image->h != height || format != imageFormat)
+				if (imageSurface->w != width || imageSurface->h != height || format != imageFormat)
 				{
 					badData = true;
 					break;
@@ -507,9 +507,9 @@ namespace Fluxions
 			}
 			if (imageFormat != 0)
 			{
-				memcpy(data + i * (width * height * bpp), image->pixels, width * height * bpp);
+				memcpy(data + i * (width * height * bpp), imageSurface->pixels, width * height * bpp);
 			}
-			SDL_FreeSurface(image);
+			SDL_FreeSurface(imageSurface);
 		}
 
 		if (data == nullptr)
@@ -533,15 +533,15 @@ namespace Fluxions
 	{
 		target = GL_TEXTURE_3D;
 
-		SDL_Surface *image = IMG_Load(filename.c_str());
-		if (image == nullptr)
+		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		if (imageSurface == nullptr)
 			return false;
 
-		int width = image->w;
-		int height = image->h / count;
-		void *data = image->pixels;
-		int format = image->format->BitsPerPixel == 24 ? GL_RGB :
-			image->format->BitsPerPixel == 32 ? GL_RGBA : 0;
+		int width = imageSurface->w;
+		int height = imageSurface->h / count;
+		void *data = imageSurface->pixels;
+		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB :
+			imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 		if (format == 0)
 			return false;
 
@@ -718,7 +718,7 @@ namespace Fluxions
 	{
 		target = GL_TEXTURE_CUBE_MAP;
 
-		SDL_Surface *image;
+		SDL_Surface *imageSurface;
 		int width;
 		int height;
 		int format;
@@ -734,17 +734,17 @@ namespace Fluxions
 		};
 		void *data[6];
 		bool badData = false;
-		image = IMG_Load(filename.c_str());
+		imageSurface = IMG_Load(filename.c_str());
 		
-		if (!image)
+		if (!imageSurface)
 			return false;
 
-		imageFormat = image->format->BitsPerPixel == 24 ? GL_RGB : image->format->BitsPerPixel == 32 ? GL_RGBA : 0;
-		bytesPerPixel = image->format->BitsPerPixel == 24 ? 3 : image->format->BitsPerPixel == 32 ? 4 : 0;
+		imageFormat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
+		bytesPerPixel = imageSurface->format->BitsPerPixel == 24 ? 3 : imageSurface->format->BitsPerPixel == 32 ? 4 : 0;
 		if (imageFormat == 0)
 			badData = true;
-		width = image->w;
-		height = image->h;
+		width = imageSurface->w;
+		height = imageSurface->h;
 		if (height * 6 != width)
 			badData = true;
 		format = imageFormat;
@@ -758,7 +758,7 @@ namespace Fluxions
 				// demultiplex the data
 				data[k] = new unsigned char[bytesPerPixel * width * width];
 				unsigned char *dst_pixels = (unsigned char *)data[k];
-				unsigned char *src_pixels = (unsigned char *)image->pixels;
+				unsigned char *src_pixels = (unsigned char *)imageSurface->pixels;
 				size_t rowLength = width * bytesPerPixel;
 				size_t dst_offset = 0;
 				size_t src_offset = i * rowLength;
@@ -826,7 +826,7 @@ namespace Fluxions
 			}
 		}
 
-		SDL_FreeSurface(image);
+		SDL_FreeSurface(imageSurface);
 		if (badData == true)
 			return false;
 		return true;

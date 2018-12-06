@@ -770,8 +770,8 @@ STBTT_DEF int stbtt_GetGlyphShape(const stbtt_fontinfo *info, int glyph_index, s
 // The shape is a series of countours. Each one starts with
 // a STBTT_moveto, then consists of a series of mixed
 // STBTT_lineto and STBTT_curveto segments. A lineto
-// draws a line from previous endpoint to its X,y; a curveto
-// draws a quadratic bezier from previous endpoint to
+// draws a line from previous m_endpoint to its X,y; a curveto
+// draws a quadratic bezier from previous m_endpoint to
 // its X,y, using cx,cy as the bezier control point.
 
 STBTT_DEF void stbtt_FreeShape(const stbtt_fontinfo *info, stbtt_vertex *vertices);

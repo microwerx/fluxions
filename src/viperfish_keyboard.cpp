@@ -38,9 +38,9 @@ namespace Viperfish
 	}
 
 
-	bool KeyboardState::CheckKeyPressed(vector<string> keys)
+	bool KeyboardState::CheckKeyPressed(vector<string> keysToCheck)
 	{
-		for (auto & key : keys)
+		for (auto & key : keysToCheck)
 		{
 			if (IsPressed(key))
 				return true;
@@ -49,10 +49,10 @@ namespace Viperfish
 	}
 
 
-	int KeyboardState::CountKeysPressed(vector<string> keys)
+	int KeyboardState::CountKeysPressed(vector<string> keysToCheck)
 	{
 		int count = 0;
-		for (auto key : keys)
+		for (auto key : keysToCheck)
 		{
 			if (IsPressed(key))
 				count++;

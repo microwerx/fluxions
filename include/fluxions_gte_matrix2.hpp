@@ -238,8 +238,8 @@ class TMatrix2
 	constexpr auto AsTranspose() const noexcept
 	{
 		return TMatrix2<T>(
-			t11, t12,
-			t21, t22);
+			m11, m21,
+			m12, m22);
 	}
 
 	constexpr auto Transpose() noexcept

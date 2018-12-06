@@ -456,7 +456,7 @@ static void stb_textedit_click(STB_TEXTEDIT_STRING *str, STB_TexteditState *stat
    state->has_preferred_x = 0;
 }
 
-// API drag: on mouse drag, move the cursor and selection endpoint to the clicked location
+// API drag: on mouse drag, move the cursor and selection m_endpoint to the clicked location
 static void stb_textedit_drag(STB_TEXTEDIT_STRING *str, STB_TexteditState *state, float x, float y)
 {
    int p = stb_text_locate_coord(str, x, y);
