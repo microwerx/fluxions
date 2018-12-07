@@ -704,7 +704,7 @@ STBTT_DEF float stbtt_ScaleForPixelHeight(const stbtt_fontinfo *info, float pixe
 STBTT_DEF float stbtt_ScaleForMappingEmToPixels(const stbtt_fontinfo *info, float pixels);
 // computes a scale factor to produce a font whose EM size is mapped to
 // 'pixels' tall. This is probably what traditional APIs compute, but
-// I'm not positive.
+// I'ptr not positive.
 
 STBTT_DEF void stbtt_GetFontVMetrics(const stbtt_fontinfo *info, int *ascent, int *descent, int *lineGap);
 // ascent is the coordinate above the baseline the font extends; descent
@@ -1541,7 +1541,7 @@ static int stbtt__GetGlyphShapeTT(const stbtt_fontinfo *info, int glyph_index, s
       // above, shifted to the end of the array so we won't overwrite it when
       // we create our final data starting from the front
 
-      off = m - n; // starting offset for uninterpreted data, regardless of how m ends up being calculated
+      off = m - n; // starting offset for uninterpreted data, regardless of how ptr ends up being calculated
 
       // first load flags
 
@@ -2874,7 +2874,7 @@ static void stbtt__sort_edges_quicksort(stbtt__edge *p, int n)
          p[z] = p[m];
          p[m] = t;
       }
-      /* now p[m] is the median-of-three */
+      /* now p[ptr] is the median-of-three */
       /* swap it to the beginning so it won't move around */
       t = p[0];
       p[0] = p[m];

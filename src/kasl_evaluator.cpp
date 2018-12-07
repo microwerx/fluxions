@@ -16,86 +16,85 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "stdafx.h"
-#include "kasl.hpp"
 #include "kasl_evaluator.hpp"
+#include "kasl.hpp"
+#include "stdafx.h"
 
-namespace KASL
+namespace KASL {
+VariableList::VariableList()
 {
-	VariableList::VariableList()
-	{
+}
 
-	}
+VariableList::~VariableList()
+{
+    variables.clear();
+}
 
+bool VariableList::is_var(const string& name) const
+{
+    auto it = variables.find(name);
+    if (it == variables.end())
+        return false;
+    return true;
+}
 
-	VariableList::~VariableList()
-	{
-		variables.clear();
-	}
+void VariableList::set_var(const string& name, double dval)
+{
+    KASL::Token token;
+    token.type = KASL::TokenType::TT2_DOUBLE;
+    token.dval = dval;
+    token.ival = (int)floor(dval);
+    variables[name] = token;
+}
 
+void VariableList::set_var(const string& name, int ival)
+{
+    KASL::Token token;
+    token.type = KASL::TokenType::TT2_INTEGER;
+    token.dval = ival;
+    token.ival = ival;
+    variables[name] = token;
+}
 
-	bool VariableList::is_var(const string &name) const
-	{
-		auto it = variables.find(name);
-		if (it == variables.end()) return false;
-		return true;
-	}
+void VariableList::set_var(const string& name, const string& sval)
+{
+    KASL::Token token;
+    token.type = KASL::TokenType::TT2_STRING;
+    token.sval = sval;
+    variables[name] = token;
+}
 
-	void VariableList::set_var(const string &name, double dval)
-	{
-		KASL::Token token;
-		token.type = KASL::TokenType::TT2_DOUBLE;
-		token.dval = dval;
-		token.ival = (int)floor(dval);
-		variables[name] = token;
-	}
+int VariableList::get_var_integer(const string& name) const
+{
+    auto it = get_var(name);
+    if (it == get_var_end() || it->second.IsIntegerOrDouble() == false)
+        return 0;
+    return it->second.ival;
+}
 
-	void VariableList::set_var(const string &name, int ival)
-	{
-		KASL::Token token;
-		token.type = KASL::TokenType::TT2_INTEGER;
-		token.dval = ival;
-		token.ival = ival;
-		variables[name] = token;
-	}
+double VariableList::get_var_double(const string& name) const
+{
+    auto it = get_var(name);
+    if (it == get_var_end() || it->second.IsIntegerOrDouble() == false)
+        return 0.0;
+    return it->second.dval;
+}
 
-	void VariableList::set_var(const string &name, const string &sval)
-	{
-		KASL::Token token;
-		token.type = KASL::TokenType::TT2_STRING;
-		token.sval = sval;
-		variables[name] = token;
-	}
+const string& VariableList::get_var_string(const string& name) const
+{
+    auto it = get_var(name);
+    if (it == get_var_end() || it->second.IsStringOrIdentifier() == false)
+        return blankString;
+    return it->second.sval;
+}
 
-	int VariableList::get_var_integer(const string &name) const
-	{
-		auto it = get_var(name);
-		if (it == get_var_end() || it->second.IsIntegerOrDouble() == false) return 0;
-		return it->second.ival;
-	}
+map<string, KASL::Token>::const_iterator VariableList::get_var(const string& name) const
+{
+    return variables.find(name);
+}
 
-	double VariableList::get_var_double(const string &name) const
-	{
-		auto it = get_var(name);
-		if (it == get_var_end() || it->second.IsIntegerOrDouble() == false) return 0.0;
-		return it->second.dval;
-	}
-
-	const string & VariableList::get_var_string(const string &name) const
-	{
-		auto it = get_var(name);
-		if (it == get_var_end() || it->second.IsStringOrIdentifier() == false) return blankString;
-		return it->second.sval;
-	}
-
-	map<string, KASL::Token>::const_iterator VariableList::get_var(const string &name) const
-	{
-		return variables.find(name);
-	}
-
-	map<string, KASL::Token>::const_iterator VariableList::get_var_end() const
-	{
-		return variables.cend();
-	}
-
+map<string, KASL::Token>::const_iterator VariableList::get_var_end() const
+{
+    return variables.cend();
+}
 }

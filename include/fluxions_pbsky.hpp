@@ -113,7 +113,7 @@ class PhysicallyBasedSky
 	// not implemented
 	void ComputeCylinderMap(int width, int height, bool normalize = false, float sampleScale = 8.0f);
 	// not implemented
-	void ComputeSphereMap(int width, int height, bool normalize = false, float sampleScale = 8.0f);
+	//void ComputeSphereMap(int width, int height, bool normalize = false, float sampleScale = 8.0f);
 
 	void ComputeSunGroundRadiances();
 	Color4f GetSunDiskRadiance() const { return sunDiskRadiance; }

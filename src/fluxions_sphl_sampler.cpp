@@ -19,140 +19,126 @@
 #include "stdafx.h"
 #include <fluxions_sphl_sampler.hpp>
 
-
-namespace Fluxions
+namespace Fluxions {
+SphlSampler::SphlSampler()
 {
-	SphlSampler::SphlSampler()
-	{
-		resize(ix, iy);
-	}
+    resize(ix, iy);
+}
 
+void SphlSampler::resize(int samplesX, int samplesY)
+{
+    if (numSamples != ix * iy) {
+        numSamples = ix * iy;
+        randomVectors.resize(numSamples);
+        theta.resize(numSamples);
+        phi.resize(numSamples);
+        sph.resize(numSamples * 121);
+        debug_sides.resize(numSamples);
 
-	void SphlSampler::resize(int samplesX, int samplesY)
-	{
-		if (numSamples != ix * iy)
-		{
-			numSamples = ix * iy;
-			randomVectors.resize(numSamples);
-			theta.resize(numSamples);
-			phi.resize(numSamples);
-			sph.resize(numSamples * 121);
-			debug_sides.resize(numSamples);
+        if (numSamples == 0)
+            return;
 
-			if (numSamples == 0)
-				return;
+        Vector3f avgVector;
 
-			Vector3f avgVector;
+        // Create stratified set of samples on the sphere.
+        for (int b = 0; b < iy; b++) {
+            for (int a = 0; a < ix; a++) {
+                float x = 0.0f;
 
-			// Create stratified set of samples on the sphere.
-			for (int b = 0; b < iy; b++)
-			{
-				for (int a = 0; a < ix; a++)
-				{
-					float x, y, sampleTheta, samplePhi;
-					int method = 1;
-					if (method == 0)
-					{
-						x = randomSampler(0.0f, 1.0f);
-						y = randomSampler(0.0f, 1.0f);
-					}
-					else if (method == 1)
-					{
-						x = randomSampler((a + 0.25f) / ix, (a + 0.75f) / ix);
-						y = randomSampler((b + 0.25f) / iy, (b + 0.75f) / iy);
-					}
-					//double sampleTheta = 2 * asin(sqrt(y));
-					//double samplePhi = FX_PI * X;
-					samplePhi = FX_F32_TWOPI * x - FX_F32_PI;
-					sampleTheta = 2 * asin(sqrt(y));// FX_PI * X;
-					Vector3f v;
-					randomVectors[b * ix + a].from_theta_phi(sampleTheta, samplePhi);
-				}
-			}
+                float y = 0.0f;
+                float sampleTheta = 0.0f;
+                float samplePhi = 0.0f;
+                int method = 1;
+                if (method == 0) {
+                    x = randomSampler(0.0f, 1.0f);
+                    y = randomSampler(0.0f, 1.0f);
+                } else if (method == 1) {
+                    x = randomSampler((a + 0.25f) / ix, (a + 0.75f) / ix);
+                    y = randomSampler((b + 0.25f) / iy, (b + 0.75f) / iy);
+                }
+                //double sampleTheta = 2 * asin(sqrt(y));
+                //double samplePhi = FX_PI * X;
+                samplePhi = FX_F32_TWOPI * x - FX_F32_PI;
+                sampleTheta = 2 * asin(sqrt(y)); // FX_PI * X;
+                Vector3f v;
+                randomVectors[b * ix + a].from_theta_phi(sampleTheta, samplePhi);
+            }
+        }
 
-			sampleMap.resize(ix * pxscale, iy * pxscale);
-			for (int i = 0; i < numSamples; i++)
-			{
-				//float rtheta = randomSampler(0.0f, FX_PI);
-				//float rphi = randomSampler(0, 8.0 * FX_PI);
-				//randomVectors[i].from_theta_phi(rtheta, rphi);
-				//randomVectors[i].reset(randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f));
-				//while (randomVectors[i].lengthSquared() == 0)
-				//	randomVectors[i].reset(randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f));
-				//randomVectors[i].normalize();
-				theta[i] = randomVectors[i].theta();
-				phi[i] = randomVectors[i].phi();
-				avgVector += randomVectors[i];
-				float s;
-				float t;
-				int side;
-				MakeFaceSTFromCubeVector(randomVectors[i].x, randomVectors[i].y, randomVectors[i].z, &s, &t, &side);
-				debug_sides[i] = side;
-			}
+        sampleMap.resize(ix * pxscale, iy * pxscale);
+        for (int i = 0; i < numSamples; i++) {
+            //float rtheta = randomSampler(0.0f, FX_PI);
+            //float rphi = randomSampler(0, 8.0 * FX_PI);
+            //randomVectors[i].from_theta_phi(rtheta, rphi);
+            //randomVectors[i].reset(randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f));
+            //while (randomVectors[i].lengthSquared() == 0)
+            //	randomVectors[i].reset(randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f), randomSampler(-1.0f, 1.0f));
+            //randomVectors[i].normalize();
+            theta[i] = randomVectors[i].theta();
+            phi[i] = randomVectors[i].phi();
+            avgVector += randomVectors[i];
+            float s;
+            float t;
+            int side;
+            MakeFaceSTFromCubeVector(randomVectors[i].x, randomVectors[i].y, randomVectors[i].z, &s, &t, &side);
+            debug_sides[i] = side;
+        }
 
-			//for (int i = 0; i < 6; i++)
-			//{
-			//	cout << "side " << i << " = " << count(debug_sides.begin(), debug_sides.end(), i) << endl;
-			//}
-			avgVector *= 1.0 / numSamples;
-			// cout << "Average vector: (" << avgVector.x << ", " << avgVector.y << ", " << avgVector.z << ")" << endl;
-			for (int l = 0; l <= 10; l++)
-			{
-				for (int m = -l; m <= l; m++)
-				{
-					for (int i = 0; i < numSamples; i++)
-					{
-						int lm = l * (l + 1) + m;
-						double sph_value = spherical_harmonic(l, m, theta[i], phi[i]);
-						sph[i * 121 + lm] = sph_value;
-					}
-				}
-			}
-		}
-	}
+        //for (int i = 0; i < 6; i++)
+        //{
+        //	cout << "side " << i << " = " << count(debug_sides.begin(), debug_sides.end(), i) << endl;
+        //}
+        avgVector *= 1.0 / numSamples;
+        // cout << "Average vector: (" << avgVector.x << ", " << avgVector.y << ", " << avgVector.z << ")" << endl;
+        for (int l = 0; l <= 10; l++) {
+            for (int m = -l; m <= l; m++) {
+                for (int i = 0; i < numSamples; i++) {
+                    int lm = l * (l + 1) + m;
+                    double sph_value = spherical_harmonic(l, m, theta[i], phi[i]);
+                    sph[i * 121 + lm] = sph_value;
+                }
+            }
+        }
+    }
+}
 
+void SphlSampler::saveSampleMap(const string& path, int pixelScale)
+{
+    Color3i White(255);
 
-	void SphlSampler::saveSampleMap(const string & path, int pixelScale)
-	{
-		Color3i White(255);
+    sampleMap.reset();
+    sampleMap.resize(ix * pixelScale, iy * pixelScale);
+    for (int i = 0; i < numSamples; i++) {
+        int px = (int)(ix * pixelScale * (phi[i] / FX_PI));
+        int py = (int)(iy * pixelScale * (theta[i] + FX_PI) / FX_TWOPI);
 
-		sampleMap.reset();
-		sampleMap.resize(ix * pixelScale, iy * pixelScale);
-		for (int i = 0; i < numSamples; i++)
-		{
-			int px = (int)(ix * pixelScale * (phi[i] / FX_PI));
-			int py = (int)(iy * pixelScale * (theta[i] + FX_PI) / FX_TWOPI);
+        sampleMap.setPixel(px, py, White);
+    }
+    sampleMap.savePPMi(path, 1.0f, 0, 255);
+}
 
-			sampleMap.setPixel(px, py, White);
-		}
-		sampleMap.savePPMi(path, 1.0f, 0, 255);
-	}
+void SphlSampler::sampleCubeMap(const Image4f& cubeMap, MultispectralSph4f& msph)
+{
+    if (cubeMap.empty() || !cubeMap.IsCubeMap())
+        return;
 
+    size_t numCoefs = msph[0].getMaxCoefficients();
+    for (int lm = 0; lm < numCoefs; lm++) {
+        Color4f coef;
+        float pixelArea = (4.0f * FX_F32_PI) / numSamples;
+        for (int i = 0; i < numSamples; i++) {
+            Color4f texel = cubeMap.getPixelCubeMap(randomVectors[i]);
+            coef += texel * (float)sph[i * 121 + lm];
+        }
+        coef *= pixelArea;
 
-	void SphlSampler::sampleCubeMap(const Image4f & cubeMap, MultispectralSph4f & msph)
-	{
-		if (cubeMap.empty() || !cubeMap.IsCubeMap())
-			return;
-
-		size_t numCoefs = msph[0].getMaxCoefficients();
-		for (int lm = 0; lm < numCoefs; lm++)
-		{
-			Color4f coef;
-			float pixelArea = (4.0f * FX_F32_PI) / numSamples;
-			for (int i = 0; i < numSamples; i++)
-			{
-				Color4f texel = cubeMap.getPixelCubeMap(randomVectors[i]);
-				coef += texel * (float)sph[i * 121 + lm];
-			}
-			coef *= pixelArea;
-
-			float r = coef.v[0];
-			float g = coef.v[1];
-			float b = coef.v[2];
-			msph[0].setCoefficient(lm, r);
-			msph[1].setCoefficient(lm, g);
-			msph[2].setCoefficient(lm, b);
-			msph[3].setCoefficient(lm, 0.2126f * r + 0.7152f * g + 0.0722f * b);
-		}
-	}
+        float r = coef.r;
+        float g = coef.g;
+        float b = coef.b;
+        msph[0].setCoefficient(lm, r);
+        msph[1].setCoefficient(lm, g);
+        msph[2].setCoefficient(lm, b);
+        msph[3].setCoefficient(lm, 0.2126f * r + 0.7152f * g + 0.0722f * b);
+    }
+}
 } // namespace Fluxions

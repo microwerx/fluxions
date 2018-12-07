@@ -19,72 +19,67 @@
 #ifndef VIPERFISH_MOUSE_HPP
 #define VIPERFISH_MOUSE_HPP
 
-#include <viperfish_utilities.hpp>
 #include <fluxions_gte.hpp>
+#include <viperfish_utilities.hpp>
 
-namespace Viperfish
-{
+namespace Viperfish {
 using namespace std;
 using namespace Fluxions;
 
-struct MouseDragState
-{
-	int button;
-	Vector2i startPosition;
-	Vector2i endPosition;
-	Vector2i previousPosition;
-	Vector2i currentPosition;
-	Vector2i currentDelta;
-	Vector2i totalDelta;
-	double startTime;
-	double endTime;
-	double timeDragged;
+struct MouseDragState {
+    int button;
+    Vector2i startPosition;
+    Vector2i endPosition;
+    Vector2i previousPosition;
+    Vector2i currentPosition;
+    Vector2i currentDelta;
+    Vector2i totalDelta;
+    double startTime;
+    double endTime;
+    double timeDragged;
 
-	void Start(int button, Vector2i newPosition, double currentTime);
-	void Update(Vector2i newPosition, double currentTime);
+    void Start(int button, Vector2i newPosition, double currentTime);
+    void Update(Vector2i newPosition, double currentTime);
 };
 
-struct MouseClickState
-{
-	int button;
-	Vector2i position;
-	Vector2i startPosition;
-	Vector2i dposition;
-	double clickTime;
+struct MouseClickState {
+    int button;
+    Vector2i position;
+    Vector2i startPosition;
+    Vector2i dposition;
+    double clickTime;
 
-	void FillFromDrag(int button, const MouseDragState &mds);
+    void FillFromDrag(const MouseDragState& mds);
 };
 
-struct MouseDoubleClickState
-{
-	int button;
-	Vector2i position;
-	Vector2i deltaPosition;
-	double deltaTime;
-	void FillFromClicks(int button, const MouseClickState &mcs1, const MouseClickState &mcs2);
-	bool IsDoubleClick() const;
+struct MouseDoubleClickState {
+    int button;
+    Vector2i position;
+    Vector2i deltaPosition;
+    double deltaTime;
+    void FillFromClicks(int button, const MouseClickState& mcs1, const MouseClickState& mcs2);
+    bool IsDoubleClick() const;
 };
 
-struct MouseState
-{
-	map<int, bool> buttons;
-	Vector2i position;
-	Vector2i previousPosition;
-	Vector2i dposition;
-	map<int, MouseDragState> dragStates;
-	map<int, MouseClickState> clickStates;
-	map<int, MouseClickState> lastClickStates;
-	map<int, MouseDoubleClickState> doubleClickStates;
+struct MouseState {
+    map<int, bool> buttons;
+    Vector2i position;
+    Vector2i previousPosition;
+    Vector2i dposition;
+    map<int, MouseDragState> dragStates;
+    map<int, MouseClickState> clickStates;
+    map<int, MouseClickState> lastClickStates;
+    map<int, MouseDoubleClickState> doubleClickStates;
 
-	double lastPollTime;
-	void UpdateTime();
+    double lastPollTime;
+    void UpdateTime();
 
-	void OnMove(int x, int y);
-	void OnButtonDown(int button);
-	void OnButtonUp(int button);
-	void OnDrag(const MouseDragState &mds);
-	void OnClick(const MouseClickState &mcs);
-	void OnDoubleClick(const MouseDoubleClickState &mdcs);
+    void OnMove(int x, int y);
+    void OnButtonDown(int button);
+    void OnButtonUp(int button);
+    void OnDrag(const MouseDragState& mds);
+    void OnClick(const MouseClickState& mcs);
+    void OnDoubleClick(const MouseDoubleClickState& mdcs);
 };
 } // namespace Viperfish
 

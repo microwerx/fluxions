@@ -19,8 +19,5 @@
 #include "stdafx.h"
 #include <unicornfish.hpp>
 
-
-namespace Uf
-{
-
+namespace Uf {
 }

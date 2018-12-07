@@ -33,7 +33,7 @@ namespace Fluxions
 
 	double _legendre_polynomial(int l, int m, double x)
 	{
-		// evaluate an Associated Legendre Polynomial P(l,m,X) at X
+		// evaluate an Associated Legendre Polynomial P(l,ptr,X) at X
 		double pmm = 1.0;
 		if (m > 0) {
 			double somx2 = sqrt((1.0 - x)*(1.0 + x));
@@ -122,7 +122,7 @@ namespace Fluxions
 
 	double spherical_harmonic(int l, int m, double theta, double phi)
 	{
-		// K = sqrt(2.0) * sqrt((2 * l + 1) / (4 * FX_PI) * factorial(l - abs(m)) / factorial(l + abs(m)))
+		// K = sqrt(2.0) * sqrt((2 * l + 1) / (4 * FX_PI) * factorial(l - abs(ptr)) / factorial(l + abs(ptr)))
 		static const double K[] = {
 			3.9894228040143300E-01,
 			4.8860251190292000E-01,

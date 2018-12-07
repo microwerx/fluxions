@@ -77,7 +77,7 @@ Version history:
 
 1.1   September 2012
       The coefficients of the spectral model are now scaled so that the output
-      is given in physical units: W / (m^-2 * sr * nm). Also, the output of the
+      is given in physical units: W / (ptr^-2 * sr * nm). Also, the output of the
       XYZ model is now no longer scaled to the range [0...1]. Instead, it is
       the result of a simple conversion from spectral data via the CIE 2 degree
       standard observer matching functions. Therefore, after multiplication

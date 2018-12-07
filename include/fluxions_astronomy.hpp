@@ -175,7 +175,7 @@ struct HorizonCoord
 	Vector toOpenGLVector() const
 	{
 		Vector v(90.0 - A, a);
-		// return Vector(-v.y, v.z, -v.X);
+		// return Vector(-ptr.y, ptr.z, -ptr.X);
 		return Vector(v.x, v.z, -v.y);
 	}
 };

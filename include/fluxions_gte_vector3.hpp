@@ -23,374 +23,350 @@
 #include <fluxions_config.hpp>
 #include <fluxions_gte_math.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 template <typename T>
-class TVector3
-{
-  public:
-	//union
-	//{
-	//	struct
-	//	{
-	//		T x, y, z;
-	//	};
-	//	struct
-	//	{
-	//		T r, g, b;
-	//	};
-	//	struct
-	//	{
-	//		T s, t, p;
-	//	};
-	//	struct
-	//	{
-	//		T v[3];
-	//	};
-	//};
+class TVector3 {
+public:
+    T x, y, z;
 
-	T x, y, z;
+    constexpr T* ptr() noexcept { return &x; }
+    constexpr const T* const_ptr() const noexcept { return &x; }
 
-	constexpr T r() noexcept { return x; }
-	constexpr T g() noexcept { return y; }
-	constexpr T b() noexcept { return z; }
+    using type = T;
 
-	constexpr T *v() noexcept { return &x; }
-	constexpr const T *v() const noexcept { return &x; }
+    constexpr TVector3() noexcept
+    {
+        x = 0;
+        y = 0;
+        z = 0;
+    }
 
-	constexpr TVector3() noexcept
-	{
-		x = 0;
-		y = 0;
-		z = 0;
-	}
+    constexpr TVector3(const T _x, const T _y, const T _z) noexcept
+    {
+        x = _x;
+        y = _y;
+        z = _z;
+    }
 
-	constexpr TVector3(const T _x, const T _y, const T _z) noexcept
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-	}
+    constexpr TVector3(const T value) noexcept
+    {
+        x = value;
+        y = value;
+        z = value;
+    }
 
-	constexpr TVector3(const T value) noexcept
-	{
-		x = value;
-		y = value;
-		z = value;
-	}
+    constexpr TVector3(const TVector3<T>& V) noexcept
+    {
+        x = V.x;
+        y = V.y;
+        z = V.z;
+    }
 
-	constexpr TVector3(const TVector3<T> &V) noexcept
-	{
-		x = V.x;
-		y = V.y;
-		z = V.z;
-	}
+    constexpr TVector3(TVector3<T>&& V) noexcept
+    {
+        x = std::move(V.x);
+        y = std::move(V.y);
+        z = std::move(V.z);
+    }
 
-	constexpr TVector3(TVector3<T> &&V) noexcept
-	{
-		x = std::move(V.x);
-		y = std::move(V.y);
-		z = std::move(V.z);
-	}
+    constexpr TVector3(const T V[3]) noexcept
+    {
+        x = V[0];
+        y = V[1];
+        z = V[2];
+    }
 
-	constexpr TVector3(const T V[3]) noexcept
-	{
-		x = V[0];
-		y = V[1];
-		z = V[2];
-	}
+    constexpr auto operator=(const TVector3<T>& V) noexcept
+    {
+        x = V.x;
+        y = V.y;
+        z = V.z;
+        return *this;
+    }
 
-	constexpr auto operator=(const TVector3<T> &V) noexcept
-	{
-		x = V.x;
-		y = V.y;
-		z = V.z;
-		return *this;
-	}
+    constexpr auto operator=(const TVector3<T>&& V) noexcept
+    {
+        x = std::move(V.x);
+        y = std::move(V.y);
+        z = std::move(V.z);
+        return *this;
+    }
 
-	constexpr auto operator=(const TVector3<T> &&V) noexcept
-	{
-		x = std::move(V.x);
-		y = std::move(V.y);
-		z = std::move(V.z);
-		return *this;
-	}
+    template <typename U>
+    operator TVector3<U>() const
+    {
+        return TVector3<U>(
+            static_cast<U>(x),
+            static_cast<U>(y),
+            static_cast<U>(z));
+    }
 
-	template <typename U>
-	operator TVector3<U>() const
-	{
-		return TVector3<U>(
-			static_cast<U>(x),
-			static_cast<U>(y),
-			static_cast<U>(z));
-	}
+    constexpr TVector3<T> operator-() noexcept
+    {
+        return TVector3<T>(-x, -y, -z);
+    }
 
-	constexpr TVector3<T> operator-() noexcept
-	{
-		return TVector3<T>(-x, -y, -z);
-	}
+    //constexpr enable_if_t<is_arithmetic<T>, TVector3<T>> operator-() const noexcept
+    //{
+    //	return TVector3<T>(-X, -y, -z);
+    //}
 
-	//constexpr enable_if_t<is_arithmetic<T>, TVector3<T>> operator-() const noexcept
-	//{
-	//	return TVector3<T>(-X, -y, -z);
-	//}
+    template <typename U>
+    constexpr auto operator+=(const U val) noexcept
+    {
+        x += static_cast<T>(val);
+        y += static_cast<T>(val);
+        z += static_cast<T>(val);
+        return *this;
+    }
 
-	template <typename U>
-	constexpr auto operator+=(const U val) noexcept
-	{
-		x += static_cast<T>(val);
-		y += static_cast<T>(val);
-		z += static_cast<T>(val);
-		return *this;
-	}
+    template <typename U>
+    constexpr auto operator-=(const U val) noexcept
+    {
+        x -= static_cast<T>(val);
+        y -= static_cast<T>(val);
+        z -= static_cast<T>(val);
+        return *this;
+    }
 
-	template <typename U>
-	constexpr auto operator-=(const U val) noexcept
-	{
-		x -= static_cast<T>(val);
-		y -= static_cast<T>(val);
-		z -= static_cast<T>(val);
-		return *this;
-	}
+    template <typename U>
+    constexpr auto operator*=(const U val) noexcept
+    {
+        x *= static_cast<T>(val);
+        y *= static_cast<T>(val);
+        z *= static_cast<T>(val);
+        return *this;
+    }
 
-	template <typename U>
-	constexpr auto operator*=(const U val) noexcept
-	{
-		x *= static_cast<T>(val);
-		y *= static_cast<T>(val);
-		z *= static_cast<T>(val);
-		return *this;
-	}
+    template <typename U>
+    constexpr auto operator/=(const U val) noexcept
+    {
+        x /= static_cast<T>(val);
+        y /= static_cast<T>(val);
+        z /= static_cast<T>(val);
+        return *this;
+    }
 
-	template <typename U>
-	constexpr auto operator/=(const U val) noexcept
-	{
-		x /= static_cast<T>(val);
-		y /= static_cast<T>(val);
-		z /= static_cast<T>(val);
-		return *this;
-	}
+    template <typename U>
+    constexpr auto operator+=(const TVector3<U>& V) noexcept
+    {
+        x += V.x;
+        y += V.y;
+        z += V.z;
+        return *this;
+    }
 
-	template <typename U>
-	constexpr auto operator+=(const TVector3<U> &V) noexcept
-	{
-		x += V.x;
-		y += V.y;
-		z += V.z;
-		return *this;
-	}
+    template <typename U>
+    constexpr auto operator-=(const TVector3<U>& V) noexcept
+    {
+        x -= V.x;
+        y -= V.y;
+        z -= V.z;
+        return *this;
+    }
 
-	template <typename U>
-	constexpr auto operator-=(const TVector3<U> &V) noexcept
-	{
-		x -= V.x;
-		y -= V.y;
-		z -= V.z;
-		return *this;
-	}
+    //template <typename U> TVector3<T> operator * (const U val) const;
+    //template <typename U> TVector3<T> operator / (const U val) const;
+    //template <typename U> TVector3<T> operator + (const TVector3<U> & V) const;
+    //template <typename U> TVector3<T> operator - (const TVector3<U> & V) const;
 
-	//template <typename U> TVector3<T> operator * (const U val) const;
-	//template <typename U> TVector3<T> operator / (const U val) const;
-	//template <typename U> TVector3<T> operator + (const TVector3<U> & V) const;
-	//template <typename U> TVector3<T> operator - (const TVector3<U> & V) const;
+    //inline TVector3<T> multiply(const TVector3<T> &V) const
+    //{
+    //	return TVector3<T>(X*V.X, y*V.y, z*V.z);
+    //}
 
-	//inline TVector3<T> multiply(const TVector3<T> &V) const
-	//{
-	//	return TVector3<T>(X*V.X, y*V.y, z*V.z);
-	//}
+    //inline TVector3<T> divide(const TVector3<T> &V) const
+    //{
+    //	return TVector3<T>(X / V.X, y / V.y, z / V.z);
+    //}
 
-	//inline TVector3<T> divide(const TVector3<T> &V) const
-	//{
-	//	return TVector3<T>(X / V.X, y / V.y, z / V.z);
-	//}
+    //inline TVector3<T> sub(const int val) const
+    //{
+    //	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
+    //}
 
-	//inline TVector3<T> sub(const int val) const
-	//{
-	//	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
-	//}
+    //inline TVector3<T> sub(const float val) const
+    //{
+    //	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
+    //}
 
-	//inline TVector3<T> sub(const float val) const
-	//{
-	//	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
-	//}
+    //inline TVector3<T> sub(const double val) const
+    //{
+    //	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
+    //}
 
-	//inline TVector3<T> sub(const double val) const
-	//{
-	//	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
-	//}
+    //inline TVector3<T> add(const int val) const
+    //{
+    //	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
+    //}
 
-	//inline TVector3<T> add(const int val) const
-	//{
-	//	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
-	//}
+    //inline TVector3<T> add(const float val) const
+    //{
+    //	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
+    //}
 
-	//inline TVector3<T> add(const float val) const
-	//{
-	//	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
-	//}
+    //inline TVector3<T> add(const double val) const
+    //{
+    //	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
+    //}
 
-	//inline TVector3<T> add(const double val) const
-	//{
-	//	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
-	//}
+    inline TVector3<T>& reset(T _x = 0, T _y = 0, T _z = 0)
+    {
+        x = _x;
+        y = _y;
+        z = _z;
+        return *this;
+    }
 
-	inline TVector3<T> &reset(T _x = 0, T _y = 0, T _z = 0)
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-		return *this;
-	}
+    // template <typename U> const T operator * (const TVector3<U> & V) const;
 
-	// template <typename U> const T operator * (const TVector3<U> & V) const;
+    //constexpr auto Length() const noexcept { return }
+    //const T LengthSquared() const;
+    //TVector3<T> & Normalize();
 
-	//constexpr auto Length() const noexcept { return }
-	//const T LengthSquared() const;
-	//TVector3<T> & Normalize();
+    constexpr T length() const noexcept
+    {
+        return static_cast<T>(sqrt(x * x + y * y + z * z));
+    }
 
-	constexpr T length() const noexcept
-	{
-		return static_cast<T>(sqrt(x * x + y * y + z * z));
-	}
+    constexpr T lengthSquared() const noexcept
+    {
+        return x * x + y * y + z * z;
+    }
 
-	constexpr T lengthSquared() const noexcept
-	{
-		return x * x + y * y + z * z;
-	}
+    constexpr auto norm() const noexcept
+    {
+        T invLen = (length() != 0) ? (T)(1.0 / length()) : 0;
+        return TVector3<T>(x * invLen, y * invLen, z * invLen);
+    }
 
-	constexpr auto norm() const noexcept
-	{
-		T invLen = (length() != 0) ? (T)(1.0 / length()) : 0;
-		return TVector3<T>(x * invLen, y * invLen, z * invLen);
-	}
+    constexpr auto unit_vector() const noexcept
+    {
+        T invLen = length() != 0 ? (T)(1.0 / length()) : 0;
+        return TVector3<T>(x * invLen, y * invLen, z * invLen);
+    }
 
-	constexpr auto unit_vector() const noexcept
-	{
-		T invLen = length() != 0 ? (T)(1.0 / length()) : 0;
-		return TVector3<T>(x * invLen, y * invLen, z * invLen);
-	}
+    constexpr auto normalize() noexcept
+    {
+        return *this = norm();
+    }
 
-	constexpr auto normalize() noexcept
-	{
-		return *this = norm();
-	}
+    constexpr auto dot(const TVector3<T> v) const noexcept
+    {
+        return x * v.x + y * v.y + z * v.z;
+    }
 
-	constexpr auto dot(const TVector3<T> v) const noexcept
-	{
-		return x * v.x + y * v.y + z * v.z;
-	}
+    constexpr auto cross(const TVector3<T> v) const noexcept
+    {
+        return TVector3<T>(
+            y * v.z - z * v.y,
+            z * v.x - x * v.z,
+            x * v.y - y * v.x);
+    }
 
-	constexpr auto cross(const TVector3<T> v) const noexcept
-	{
-		return TVector3<T>(
-			y * v.z - z * v.y,
-			z * v.x - x * v.z,
-			x * v.y - y * v.x);
-	}
+    // X is positive towards the viewer's right
+    // y is positive up
+    // z is positive behind the viewer
+    //
+    // Physics/ISO:
+    // theta = arccos y/r
+    //   phi = arctan X/z
+    //
+    //     X = sin theta sin phi
+    //     y = cos theta
+    //     z = sin theta cos phi
+    //
+    // Math:
+    // theta = arctan X/z
+    //   phi = arccos y/r
+    //
+    //     X = sin phi sin theta
+    //     y = cos phi
+    //     z = sin phi cos theta
+    //
+    //   +y
+    //    |
+    //    |
+    //    +---- +X
+    //   /
+    //  /
+    // +z
+    //
+    // Mathematics notation (phi is angle away from z axis, theta is angle away from X axis on XY plane)
+    // inclination is phi
+    // azimuth is theta
+    //
+    // theta = arctan y/X
+    //   phi = arccos z/r
+    //
+    //     X = sin phi cos theta
+    //     y = sin phi sin theta
+    //     z = cos phi
+    //
+    //   +z
+    //    |
+    //    |
+    //    +---- +y
+    //   /
+    //  /
+    // +X
+    //
+    // Physics/ISO notation (phi is angle away from X axis on XY plane, theta is angle away from z axis)
+    // inclination is theta
+    // azimuth is phi
+    //
+    // theta = arccos z/r
+    //   phi = arctan y/X
+    //
+    //     X = sin theta cos phi
+    //     y = sin theta sin phi
+    //     z = cos theta
+    //
+    //   +z
+    //    |
+    //    |
+    //    +---- +y
+    //   /
+    //  /
+    // +X
+    //
 
-	// X is positive towards the viewer's right
-	// y is positive up
-	// z is positive behind the viewer
-	//
-	// Physics/ISO:
-	// theta = arccos y/r
-	//   phi = arctan X/z
-	//
-	//     X = sin theta sin phi
-	//     y = cos theta
-	//     z = sin theta cos phi
-	//
-	// Math:
-	// theta = arctan X/z
-	//   phi = arccos y/r
-	//
-	//     X = sin phi sin theta
-	//     y = cos phi
-	//     z = sin phi cos theta
-	//
-	//   +y
-	//    |
-	//    |
-	//    +---- +X
-	//   /
-	//  /
-	// +z
-	//
-	// Mathematics notation (phi is angle away from z axis, theta is angle away from X axis on XY plane)
-	// inclination is phi
-	// azimuth is theta
-	//
-	// theta = arctan y/X
-	//   phi = arccos z/r
-	//
-	//     X = sin phi cos theta
-	//     y = sin phi sin theta
-	//     z = cos phi
-	//
-	//   +z
-	//    |
-	//    |
-	//    +---- +y
-	//   /
-	//  /
-	// +X
-	//
-	// Physics/ISO notation (phi is angle away from X axis on XY plane, theta is angle away from z axis)
-	// inclination is theta
-	// azimuth is phi
-	//
-	// theta = arccos z/r
-	//   phi = arctan y/X
-	//
-	//     X = sin theta cos phi
-	//     y = sin theta sin phi
-	//     z = cos theta
-	//
-	//   +z
-	//    |
-	//    |
-	//    +---- +y
-	//   /
-	//  /
-	// +X
-	//
+    constexpr T to_straight_theta() const noexcept { return (T)acos((double)z / (double)length()); }
+    constexpr T to_straight_phi() const noexcept { return (T)atan2((double)y, (double)x); }
 
-	constexpr T to_straight_theta() const noexcept { return (T)acos((double)z / (double)length()); }
-	constexpr T to_straight_phi() const noexcept { return (T)atan2((double)y, (double)x); }
+    constexpr T to_math_theta() const noexcept { return (T)atan2((double)x, (double)z); }
+    constexpr T to_math_phi() const noexcept { return (T)acos((double)y / (double)length()); }
 
-	constexpr T to_math_theta() const noexcept { return (T)atan2((double)x, (double)z); }
-	constexpr T to_math_phi() const noexcept { return (T)acos((double)y / (double)length()); }
+    constexpr T to_physics_theta() const noexcept { return (T)acos((double)y / (double)length()); }
+    constexpr T to_physics_phi() const noexcept { return (T)atan2((double)x, (double)z); }
 
-	constexpr T to_physics_theta() const noexcept { return (T)acos((double)y / (double)length()); }
-	constexpr T to_physics_phi() const noexcept { return (T)atan2((double)x, (double)z); }
+    constexpr T theta() const noexcept { return to_physics_theta(); }
+    constexpr T phi() const noexcept { return to_physics_phi(); }
 
-	constexpr T theta() const noexcept { return to_physics_theta(); }
-	constexpr T phi() const noexcept { return to_physics_phi(); }
+    constexpr auto from_theta_phi(T theta, T phi) noexcept { return from_physics_theta_phi(theta, phi); }
 
-	constexpr auto from_theta_phi(T theta, T phi) noexcept { return from_physics_theta_phi(theta, phi); }
+    constexpr auto from_straight_theta_phi(T theta, T phi)
+    {
+        x = (T)(sin(theta) * cos(phi));
+        y = (T)(sin(theta) * sin(phi));
+        z = (T)(cos(theta));
+    }
 
-	constexpr auto from_straight_theta_phi(T theta, T phi)
-	{
-		x = (T)(sin(theta) * cos(phi));
-		y = (T)(sin(theta) * sin(phi));
-		z = (T)(cos(theta));
-	}
+    constexpr auto from_math_theta_phi(T theta, T phi)
+    {
+        x = (T)(sin(phi) * sin(theta));
+        y = (T)(cos(phi));
+        z = (T)(sin(phi) * cos(theta));
+        return *this;
+    }
 
-	constexpr auto from_math_theta_phi(T theta, T phi)
-	{
-		x = (T)(sin(phi) * sin(theta));
-		y = (T)(cos(phi));
-		z = (T)(sin(phi) * cos(theta));
-		return *this;
-	}
-
-	constexpr auto from_physics_theta_phi(T theta, T phi)
-	{
-		x = (T)(sin(theta) * sin(phi));
-		y = (T)(cos(theta));
-		z = (T)(sin(theta) * cos(phi));
-		return *this;
-	}
+    constexpr auto from_physics_theta_phi(T theta, T phi)
+    {
+        x = (T)(sin(theta) * sin(phi));
+        y = (T)(cos(theta));
+        z = (T)(sin(theta) * cos(phi));
+        return *this;
+    }
 };
 
 //////////////////////////////////////////////////////////////////
@@ -401,22 +377,22 @@ class TVector3
 template <>
 constexpr TVector3<uint8_t> TVector3<uint8_t>::operator-() noexcept
 {
-	return TVector3<uint8_t>(x, y, z);
+    return TVector3<uint8_t>(x, y, z);
 }
 template <>
 constexpr TVector3<uint16_t> TVector3<uint16_t>::operator-() noexcept
 {
-	return TVector3<uint16_t>(x, y, z);
+    return TVector3<uint16_t>(x, y, z);
 }
 template <>
 constexpr TVector3<uint32_t> TVector3<uint32_t>::operator-() noexcept
 {
-	return TVector3<uint32_t>(x, y, z);
+    return TVector3<uint32_t>(x, y, z);
 }
 template <>
 constexpr TVector3<uint64_t> TVector3<uint64_t>::operator-() noexcept
 {
-	return TVector3<uint64_t>(x, y, z);
+    return TVector3<uint64_t>(x, y, z);
 }
 
 //template<typename T>
@@ -549,33 +525,33 @@ constexpr TVector3<uint64_t> TVector3<uint64_t>::operator-() noexcept
 //}
 
 template <typename T, typename U>
-constexpr auto DotProduct(const TVector3<T> &v1, const TVector3<U> &v2) noexcept
+constexpr auto DotProduct(const TVector3<T>& v1, const TVector3<U>& v2) noexcept
 {
-	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 template <typename T, typename U>
-constexpr auto dot(const TVector3<T> &v1, const TVector3<U> &v2) noexcept
+constexpr auto dot(const TVector3<T>& v1, const TVector3<U>& v2) noexcept
 {
-	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 template <typename T, typename U>
-constexpr auto CrossProduct(const TVector3<T> &v1, const TVector3<U> &v2)
+constexpr auto CrossProduct(const TVector3<T>& v1, const TVector3<U>& v2)
 {
-	return TVector3<common_type_t<T, U>>(
-		v1.y * v2.z - v1.z * v2.y,
-		v1.z * v2.x - v1.x * v2.z,
-		v1.x * v2.y - v1.y * v2.x);
+    return TVector3<common_type_t<T, U>>(
+        v1.y * v2.z - v1.z * v2.y,
+        v1.z * v2.x - v1.x * v2.z,
+        v1.x * v2.y - v1.y * v2.x);
 }
 
 template <typename T, typename U>
-constexpr auto cross(const TVector3<T> &v1, const TVector3<U> &v2)
+constexpr auto cross(const TVector3<T>& v1, const TVector3<U>& v2)
 {
-	return TVector3<common_type_t<T, U>>(
-		v1.y * v2.z - v1.z * v2.y,
-		v1.z * v2.x - v1.x * v2.z,
-		v1.x * v2.y - v1.y * v2.x);
+    return TVector3<common_type_t<T, U>>(
+        v1.y * v2.z - v1.z * v2.y,
+        v1.z * v2.x - v1.x * v2.z,
+        v1.x * v2.y - v1.y * v2.x);
 }
 
 using Vector3f = TVector3<float>;
@@ -597,69 +573,69 @@ extern template class TVector3<int>;
 extern template class TVector3<unsigned int>;
 
 template <typename T, typename U>
-constexpr auto operator+(const U a, const TVector3<T> &V)
+constexpr auto operator+(const U a, const TVector3<T>& V)
 {
-	return TVector3<common_type_t<U, T>>(a + V.x, a + V.y, a + V.z);
+    return TVector3<common_type_t<U, T>>(a + V.x, a + V.y, a + V.z);
 }
 
 template <typename T, typename U>
-constexpr auto operator+(const TVector3<T> &V, const U a) noexcept
+constexpr auto operator+(const TVector3<T>& V, const U a) noexcept
 {
-	return TVector3<common_type_t<U, T>>(V.x + a, V.y + a, V.z + a);
+    return TVector3<common_type_t<U, T>>(V.x + a, V.y + a, V.z + a);
 }
 
 template <typename T, typename U>
-constexpr auto operator-(const U a, const TVector3<T> &V)
+constexpr auto operator-(const U a, const TVector3<T>& V)
 {
-	return TVector3<common_type_t<U, T>>(a - V.x, a - V.y, a - V.z);
+    return TVector3<common_type_t<U, T>>(a - V.x, a - V.y, a - V.z);
 }
 
 template <typename T, typename U>
-constexpr auto operator-(const TVector3<T> &V, const U a) noexcept
+constexpr auto operator-(const TVector3<T>& V, const U a) noexcept
 {
-	return TVector3<common_type_t<U, T>>(V.x - a, V.y - a, V.z - a);
+    return TVector3<common_type_t<U, T>>(V.x - a, V.y - a, V.z - a);
 }
 
 template <typename T, typename U>
-constexpr auto operator*(const U a, const TVector3<T> &V)
+constexpr auto operator*(const U a, const TVector3<T>& V)
 {
-	return TVector3<common_type_t<U, T>>(a * V.x, a * V.y, a * V.z);
+    return TVector3<common_type_t<U, T>>(a * V.x, a * V.y, a * V.z);
 }
 
 template <typename T, typename U>
-constexpr auto operator*(const TVector3<T> &V, const U a) noexcept
+constexpr auto operator*(const TVector3<T>& V, const U a) noexcept
 {
-	return TVector3<common_type_t<U, T>>(V.x * a, V.y * a, V.z * a);
+    return TVector3<common_type_t<U, T>>(V.x * a, V.y * a, V.z * a);
 }
 
 template <typename T, typename U>
-constexpr auto operator/(const U a, const TVector3<T> &V)
+constexpr auto operator/(const U a, const TVector3<T>& V)
 {
-	return TVector3<common_type_t<U, T>>(a / V.x, a / V.y, a / V.z);
+    return TVector3<common_type_t<U, T>>(a / V.x, a / V.y, a / V.z);
 }
 
 template <typename T, typename U>
-constexpr auto operator/(const TVector3<T> &V, const U a) noexcept
+constexpr auto operator/(const TVector3<T>& V, const U a) noexcept
 {
-	return TVector3<common_type_t<U, T>>(V.x / a, V.y / a, V.z / a);
+    return TVector3<common_type_t<U, T>>(V.x / a, V.y / a, V.z / a);
 }
 
 template <typename T, typename U>
-constexpr auto operator+(const TVector3<T> &v1, const TVector3<U> &v2) noexcept
+constexpr auto operator+(const TVector3<T>& v1, const TVector3<U>& v2) noexcept
 {
-	return TVector3<common_type_t<T, U>>(
-		v1.x + v2.x,
-		v1.y + v2.y,
-		v1.z + v2.z);
+    return TVector3<common_type_t<T, U>>(
+        v1.x + v2.x,
+        v1.y + v2.y,
+        v1.z + v2.z);
 }
 
 template <typename T, typename U>
-constexpr auto operator-(const TVector3<T> &v1, const TVector3<U> &v2) noexcept
+constexpr auto operator-(const TVector3<T>& v1, const TVector3<U>& v2) noexcept
 {
-	return TVector3<common_type_t<T, U>>(
-		v1.x - v2.x,
-		v1.y - v2.y,
-		v1.z - v2.z);
+    return TVector3<common_type_t<T, U>>(
+        v1.x - v2.x,
+        v1.y - v2.y,
+        v1.z - v2.z);
 }
 } // namespace Fluxions
 

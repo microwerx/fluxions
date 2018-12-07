@@ -51,7 +51,7 @@
 /*
 namespace ImGui
 {
-    void    Value(const char* prefix, const MyMatrix44& v, const char* float_format = NULL);
+    void    Value(const char* prefix, const MyMatrix44& ptr, const char* float_format = NULL);
 }
 */
 

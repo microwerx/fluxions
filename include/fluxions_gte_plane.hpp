@@ -19,29 +19,27 @@
 #ifndef FLUXIONS_GTE_PLANE_HPP
 #define FLUXIONS_GTE_PLANE_HPP
 
-namespace Fluxions
-{
+namespace Fluxions {
 template <typename T>
-class TPlane
-{
-  public:
-	//union {
-	//	struct
-	//	{
-	//		T a, b, c, d;
-	//	};
-	//	T v[4];
-	//};
+class TPlane {
+public:
+    T a, b, c, d;
 
-	T a, b, c, d;
+    constexpr T* ptr() noexcept { return &a; }
+    constexpr const T* const_ptr() const noexcept { return &a; }
 
-	TPlane<T>();
-	~TPlane<T>();
+    using type = T;
+
+    TPlane<T>();
+    ~TPlane<T>();
 };
 
 template <typename T>
 TPlane<T>::TPlane()
-	: a(0), b(0), c(0), d(0)
+    : a(0)
+    , b(0)
+    , c(0)
+    , d(0)
 {
 }
 

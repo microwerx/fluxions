@@ -21,8 +21,7 @@
 
 #include <fluxions_gte.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 //bool XmlReadBool(istream &istr, const string &tagName);
 //int XmlReadInt(istream &istr, const string &tagName);
 //long long XmlReadInt64(istream &istr, const string &tagName);
@@ -44,35 +43,39 @@ namespace Fluxions
 //SphericalHarmonicf XmlReadSphericalHarmonicf(istream &istr, const string &tagName);
 //SphericalHarmonicd XmlReadSphericalHarmonicd(istream &istr, const string &tagName);
 
-ostream &XmlBool(ostream &ostr, const string &tagName, bool val, int numtabs = 0);
-ostream &XmlInt(ostream &ostr, const string &tagName, int val, int numtabs = 0);
-ostream &XmlInt64(ostream &ostr, const string &tagName, long long val, int numtabs = 0);
-ostream &XmlSize(ostream &ostr, const string &tagName, size_t val, int numtabs = 0);
-ostream &XmlFloat(ostream &ostr, const string &tagName, float val, int numtabs = 0);
-ostream &XmlDouble(ostream &ostr, const string &tagName, double val, int numtabs = 0);
-ostream &XmlString(ostream &ostr, const string &tagName, const string &str, int numtabs = 0);
-ostream &XmlVector2f(ostream &ostr, const string &tagName, const Vector2f &v, int numtabs = 0);
-ostream &XmlVector2d(ostream &ostr, const string &tagName, const Vector2d &v, int numtabs = 0);
-ostream &XmlVector3f(ostream &ostr, const string &tagName, const Vector3f &v, int numtabs = 0);
-ostream &XmlVector3d(ostream &ostr, const string &tagName, const Vector3d &v, int numtabs = 0);
-ostream &XmlVector4f(ostream &ostr, const string &tagName, const Vector4f &v, int numtabs = 0);
-ostream &XmlVector4d(ostream &ostr, const string &tagName, const Vector4d &v, int numtabs = 0);
-ostream &XmlQuaternionf(ostream &ostr, const string &tagName, const Quaternionf &q, int numtabs = 0);
-ostream &XmlQuaterniond(ostream &ostr, const string &tagName, const Quaterniond &q, int numtabs = 0);
-ostream &XmlMatrix4f(ostream &ostr, const string &tagName, const Matrix4f &m, int numtabs = 0);
-ostream &XmlMatrix4d(ostream &ostr, const string &tagName, const Matrix4d &m, int numtabs = 0);
-ostream &XmlAffineMatrix4f(ostream &ostr, const string &tagName, const Matrix4f &m, int numtabs = 0);
-ostream &XmlAffineMatrix4d(ostream &ostr, const string &tagName, const Matrix4d &m, int numtabs = 0);
-ostream &XmlSphericalHarmonicf(ostream &ostr, const string &tagName, const SphericalHarmonicf &sph, int numtabs = 0);
-ostream &XmlSphericalHarmonicd(ostream &ostr, const string &tagName, const SphericalHarmonicd &sph, int numtabs = 0);
+ostream& XmlBool(ostream& ostr, const string& tagName, bool val, int numtabs = 0);
+ostream& XmlInt(ostream& ostr, const string& tagName, int val, int numtabs = 0);
+ostream& XmlInt64(ostream& ostr, const string& tagName, long long val, int numtabs = 0);
+ostream& XmlSize(ostream& ostr, const string& tagName, size_t val, int numtabs = 0);
+ostream& XmlFloat(ostream& ostr, const string& tagName, float val, int numtabs = 0);
+ostream& XmlDouble(ostream& ostr, const string& tagName, double val, int numtabs = 0);
+ostream& XmlString(ostream& ostr, const string& tagName, const string& str, int numtabs = 0);
+ostream& XmlVector2f(ostream& ostr, const string& tagName, const Vector2f& v, int numtabs = 0);
+ostream& XmlVector2d(ostream& ostr, const string& tagName, const Vector2d& v, int numtabs = 0);
+ostream& XmlVector3f(ostream& ostr, const string& tagName, const Vector3f& v, int numtabs = 0);
+ostream& XmlVector3d(ostream& ostr, const string& tagName, const Vector3d& v, int numtabs = 0);
+ostream& XmlVector4f(ostream& ostr, const string& tagName, const Vector4f& v, int numtabs = 0);
+ostream& XmlVector4d(ostream& ostr, const string& tagName, const Vector4d& v, int numtabs = 0);
+ostream& XmlColor3f(ostream& ostr, const string& tagName, const Color3f& v, int numtabs = 0);
+ostream& XmlColor3d(ostream& ostr, const string& tagName, const Color3d& v, int numtabs = 0);
+ostream& XmlColor4f(ostream& ostr, const string& tagName, const Color4f& v, int numtabs = 0);
+ostream& XmlColor4d(ostream& ostr, const string& tagName, const Color4d& v, int numtabs = 0);
+ostream& XmlQuaternionf(ostream& ostr, const string& tagName, const Quaternionf& q, int numtabs = 0);
+ostream& XmlQuaterniond(ostream& ostr, const string& tagName, const Quaterniond& q, int numtabs = 0);
+ostream& XmlMatrix4f(ostream& ostr, const string& tagName, const Matrix4f& m, int numtabs = 0);
+ostream& XmlMatrix4d(ostream& ostr, const string& tagName, const Matrix4d& m, int numtabs = 0);
+ostream& XmlAffineMatrix4f(ostream& ostr, const string& tagName, const Matrix4f& m, int numtabs = 0);
+ostream& XmlAffineMatrix4d(ostream& ostr, const string& tagName, const Matrix4d& m, int numtabs = 0);
+ostream& XmlSphericalHarmonicf(ostream& ostr, const string& tagName, const SphericalHarmonicf& sph, int numtabs = 0);
+ostream& XmlSphericalHarmonicd(ostream& ostr, const string& tagName, const SphericalHarmonicd& sph, int numtabs = 0);
 
-ostream &XmlComment(ostream &ostr, const string &comment, int numtabs = 0);
-ostream &XmlBeginTag(ostream &ostr, const string &tagName, int numtabs = 0);
-ostream &XmlBeginTag(ostream &ostr, const string &tagName, const string &optClassName, int numtabs = 0);
-ostream &XmlBeginTag(ostream &ostr, const string &tagName, const string &attributeName, const string &value, int numtabs = 0);
-ostream &XmlEndTag(ostream &ostr, const string &tagName, int numtabs = 0);
+ostream& XmlComment(ostream& ostr, const string& comment, int numtabs = 0);
+ostream& XmlBeginTag(ostream& ostr, const string& tagName, int numtabs = 0);
+ostream& XmlBeginTag(ostream& ostr, const string& tagName, const string& optClassName, int numtabs = 0);
+ostream& XmlBeginTag(ostream& ostr, const string& tagName, const string& attributeName, const string& value, int numtabs = 0);
+ostream& XmlEndTag(ostream& ostr, const string& tagName, int numtabs = 0);
 
-ostream &XmlCoronaMapTexture(ostream &ostr, const string &tagName, const string &mapName, const string &imagePath, int numtabs = 0, const float gamma = 2.2f);
+ostream& XmlCoronaMapTexture(ostream& ostr, const string& tagName, const string& mapName, const string& imagePath, int numtabs = 0, const float gamma = 2.2f);
 } // namespace Fluxions
 
 #endif

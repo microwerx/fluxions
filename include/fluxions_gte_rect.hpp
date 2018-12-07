@@ -22,154 +22,153 @@
 
 #include <fluxions_gte_vector2.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 template <typename T>
-class TRect
-{
-  public:
-	//union
-	//{
-	//	struct
-	//	{
-	//		T x;
-	//		T y;
-	//		T w;
-	//		T h;
-	//	};
-	//	T v[4];
-	//};
+class TRect {
+public:
+    T x, y, w, h;
 
-	T x, y, w, h;
+    constexpr T* ptr() noexcept { return &x; }
+    constexpr const T* const_ptr() const noexcept { return &x; }
 
-	constexpr T *v() noexcept { return &x; }
-	constexpr const T *v() const noexcept { return &x; }
+    using type = T;
 
-	constexpr TRect() noexcept
-	{
-		x = 0;
-		y = 0;
-		w = 0;
-		h = 0;
-	}
+    constexpr T* v() noexcept { return &x; }
+    constexpr const T* v() const noexcept { return &x; }
 
-	constexpr TRect(T _x, T _y, T _w, T _h) noexcept
-		: x(_x), y(_y), w(_w), h(_h)
-	{
-	}
+    constexpr TRect() noexcept
+    {
+        x = 0;
+        y = 0;
+        w = 0;
+        h = 0;
+    }
 
-	constexpr TRect(const TRect<T> &rect) noexcept
-		: x(rect.x), y(rect.y), w(rect.w), h(rect.h)
-	{
-	}
+    constexpr TRect(T _x, T _y, T _w, T _h) noexcept
+        : x(_x)
+        , y(_y)
+        , w(_w)
+        , h(_h)
+    {
+    }
 
-	// initialize like OpenGL viewport
-	constexpr TRect(const T V[4]) noexcept
-		: x(V[0]), y(V[1]), w(V[2]), h(V[3])
-	{
-	}
+    constexpr TRect(const TRect<T>& rect) noexcept
+        : x(rect.x)
+        , y(rect.y)
+        , w(rect.w)
+        , h(rect.h)
+    {
+    }
 
-	// initialize with two points
-	constexpr TRect(const TVector2<T> v1, const TVector2<T> v2) noexcept
-	{
-		x = std::min(v1.x, v2.x);
-		y = std::min(v1.y, v2.y);
-		T x2 = std::max(v1.x, v2.x);
-		T y2 = std::max(v1.y, v2.y);
-		w = x2 - x;
-		h = y2 - y;
-	}
+    // initialize like OpenGL viewport
+    constexpr TRect(const T V[4]) noexcept
+        : x(V[0])
+        , y(V[1])
+        , w(V[2])
+        , h(V[3])
+    {
+    }
 
-	template <typename T2>
-	constexpr const TVector2<T> &operator=(const TRect<T2> &rect) noexcept
-	{
-		x = (T)rect.x;
-		y = (T)rect.y;
-		w = (T)rect.w;
-		h = (T)rect.h;
-		return *this;
-	}
+    // initialize with two points
+    constexpr TRect(const TVector2<T> v1, const TVector2<T> v2) noexcept
+    {
+        x = std::min(v1.x, v2.x);
+        y = std::min(v1.y, v2.y);
+        T x2 = std::max(v1.x, v2.x);
+        T y2 = std::max(v1.y, v2.y);
+        w = x2 - x;
+        h = y2 - y;
+    }
 
-	template <typename Other>
-	constexpr operator TRect<Other>() const noexcept
-	{
-		return TRect<Other>((Other)x, (Other)y, (Other)w, (Other)h);
-	}
+    template <typename T2>
+    constexpr const TVector2<T>& operator=(const TRect<T2>& rect) noexcept
+    {
+        x = (T)rect.x;
+        y = (T)rect.y;
+        w = (T)rect.w;
+        h = (T)rect.h;
+        return *this;
+    }
 
-	// x1 <= x2
-	constexpr T x1() const noexcept { return x; }
-	// y1 <= y2
-	constexpr T y1() const noexcept { return y; }
-	// x1 <= x2
-	constexpr T x2() const noexcept { return x + w; }
-	// y1 <= y2
-	constexpr T y2() const noexcept { return y + h; }
+    template <typename Other>
+    constexpr operator TRect<Other>() const noexcept
+    {
+        return TRect<Other>((Other)x, (Other)y, (Other)w, (Other)h);
+    }
 
-	constexpr T width() const noexcept { return w; }
-	constexpr T height() const noexcept { return h; }
-	constexpr T left() const noexcept { return x; }
-	constexpr T right() const noexcept { return x + w; }
-	constexpr T top() const noexcept { return y + h; }
-	constexpr T bottom() const noexcept { return y; }
-	constexpr T area() const noexcept { return w * h; }
-	constexpr TVector2<T> lowerLeft() const noexcept { return TVector2<T>(left(), bottom()); }
-	constexpr TVector2<T> lowerRight() const noexcept { return TVector2<T>(right(), bottom()); }
-	constexpr TVector2<T> upperLeft() const noexcept { return TVector2<T>(left(), top()); }
-	constexpr TVector2<T> upperRight() const noexcept { return TVector2<T>(right(), top()); }
+    // x1 <= x2
+    constexpr T x1() const noexcept { return x; }
+    // y1 <= y2
+    constexpr T y1() const noexcept { return y; }
+    // x1 <= x2
+    constexpr T x2() const noexcept { return x + w; }
+    // y1 <= y2
+    constexpr T y2() const noexcept { return y + h; }
 
-	constexpr TVector2<T> middle(bool relative = false) const noexcept { return relative ? TVector2<T>(w / 2, h / 2) : TVector2<T>(y + w / 2, x + h / 2); }
-	constexpr TVector2<T> percent(float pctx, float pcty, bool relative = false) const noexcept { return relative ? TVector2<T>((T)(w * pctx), (T)(h * pcty)) : TVector2<T>(x + (T)(w * pctx), y + (T)(h * pcty)); }
-	constexpr TVector2<T> percent(const Vector2f pct, bool relative = false) const noexcept { return relative ? TVector2<T>((T)(w * pct.x), (T)(h * pct.y)) : TVector2<T>(x + (T)(w * pct.x), y + (T)(h * pct.y)); }
+    constexpr T width() const noexcept { return w; }
+    constexpr T height() const noexcept { return h; }
+    constexpr T left() const noexcept { return x; }
+    constexpr T right() const noexcept { return x + w; }
+    constexpr T top() const noexcept { return y + h; }
+    constexpr T bottom() const noexcept { return y; }
+    constexpr T area() const noexcept { return w * h; }
+    constexpr TVector2<T> lowerLeft() const noexcept { return TVector2<T>(left(), bottom()); }
+    constexpr TVector2<T> lowerRight() const noexcept { return TVector2<T>(right(), bottom()); }
+    constexpr TVector2<T> upperLeft() const noexcept { return TVector2<T>(left(), top()); }
+    constexpr TVector2<T> upperRight() const noexcept { return TVector2<T>(right(), top()); }
 
-	constexpr double aspectRatio() const { return (double)w / (double)h; }
-	constexpr float aspectRatiof() const { return (float)aspectRatio(); }
+    constexpr TVector2<T> middle(bool relative = false) const noexcept { return relative ? TVector2<T>(w / 2, h / 2) : TVector2<T>(y + w / 2, x + h / 2); }
+    constexpr TVector2<T> percent(float pctx, float pcty, bool relative = false) const noexcept { return relative ? TVector2<T>((T)(w * pctx), (T)(h * pcty)) : TVector2<T>(x + (T)(w * pctx), y + (T)(h * pcty)); }
+    constexpr TVector2<T> percent(const Vector2f pct, bool relative = false) const noexcept { return relative ? TVector2<T>((T)(w * pct.x), (T)(h * pct.y)) : TVector2<T>(x + (T)(w * pct.x), y + (T)(h * pct.y)); }
 
-	constexpr TRect<T> GetUpperLeftRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), upperLeft()); }
-	constexpr TRect<T> GetUpperRightRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), upperRight()); }
-	constexpr TRect<T> GetLowerLeftRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), lowerLeft()); }
-	constexpr TRect<T> GetLowerRightRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), lowerRight()); }
+    constexpr double aspectRatio() const { return (double)w / (double)h; }
+    constexpr float aspectRatiof() const { return (float)aspectRatio(); }
 
-	enum Quadrant
-	{
-		UpperLeft = 0,
-		UpperRight = 1,
-		LowerLeft = 2,
-		LowerRight = 3
-	};
+    constexpr TRect<T> GetUpperLeftRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), upperLeft()); }
+    constexpr TRect<T> GetUpperRightRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), upperRight()); }
+    constexpr TRect<T> GetLowerLeftRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), lowerLeft()); }
+    constexpr TRect<T> GetLowerRightRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), lowerRight()); }
 
-	constexpr TRect<T> GetQuadrant(Quadrant quadrant, const TVector2<T> splitPoint) const noexcept
-	{
-		if (quadrant == UpperLeft)
-			return GetUpperLeftRect(splitPoint);
-		if (quadrant == UpperRight)
-			return GetUpperRightRect(splitPoint);
-		if (quadrant == LowerLeft)
-			return GetLowerLeftRect(splitPoint);
-		if (quadrant == LowerRight)
-			return GetLowerRightRect(splitPoint);
-		return TRect<T>();
-	}
+    enum Quadrant {
+        UpperLeft = 0,
+        UpperRight = 1,
+        LowerLeft = 2,
+        LowerRight = 3
+    };
 
-	constexpr TRect<T> &SetFromPoints(const TVector2<T> v1, const TVector2<T> v2) noexcept
-	{
-		x = std::min(v1.x, v2.x);
-		y = std::min(v1.y, v2.y);
-		T x2 = std::max(v1.x, v2.x);
-		T y2 = std::max(v1.y, v2.y);
-		w = x2 - x;
-		h = y2 - y;
-		return *this;
-	}
+    constexpr TRect<T> GetQuadrant(Quadrant quadrant, const TVector2<T> splitPoint) const noexcept
+    {
+        if (quadrant == UpperLeft)
+            return GetUpperLeftRect(splitPoint);
+        if (quadrant == UpperRight)
+            return GetUpperRightRect(splitPoint);
+        if (quadrant == LowerLeft)
+            return GetLowerLeftRect(splitPoint);
+        if (quadrant == LowerRight)
+            return GetLowerRightRect(splitPoint);
+        return TRect<T>();
+    }
 
-	constexpr bool IsInside(const TVector2<T> p) const noexcept
-	{
-		return (x1() >= p.x && x2() <= p.x) && (y1() >= p.y && y2() <= p.y);
-	}
+    constexpr TRect<T>& SetFromPoints(const TVector2<T> v1, const TVector2<T> v2) noexcept
+    {
+        x = std::min(v1.x, v2.x);
+        y = std::min(v1.y, v2.y);
+        T x2 = std::max(v1.x, v2.x);
+        T y2 = std::max(v1.y, v2.y);
+        w = x2 - x;
+        h = y2 - y;
+        return *this;
+    }
 
-	constexpr inline TVector2<T> Clamp(const TVector2<T> p) const noexcept
-	{
-		return TVector2<T>(clamp(p.x, x1(), x2()), clamp(p.y, y1(), y2()));
-	}
+    constexpr bool IsInside(const TVector2<T> p) const noexcept
+    {
+        return (x1() >= p.x && x2() <= p.x) && (y1() >= p.y && y2() <= p.y);
+    }
+
+    constexpr inline TVector2<T> Clamp(const TVector2<T> p) const noexcept
+    {
+        return TVector2<T>(clamp(p.x, x1(), x2()), clamp(p.y, y1(), y2()));
+    }
 };
 
 using Rectf = TRect<float>;

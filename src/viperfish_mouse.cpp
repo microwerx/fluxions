@@ -19,134 +19,128 @@
 #include "stdafx.h"
 #include <viperfish_mouse.hpp>
 
+namespace Viperfish {
+// @class MouseDragState
 
-namespace Viperfish
+void MouseDragState::Start(int whichButton, Vector2i newPosition, double currentTime)
 {
-	// @class MouseDragState
+    button = whichButton;
+    startPosition = newPosition;
+    endPosition = newPosition;
+    currentPosition = newPosition;
+    previousPosition = newPosition;
+    currentDelta = Vector2i(0, 0);
+    totalDelta = Vector2i(0, 0);
+    startTime = currentTime;
+    endTime = currentTime;
+    timeDragged = 0;
+}
 
-	void MouseDragState::Start(int whichButton, Vector2i newPosition, double currentTime)
-	{
-		button = whichButton;
-		startPosition = newPosition;
-		endPosition = newPosition;
-		currentPosition = newPosition;
-		previousPosition = newPosition;
-		currentDelta = Vector2i(0, 0);
-		totalDelta = Vector2i(0, 0);
-		startTime = currentTime;
-		endTime = currentTime;
-		timeDragged = 0;
-	}
+void MouseDragState::Update(Vector2i newPosition, double currentTime)
+{
+    previousPosition = currentPosition;
+    currentPosition = newPosition;
+    endPosition = newPosition;
+    currentDelta = currentPosition - previousPosition;
+    totalDelta = endPosition - startPosition;
+    endTime = currentTime;
+    timeDragged = currentTime - startTime;
+}
 
+// @class MouseClickState
 
-	void MouseDragState::Update(Vector2i newPosition, double currentTime)
-	{
-		previousPosition = currentPosition;
-		currentPosition = newPosition;
-		endPosition = newPosition;
-		currentDelta = currentPosition - previousPosition;
-		totalDelta = endPosition - startPosition;
-		endTime = currentTime;
-		timeDragged = currentTime - startTime;
-	}
+void MouseClickState::FillFromDrag(const MouseDragState& mds)
+{
+    button = mds.button;
+    startPosition = mds.startPosition;
+    position = mds.endPosition;
+    dposition = mds.totalDelta;
+    clickTime = mds.endTime;
+}
 
-	// @class MouseClickState
+// @class MouseDoubleClickState
 
-	void MouseClickState::FillFromDrag(int whichButton, const MouseDragState &mds)
-	{
-		button = mds.button;
-		startPosition = mds.startPosition;
-		position = mds.endPosition;
-		dposition = mds.totalDelta;
-		clickTime = mds.endTime;
-	}
+void MouseDoubleClickState::FillFromClicks(int whichButton, const MouseClickState& mcs1, const MouseClickState& mcs2)
+{
+    button = whichButton;
+    position = mcs2.position;
+    deltaPosition = mcs2.position - mcs1.position;
+    deltaTime = mcs2.clickTime - mcs1.clickTime;
+}
 
-	// @class MouseDoubleClickState
+bool MouseDoubleClickState::IsDoubleClick() const
+{
+    int clickDistance = deltaPosition.lengthSquared();
+    return (clickDistance == 0 && deltaTime <= 500) ? true : false;
+}
 
-	void MouseDoubleClickState::FillFromClicks(int whichButton, const MouseClickState &mcs1, const MouseClickState &mcs2)
-	{
-		button = whichButton;
-		position = mcs2.position;
-		deltaPosition = mcs2.position - mcs1.position;
-		deltaTime = mcs2.clickTime - mcs1.clickTime;
-	}
+// @class MouseState
+void MouseState::UpdateTime()
+{
+    lastPollTime = SteadyClockNow();
+}
 
+void MouseState::OnMove(int x, int y)
+{
+    UpdateTime();
 
-	bool MouseDoubleClickState::IsDoubleClick() const
-	{
-		int clickDistance = deltaPosition.lengthSquared();
-		return (clickDistance == 0 && deltaTime <= 500) ? true : false;
-	}
+    previousPosition = position;
+    position = Vector2i(x, y);
+    dposition = position - previousPosition;
 
-	// @class MouseState
-	void MouseState::UpdateTime()
-	{
-		lastPollTime = SteadyClockNow();
-	}
+    // Handle drag states because clicks and double clicks depend on this data
+    for (auto button : buttons) {
+        if (button.second) {
+            dragStates[button.first].Update(position, lastPollTime);
+            OnDrag(dragStates[button.first]);
+        }
+    }
+}
 
-	void MouseState::OnMove(int x, int y)
-	{
-		UpdateTime();
+void MouseState::OnButtonDown(int button)
+{
+    UpdateTime();
 
-		previousPosition = position;
-		position = Vector2i(x, y);
-		dposition = position - previousPosition;
+    // Set the overall state
+    buttons[button] = true;
 
-		// Handle drag states because clicks and double clicks depend on this data
-		for (auto button : buttons)
-		{
-			if (button.second)
-			{
-				dragStates[button.first].Update(position, lastPollTime);
-				OnDrag(dragStates[button.first]);
-			}
-		}
-	}
+    // Start a new drag state
+    dragStates[button].Start(button, position, lastPollTime);
+}
 
-	void MouseState::OnButtonDown(int button)
-	{
-		UpdateTime();
+void MouseState::OnButtonUp(int button)
+{
+    UpdateTime();
 
-		// Set the overall state
-		buttons[button] = true;
+    // Set the overall state
+    buttons[button] = false;
 
-		// Start a new drag state
-		dragStates[button].Start(button, position, lastPollTime);
-	}
+    // finalize the drag time
+    dragStates[button].Update(position, lastPollTime);
 
-	void MouseState::OnButtonUp(int button)
-	{
-		UpdateTime();
+    // fill in the mouse click information
+    lastClickStates[button] = clickStates[button];
+    clickStates[button].FillFromDrag(dragStates[button]);
+    doubleClickStates[button].FillFromClicks(button, lastClickStates[button], clickStates[button]);
 
-		// Set the overall state
-		buttons[button] = false;
+    // call click callbacks
+    OnClick(clickStates[button]);
+    if (doubleClickStates[button].IsDoubleClick())
+        OnDoubleClick(doubleClickStates[button]);
+}
 
-		// finalize the drag time
-		dragStates[button].Update(position, lastPollTime);
+void MouseState::OnDrag(const MouseDragState& mds)
+{
+    // Tell listeners about event...
+}
 
-		// fill in the mouse click information
-		lastClickStates[button] = clickStates[button];
-		clickStates[button].FillFromDrag(button, dragStates[button]);
-		doubleClickStates[button].FillFromClicks(button, lastClickStates[button], clickStates[button]);
+void MouseState::OnClick(const MouseClickState& mcs)
+{
+    // Tell listeners about event...
+}
 
-		// call click callbacks
-		OnClick(clickStates[button]);
-		if (doubleClickStates[button].IsDoubleClick())
-			OnDoubleClick(doubleClickStates[button]);
-	}
-
-	void MouseState::OnDrag(const MouseDragState &mds)
-	{
-		// Tell listeners about event...
-	}
-
-	void MouseState::OnClick(const MouseClickState &mcs)
-	{
-		// Tell listeners about event...
-	}
-
-	void MouseState::OnDoubleClick(const MouseDoubleClickState &mdcs)
-	{
-		// Tell listeners about event...
-	}
+void MouseState::OnDoubleClick(const MouseDoubleClickState& mdcs)
+{
+    // Tell listeners about event...
+}
 }

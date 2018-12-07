@@ -71,10 +71,10 @@ namespace Fluxions
 	{
 		for (int i = 0; i < MaxCoefficients; i++)
 		{
-			v_coefs[0][i] = coefs[i].r = randomSampler(0.18f, 2.2f);
-			v_coefs[1][i] = coefs[i].g = randomSampler(0.18f, 2.2f);
-			v_coefs[2][i] = coefs[i].b = randomSampler(0.18f, 2.2f);
-			v_coefs[3][i] = coefs[i].a = coefs[i].xyz().dot(Vector3f(0.299f, 0.587f, 0.114f));
+			v_coefs[0][i] = coefs[i].x = randomSampler(0.18f, 2.2f);
+			v_coefs[1][i] = coefs[i].y = randomSampler(0.18f, 2.2f);
+			v_coefs[2][i] = coefs[i].z = randomSampler(0.18f, 2.2f);
+			v_coefs[3][i] = coefs[i].w = coefs[i].xyz().dot(Vector3f(0.299f, 0.587f, 0.114f));
 			v_coefs[4][i] = randomSampler(0.18f, 0.78f);
 			v_coefs[5][i] = randomSampler(0.18f, 0.78f);
 		}
@@ -134,7 +134,7 @@ namespace Fluxions
 		float theta = 0.0f;
 		float dtheta = (float)FX_DEGREES_TO_RADIANS;
 		float dxs = 0.1f;
-		float dx = dxs * sin(theta += dtheta);
+		//float dx = dxs * sin(theta += dtheta);
 		const float scale = 0.25f;
 		// const int MaxComponents = 6;
 		// Red, Green, Blue, Monochromatic, Hierarchy Self, Hierarchy Neighbors
@@ -208,9 +208,9 @@ namespace Fluxions
 			sph_model.BeginSurface(SimpleGeometryMesh::SurfaceType::Triangles);
 			for (int i = 0; i < model.triangleCount; i++)
 			{
-				int v0 = k * model.vertexCount + model.triangles[i].v[0];
-				int v1 = k * model.vertexCount + model.triangles[i].v[1];
-				int v2 = k * model.vertexCount + model.triangles[i].v[2];
+				int v0 = k * model.vertexCount + model.triangles[i].x;
+				int v1 = k * model.vertexCount + model.triangles[i].y;
+				int v2 = k * model.vertexCount + model.triangles[i].z;
 				Vector3f dp1 = sph_model.GetVertex(v1).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 				Vector3f dp2 = sph_model.GetVertex(v2).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 				Vector3f N = dp1.cross(dp2).norm();
@@ -218,9 +218,9 @@ namespace Fluxions
 				sph_model.GetVertex(v1).attribs[1] += N;
 				sph_model.GetVertex(v2).attribs[1] += N;
 
-				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].v[0]);
-				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].v[1]);
-				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].v[2]);
+				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].x);
+				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].y);
+				sph_model.AddIndex(k * model.vertexCount + model.triangles[i].z);
 
 			}
 			k++;
@@ -230,9 +230,9 @@ namespace Fluxions
 		{
 			for (int i = 0; i < model.triangleCount; i++)
 			{
-				int v0 = j * model.vertexCount + model.triangles[i].v[0];
-				int v1 = j * model.vertexCount + model.triangles[i].v[1];
-				int v2 = j * model.vertexCount + model.triangles[i].v[2];
+				int v0 = j * model.vertexCount + model.triangles[i].x;
+				int v1 = j * model.vertexCount + model.triangles[i].y;
+				int v2 = j * model.vertexCount + model.triangles[i].z;
 				sph_model.GetVertex(v0).attribs[1].normalize();
 				sph_model.GetVertex(v1).attribs[1].normalize();
 				sph_model.GetVertex(v2).attribs[1].normalize();

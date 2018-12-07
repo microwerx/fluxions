@@ -19,13 +19,12 @@
 #ifndef FLUXIONS_GTE_COLOR4_HPP
 #define FLUXIONS_GTE_COLOR4_HPP
 
+#include <fluxions_gte_color3.hpp>
 #include <fluxions_gte_math.hpp>
 #include <fluxions_gte_vector3.hpp>
 #include <fluxions_gte_vector4.hpp>
-#include <fluxions_gte_color3.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 template <typename T>
 class TColor3;
 template <typename T>
@@ -36,415 +35,450 @@ template <typename T>
 class TVector4;
 
 template <typename T>
-class TColor4
-{
-  public:
-	//union {
-	//	struct
-	//	{
-	//		T r, g, b, a;
-	//	};
-	//	T v[4];
-	//};
-	T r, g, b, a;
+class TColor4 {
+public:
+    T r, g, b, a;
 
-	constexpr T *v() noexcept { return &r; }
-	constexpr const T *v() const noexcept { return &r; }
+    constexpr T* ptr() noexcept { return &r; }
+    constexpr const T* const_ptr() const noexcept { return &r; }
 
-	using type = T;
+    using type = T;
 
-	TColor4()
-		: r(0), g(0), b(0), a(0)
-	{
-	}
+    TColor4()
+        : r(0)
+        , g(0)
+        , b(0)
+        , a(0)
+    {
+    }
 
-	TColor4(const T value)
-		: r(value), g(value), b(value), a(value)
-	{
-	}
+    TColor4(const T value)
+        : r(value)
+        , g(value)
+        , b(value)
+        , a(value)
+    {
+    }
 
-	TColor4(const T newR, const T newG, const T newB, const T newA)
-		: r(newR), g(newG), b(newB), a(newA)
-	{
-	}
+    TColor4(const T newR, const T newG, const T newB, const T newA)
+        : r(newR)
+        , g(newG)
+        , b(newB)
+        , a(newA)
+    {
+    }
 
-	TColor4(const TColor4<T> &color)
-		: r(color.r), g(color.g), b(color.b), a(color.a)
-	{
-	}
+    TColor4(const TColor4<T>& color)
+        : r(color.r)
+        , g(color.g)
+        , b(color.b)
+        , a(color.a)
+    {
+    }
 
-	TColor4(const TColor3<T> &color, const T newA = T(1))
-		: r(color.r), g(color.g), b(color.b), a(newA)
-	{
-	}
+    TColor4(const TColor3<T>& color, const T newA = T(1))
+        : r(color.r)
+        , g(color.g)
+        , b(color.b)
+        , a(newA)
+    {
+    }
 
-	~TColor4() {}
+    ~TColor4() {}
 
-	const TColor4<T> &reset(const T value)
-	{
-		r = g = b = a = value;
-		return *this;
-	}
+    const TColor4<T>& reset(const T value)
+    {
+        r = g = b = a = value;
+        return *this;
+    }
 
-	const TColor4<T> &reset(const T newR, const T newG, const T newB, const T newA)
-	{
-		r = newR;
-		g = newG;
-		b = newB;
-		a = newA;
-		return *this;
-	}
+    const TColor4<T>& reset(const T newR, const T newG, const T newB, const T newA)
+    {
+        r = newR;
+        g = newG;
+        b = newB;
+        a = newA;
+        return *this;
+    }
 
-	template <typename OtherType>
-	constexpr operator TColor4<OtherType>() const
-	{
-		return TColor4<OtherType>((OtherType)r, (OtherType)g, (OtherType)b, (OtherType)a);
-	}
+    template <typename OtherType>
+    constexpr operator TColor4<OtherType>() const
+    {
+        return TColor4<OtherType>((OtherType)r, (OtherType)g, (OtherType)b, (OtherType)a);
+    }
 
-	template <typename OtherType>
-	constexpr operator TColor3<OtherType>() const
-	{
-		return TColor4<OtherType>((OtherType)r, (OtherType)g, (OtherType)b);
-	}
+    template <typename OtherType>
+    constexpr operator TColor3<OtherType>() const
+    {
+        return TColor4<OtherType>((OtherType)r, (OtherType)g, (OtherType)b);
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator=(const TColor3<OtherType> &color)
-	{
-		r = (T)color.r;
-		g = (T)color.g;
-		b = (T)color.b;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator=(const TColor3<OtherType>& color)
+    {
+        r = (T)color.r;
+        g = (T)color.g;
+        b = (T)color.b;
+        return *this;
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator=(const TColor4<OtherType> &color)
-	{
-		r = (T)color.r;
-		g = (T)color.g;
-		b = (T)color.b;
-		a = (T)color.a;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator=(const TColor4<OtherType>& color)
+    {
+        r = (T)color.r;
+        g = (T)color.g;
+        b = (T)color.b;
+        a = (T)color.a;
+        return *this;
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator=(const TVector3<OtherType> &color)
-	{
-		r = (T)color.r;
-		g = (T)color.g;
-		b = (T)color.b;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator=(const TVector3<OtherType>& color)
+    {
+        r = (T)color.r;
+        g = (T)color.g;
+        b = (T)color.b;
+        return *this;
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator=(const TVector4<OtherType> &color)
-	{
-		r = (T)color.r;
-		g = (T)color.g;
-		b = (T)color.b;
-		a = (T)color.a;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator=(const TVector4<OtherType>& color)
+    {
+        r = (T)color.r;
+        g = (T)color.g;
+        b = (T)color.b;
+        a = (T)color.a;
+        return *this;
+    }
 
-	const TColor4<T> &operator=(const T value)
-	{
-		r = value;
-		g = value;
-		b = value;
-		a = value;
-		return *this;
-	}
+    const TColor4<T>& operator=(const T value)
+    {
+        r = value;
+        g = value;
+        b = value;
+        a = value;
+        return *this;
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator+=(const TColor4<OtherType> &color)
-	{
-		r += (T)color.r;
-		g += (T)color.g;
-		b += (T)color.b;
-		a += (T)color.a;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator+=(const TColor4<OtherType>& color)
+    {
+        r += (T)color.r;
+        g += (T)color.g;
+        b += (T)color.b;
+        a += (T)color.a;
+        return *this;
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator-=(const TColor4<OtherType> &color)
-	{
-		r -= (T)color.r;
-		g -= (T)color.g;
-		b -= (T)color.b;
-		a -= (T)color.a;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator-=(const TColor4<OtherType>& color)
+    {
+        r -= (T)color.r;
+        g -= (T)color.g;
+        b -= (T)color.b;
+        a -= (T)color.a;
+        return *this;
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator*=(const TColor4<OtherType> &color)
-	{
-		r *= (T)color.r;
-		g *= (T)color.g;
-		b *= (T)color.b;
-		a *= (T)color.a;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator*=(const TColor4<OtherType>& color)
+    {
+        r *= (T)color.r;
+        g *= (T)color.g;
+        b *= (T)color.b;
+        a *= (T)color.a;
+        return *this;
+    }
 
-	template <typename OtherType>
-	const TColor4<T> &operator/=(const TColor4<OtherType> &color)
-	{
-		r /= (T)color.r;
-		g /= (T)color.g;
-		b /= (T)color.b;
-		a /= (T)color.a;
-		return *this;
-	}
+    template <typename OtherType>
+    const TColor4<T>& operator/=(const TColor4<OtherType>& color)
+    {
+        r /= (T)color.r;
+        g /= (T)color.g;
+        b /= (T)color.b;
+        a /= (T)color.a;
+        return *this;
+    }
 
-	const TColor4<T> &operator+=(const T value)
-	{
-		r += value;
-		g += value;
-		b += value;
-		a += value;
-		return *this;
-	}
+    const TColor4<T>& operator+=(const T value)
+    {
+        r += value;
+        g += value;
+        b += value;
+        a += value;
+        return *this;
+    }
 
-	const TColor4<T> &operator-=(const T value)
-	{
-		r -= value;
-		g -= value;
-		b -= value;
-		a -= value;
-		return *this;
-	}
+    const TColor4<T>& operator-=(const T value)
+    {
+        r -= value;
+        g -= value;
+        b -= value;
+        a -= value;
+        return *this;
+    }
 
-	const TColor4<T> &operator*=(const T value)
-	{
-		r *= value;
-		g *= value;
-		b *= value;
-		a *= value;
-		return *this;
-	}
+    const TColor4<T>& operator*=(const T value)
+    {
+        r *= value;
+        g *= value;
+        b *= value;
+        a *= value;
+        return *this;
+    }
 
-	const TColor4<T> &operator/=(const T value)
-	{
-		r /= value;
-		g /= value;
-		b /= value;
-		a /= value;
-		return *this;
-	}
+    const TColor4<T>& operator/=(const T value)
+    {
+        r /= value;
+        g /= value;
+        b /= value;
+        a /= value;
+        return *this;
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<T> operator+(const TColor4<OtherType> &color)
-	{
-		return TColor4<T>(
-			r + color.r,
-			g + color.g,
-			b + color.b,
-			a + color.a);
-	}
+    template <typename OtherType>
+    constexpr TColor4<T> operator+(const TColor4<OtherType>& color)
+    {
+        return TColor4<T>(
+            r + color.r,
+            g + color.g,
+            b + color.b,
+            a + color.a);
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<T> operator-(const TColor4<OtherType> &color)
-	{
-		return TColor4<T>(
-			r - color.r,
-			g - color.g,
-			b - color.b,
-			a - color.a);
-	}
+    template <typename OtherType>
+    constexpr TColor4<T> operator-(const TColor4<OtherType>& color)
+    {
+        return TColor4<T>(
+            r - color.r,
+            g - color.g,
+            b - color.b,
+            a - color.a);
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<T> operator*(const TColor4<OtherType> &color)
-	{
-		return TColor4<T>(
-			r * color.r,
-			g * color.g,
-			b * color.b,
-			a * color.a);
-	}
+    template <typename OtherType>
+    constexpr TColor4<T> operator*(const TColor4<OtherType>& color)
+    {
+        return TColor4<T>(
+            r * color.r,
+            g * color.g,
+            b * color.b,
+            a * color.a);
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<T> operator/(const TColor4<OtherType> &color)
-	{
-		return TColor4<T>(
-			r / color.r,
-			g / color.g,
-			b / color.b,
-			a / color.a);
-	}
+    template <typename OtherType>
+    constexpr TColor4<T> operator/(const TColor4<OtherType>& color)
+    {
+        return TColor4<T>(
+            r / color.r,
+            g / color.g,
+            b / color.b,
+            a / color.a);
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<T> pow(const OtherType power)
-	{
-		return TColor4<T>(
-			std::pow(r, power),
-			std::pow(g, power),
-			std::pow(b, power),
-			std::pow(a, power));
-	}
+    template <typename OtherType>
+    constexpr TColor4<T> pow(const OtherType power)
+    {
+        return TColor4<T>(
+            std::pow(r, power),
+            std::pow(g, power),
+            std::pow(b, power),
+            std::pow(a, power));
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<OtherType> to_other_type(const OtherType min_value, const OtherType max_value)
-	{
-		return TColor4<OtherType>(
-			remap_value_min_max<T, OtherType>(r, min_value, max_value),
-			remap_value_min_max<T, OtherType>(g, min_value, max_value),
-			remap_value_min_max<T, OtherType>(b, min_value, max_value),
-			remap_value_min_max<T, OtherType>(a, min_value, max_value));
-	}
+    template <typename OtherType>
+    constexpr TColor4<OtherType> to_other_type(const OtherType min_value, const OtherType max_value)
+    {
+        return TColor4<OtherType>(
+            remap_value_min_max<T, OtherType>(r, min_value, max_value),
+            remap_value_min_max<T, OtherType>(g, min_value, max_value),
+            remap_value_min_max<T, OtherType>(b, min_value, max_value),
+            remap_value_min_max<T, OtherType>(a, min_value, max_value));
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<OtherType> to_other_type(const OtherType min1, const OtherType max1, const OtherType min2, const OtherType max2)
-	{
-		return TColor4<OtherType>(
-			remap_value_min_max<T, OtherType>(r, min1, max1, min2, max2),
-			remap_value_min_max<T, OtherType>(g, min1, max1, min2, max2),
-			remap_value_min_max<T, OtherType>(b, min1, max1, min2, max2),
-			remap_value_min_max<T, OtherType>(a, min1, max1, min2, max2));
-	}
+    template <typename OtherType>
+    constexpr TColor4<OtherType> to_other_type(const OtherType min1, const OtherType max1, const OtherType min2, const OtherType max2)
+    {
+        return TColor4<OtherType>(
+            remap_value_min_max<T, OtherType>(r, min1, max1, min2, max2),
+            remap_value_min_max<T, OtherType>(g, min1, max1, min2, max2),
+            remap_value_min_max<T, OtherType>(b, min1, max1, min2, max2),
+            remap_value_min_max<T, OtherType>(a, min1, max1, min2, max2));
+    }
 
-	template <typename OtherType>
-	constexpr TColor4<OtherType> Remap(const T src_min_value, const T src_max_value, const OtherType dst_min_value, const OtherType dst_max_value)
-	{
-		return TColor4<OtherType>(
-			remap_value_min_max<T, OtherType>(r, src_min_value, src_max_value, dst_min_value, dst_max_value),
-			remap_value_min_max<T, OtherType>(g, src_min_value, src_max_value, dst_min_value, dst_max_value),
-			remap_value_min_max<T, OtherType>(b, src_min_value, src_max_value, dst_min_value, dst_max_value),
-			remap_value_min_max<T, OtherType>(a, src_min_value, src_max_value, dst_min_value, dst_max_value));
-	}
+    template <typename OtherType>
+    constexpr TColor4<OtherType> Remap(const T src_min_value, const T src_max_value, const OtherType dst_min_value, const OtherType dst_max_value)
+    {
+        return TColor4<OtherType>(
+            remap_value_min_max<T, OtherType>(r, src_min_value, src_max_value, dst_min_value, dst_max_value),
+            remap_value_min_max<T, OtherType>(g, src_min_value, src_max_value, dst_min_value, dst_max_value),
+            remap_value_min_max<T, OtherType>(b, src_min_value, src_max_value, dst_min_value, dst_max_value),
+            remap_value_min_max<T, OtherType>(a, src_min_value, src_max_value, dst_min_value, dst_max_value));
+    }
 
-	constexpr TColor4<T> Clamp(T min_value, T max_value) const
-	{
-		return TColor4<T>(
-			clamp<T>(r, min_value, max_value),
-			clamp<T>(g, min_value, max_value),
-			clamp<T>(b, min_value, max_value),
-			clamp<T>(a, min_value, max_value));
-	}
+    constexpr TColor4<T> Clamp(T min_value, T max_value) const
+    {
+        return TColor4<T>(
+            clamp<T>(r, min_value, max_value),
+            clamp<T>(g, min_value, max_value),
+            clamp<T>(b, min_value, max_value),
+            clamp<T>(a, min_value, max_value));
+    }
 
-	constexpr TColor4<T> ScaleClamp(T scale, T min_value, T max_value) const
-	{
-		return TColor4<T>(
-			clamp<T>(r * scale, min_value, max_value),
-			clamp<T>(g * scale, min_value, max_value),
-			clamp<T>(b * scale, min_value, max_value),
-			clamp<T>(a * scale, min_value, max_value));
-	}
+    constexpr TColor4<T> ScaleClamp(T scale, T min_value, T max_value) const
+    {
+        return TColor4<T>(
+            clamp<T>(r * scale, min_value, max_value),
+            clamp<T>(g * scale, min_value, max_value),
+            clamp<T>(b * scale, min_value, max_value),
+            clamp<T>(a * scale, min_value, max_value));
+    }
 
-	template <typename OtherType, typename ScaleType>
-	constexpr TColor3<OtherType> ToColor3(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
-	{
-		return TColor3<OtherType>(
-			(OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
-			(OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
-			(OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value));
-	}
+    template <typename OtherType, typename ScaleType>
+    constexpr TColor3<OtherType> ToColor3(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
+    {
+        return TColor3<OtherType>(
+            (OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
+            (OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
+            (OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value));
+    }
 
-	template <typename OtherType, typename ScaleType>
-	constexpr TColor4<OtherType> ToColor4(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
-	{
-		return TColor4<OtherType>(
-			(OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
-			(OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
-			(OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value),
-			(OtherType)clamp<OtherType>(OtherType(a * scale), min_value, max_value));
-	}
+    template <typename OtherType, typename ScaleType>
+    constexpr TColor4<OtherType> ToColor4(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
+    {
+        return TColor4<OtherType>(
+            (OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
+            (OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
+            (OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value),
+            (OtherType)clamp<OtherType>(OtherType(a * scale), min_value, max_value));
+    }
 
-	template <typename OtherType = T>
-	constexpr TColor3<OtherType> ToColor3() const
-	{
-		return TColor3<OtherType>(
-			(OtherType)r,
-			(OtherType)g,
-			(OtherType)b);
-	}
+    template <typename OtherType = T>
+    constexpr TColor3<OtherType> ToColor3() const
+    {
+        return TColor3<OtherType>(
+            (OtherType)r,
+            (OtherType)g,
+            (OtherType)b);
+    }
 
-	template <typename OtherType = T>
-	constexpr TColor3<OtherType> ToColor4() const
-	{
-		return TColor3<OtherType>(
-			(OtherType)r,
-			(OtherType)g,
-			(OtherType)b,
-			(OtherType)a);
-	}
+    template <typename OtherType = T>
+    constexpr TColor3<OtherType> ToColor4() const
+    {
+        return TColor3<OtherType>(
+            (OtherType)r,
+            (OtherType)g,
+            (OtherType)b,
+            (OtherType)a);
+    }
 
-	template <typename OtherType = T>
-	constexpr TVector3<OtherType> ToVector3() const
-	{
-		return TVector3<OtherType>(
-			(OtherType)r,
-			(OtherType)g,
-			(OtherType)b);
-	}
+    template <typename OtherType = T>
+    constexpr TVector3<OtherType> ToVector3() const
+    {
+        return TVector3<OtherType>(
+            (OtherType)r,
+            (OtherType)g,
+            (OtherType)b);
+    }
 
-	template <typename OtherType = T>
-	constexpr TVector4<OtherType> ToVector4() const
-	{
-		return TVector4<OtherType>(
-			(OtherType)r,
-			(OtherType)g,
-			(OtherType)b,
-			(OtherType)a);
-	}
+    template <typename OtherType = T>
+    constexpr TVector4<OtherType> ToVector4() const
+    {
+        return TVector4<OtherType>(
+            (OtherType)r,
+            (OtherType)g,
+            (OtherType)b,
+            (OtherType)a);
+    }
 
-	constexpr double Intensity() const
-	{
-		return (r + g + b) / 3.0;
-	}
+    constexpr double Intensity() const
+    {
+        return (r + g + b) / 3.0;
+    }
+
+    constexpr T minrgb() const noexcept
+    {
+        return min3<T>(r, g, b);
+    }
+
+    constexpr T maxrgb() const noexcept
+    {
+        return max3<T>(r, g, b);
+    }
+
+    static constexpr TColor4<T> min(const TColor4<T>& a, const TColor4<T>& b) noexcept
+    {
+        return TColor4<T>(
+            std::min(a.r, b.r),
+            std::min(a.g, b.g),
+            std::min(a.b, b.b),
+            std::min(a.a, b.a));
+    }
+
+    static constexpr TColor4<T> max(const TColor4<T>& a, const TColor4<T>& b) noexcept
+    {
+        return TColor4<T>(
+            std::max(a.r, b.r),
+            std::max(a.g, b.g),
+            std::max(a.b, b.b),
+            std::max(a.a, b.a));
+    }
 };
 
 template <typename T>
 constexpr TColor4<T> abs(TColor4<T> color)
 {
-	return TColor4<T>(
-		color.r < 0 ? (T)-1 : color.r > 0 ? 1 : 0,
-		color.g < 0 ? (T)-1 : color.g > 0 ? 1 : 0,
-		color.b < 0 ? (T)-1 : color.b > 0 ? 1 : 0,
-		color.a < 0 ? (T)-1 : color.a > 0 ? 1 : 0);
+    return TColor4<T>(
+        color.r < 0 ? (T)-1 : color.r > 0 ? 1 : 0,
+        color.g < 0 ? (T)-1 : color.g > 0 ? 1 : 0,
+        color.b < 0 ? (T)-1 : color.b > 0 ? 1 : 0,
+        color.a < 0 ? (T)-1 : color.a > 0 ? 1 : 0);
 }
 
 template <typename T>
 constexpr TColor4<T> sign(TColor4<T> color)
 {
-	return TColor4<T>(
-		color.r < 0 ? (T)-1 : color.r > 0 ? 1 : 0,
-		color.g < 0 ? (T)-1 : color.g > 0 ? 1 : 0,
-		color.b < 0 ? (T)-1 : color.b > 0 ? 1 : 0,
-		color.a < 0 ? (T)-1 : color.a > 0 ? 1 : 0);
+    return TColor4<T>(
+        color.r < 0 ? (T)-1 : color.r > 0 ? 1 : 0,
+        color.g < 0 ? (T)-1 : color.g > 0 ? 1 : 0,
+        color.b < 0 ? (T)-1 : color.b > 0 ? 1 : 0,
+        color.a < 0 ? (T)-1 : color.a > 0 ? 1 : 0);
 }
 
 template <typename T>
 constexpr TColor4<T> negate(TColor4<T> color)
 {
-	return TColor4<T>(-color.r, -color.g, -color.b, -color.a);
+    return TColor4<T>(-color.r, -color.g, -color.b, -color.a);
 }
 
 template <typename Floating, typename T>
-constexpr TColor4<T> operator*(const TColor4<T> &lhs, const Floating rhs)
+constexpr TColor4<T> operator*(const TColor4<T>& lhs, const Floating rhs)
 {
-	return TColor4<T>(
-		(T)(lhs.r * rhs),
-		(T)(lhs.g * rhs),
-		(T)(lhs.b * rhs),
-		(T)(lhs.a * rhs));
+    return TColor4<T>(
+        (T)(lhs.r * rhs),
+        (T)(lhs.g * rhs),
+        (T)(lhs.b * rhs),
+        (T)(lhs.a * rhs));
 }
 
 template <typename Floating, typename T>
-constexpr TColor4<T> operator*(const Floating rhs, const TColor4<T> &lhs)
+constexpr TColor4<T> operator*(const Floating rhs, const TColor4<T>& lhs)
 {
-	return TColor4<T>(
-		(T)(lhs * rhs.r),
-		(T)(lhs * rhs.g),
-		(T)(lhs * rhs.b),
-		(T)(lhs * rhs.a));
+    return TColor4<T>(
+        (T)(lhs * rhs.r),
+        (T)(lhs * rhs.g),
+        (T)(lhs * rhs.b),
+        (T)(lhs * rhs.a));
 }
 
 template <typename T>
-constexpr TColor4<T> operator/(const TColor4<T> &lhs, const T rhs)
+constexpr TColor4<T> operator/(const TColor4<T>& lhs, const T rhs)
 {
-	return TColor4<T>(
-		lhs.r / rhs,
-		lhs.g / rhs,
-		lhs.b / rhs,
-		lhs.a / rhs);
+    return TColor4<T>(
+        lhs.r / rhs,
+        lhs.g / rhs,
+        lhs.b / rhs,
+        lhs.a / rhs);
 }
 
 using Color4f = TColor4<float>;
@@ -468,25 +502,25 @@ extern template class TColor4<unsigned char>;
 // Scales the color by 255 and then clamps to 0 to 65535
 inline Color4i ToColor4i(const Color4f color, float scale = 255.0f, int min_value = 0, int max_value = 65535)
 {
-	return color.ToColor4<int, float>(scale, min_value, max_value);
+    return color.ToColor4<int, float>(scale, min_value, max_value);
 }
 
 // Scales the color by 255 and then clamps to 0 to 255
 inline Color4ub ToColor4ub(const Color4f color, float scale = 255.99f, int min_value = 0, int max_value = 255)
 {
-	return color.ToColor4<unsigned char, float>(scale, (unsigned char)min_value, (unsigned char)max_value);
+    return color.ToColor4<unsigned char, float>(scale, (unsigned char)min_value, (unsigned char)max_value);
 }
 
 // Scales the color by 1/255 and then clamps to 0 to 1
 inline Color4f ToColor4f(const Color4ub color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
 {
-	return color.ToColor4<float>(scale, min_value, max_value);
+    return color.ToColor4<float>(scale, min_value, max_value);
 }
 
 // Scales the color by 1/255 and then clamps to 0 to 1
 inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
 {
-	return color.ToColor4<float>(scale, min_value, max_value);
+    return color.ToColor4<float>(scale, min_value, max_value);
 }
 
 //////////////////////////////////////////////////////////////////////

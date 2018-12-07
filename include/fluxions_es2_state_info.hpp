@@ -41,7 +41,7 @@ namespace ES2
 //	{
 //		T r, g, b;
 //	};
-//	T v[3];
+//	T ptr[3];
 //
 //	TVector3() : x(0), y(0), z(0)
 //	{
@@ -75,7 +75,7 @@ struct TVector3
 //	{
 //		T r, g, b, a;
 //	};
-//	T v[4];
+//	T ptr[4];
 //
 //	TVector4() : x(0), y(0), z(0), w(0)
 //	{

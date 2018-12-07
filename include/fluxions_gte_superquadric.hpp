@@ -92,12 +92,22 @@ class SuperQuadricEllipsoid
 };
 
 template <typename T>
-class SuperQuadricToroid : public SuperQuadricEllipsoid<T>
+class SuperQuadricToroid
 {
   public:
 	SuperQuadricToroid(T n_, T e_, T alpha_, T a1_ = 1, T a2_ = 1, T a3_ = 1)
-		: SuperQuadricEllipsoid<T>(n_, e_, a1_, a2_, a3_)
 	{
+		n = fabs(n_);
+		e = fabs(e_);
+		e_over_n = e_ / n_;
+		_2_over_n = 2 / n_;
+		_2_over_e = 2 / e_;
+		a1 = a1_;
+		a2 = a2_;
+		a3 = a3_;
+		inva1 = 1 / a1_;
+		inva2 = 1 / a2_;
+		inva3 = 1 / a3_;
 		alpha = alpha_;
 		a4 = alpha_ / sqrt(a1_ * a1_ + a2_ * a2_);
 	}
@@ -120,21 +130,36 @@ class SuperQuadricToroid : public SuperQuadricEllipsoid<T>
 
 	T InsideOutside(T x, T y, T z) const
 	{
-		//T x_over_a1 = inva1 * x;
-		//T y_over_a2 = inva2 * y;
-		//T z_over_a3 = inva3 * z;
-		//T px = pow(x_over_a1, _2_over_e);
-		//T py = pow(y_over_a2, _2_over_e);
-		//T pz = pow(z_over_a3, _2_over_n);
-		//T pxy = pow(px + py, e_over_n);
-		//return pow(pxy - a4, _2_over_n) + pz;
-
-		//return (pow(px + py, e_over_n) - a4, _2_over_n) + pow(inva3 * z, _2_over_n);
-
 		return pow(pow(pow(inva1 * x, _2_over_e) + pow(inva2 * y, _2_over_e), e_over_n) - a4, _2_over_n) + pow(inva3 * z, _2_over_n);
 	}
 
   private:
+	T c(const T x, const T &y) const
+	{
+		T cosine = cos(x);
+		return sgn(cosine) * pow(abs(cosine), y);
+	}
+	T s(const T x, const T y) const
+	{
+		T sine = sin(x);
+		return sgn(sine) * pow(abs(sine), y);
+	}
+	T cT(const T x, const T y) const
+	{
+		return alpha + c(x, y);
+	}
+
+	T a1;
+	T a2;
+	T a3;
+	T inva1;
+	T inva2;
+	T inva3;
+	T n;
+	T e;
+	T e_over_n;
+	T _2_over_n;
+	T _2_over_e;
 	T a4;
 	T alpha;
 };

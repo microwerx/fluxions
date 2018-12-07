@@ -579,9 +579,9 @@ namespace Fluxions
 		target = GL_TEXTURE_CUBE_MAP;
 		
 		SDL_Surface *images[6] = { nullptr };
-		int width;
-		int height;
-		int format;
+		int width = 0;
+		int height = 0;
+		int format = 0;
 		int imageFormat;
 		void *data[6] = { nullptr };
 		bool badData = false;

@@ -19,175 +19,176 @@
 #ifndef FLUXIONS_GTE_IMAGE_HPP
 #define FLUXIONS_GTE_IMAGE_HPP
 
+#include <algorithm>
+#include <fluxions_gte_color3.hpp>
+#include <fluxions_gte_color4.hpp>
 #include <fluxions_gte_math.hpp>
 #include <fluxions_gte_vector3.hpp>
 #include <fluxions_gte_vector4.hpp>
-#include <fluxions_gte_color3.hpp>
-#include <fluxions_gte_color4.hpp>
-#include <vector>
 #include <string>
-#include <algorithm>
+#include <vector>
 
-namespace Fluxions
-{
+namespace Fluxions {
 template <class T>
 struct is_color_type : std::integral_constant<
-						   bool,
-						   std::is_same<TColor3<T>, T>::value ||
-							   std::is_same<TColor4<T>, T>::value>
-{
+                           bool,
+                           std::is_same<TColor3<T>, T>::value || std::is_same<TColor4<T>, T>::value> {
 };
 
 template <typename ColorType>
-class TImage
-{
-  public:
-	std::vector<ColorType> pixels;
-	int imageWidth;
-	int imageHeight;
-	int imageDepth;
+class TImage {
+public:
+    std::vector<ColorType> pixels;
+    int imageWidth;
+    int imageHeight;
+    int imageDepth;
 
-	TImage() : imageWidth(0), imageHeight(0), imageDepth(0) {}
-	TImage(int width, int height, int depth = 1) { resize(width, height, depth); }
+    TImage()
+        : imageWidth(0)
+        , imageHeight(0)
+        , imageDepth(0)
+    {
+    }
+    TImage(int width, int height, int depth = 1) { resize(width, height, depth); }
 
-	inline void setBorderColor(const ColorType &color) { borderColor = color; }
-	inline const ColorType &getBorderColor() const { return borderColor; }
-	inline int width() const { return imageWidth; }
-	inline int height() const { return imageHeight; }
-	inline int depth() const { return imageDepth; }
-	inline size_t addr(int x, int y, int z = 0)
-	{
-		if (x < 0 || y < 0 || z < 0)
-			return 0;
-		if (x >= imageWidth || y >= imageHeight || z >= imageDepth)
-			return 0;
-		return z * zstride + y * imageWidth + x;
-	}
+    inline void setBorderColor(const ColorType& color) { borderColor = color; }
+    inline const ColorType& getBorderColor() const { return borderColor; }
+    inline int width() const { return imageWidth; }
+    inline int height() const { return imageHeight; }
+    inline int depth() const { return imageDepth; }
+    inline size_t addr(int x, int y, int z = 0)
+    {
+        if (x < 0 || y < 0 || z < 0)
+            return 0;
+        if (x >= imageWidth || y >= imageHeight || z >= imageDepth)
+            return 0;
+        return z * zstride + y * imageWidth + x;
+    }
 
-	inline ColorType *getPixels(int index)
-	{
-		if (index < 0 || index >= imageDepth)
-			return NULL;
-		return &(pixels[index * zstride]);
-	}
+    inline ColorType* getPixels(int index)
+    {
+        if (index < 0 || index >= imageDepth)
+            return NULL;
+        return &(pixels[index * zstride]);
+    }
 
-	void resize(int width, int height, int depth = 1);
-	void reset() { resize(0, 0, 0); }
-	void clear(const ColorType &clearcolor);
-	bool empty() const noexcept { return pixels.empty(); }
-	bool IsCubeMap() const noexcept { return imageWidth == imageHeight && imageDepth == 6; }
-	TImage<ColorType> &ToSRGB();
-	TImage<ColorType> & ReverseSRGB();
-	TImage<ColorType> & ToneMap(float exposure);
-	TImage<ColorType> & ReverseToneMap(float exposure);
-	void scaleColors(float x);
-	TImage<ColorType> ScaleImage(int newWidth, int newHeight, bool bilinear = false);
+    void resize(int width, int height, int depth = 1);
+    void reset() { resize(0, 0, 0); }
+    void clear(const ColorType& clearcolor);
+    bool empty() const noexcept { return pixels.empty(); }
+    bool IsCubeMap() const noexcept { return imageWidth == imageHeight && imageDepth == 6; }
+    TImage<ColorType>& ToSRGB();
+    TImage<ColorType>& ReverseSRGB();
+    TImage<ColorType>& ToneMap(float exposure);
+    TImage<ColorType>& ReverseToneMap(float exposure);
+    void scaleColors(float x);
+    TImage<ColorType> ScaleImage(int newWidth, int newHeight, bool bilinear = false);
 
-	inline void setPixel(int x, int y, ColorType color)
-	{
-		if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight)
-			return;
-		pixels[y * imageWidth + x] = color;
-	}
+    inline void setPixel(int x, int y, ColorType color)
+    {
+        if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight)
+            return;
+        pixels[y * imageWidth + x] = color;
+    }
 
-	inline ColorType getPixel(int x, int y) const
-	{
-		if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight)
-			return borderColor;
+    inline ColorType getPixel(int x, int y) const
+    {
+        if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight)
+            return borderColor;
 
-		return pixels[y * imageWidth + x];
-	}
+        return pixels[y * imageWidth + x];
+    }
 
-	// Same as setPixel(X, y, color) but without image bounds checking: unsafe!
-	inline void setPixelUnsafe(int x, int y, ColorType color)
-	{
-		pixels[y * imageWidth + x] = color;
-	}
+    // Same as setPixel(X, y, color) but without image bounds checking: unsafe!
+    inline void setPixelUnsafe(int x, int y, ColorType color)
+    {
+        pixels[y * imageWidth + x] = color;
+    }
 
-	// Same as getPixel(X, y) but without image bounds checking: unsafe!
-	inline ColorType getPixelUnsafe(int x, int y) const
-	{
-		return pixels[y * imageWidth + x];
-	}
+    // Same as getPixel(X, y) but without image bounds checking: unsafe!
+    inline ColorType getPixelUnsafe(int x, int y) const
+    {
+        return pixels[y * imageWidth + x];
+    }
 
-	inline void setPixel(int x, int y, int z, const ColorType &color)
-	{
-		if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight || z < 0 || z >= imageDepth)
-			return;
-		pixels[z * zstride + y * imageWidth + x] = color;
-	}
+    inline void setPixel(int x, int y, int z, const ColorType& color)
+    {
+        if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight || z < 0 || z >= imageDepth)
+            return;
+        pixels[z * zstride + y * imageWidth + x] = color;
+    }
 
-	inline ColorType getPixel(int x, int y, int z) const
-	{
-		if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight || z < 0 || z >= imageDepth)
-			return borderColor;
+    inline ColorType getPixel(int x, int y, int z) const
+    {
+        if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight || z < 0 || z >= imageDepth)
+            return borderColor;
 
-		return pixels[z * zstride + y * imageWidth + x];
-	}
+        return pixels[z * zstride + y * imageWidth + x];
+    }
 
-	inline ColorType getPixelCubeMap(const Vector3f &v) const
-	{
-		return getPixelCubeMap(v.x, v.y, v.z);
-	}
+    inline ColorType getPixelCubeMap(const Vector3f& v) const
+    {
+        return getPixelCubeMap(v.x, v.y, v.z);
+    }
 
-	inline ColorType getPixelCubeMap(float x, float y, float z) const
-	{
-		if (imageDepth != 6)
-			return borderColor;
+    inline ColorType getPixelCubeMap(float x, float y, float z) const
+    {
+        if (imageDepth != 6)
+            return borderColor;
 
-		float s, t;
-		int iz;
-		MakeFaceSTFromCubeVector(x, y, z, &s, &t, &iz);
-		int ix = (int)(s * imageWidth);
-		int iy = (int)((1.0f - t) * imageHeight);
-		return getPixel(ix, iy, iz);
-	}
+        float s, t;
+        int iz;
+        MakeFaceSTFromCubeVector(x, y, z, &s, &t, &iz);
+        int ix = (int)(s * imageWidth);
+        int iy = (int)((1.0f - t) * imageHeight);
+        return getPixel(ix, iy, iz);
+    }
 
-	// Same as setPixel(X, y, color) but without image bounds checking: unsafe!
-	inline void setPixelUnsafe(int x, int y, int z, const ColorType &color)
-	{
-		pixels[z * zstride + y * imageWidth + x] = color;
-	}
+    // Same as setPixel(X, y, color) but without image bounds checking: unsafe!
+    inline void setPixelUnsafe(int x, int y, int z, const ColorType& color)
+    {
+        pixels[z * zstride + y * imageWidth + x] = color;
+    }
 
-	// Same as getPixel(X, y) but without image bounds checking: unsafe!
-	inline ColorType getPixelUnsafe(int x, int y, int z) const
-	{
-		return pixels[z * zstride + y * imageWidth + x];
-	}
+    // Same as getPixel(X, y) but without image bounds checking: unsafe!
+    inline ColorType getPixelUnsafe(int x, int y, int z) const
+    {
+        return pixels[z * zstride + y * imageWidth + x];
+    }
 
-	inline const void *getImageData(int z) const
-	{
-		return &pixels[z * zstride];
-	}
+    inline const void* getImageData(int z) const
+    {
+        return &pixels[z * zstride];
+    }
 
-	double getIntensity() const;
-	double getMinimum() const;
-	double getMaximum() const;
-	double getAverage() const;
-	int getNumPixels() const { return (int)pixels.size(); }
+    double getIntensity() const;
+    double getMinimum() const;
+    double getMaximum() const;
+    double getAverage() const;
+    int getNumPixels() const { return (int)pixels.size(); }
 
-	void savePPMRaw(const std::string &filename, int z = 0);
-	void savePPM(const std::string &filename, int z = 0, bool flipy = false);
-	void savePPMi(const string &filename, float scale, int minValue, int maxValue, int z = 0, bool flipy = false);
-	void savePPMHDRI(const std::string &filename, int z = 0);
-	void loadPPM(const std::string &filename);
+    void savePPMRaw(const std::string& filename, int z = 0);
+    void savePPM(const std::string& filename, int z = 0, bool flipy = false);
+    void savePPMi(const string& filename, float scale, int minValue, int maxValue, int z = 0, bool flipy = false);
+    void savePPMHDRI(const std::string& filename, int z = 0);
+    void loadPPM(const std::string& filename);
 
-	bool flipX(int z = 0);
-	bool flipY(int z = 0);
-	bool rotateLeft90(int z = 0);
-	bool rotateRight90(int z = 0);
-	bool convertRectToCubeMap();
-	bool convertCubeMapToRect();
+    bool flipX(int z = 0);
+    bool flipY(int z = 0);
+    bool rotateLeft90(int z = 0);
+    bool rotateRight90(int z = 0);
+    bool convertRectToCubeMap();
+    bool convertCubeMapToRect();
 
-	void setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void *_pixels);
+    void setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void* _pixels);
 
-  private:
-	void _setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, int width, int height, int depth, void *_pixels);
+private:
+    void _setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, int width, int height, int depth, void* _pixels);
 
-	int zstride;
-	ColorType borderColor;
-	int minColor;
-	int maxColor;
+    int zstride;
+    ColorType borderColor;
+    int minColor;
+    int maxColor;
 };
 
 using Image3f = TImage<Color3f>;

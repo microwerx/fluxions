@@ -19,8 +19,5 @@
 #include "stdafx.h"
 #include "viperfish.hpp"
 
-
-namespace Viperfish
-{
-
+namespace Viperfish {
 }
