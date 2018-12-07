@@ -1,0 +1,546 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\fluxions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_astronomy.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_bbox.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_corona.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_corona_scene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_es2_renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_fileio.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_bounding_box.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_color3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_color4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_geometric_algebra.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_iostream.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_math.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix_extra.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix_stack.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_quaternion.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_ray.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_rect.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_scalar.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_spherical_harmonic.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_superquadric.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_vector2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_vector3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_vector4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_multiple_render_target.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_opengl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_pbsky.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_gles30_renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_materials.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_program.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_property.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_render_configuration.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_scene_graph.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_ssphh_light.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_uniform_buffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_sphl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_sphl_sampler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_ssphh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_xml.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glut_extensions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hatchetfish.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kasl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kasl_evaluator.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kasl_json.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kasl_lexer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kasl_python.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\kasl_syntax_semantic_analyzer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_broker.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_client.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_curl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_frame.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_majordomo.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_message.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_socket.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_worker.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_analog_bitset.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_application.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_gamepad.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_glut.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_imgui.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_keyboard.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_mouse.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_stopwatch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_widget.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_xinput.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\src\ArHosekSkyModel.cpp">
+      <Filter>dep\src</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\src\glew.c">
+      <Filter>dep\src</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\src\imgui.cpp">
+      <Filter>dep\src</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\src\imgui_demo.cpp">
+      <Filter>dep\src</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\src\imgui_draw.cpp">
+      <Filter>dep\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\fluxions.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_astronomy.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_bbox.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_config.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_corona.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_corona_scene.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_es2_renderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_es2_state_info.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_fileio.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_multiple_render_target.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_opengl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_pbsky.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_precompiled_models.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_renderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_resource_manager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_gles30_renderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_materials.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_property.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_renderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_scene_graph.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_texture.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl_sampler.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssphh.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_stdcxx.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_types.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_uniform_library.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_utilities.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_xml.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\glut_extensions.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\hatchetfish.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\kasl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\kasl_evaluator.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\kasl_json.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\kasl_lexer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\kasl_python.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\kasl_syntax_semantic_analyzer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_broker.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_client.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_curl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_frame.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_majordomo.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_message.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_socket.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unicornfish_worker.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_gamepad.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_glut.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_imgui.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_keyboard.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_mouse.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_stopwatch.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_utilities.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_widget.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_xinput.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stdafx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\ArHosekSkyModel.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\ArHosekSkyModelData_CIEXYZ.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\ArHosekSkyModelData_RGB.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\ArHosekSkyModelData_Spectral.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\imconfig.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\imgui.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\imgui_internal.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\stb_rect_pack.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\stb_textedit.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\stb_truetype.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_bounding_box.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_color3.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_color4.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_geometric_algebra.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_image.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_iostream.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_math.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_matrix_extra.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_matrix_stack.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_matrix2.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_matrix3.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_matrix4.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_plane.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_quaternion.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_ray.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_rect.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_scalar.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_spherical_harmonic.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_superquadric.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_vector2.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_vector3.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_vector4.hpp">
+      <Filter>include\GTE</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{03470371-3264-498e-8cf0-f05cf547a4cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{eba1624e-0b3e-40cf-88a9-b8c46324b83f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep">
+      <UniqueIdentifier>{8236847c-4654-40a6-9853-c753029b6124}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep\include">
+      <UniqueIdentifier>{91daab5d-28f6-46bf-a9b3-9dbd5427176d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep\src">
+      <UniqueIdentifier>{bb269781-682a-45f4-bea1-5dfa57f780a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\GTE">
+      <UniqueIdentifier>{de630064-8141-46c7-88eb-62f06cf3e5d7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
