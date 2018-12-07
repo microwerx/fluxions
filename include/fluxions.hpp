@@ -20,6 +20,7 @@
 #define FLUXIONS_HPP
 
 #ifdef WIN32
+#define NOMINMAX
 #pragma comment(lib, "SDL2.lib")
 #pragma comment(lib, "SDL2main.lib")
 #pragma comment(lib, "SDL2_image.lib")

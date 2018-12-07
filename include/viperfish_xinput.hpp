@@ -23,6 +23,7 @@
 #include <viperfish_gamepad.hpp>
 
 #ifdef WIN32
+#define NOMINMAX
 #include <Xinput.h>
 
 #pragma comment(lib, "xinput.lib")

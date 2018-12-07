@@ -40,6 +40,11 @@ template <typename T>
 class TMatrix4x3;
 
 template <typename T>
+class TColor3;
+template <typename T>
+class TColor4;
+
+template <typename T>
 class TMatrixM {
 public:
     T m11, m21, m31, m41;
@@ -984,6 +989,15 @@ constexpr TVector3<T> operator*(const TMatrix3<T>& lhs, const TVector3<T>& rhs)
         lhs.m11 * rhs.x + lhs.m12 * rhs.y + lhs.m13 * rhs.z,
         lhs.m21 * rhs.x + lhs.m22 * rhs.y + lhs.m23 * rhs.z,
         lhs.m31 * rhs.x + lhs.m32 * rhs.y + lhs.m33 * rhs.z);
+}
+
+template <typename T>
+constexpr TColor3<T> operator*(const TMatrix3<T>& lhs, const TColor3<T>& rhs)
+{
+    return TColor3<T>(
+        lhs.m11 * rhs.r + lhs.m12 * rhs.g + lhs.m13 * rhs.b,
+        lhs.m21 * rhs.r + lhs.m22 * rhs.g + lhs.m23 * rhs.b,
+        lhs.m31 * rhs.r + lhs.m32 * rhs.g + lhs.m33 * rhs.b);
 }
 
 //using Matrix2x3f = TMatrix2x3<float>;

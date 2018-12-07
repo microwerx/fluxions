@@ -19,6 +19,7 @@
 #ifndef FLUXIONS_OPENGL_HPP
 #define FLUXIONS_OPENGL_HPP
 
+#define NOMINMAX
 #define GLEW_STATIC
 #include <GL/glew.h>
 #ifdef WIN32

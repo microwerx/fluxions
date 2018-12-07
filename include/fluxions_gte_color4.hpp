@@ -406,23 +406,23 @@ public:
         return max3<T>(r, g, b);
     }
 
-    static constexpr TColor4<T> min(const TColor4<T>& a, const TColor4<T>& b) noexcept
-    {
-        return TColor4<T>(
-            std::min(a.r, b.r),
-            std::min(a.g, b.g),
-            std::min(a.b, b.b),
-            std::min(a.a, b.a));
-    }
+    //static constexpr TColor4<T> min(const TColor4<T>& a, const TColor4<T>& b) noexcept
+    //{
+    //    return TColor4<T>(
+    //        std::min(a.r, b.r),
+    //        std::min(a.g, b.g),
+    //        std::min(a.b, b.b),
+    //        std::min(a.a, b.a));
+    //}
 
-    static constexpr TColor4<T> max(const TColor4<T>& a, const TColor4<T>& b) noexcept
-    {
-        return TColor4<T>(
-            std::max(a.r, b.r),
-            std::max(a.g, b.g),
-            std::max(a.b, b.b),
-            std::max(a.a, b.a));
-    }
+    //static constexpr TColor4<T> max(const TColor4<T>& a, const TColor4<T>& b) noexcept
+    //{
+    //    return TColor4<T>(
+    //        std::max(a.r, b.r),
+    //        std::max(a.g, b.g),
+    //        std::max(a.b, b.b),
+    //        std::max(a.a, b.a));
+    //}
 };
 
 template <typename T>

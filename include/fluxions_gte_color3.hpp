@@ -19,6 +19,8 @@
 #ifndef FLUXIONS_GTE_COLOR3_HPP
 #define FLUXIONS_GTE_COLOR3_HPP
 
+#define NOMINMAX
+
 #include <fluxions_gte_color4.hpp>
 #include <fluxions_gte_math.hpp>
 #include <fluxions_gte_vector3.hpp>
@@ -374,6 +376,37 @@ public:
     constexpr double Hue() const
     {
         return acos(sqrt(0.5 * ((r - g) + (r - b)) / ((r - g) * (r - g) + (r - b) * (g - b))));
+    }
+
+    constexpr T minrgb() const noexcept
+    {
+        return min3<T>(r, g, b);
+    }
+
+    constexpr T maxrgb() const noexcept
+    {
+        return max3<T>(r, g, b);
+    }
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+    static constexpr TColor3<T> min(const TColor3<T>& a, const TColor3<T>& b) noexcept
+    {
+        return TColor3<T>(
+            std::min(a.r, b.r),
+            std::min(a.g, b.g),
+            std::min(a.b, b.b));
+    }
+
+    static constexpr TColor3<T> max(const TColor3<T>& a, const TColor3<T>& b) noexcept
+    {
+        return TColor3<T>(
+            std::max(a.r, b.r),
+            std::max(a.g, b.g),
+            std::max(a.b, b.b));
     }
 };
 

@@ -149,12 +149,12 @@ struct SimpleEnvironment {
     bool hasColor = false;
     bool hasTexmap = false;
     bool hasSun = false;
-    Vector3f color;
+    Color3f color;
     string texmap;
     Vector3f sunDirTo;
     Vector3f curSunDirTo;
-    Vector4f curSunDiskRadiance;
-    Vector4f curGroundRadiance;
+    Color4f curSunDiskRadiance;
+    Color4f curGroundRadiance;
     float toneMapScale = -6.0f;
     float toneMapExposure = -6.0f;
     float toneMapGamma = 1.0f;
