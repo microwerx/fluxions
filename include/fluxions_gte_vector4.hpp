@@ -288,7 +288,7 @@ public:
     }
 
     template <typename U>
-    constexpr T dot(const TVector4<T>& v2) const noexcept
+    constexpr T dot(const TVector4<T>& v) const noexcept
     {
         return x * v.x + y * v.y + z * v.z + w * v.w;
     }
