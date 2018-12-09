@@ -239,7 +239,7 @@ class TSphericalHarmonic
 
 	constexpr VectorType K(size_t l, int m)
 	{
-		ScalarType fourPi = (ScalarType)12.566370614359172953850573533118;
+		// ScalarType fourPi = (ScalarType)12.566370614359172953850573533118;
 		ScalarType invFourPi = (ScalarType)0.07957747154594766788444188168626;
 		ScalarType c = invFourPi * (2 * l + 1);
 		ScalarType t;

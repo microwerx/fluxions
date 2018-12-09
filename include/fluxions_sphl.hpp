@@ -32,8 +32,8 @@ struct FxModel
 {
 	vector<Vector3f> vertices;
 	vector<Vector3i> triangles;
-	int vertexCount = 0;
-	int triangleCount = 0;
+	size_t vertexCount = 0;
+	size_t triangleCount = 0;
 
 	void load(const char *path);
 	void makeModel(SimpleGeometryMesh &model);
