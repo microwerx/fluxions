@@ -191,16 +191,18 @@ Real DDDeg(Real dd)
 	Real a = fabs(dd);
 	Real b = a * 3600.0;
 	Real c = vb_round(b - 60.0 * trunc(b / 60.0), 2);
-	Real d, e;
+	// FIXME: d is not used, but why?
+	// Real d;
+	Real e;
 
 	if (c == 60.0)
 	{
-		d = 0;
+		// d = 0;
 		e = b + 60.0;
 	}
 	else
 	{
-		d = c;
+		// d = c;
 		e = b;
 	}
 
@@ -219,15 +221,16 @@ Real DDMin(Real dd)
 	Real a = fabs(dd);
 	Real b = a * 3600.0;
 	Real c = vb_round(b - 60 * trunc(b / 60.0), 2);
-	Real d, e;
+	// Real d;
+	Real e;
 	if (c == 60.0)
 	{
-		d = 0;
+		// d = 0;
 		e = b + 60;
 	}
 	else
 	{
-		d = c;
+		// d = c;
 		e = b;
 	}
 

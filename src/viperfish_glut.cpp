@@ -19,257 +19,267 @@
 #include "stdafx.h"
 #include <viperfish_glut.hpp>
 
-namespace Viperfish {
-namespace vfglut {
-    static shared_ptr<Widget> widget;
-    static MouseState mouseState;
-    static map<int, MouseState> multitouchState;
-    static KeyboardState keyboardState;
-    static map<int, GamepadState> gamepadState;
+namespace Viperfish
+{
+namespace vfglut
+{
+static shared_ptr<Widget> widget;
+static MouseState mouseState;
+static map<int, MouseState> multitouchState;
+static KeyboardState keyboardState;
+static map<int, GamepadState> gamepadState;
 
-    static void reshape(int width, int height)
+static void reshape(int width, int height)
+{
+    if (!widget)
+        return;
+
+    widget->OnReshape(width, height);
+}
+
+static void display()
+{
+    if (!widget)
+        return;
+
+    widget->OnRender();
+}
+
+static void idle()
+{
+    if (!widget)
+        return;
+    static double t0 = 0.0;
+    static double t1 = 0.0;
+    t0 = t1;
+    t1 = SteadyClockNow();
+    double dt = t1 - t0;
+
+    widget->OnUpdate(dt);
+}
+
+static void keyboard(unsigned char key, int x, int y)
+{
+    if (!widget)
+        return;
+
+    string keyName = Viperfish::KeyToHTML5Name(key);
+    keyboardState.SetKey(keyName, true);
+
+    widget->OnKeyDown(keyName, 0);
+}
+
+static void keyboardup(unsigned char key, int x, int y)
+{
+    if (!widget)
+        return;
+
+    string keyName = Viperfish::KeyToHTML5Name(key);
+    keyboardState.SetKey(keyName, false);
+
+    widget->OnKeyUp(keyName, 0);
+}
+
+static void special(int key, int x, int y)
+{
+    if (!widget)
+        return;
+
+    string keyName = Viperfish::SpecialKeyToHTML5Name(key);
+    keyboardState.SetKey(keyName, false);
+
+    widget->OnKeyDown(keyName, 0);
+}
+
+static void specialup(int key, int x, int y)
+{
+    if (!widget)
+        return;
+
+    string keyName = Viperfish::SpecialKeyToHTML5Name(key);
+    keyboardState.SetKey(keyName, false);
+
+    widget->OnKeyUp(keyName, 0);
+}
+
+static void mouse(int x, int y, int button, int state)
+{
+    if (!widget)
+        return;
+}
+
+static void mouseWheel(int wheel, int direction, int x, int y)
+{
+    if (!widget)
+        return;
+}
+
+static void motion(int x, int y)
+{
+    if (!widget)
+        return;
+}
+
+static void passivemotion(int x, int y)
+{
+    if (!widget)
+        return;
+}
+
+static void appstatus(int state)
+{
+#ifdef GLUT_APPSTATUS_PAUSE
+    // GLUT_APPSTATUS_PAUSE and GLUT_APPSTATUS_RESUME
+    if (state == GLUT_APPSTATUS_PAUSE)
+        widget->OnPauseApp();
+#endif
+#ifdef GLUT_APPSTATUS_RESUME
+    if (state == GLUT_APPSTATUS_RESUME)
+        widget->OnResumeApp();
+#endif
+}
+
+static void close()
+{
+    if (!widget)
+        return;
+}
+
+static void entry(int state)
+{
+    if (!widget)
+        return;
+    // GLUT_LEFT or GLUT_ENTERED
+}
+
+static void visibility(int state)
+{
+    if (!widget)
+        return;
+    // GLUT_NOT_VISIBLE or GLUT_VISIBLE
+}
+
+static void joystick(unsigned int buttonMask, int x, int y, int z)
+{
+    if (!widget)
+        return;
+}
+
+static void multibutton(int id, int x, int y, int button, int state)
+{
+    if (!widget)
+        return;
+
+    if (state == GLUT_DOWN)
+        multitouchState[id].OnButtonDown(button);
+    if (state == GLUT_UP)
+        multitouchState[id].OnButtonUp(button);
+
+    if (state == GLUT_DOWN)
+        widget->OnMultiButtonDown(id, button, multitouchState[id]);
+    if (state == GLUT_UP)
+        widget->OnMultiButtonUp(id, button, multitouchState[id]);
+}
+
+static void multimotion(int id, int x, int y)
+{
+    if (!widget)
+        return;
+
+    multitouchState[id].OnMove(x, y);
+}
+
+static void multientry(int id, int state)
+{
+    if (!widget)
+        return;
+
+    if (state == GLUT_ENTERED)
+        widget->OnMultiEnter(id);
+    if (state == GLUT_LEFT)
+        widget->OnMultiLeave(id);
+}
+
+static void multipassive(int id, int x, int y)
+{
+    if (!widget)
+        return;
+
+    multitouchState[id].OnMove(x, y);
+}
+
+static void position(int x, int y)
+{
+    if (!widget)
+        return;
+
+    widget->OnWindowMove(x, y);
+}
+
+static void spaceballbutton(int button, int state)
+{
+}
+
+static void spaceballmotion(int x, int y, int z)
+{
+}
+
+static void spaceballrotate(int x, int y, int z)
+{
+}
+
+static void tabletbutton(int button, int state, int x, int y)
+{
+}
+
+static void tabletmotion(int x, int y)
+{
+}
+
+static void windowstatus(int state)
+{
+    if (!widget)
+        return;
+    // GLUT_HIDDEN, GLUT_FULLY_RETAINED, GLUT_PARTIALLY_RETAINED, or GLUT_FULLY_COVERED
+    // windowstatus() is preferred over visibility()
+
+    if (state == GLUT_HIDDEN)
+        widget->OnWindowHidden();
+    else
     {
-        if (!widget)
-            return;
-
-        widget->OnReshape(width, height);
-    }
-
-    static void display()
-    {
-        if (!widget)
-            return;
-
-        widget->OnRender();
-    }
-
-    static void idle()
-    {
-        if (!widget)
-            return;
-        static double t0 = 0.0;
-        static double t1 = 0.0;
-        t0 = t1;
-        t1 = SteadyClockNow();
-        double dt = t1 - t0;
-
-        widget->OnUpdate(dt);
-    }
-
-    static void keyboard(unsigned char key, int x, int y)
-    {
-        if (!widget)
-            return;
-
-        string keyName = Viperfish::KeyToHTML5Name(key);
-        keyboardState.SetKey(keyName, true);
-
-        widget->OnKeyDown(keyName, 0);
-    }
-
-    static void keyboardup(unsigned char key, int x, int y)
-    {
-        if (!widget)
-            return;
-
-        string keyName = Viperfish::KeyToHTML5Name(key);
-        keyboardState.SetKey(keyName, false);
-
-        widget->OnKeyUp(keyName, 0);
-    }
-
-    static void special(int key, int x, int y)
-    {
-        if (!widget)
-            return;
-
-        string keyName = Viperfish::SpecialKeyToHTML5Name(key);
-        keyboardState.SetKey(keyName, false);
-
-        widget->OnKeyDown(keyName, 0);
-    }
-
-    static void specialup(int key, int x, int y)
-    {
-        if (!widget)
-            return;
-
-        string keyName = Viperfish::SpecialKeyToHTML5Name(key);
-        keyboardState.SetKey(keyName, false);
-
-        widget->OnKeyUp(keyName, 0);
-    }
-
-    static void mouse(int x, int y, int button, int state)
-    {
-        if (!widget)
-            return;
-    }
-
-    static void mouseWheel(int wheel, int direction, int x, int y)
-    {
-        if (!widget)
-            return;
-    }
-
-    static void motion(int x, int y)
-    {
-        if (!widget)
-            return;
-    }
-
-    static void passivemotion(int x, int y)
-    {
-        if (!widget)
-            return;
-    }
-
-    static void appstatus(int state)
-    {
-        // GLUT_APPSTATUS_PAUSE and GLUT_APPSTATUS_RESUME
-        if (state == GLUT_APPSTATUS_PAUSE)
-            widget->OnPauseApp();
-        if (state == GLUT_APPSTATUS_RESUME)
-            widget->OnResumeApp();
-    }
-
-    static void close()
-    {
-        if (!widget)
-            return;
-    }
-
-    static void entry(int state)
-    {
-        if (!widget)
-            return;
-        // GLUT_LEFT or GLUT_ENTERED
-    }
-
-    static void visibility(int state)
-    {
-        if (!widget)
-            return;
-        // GLUT_NOT_VISIBLE or GLUT_VISIBLE
-    }
-
-    static void joystick(unsigned int buttonMask, int x, int y, int z)
-    {
-        if (!widget)
-            return;
-    }
-
-    static void multibutton(int id, int x, int y, int button, int state)
-    {
-        if (!widget)
-            return;
-
-        if (state == GLUT_DOWN)
-            multitouchState[id].OnButtonDown(button);
-        if (state == GLUT_UP)
-            multitouchState[id].OnButtonUp(button);
-
-        if (state == GLUT_DOWN)
-            widget->OnMultiButtonDown(id, button, multitouchState[id]);
-        if (state == GLUT_UP)
-            widget->OnMultiButtonUp(id, button, multitouchState[id]);
-    }
-
-    static void multimotion(int id, int x, int y)
-    {
-        if (!widget)
-            return;
-
-        multitouchState[id].OnMove(x, y);
-    }
-
-    static void multientry(int id, int state)
-    {
-        if (!widget)
-            return;
-
-        if (state == GLUT_ENTERED)
-            widget->OnMultiEnter(id);
-        if (state == GLUT_LEFT)
-            widget->OnMultiLeave(id);
-    }
-
-    static void multipassive(int id, int x, int y)
-    {
-        if (!widget)
-            return;
-
-        multitouchState[id].OnMove(x, y);
-    }
-
-    static void position(int x, int y)
-    {
-        if (!widget)
-            return;
-
-        widget->OnWindowMove(x, y);
-    }
-
-    static void spaceballbutton(int button, int state)
-    {
-    }
-
-    static void spaceballmotion(int x, int y, int z)
-    {
-    }
-
-    static void spaceballrotate(int x, int y, int z)
-    {
-    }
-
-    static void tabletbutton(int button, int state, int x, int y)
-    {
-    }
-
-    static void tabletmotion(int x, int y)
-    {
-    }
-
-    static void windowstatus(int state)
-    {
-        if (!widget)
-            return;
-        // GLUT_HIDDEN, GLUT_FULLY_RETAINED, GLUT_PARTIALLY_RETAINED, or GLUT_FULLY_COVERED
-        // windowstatus() is preferred over visibility()
-
-        if (state == GLUT_HIDDEN)
-            widget->OnWindowHidden();
-        else {
-            widget->OnWindowVisible();
-        }
-    }
-
-    static void initcontext()
-    {
-        if (!widget)
-            return;
-
-        widget->OnInitContext();
+        widget->OnWindowVisible();
     }
 }
 
-void SetGLUTWidget(shared_ptr<Widget>& widget)
+static void initcontext()
+{
+    if (!widget)
+        return;
+
+    widget->OnInitContext();
+}
+} // namespace vfglut
+
+void SetGLUTWidget(shared_ptr<Widget> &widget)
 {
     vfglut::widget = widget;
 }
 
-void GLUTWidget::OnInit(const vector<string>& args)
+void GLUTWidget::OnInit(const vector<string> &args)
 {
     // Create the GLUT instance
     //vfglut::widget = Widget::shared_from_this();
 
     int argc = (int)args.size();
-    vector<char*> argv;
-    for_each(args.begin(), args.end(), [&argv](const string& s) {
+    vector<char *> argv;
+    for_each(args.begin(), args.end(), [&argv](const string &s) {
         int len = (int)s.length();
-        char* arg = new char[len + 1];
-        //strncpy(arg, s.c_str(), len);
+        char *arg = new char[len + 1];
+#ifdef WIN32
         strncpy_s(arg, len + 1, s.c_str(), len);
+#elif __unix__
+        strncpy(arg, s.c_str(), len);
+#endif
         argv.push_back(arg);
     });
 
@@ -307,12 +317,19 @@ void GLUTWidget::OnInit(const vector<string>& args)
     glutIdleFunc(vfglut::idle);
     glutReshapeFunc(vfglut::reshape);
     glutDisplayFunc(vfglut::display);
+
+    // Mobile applications and other functions in FREEGLUT
+    // This is one way to check for these
+#ifdef GLUT_APPSTATUS_PAUSE
     glutAppStatusFunc(vfglut::appstatus);
+    glutInitContextFunc(vfglut::initcontext);
+    glutPositionFunc(vfglut::position);
+#endif
+
     glutCloseFunc(vfglut::close);
     glutEntryFunc(vfglut::entry);
     glutWindowStatusFunc(vfglut::windowstatus);
-    glutInitContextFunc(vfglut::initcontext);
-    glutPositionFunc(vfglut::position);
+
     //glutJoystickFunc(vfglut::joystick, 10);
     //glutMultiButtonFunc(vfglut::multibutton);
     //glutMultiEntryFunc(vfglut::multientry);
@@ -326,7 +343,7 @@ void GLUTWidget::OnInit(const vector<string>& args)
     // glutVisibilityFunc(vfglut::visibility); // deprecated in favor of glutWindowStatusFunc
     // glutWMCloseFunc(vfglut::wmclose); // deprecated in factor of glutCloseFunc
 
-    for_each(argv.begin(), argv.end(), [](char* cstr) { if (cstr) delete[] cstr; });
+    for_each(argv.begin(), argv.end(), [](char *cstr) { if (cstr) delete[] cstr; });
 
     glewInit();
 
@@ -348,12 +365,14 @@ void GLUTWidget::OnLeaveMainLoop()
     glutLeaveMainLoop();
 }
 
-const char* KeyToHTML5Name(char c)
+const char *KeyToHTML5Name(char c)
 {
     static char s[10];
 
-    if (c <= 0x20) {
-        switch (c) {
+    if (c <= 0x20)
+    {
+        switch (c)
+        {
         case 0x09:
             return "Tab";
         case 0x0D:
@@ -366,9 +385,12 @@ const char* KeyToHTML5Name(char c)
     }
 
     int keymod = glutGetModifiers();
-    if (keymod & GLUT_ACTIVE_SHIFT) {
+    if (keymod & GLUT_ACTIVE_SHIFT)
+    {
         c = (char)toupper(c);
-    } else {
+    }
+    else
+    {
         c = (char)tolower(c);
     }
     s[0] = c;
@@ -377,7 +399,7 @@ const char* KeyToHTML5Name(char c)
     return s;
 }
 
-int HTML5NameToKey(const string& key)
+int HTML5NameToKey(const string &key)
 {
     if (key == "Tab")
         return 0x09;
@@ -446,12 +468,13 @@ int HTML5NameToKey(const string& key)
     return 0;
 }
 
-const char* SpecialKeyToHTML5Name(int key)
+const char *SpecialKeyToHTML5Name(int key)
 {
     if (key >= 0x100)
         key -= 0x100;
 
-    switch (key) {
+    switch (key)
+    {
     case 0x0001: // GLUT_KEY_F1
         return "F1";
         break;
@@ -545,4 +568,4 @@ const char* SpecialKeyToHTML5Name(int key)
     }
     return "Undefined";
 }
-}
+} // namespace Viperfish

@@ -29,7 +29,8 @@
 GLint g_MaxCombinedTextureUnits = 0;
 std::string g_CurrentDebugMessage;
 
-struct GLTypeInfo {
+struct GLTypeInfo
+{
     GLenum type;
     GLenum baseType;
     GLint components;
@@ -37,109 +38,109 @@ struct GLTypeInfo {
 };
 
 GLTypeInfo glutTypeInfo[] = {
-    { GL_BYTE, GL_BYTE, 1, sizeof(GLbyte) },
-    { GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, 1, sizeof(GLubyte) },
-    { GL_SHORT, GL_SHORT, 1, sizeof(GLshort) },
-    { GL_UNSIGNED_SHORT, GL_UNSIGNED_SHORT, 1, sizeof(GLushort) },
-    { GL_INT, GL_INT, 1, sizeof(GLint) },
-    { GL_UNSIGNED_INT, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_BOOL, GL_INT, 1, sizeof(GLint) },
-    { GL_FLOAT, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_DOUBLE, GL_DOUBLE, 1, sizeof(GLdouble) },
-    { GL_FLOAT_VEC2, GL_FLOAT, 2, sizeof(GLfloat) },
-    { GL_FLOAT_VEC3, GL_FLOAT, 3, sizeof(GLfloat) },
-    { GL_FLOAT_VEC4, GL_FLOAT, 4, sizeof(GLfloat) },
-    { GL_FLOAT_MAT2, GL_FLOAT, 4, sizeof(GLfloat) },
-    { GL_FLOAT_MAT3, GL_FLOAT, 9, sizeof(GLfloat) },
-    { GL_FLOAT_MAT4, GL_FLOAT, 16, sizeof(GLfloat) },
-    { GL_FLOAT_MAT2x3, GL_FLOAT, 6, sizeof(GLfloat) },
-    { GL_FLOAT_MAT2x4, GL_FLOAT, 8, sizeof(GLfloat) },
-    { GL_FLOAT_MAT3x2, GL_FLOAT, 6, sizeof(GLfloat) },
-    { GL_FLOAT_MAT3x4, GL_FLOAT, 12, sizeof(GLfloat) },
-    { GL_FLOAT_MAT4x2, GL_FLOAT, 8, sizeof(GLfloat) },
-    { GL_FLOAT_MAT4x3, GL_FLOAT, 12, sizeof(GLfloat) },
-    { GL_SAMPLER_1D, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_2D, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_3D, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_CUBE, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_1D_SHADOW, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_2D_SHADOW, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_2D_MULTISAMPLE, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_2D_MULTISAMPLE_ARRAY, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_1D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_2D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_1D_ARRAY_SHADOW, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_SAMPLER_2D_ARRAY_SHADOW, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_DOUBLE_VEC2, GL_DOUBLE, 2, sizeof(GLdouble) },
-    { GL_DOUBLE_VEC3, GL_DOUBLE, 3, sizeof(GLdouble) },
-    { GL_DOUBLE_VEC4, GL_DOUBLE, 4, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT2, GL_DOUBLE, 4, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT3, GL_DOUBLE, 9, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT4, GL_DOUBLE, 16, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT2x3, GL_DOUBLE, 6, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT2x4, GL_DOUBLE, 8, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT3x2, GL_DOUBLE, 6, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT3x4, GL_DOUBLE, 12, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT4x2, GL_DOUBLE, 8, sizeof(GLdouble) },
-    { GL_DOUBLE_MAT4x3, GL_DOUBLE, 12, sizeof(GLdouble) },
-    { GL_INT_SAMPLER_1D, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_SAMPLER_2D, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_SAMPLER_3D, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_SAMPLER_CUBE, GL_INT, 1, sizeof(GLint) },
+    {GL_BYTE, GL_BYTE, 1, sizeof(GLbyte)},
+    {GL_UNSIGNED_BYTE, GL_UNSIGNED_BYTE, 1, sizeof(GLubyte)},
+    {GL_SHORT, GL_SHORT, 1, sizeof(GLshort)},
+    {GL_UNSIGNED_SHORT, GL_UNSIGNED_SHORT, 1, sizeof(GLushort)},
+    {GL_INT, GL_INT, 1, sizeof(GLint)},
+    {GL_UNSIGNED_INT, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_BOOL, GL_INT, 1, sizeof(GLint)},
+    {GL_FLOAT, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_DOUBLE, GL_DOUBLE, 1, sizeof(GLdouble)},
+    {GL_FLOAT_VEC2, GL_FLOAT, 2, sizeof(GLfloat)},
+    {GL_FLOAT_VEC3, GL_FLOAT, 3, sizeof(GLfloat)},
+    {GL_FLOAT_VEC4, GL_FLOAT, 4, sizeof(GLfloat)},
+    {GL_FLOAT_MAT2, GL_FLOAT, 4, sizeof(GLfloat)},
+    {GL_FLOAT_MAT3, GL_FLOAT, 9, sizeof(GLfloat)},
+    {GL_FLOAT_MAT4, GL_FLOAT, 16, sizeof(GLfloat)},
+    {GL_FLOAT_MAT2x3, GL_FLOAT, 6, sizeof(GLfloat)},
+    {GL_FLOAT_MAT2x4, GL_FLOAT, 8, sizeof(GLfloat)},
+    {GL_FLOAT_MAT3x2, GL_FLOAT, 6, sizeof(GLfloat)},
+    {GL_FLOAT_MAT3x4, GL_FLOAT, 12, sizeof(GLfloat)},
+    {GL_FLOAT_MAT4x2, GL_FLOAT, 8, sizeof(GLfloat)},
+    {GL_FLOAT_MAT4x3, GL_FLOAT, 12, sizeof(GLfloat)},
+    {GL_SAMPLER_1D, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_2D, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_3D, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_CUBE, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_1D_SHADOW, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_2D_SHADOW, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_2D_MULTISAMPLE, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_2D_MULTISAMPLE_ARRAY, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_1D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_2D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_1D_ARRAY_SHADOW, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_SAMPLER_2D_ARRAY_SHADOW, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_DOUBLE_VEC2, GL_DOUBLE, 2, sizeof(GLdouble)},
+    {GL_DOUBLE_VEC3, GL_DOUBLE, 3, sizeof(GLdouble)},
+    {GL_DOUBLE_VEC4, GL_DOUBLE, 4, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT2, GL_DOUBLE, 4, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT3, GL_DOUBLE, 9, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT4, GL_DOUBLE, 16, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT2x3, GL_DOUBLE, 6, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT2x4, GL_DOUBLE, 8, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT3x2, GL_DOUBLE, 6, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT3x4, GL_DOUBLE, 12, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT4x2, GL_DOUBLE, 8, sizeof(GLdouble)},
+    {GL_DOUBLE_MAT4x3, GL_DOUBLE, 12, sizeof(GLdouble)},
+    {GL_INT_SAMPLER_1D, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_SAMPLER_2D, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_SAMPLER_3D, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_SAMPLER_CUBE, GL_INT, 1, sizeof(GLint)},
     //{ GL_INT_SAMPLER_1D_SHADOW, GL_INT, 1, sizeof(GLint) },
     //{ GL_INT_SAMPLER_2D_SHADOW, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_SAMPLER_2D_MULTISAMPLE, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_SAMPLER_1D_ARRAY, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_SAMPLER_2D_ARRAY, GL_INT, 1, sizeof(GLint) },
+    {GL_INT_SAMPLER_2D_MULTISAMPLE, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_SAMPLER_1D_ARRAY, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_SAMPLER_2D_ARRAY, GL_INT, 1, sizeof(GLint)},
     //{ GL_INT_SAMPLER_1D_ARRAY_SHADOW, GL_INT, 1, sizeof(GLint) },
     //{ GL_UNSIGNED_INT_SAMPLER_2D_ARRAY_SHADOW, GL_INT, 1, sizeof(GLint) },
-    { GL_UNSIGNED_INT_SAMPLER_1D, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_SAMPLER_2D, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_SAMPLER_3D, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_SAMPLER_CUBE, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
+    {GL_UNSIGNED_INT_SAMPLER_1D, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_SAMPLER_2D, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_SAMPLER_3D, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_SAMPLER_CUBE, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
     //{ GL_UNSIGNED_INT_SAMPLER_1D_SHADOW, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
     //{ GL_UNSIGNED_INT_SAMPLER_2D_SHADOW, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_SAMPLER_1D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_SAMPLER_2D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
+    {GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_SAMPLER_1D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_SAMPLER_2D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
     //{ GL_UNSIGNED_INT_SAMPLER_1D_ARRAY_SHADOW, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
     //{ GL_UNSIGNED_INT_SAMPLER_2D_ARRAY_SHADOW, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_IMAGE_1D, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_2D, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_3D, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_2D_RECT, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_CUBE, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_BUFFER, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_1D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_2D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_2D_MULTISAMPLE, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_IMAGE_2D_MULTISAMPLE_ARRAY, GL_FLOAT, 1, sizeof(GLfloat) },
-    { GL_INT_IMAGE_1D, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_2D, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_3D, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_2D_RECT, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_CUBE, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_BUFFER, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_1D_ARRAY, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_2D_ARRAY, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_2D_MULTISAMPLE, GL_INT, 1, sizeof(GLint) },
-    { GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY, GL_INT, 1, sizeof(GLint) },
-    { GL_UNSIGNED_INT_IMAGE_1D, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_2D, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_3D, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_2D_RECT, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_CUBE, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_BUFFER, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_1D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_2D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint) },
-    { GL_UNSIGNED_INT_ATOMIC_COUNTER, GL_UNSIGNED_INT, 1, sizeof(GLuint) }
-};
+    {GL_IMAGE_1D, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_2D, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_3D, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_2D_RECT, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_CUBE, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_BUFFER, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_1D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_2D_ARRAY, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_2D_MULTISAMPLE, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_IMAGE_2D_MULTISAMPLE_ARRAY, GL_FLOAT, 1, sizeof(GLfloat)},
+    {GL_INT_IMAGE_1D, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_2D, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_3D, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_2D_RECT, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_CUBE, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_BUFFER, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_1D_ARRAY, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_2D_ARRAY, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_2D_MULTISAMPLE, GL_INT, 1, sizeof(GLint)},
+    {GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY, GL_INT, 1, sizeof(GLint)},
+    {GL_UNSIGNED_INT_IMAGE_1D, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_2D, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_3D, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_2D_RECT, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_CUBE, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_BUFFER, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_1D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_2D_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {GL_UNSIGNED_INT_ATOMIC_COUNTER, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
+    {0xffff, 0, 0, 0}};
 
-void glutSetErrorMessage(const char* filename, int line, const char* format, ...)
+void glutSetErrorMessage(const char *filename, int line, const char *format, ...)
 {
     using namespace std;
     ostringstream ostr;
@@ -152,9 +153,11 @@ void glutSetErrorMessage(const char* filename, int line, const char* format, ...
     int numBytes = vsnprintf(buffer, 4096, format, args);
 #endif
     va_end(args);
-    if (numBytes < 0) {
+    if (numBytes < 0)
+    {
         g_CurrentDebugMessage = "<blank>";
-    } else if (numBytes < 4096)
+    }
+    else if (numBytes < 4096)
         buffer[numBytes] = '\0';
     ostr << "File (" << filename << "), Line (" << line << "): \"" << buffer;
     g_CurrentDebugMessage = ostr.str();
@@ -168,8 +171,10 @@ void glutSetDefaultErrorMessage()
 GLenum glutGetBaseType(GLenum type)
 {
     int i = 0;
-    while (glutTypeInfo[i].type != -1) {
-        if (type == glutTypeInfo[i].type) {
+    while (glutTypeInfo[i].type != 0xffff)
+    {
+        if (type == glutTypeInfo[i].type)
+        {
             return glutTypeInfo[i].baseType;
         }
         i++;
@@ -180,8 +185,10 @@ GLenum glutGetBaseType(GLenum type)
 GLint glutGetTypeComponents(GLenum type)
 {
     int i = 0;
-    while (glutTypeInfo[i].type != -1) {
-        if (type == glutTypeInfo[i].type) {
+    while (glutTypeInfo[i].type != 0xffff)
+    {
+        if (type == glutTypeInfo[i].type)
+        {
             return glutTypeInfo[i].components;
         }
         i++;
@@ -192,8 +199,10 @@ GLint glutGetTypeComponents(GLenum type)
 GLsizei glutGetSizeOfType(GLenum type)
 {
     int i = 0;
-    while (glutTypeInfo[i].type != -1) {
-        if (type == glutTypeInfo[i].type) {
+    while (glutTypeInfo[i].type != 0xffff)
+    {
+        if (type == glutTypeInfo[i].type)
+        {
             return glutTypeInfo[i].components * glutTypeInfo[i].sizeOfType;
         }
         i++;
@@ -204,8 +213,10 @@ GLsizei glutGetSizeOfType(GLenum type)
 GLsizei glutGetSizeOfBaseType(GLenum type)
 {
     int i = 0;
-    while (glutTypeInfo[i].type != -1) {
-        if (type == glutTypeInfo[i].type) {
+    while (glutTypeInfo[i].type != 0xffff)
+    {
+        if (type == glutTypeInfo[i].type)
+        {
             return glutTypeInfo[i].sizeOfType;
         }
         i++;
@@ -215,7 +226,8 @@ GLsizei glutGetSizeOfBaseType(GLenum type)
 
 GLint glutSetActiveTexture(GLint unit)
 {
-    if (g_MaxCombinedTextureUnits == 0) {
+    if (g_MaxCombinedTextureUnits == 0)
+    {
         glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &g_MaxCombinedTextureUnits);
     }
     unit = unit >= GL_TEXTURE0 ? unit - GL_TEXTURE0 : unit;
@@ -268,7 +280,8 @@ bool glutDebugBindTexture(GLenum target, GLuint texture)
     GLenum e = glGetError();
     glBindTexture(target, texture);
     e = glGetError();
-    if (e != GL_NO_ERROR) {
+    if (e != GL_NO_ERROR)
+    {
         GLint id1, id2;
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &id1);
         glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &id2);
@@ -299,27 +312,29 @@ void glutTestLitSolidTeapotScene(double fovy, double aspect)
     glDisable(GL_DEPTH_TEST);
 }
 
-void glutBitmapString(void* font, const char* string)
+void glutBitmapString(void *font, const char *string)
 {
     int len = (int)strlen(string);
     int i = 0;
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len; i++)
+    {
         glutBitmapCharacter(font, string[i]);
     }
 }
 
-void glutStrokeString(void* font, const char* string)
+void glutStrokeString(void *font, const char *string)
 {
     int len = (int)strlen(string);
     int i = 0;
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len; i++)
+    {
         glutStrokeCharacter(font, string[i]);
     }
 }
 
-void glutPrintString9x15(double x, double y, double screenWidth, int justification, const char* format, ...)
+void glutPrintString9x15(double x, double y, double screenWidth, int justification, const char *format, ...)
 {
     char buffer[256];
 
@@ -335,7 +350,7 @@ void glutPrintString9x15(double x, double y, double screenWidth, int justificati
     glutPrintBitmapStringJustified(x, y, screenWidth, justification, GLUT_BITMAP_9_BY_15, buffer);
 }
 
-void glutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...)
+void glutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void *font, const char *format, ...)
 {
     char buffer[256];
     int pixelWidthOfString;
@@ -349,22 +364,27 @@ void glutPrintBitmapStringJustified(double x, double y, double screenWidth, int 
 #endif
     va_end(va);
 
-    pixelWidthOfString = glutBitmapLength(font, (const unsigned char*)buffer);
+    pixelWidthOfString = glutBitmapLength(font, (const unsigned char *)buffer);
 
-    if (justification == LEFT) {
+    if (justification == LEFT)
+    {
         // left justified
         glRasterPos2d(x, y);
-    } else if (justification == RIGHT) {
+    }
+    else if (justification == RIGHT)
+    {
         // right justified
         glRasterPos2d((screenWidth - pixelWidthOfString), y);
-    } else if (justification == CENTER) {
+    }
+    else if (justification == CENTER)
+    {
         glRasterPos2d((screenWidth - pixelWidthOfString) / 2.0f, y);
     }
 
     glutBitmapString(font, buffer);
 }
 
-void glutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...)
+void glutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void *font, const char *format, ...)
 {
     char buffer[2048];
     int pixelWidthOfString;
@@ -378,15 +398,20 @@ void glutPrintStrokeStringJustified(double x, double y, double screenWidth, int 
 #endif
     va_end(va);
 
-    pixelWidthOfString = glutStrokeLength(font, (const unsigned char*)buffer);
+    pixelWidthOfString = glutStrokeLength(font, (const unsigned char *)buffer);
 
-    if (justification == LEFT) {
+    if (justification == LEFT)
+    {
         // left justified
         glRasterPos2d(x, y);
-    } else if (justification == RIGHT) {
+    }
+    else if (justification == RIGHT)
+    {
         // right justified
         glRasterPos2d((screenWidth - pixelWidthOfString), y);
-    } else if (justification == CENTER) {
+    }
+    else if (justification == CENTER)
+    {
         glRasterPos2d((screenWidth - pixelWidthOfString) / 2.0f, y);
     }
 
@@ -407,8 +432,7 @@ void glutThreeAxis(float length)
         0.0f, 0.0f, 0.0f,
         0.0f, -length, 0.0f,
         0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -length
-    };
+        0.0f, 0.0f, -length};
 
     GLfloat colors[36] = {
         1.0f, 0.0f, 0.0f,
@@ -422,8 +446,7 @@ void glutThreeAxis(float length)
         1.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f,
         1.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f
-    };
+        1.0f, 1.0f, 0.0f};
 
     glVertexPointer(3, GL_FLOAT, 0, v);
     glColorPointer(3, GL_FLOAT, 0, colors);
@@ -436,7 +459,7 @@ void glutThreeAxis(float length)
     glColorPointer(3, GL_FLOAT, 0, 0);
 }
 
-void glutCamera(double fov, float r, float g, float b, float zfar, const float* inverseCameraMatrix, const float* projectionMatrix)
+void glutCamera(double fov, float r, float g, float b, float zfar, const float *inverseCameraMatrix, const float *projectionMatrix)
 {
     glPushMatrix(); // for camera viz
     glMultMatrixf(inverseCameraMatrix);
@@ -478,8 +501,7 @@ void glutSixAxis(float length)
         0.0f, 0.0f, 0.0f,
         0.0f, -length, 0.0f,
         0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, -length
-    };
+        0.0f, 0.0f, -length};
 
     GLfloat colors[36] = {
         1.0f, 0.0f, 0.0f,
@@ -493,8 +515,7 @@ void glutSixAxis(float length)
         1.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f,
         1.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f
-    };
+        1.0f, 1.0f, 0.0f};
 
     glVertexPointer(3, GL_FLOAT, 0, v);
     glColorPointer(3, GL_FLOAT, 0, colors);
@@ -507,23 +528,26 @@ void glutSixAxis(float length)
     glColorPointer(3, GL_FLOAT, 0, 0);
 }
 
-void glutWireFrustumd(const double* m)
+void glutWireFrustumd(const double *m)
 {
     float f32m[16];
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++)
+    {
         f32m[i] = (float)m[i];
     }
     glutWireFrustumf(f32m);
 }
 
-struct Matrix {
+struct Matrix
+{
     float m11, m21, m31, m41;
     float m12, m22, m32, m42;
     float m13, m23, m33, m43;
     float m14, m24, m34, m44;
 };
 
-struct Vector {
+struct Vector
+{
     float x, y, z, w;
 
     Vector scale(float amount) const
@@ -546,7 +570,7 @@ struct Vector {
         return out;
     }
 
-    Vector cross3(const Vector& V) const
+    Vector cross3(const Vector &V) const
     {
         Vector out;
         out.x = y * V.z - z * V.y;
@@ -556,7 +580,7 @@ struct Vector {
         return out;
     }
 
-    float dot3(const Vector& V) const
+    float dot3(const Vector &V) const
     {
         return x * V.x + y * V.y + z * V.z;
     }
@@ -573,7 +597,8 @@ struct Vector {
     }
 };
 
-struct Plane {
+struct Plane
+{
     float a, b, c, d;
 
     void normalize()
@@ -617,7 +642,8 @@ Vector ThreePlaneIntersection(Plane A, Plane B, Plane C)
     //	// coplanar somewhere
     //	return out;
     //}
-    if (!isnormal(mag) || mag == 0.0f) {
+    if (!isnormal(mag) || mag == 0.0f)
+    {
         return out;
     }
 
@@ -629,7 +655,7 @@ Vector ThreePlaneIntersection(Plane A, Plane B, Plane C)
     return out;
 }
 
-void glutWireFrustumf(const float* m, float scale)
+void glutWireFrustumf(const float *m, float scale)
 {
     Matrix M;
     memcpy(&M, m, sizeof(float) * 16);
@@ -702,8 +728,7 @@ void glutWireFrustumf(const float* m, float scale)
         fscale * P5.x, fscale * P5.y, fscale * P5.z,
         fscale * P6.x, fscale * P6.y, fscale * P6.z,
         fscale * P7.x, fscale * P7.y, fscale * P7.z,
-        fscale * P8.x, fscale * P8.y, fscale * P8.z
-    };
+        fscale * P8.x, fscale * P8.y, fscale * P8.z};
 
     int indices[] = {
         // near
@@ -717,17 +742,15 @@ void glutWireFrustumf(const float* m, float scale)
         // bottom
         3, 4, 7, 0,
         // top
-        2, 6, 5, 1
-    };
+        2, 6, 5, 1};
 
     float colors[6][4] = {
-        { 1.0f, 1.0f, 0.0f, 0.1f },
-        { 0.0f, 0.0f, 1.0f, 0.1f },
-        { 0.0f, 1.0f, 1.0f, 0.1f },
-        { 1.0f, 0.0f, 0.0f, 0.1f },
-        { 1.0f, 0.0f, 1.0f, 0.1f },
-        { 0.0f, 1.0f, 0.0f, 0.1f }
-    };
+        {1.0f, 1.0f, 0.0f, 0.1f},
+        {0.0f, 0.0f, 1.0f, 0.1f},
+        {0.0f, 1.0f, 1.0f, 0.1f},
+        {1.0f, 0.0f, 0.0f, 0.1f},
+        {1.0f, 0.0f, 1.0f, 0.1f},
+        {0.0f, 1.0f, 0.0f, 0.1f}};
 
     //glEnable(GL_CULL_FACE);
     //glEnable(GL_BLEND);
@@ -735,7 +758,8 @@ void glutWireFrustumf(const float* m, float scale)
     glPointSize(4.0f);
     glVertexPointer(3, GL_FLOAT, 0, v);
     glEnableClientState(GL_VERTEX_ARRAY);
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         //glPointSize((i+1) * 2.0f);
         glColor4fv(colors[i]);
         glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, indices + i * 4);
@@ -761,8 +785,7 @@ void glutEnvironmentCube(GLfloat size, GLuint cubeMapTexId)
         size, size, size,
         -size, size, size,
         -size, -size, size,
-        size, -size, size
-    };
+        size, -size, size};
 
     GLfloat texcoords[] = {
         -1.0f, 1.0f, -1.0f,
@@ -772,8 +795,7 @@ void glutEnvironmentCube(GLfloat size, GLuint cubeMapTexId)
         1.0f, 1.0f, 1.0f,
         -1.0f, 1.0f, 1.0f,
         -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f
-    };
+        1.0f, -1.0f, 1.0f};
 
     //GLshort indices[] = {
     //	// FACE 0
@@ -814,7 +836,7 @@ void glutEnvironmentCube(GLfloat size, GLuint cubeMapTexId)
         4, 7, 6, //6,7,4,
         // FACE 4
         2, 1, 0, //0,1,2,
-        0, 3, 2 //2,3,0
+        0, 3, 2  //2,3,0
     };
 
     glEnable(GL_CULL_FACE);
@@ -849,32 +871,31 @@ void glutUnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLint tlo
     GLfloat ys2 = y + size * 2.0f;
     GLfloat ys3 = y + size * 3.0f;
 
-    GLfloat v[] = {
-        xs0, ys1, 0.0f, // FACE 1 NEGATIVE X
-        xs0, ys2, 0.0f,
-        xs1, ys2, 0.0f,
-        xs1, ys1, 0.0f,
-        xs1, ys1, 0.0f, // FACE 4 POSITIVE Z
-        xs1, ys2, 0.0f,
-        xs2, ys2, 0.0f,
-        xs2, ys1, 0.0f,
-        xs2, ys1, 0.0f, // FACE 0 POSITIVE X
-        xs2, ys2, 0.0f,
-        xs3, ys2, 0.0f,
-        xs3, ys1, 0.0f,
-        xs3, ys1, 0.0f, // FACE 5 NEGATIVE Z
-        xs3, ys2, 0.0f,
-        xs4, ys2, 0.0f,
-        xs4, ys1, 0.0f,
-        xs1, ys2, 0.0f, // FACE 3 NEGATIVE Y
-        xs1, ys3, 0.0f,
-        xs2, ys3, 0.0f,
-        xs2, ys2, 0.0f,
-        xs1, ys0, 0.0f, // FACE 2 POSITIVE Y
-        xs1, ys1, 0.0f,
-        xs2, ys1, 0.0f,
-        xs2, ys0, 0.0f
-    };
+    // GLfloat v[] = {
+    //     xs0, ys1, 0.0f, // FACE 1 NEGATIVE X
+    //     xs0, ys2, 0.0f,
+    //     xs1, ys2, 0.0f,
+    //     xs1, ys1, 0.0f,
+    //     xs1, ys1, 0.0f, // FACE 4 POSITIVE Z
+    //     xs1, ys2, 0.0f,
+    //     xs2, ys2, 0.0f,
+    //     xs2, ys1, 0.0f,
+    //     xs2, ys1, 0.0f, // FACE 0 POSITIVE X
+    //     xs2, ys2, 0.0f,
+    //     xs3, ys2, 0.0f,
+    //     xs3, ys1, 0.0f,
+    //     xs3, ys1, 0.0f, // FACE 5 NEGATIVE Z
+    //     xs3, ys2, 0.0f,
+    //     xs4, ys2, 0.0f,
+    //     xs4, ys1, 0.0f,
+    //     xs1, ys2, 0.0f, // FACE 3 NEGATIVE Y
+    //     xs1, ys3, 0.0f,
+    //     xs2, ys3, 0.0f,
+    //     xs2, ys2, 0.0f,
+    //     xs1, ys0, 0.0f, // FACE 2 POSITIVE Y
+    //     xs1, ys1, 0.0f,
+    //     xs2, ys1, 0.0f,
+    //     xs2, ys0, 0.0f};
 
     GLfloat x1 = -1.0f;
     GLfloat x2 = 1.0f;
@@ -883,80 +904,80 @@ void glutUnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLint tlo
     GLfloat z1 = -1.0f;
     GLfloat z2 = 1.0f;
 
-    GLfloat texcoords[] = {
-        x1,
-        y1,
-        z1, // FACE 1 NEGATIVE X
-        x1,
-        y2,
-        z1,
-        x1,
-        y2,
-        z2,
-        x1,
-        y1,
-        z2,
-        x1,
-        y1,
-        z2, // FACE 4 POSITIVE Z
-        x1,
-        y2,
-        z2,
-        x2,
-        y2,
-        z2,
-        x2,
-        y1,
-        z2,
-        x2,
-        y1,
-        z2, // FACE 0 POSITIVE X
-        x2,
-        y2,
-        z2,
-        x2,
-        y2,
-        z1,
-        x2,
-        y1,
-        z1,
-        x2,
-        y1,
-        z1, // FACE 5 NEGATIVE Z
-        x2,
-        y2,
-        z1,
-        x1,
-        y2,
-        z1,
-        x1,
-        y1,
-        z1,
-        x1,
-        y1,
-        z1, // FACE 3 NEGATIVE Y
-        x1,
-        y1,
-        z2,
-        x2,
-        y1,
-        z2,
-        x2,
-        y1,
-        z1,
-        x1,
-        y2,
-        z2, // FACE 2 POSITIVE Y
-        x1,
-        y2,
-        z1,
-        x2,
-        y2,
-        z1,
-        x2,
-        y2,
-        z2,
-    };
+    // GLfloat texcoords[] = {
+    //     x1,
+    //     y1,
+    //     z1, // FACE 1 NEGATIVE X
+    //     x1,
+    //     y2,
+    //     z1,
+    //     x1,
+    //     y2,
+    //     z2,
+    //     x1,
+    //     y1,
+    //     z2,
+    //     x1,
+    //     y1,
+    //     z2, // FACE 4 POSITIVE Z
+    //     x1,
+    //     y2,
+    //     z2,
+    //     x2,
+    //     y2,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z2, // FACE 0 POSITIVE X
+    //     x2,
+    //     y2,
+    //     z2,
+    //     x2,
+    //     y2,
+    //     z1,
+    //     x2,
+    //     y1,
+    //     z1,
+    //     x2,
+    //     y1,
+    //     z1, // FACE 5 NEGATIVE Z
+    //     x2,
+    //     y2,
+    //     z1,
+    //     x1,
+    //     y2,
+    //     z1,
+    //     x1,
+    //     y1,
+    //     z1,
+    //     x1,
+    //     y1,
+    //     z1, // FACE 3 NEGATIVE Y
+    //     x1,
+    //     y1,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z1,
+    //     x1,
+    //     y2,
+    //     z2, // FACE 2 POSITIVE Y
+    //     x1,
+    //     y2,
+    //     z1,
+    //     x2,
+    //     y2,
+    //     z1,
+    //     x2,
+    //     y2,
+    //     z2,
+    // };
 
     GLfloat buffer[] = {
         xs0, ys1, 0.0f, x1, y1, z1, // FACE 1 NEGATIVE X
@@ -1001,13 +1022,13 @@ void glutUnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLint tlo
         8, 9, 10, 10, 11, 8,
         12, 13, 14, 14, 15, 12,
         16, 17, 18, 18, 19, 16,
-        20, 21, 22, 22, 23, 20
-    };
+        20, 21, 22, 22, 23, 20};
 
     static GLuint abo = 0;
     static GLuint eabo = 0;
 
-    if (abo == 0) {
+    if (abo == 0)
+    {
         glGenBuffers(1, &abo);
         glGenBuffers(1, &eabo);
         glBindBuffer(GL_ARRAY_BUFFER, abo);
@@ -1018,8 +1039,8 @@ void glutUnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLint tlo
 
     glBindBuffer(GL_ARRAY_BUFFER, abo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-    glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
-    glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
+    glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)0);
+    glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)12);
     if (vloc >= 0)
         glEnableVertexAttribArray(vloc);
     if (tloc >= 0)
@@ -1049,32 +1070,31 @@ void glutCubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint vloc, 
     GLfloat y2 = (float)(y + size / 2.0);
     GLfloat z2 = (float)(z + size / 2.0);
 
-    GLfloat v[] = {
-        x1, y1, z1, // FACE 1 NEGATIVE X
-        x1, y1, z2,
-        x1, y2, z2,
-        x1, y2, z1,
-        x1, y1, z2, // FACE 4 POSITIVE Z
-        x2, y1, z2,
-        x2, y2, z2,
-        x1, y2, z2,
-        x2, y1, z2, // FACE 0 POSITIVE X
-        x2, y1, z1,
-        x2, y2, z1,
-        x2, y2, z2,
-        x2, y1, z1, // FACE 5 NEGATIVE Z
-        x1, y1, z1,
-        x1, y2, z1,
-        x2, y2, z1,
-        x1, y1, z1, // FACE 3 NEGATIVE Y
-        x2, y1, z1,
-        x2, y1, z2,
-        x1, y1, z2,
-        x2, y2, z1, // FACE 2 POSITIVE Y
-        x1, y2, z1,
-        x1, y2, z2,
-        x2, y2, z2
-    };
+    // GLfloat v[] = {
+    //     x1, y1, z1, // FACE 1 NEGATIVE X
+    //     x1, y1, z2,
+    //     x1, y2, z2,
+    //     x1, y2, z1,
+    //     x1, y1, z2, // FACE 4 POSITIVE Z
+    //     x2, y1, z2,
+    //     x2, y2, z2,
+    //     x1, y2, z2,
+    //     x2, y1, z2, // FACE 0 POSITIVE X
+    //     x2, y1, z1,
+    //     x2, y2, z1,
+    //     x2, y2, z2,
+    //     x2, y1, z1, // FACE 5 NEGATIVE Z
+    //     x1, y1, z1,
+    //     x1, y2, z1,
+    //     x2, y2, z1,
+    //     x1, y1, z1, // FACE 3 NEGATIVE Y
+    //     x2, y1, z1,
+    //     x2, y1, z2,
+    //     x1, y1, z2,
+    //     x2, y2, z1, // FACE 2 POSITIVE Y
+    //     x1, y2, z1,
+    //     x1, y2, z2,
+    //     x2, y2, z2};
 
     GLfloat tx1 = -1.0f;
     GLfloat tx2 = 1.0f;
@@ -1083,80 +1103,80 @@ void glutCubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint vloc, 
     GLfloat tz1 = -1.0f;
     GLfloat tz2 = 1.0f;
 
-    GLfloat texcoords[] = {
-        x1,
-        y1,
-        z1, // FACE 1 NEGATIVE X
-        x1,
-        y2,
-        z1,
-        x1,
-        y2,
-        z2,
-        x1,
-        y1,
-        z2,
-        x1,
-        y1,
-        z2, // FACE 4 POSITIVE Z
-        x1,
-        y2,
-        z2,
-        x2,
-        y2,
-        z2,
-        x2,
-        y1,
-        z2,
-        x2,
-        y1,
-        z2, // FACE 0 POSITIVE X
-        x2,
-        y2,
-        z2,
-        x2,
-        y2,
-        z1,
-        x2,
-        y1,
-        z1,
-        x2,
-        y1,
-        z1, // FACE 5 NEGATIVE Z
-        x2,
-        y2,
-        z1,
-        x1,
-        y2,
-        z1,
-        x1,
-        y1,
-        z1,
-        x1,
-        y1,
-        z1, // FACE 3 NEGATIVE Y
-        x1,
-        y1,
-        z2,
-        x2,
-        y1,
-        z2,
-        x2,
-        y1,
-        z1,
-        x1,
-        y2,
-        z2, // FACE 2 POSITIVE Y
-        x1,
-        y2,
-        z1,
-        x2,
-        y2,
-        z1,
-        x2,
-        y2,
-        z2,
-    };
+    // GLfloat texcoords[] = {
+    //     x1,
+    //     y1,
+    //     z1, // FACE 1 NEGATIVE X
+    //     x1,
+    //     y2,
+    //     z1,
+    //     x1,
+    //     y2,
+    //     z2,
+    //     x1,
+    //     y1,
+    //     z2,
+    //     x1,
+    //     y1,
+    //     z2, // FACE 4 POSITIVE Z
+    //     x1,
+    //     y2,
+    //     z2,
+    //     x2,
+    //     y2,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z2, // FACE 0 POSITIVE X
+    //     x2,
+    //     y2,
+    //     z2,
+    //     x2,
+    //     y2,
+    //     z1,
+    //     x2,
+    //     y1,
+    //     z1,
+    //     x2,
+    //     y1,
+    //     z1, // FACE 5 NEGATIVE Z
+    //     x2,
+    //     y2,
+    //     z1,
+    //     x1,
+    //     y2,
+    //     z1,
+    //     x1,
+    //     y1,
+    //     z1,
+    //     x1,
+    //     y1,
+    //     z1, // FACE 3 NEGATIVE Y
+    //     x1,
+    //     y1,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z2,
+    //     x2,
+    //     y1,
+    //     z1,
+    //     x1,
+    //     y2,
+    //     z2, // FACE 2 POSITIVE Y
+    //     x1,
+    //     y2,
+    //     z1,
+    //     x2,
+    //     y2,
+    //     z1,
+    //     x2,
+    //     y2,
+    //     z2,
+    // };
 
     GLfloat buffer[] = {
         x1, y1, z1, tx1, ty1, tz1, // FACE 1 NEGATIVE X
@@ -1182,8 +1202,7 @@ void glutCubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint vloc, 
         x1, y2, z2, tx1, ty2, tz2, // FACE 3 POSITIVE Y
         x1, y2, z1, tx1, ty2, tz1,
         x2, y2, z1, tx2, ty2, tz1,
-        x2, y2, z2, tx2, ty2, tz2
-    };
+        x2, y2, z2, tx2, ty2, tz2};
 
     GLushort indices[] = {
         0, 1, 2, 2, 3, 0,
@@ -1191,13 +1210,13 @@ void glutCubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint vloc, 
         8, 9, 10, 10, 11, 8,
         12, 13, 14, 14, 15, 12,
         16, 17, 18, 18, 19, 16,
-        20, 21, 22, 22, 23, 20
-    };
+        20, 21, 22, 22, 23, 20};
 
     static GLuint abo = 0;
     static GLuint eabo = 0;
 
-    if (abo == 0) {
+    if (abo == 0)
+    {
         glGenBuffers(1, &abo);
         glGenBuffers(1, &eabo);
         glBindBuffer(GL_ARRAY_BUFFER, abo);
@@ -1210,8 +1229,8 @@ void glutCubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint vloc, 
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
     //glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)0);
     //glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)12);
-    const unsigned char* vptr = (unsigned char*)buffer;
-    const unsigned char* tptr = vptr + 12;
+    const unsigned char *vptr = (unsigned char *)buffer;
+    const unsigned char *tptr = vptr + 12;
     glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, vptr);
     glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, tptr);
     if (vloc >= 0)

@@ -37,6 +37,7 @@
 #include <fluxions_gte_ray.hpp>
 #include <fluxions_gte_color3.hpp>
 #include <fluxions_gte_color4.hpp>
+#include <fluxions_gte_color_math.hpp>
 #include <fluxions_gte_image.hpp>
 
 namespace Fluxions

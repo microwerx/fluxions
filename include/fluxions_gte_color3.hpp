@@ -25,9 +25,8 @@
 #include <fluxions_gte_math.hpp>
 #include <fluxions_gte_vector3.hpp>
 
-namespace Fluxions {
-template <typename T>
-class TColor3;
+namespace Fluxions
+{
 template <typename T>
 class TColor4;
 template <typename T>
@@ -36,40 +35,42 @@ template <typename T>
 class TVector4;
 
 template <typename T>
-class TColor3 {
-public:
+class TColor3
+{
+  public:
     T r, g, b;
-
-    constexpr T* ptr() noexcept { return &r; }
-    constexpr const T* const_ptr() const noexcept { return &r; }
 
     using type = T;
 
+    static float to_float_factor;
+    static float from_float_factor;
+
+    static type min_value;
+    static type max_value;
+
+    static unsigned int gl_type; // UNSIGNED_BYTE, FLOAT, etc.
+    static unsigned int gl_size; // 3 for RGB, 4 for RGBA
+
+    constexpr T *ptr() noexcept { return &r; }
+    constexpr const T *const_ptr() const noexcept { return &r; }
+
     TColor3()
-        : r(0)
-        , g(0)
-        , b(0)
+        : r(0), g(0), b(0)
     {
     }
 
     TColor3(const T value)
-        : r(value)
-        , g(value)
-        , b(value)
+        : r(value), g(value), b(value)
     {
     }
 
     TColor3(const T newR, const T newG, const T newB)
-        : r(newR)
-        , g(newG)
-        , b(newB)
+        : r(newR), g(newG), b(newB)
     {
     }
 
-    TColor3(const TColor3<T>& color)
-        : r(color.r)
-        , g(color.g)
-        , b(color.b)
+    TColor3(const TColor3<T> &color)
+        : r(color.r), g(color.g), b(color.b)
     {
     }
 
@@ -88,7 +89,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator=(const TColor3<OtherType>& color)
+    const TColor3<T> &operator=(const TColor3<OtherType> &color)
     {
         r = (T)color.r;
         g = (T)color.g;
@@ -97,7 +98,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator=(const TColor4<OtherType>& color)
+    const TColor3<T> &operator=(const TColor4<OtherType> &color)
     {
         r = (T)color.r;
         g = (T)color.g;
@@ -106,7 +107,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator=(const TVector3<OtherType>& color)
+    const TColor3<T> &operator=(const TVector3<OtherType> &color)
     {
         r = (T)color.x;
         g = (T)color.y;
@@ -115,7 +116,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator=(const TVector4<OtherType>& color)
+    const TColor3<T> &operator=(const TVector4<OtherType> &color)
     {
         r = (T)color.x;
         g = (T)color.t;
@@ -123,7 +124,7 @@ public:
         return *this;
     }
 
-    const TColor3<T>& operator=(const T value)
+    const TColor3<T> &operator=(const T value)
     {
         r = value;
         g = value;
@@ -132,7 +133,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator+=(const TColor3<OtherType>& color)
+    const TColor3<T> &operator+=(const TColor3<OtherType> &color)
     {
         r = (T)(r + color.r);
         g = (T)(g + color.g);
@@ -141,7 +142,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator-=(const TColor3<OtherType>& color)
+    const TColor3<T> &operator-=(const TColor3<OtherType> &color)
     {
         r = (T)(r - color.r);
         g = (T)(g - color.g);
@@ -150,7 +151,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator*=(const TColor3<OtherType>& color)
+    const TColor3<T> &operator*=(const TColor3<OtherType> &color)
     {
         r = (T)(r * color.r);
         g = (T)(g * color.g);
@@ -159,7 +160,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor3<T>& operator/=(const TColor3<OtherType>& color)
+    const TColor3<T> &operator/=(const TColor3<OtherType> &color)
     {
         r = (T)(r / color.r);
         g = (T)(g / color.g);
@@ -167,7 +168,7 @@ public:
         return *this;
     }
 
-    const TColor3<T>& operator+=(const T value)
+    const TColor3<T> &operator+=(const T value)
     {
         r = (T)(r + value);
         g = (T)(g + value);
@@ -175,7 +176,7 @@ public:
         return *this;
     }
 
-    const TColor3<T>& operator-=(const T value)
+    const TColor3<T> &operator-=(const T value)
     {
         r = (T)(r - value);
         g = (T)(g - value);
@@ -183,7 +184,7 @@ public:
         return *this;
     }
 
-    const TColor3<T>& operator*=(const T value)
+    const TColor3<T> &operator*=(const T value)
     {
         r = (T)(r * value);
         g = (T)(g * value);
@@ -191,7 +192,7 @@ public:
         return *this;
     }
 
-    const TColor3<T>& operator/=(const T value)
+    const TColor3<T> &operator/=(const T value)
     {
         r = (T)(r / value);
         g = (T)(g / value);
@@ -200,7 +201,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor3<T> operator+(const TColor3<OtherType>& color)
+    constexpr TColor3<T> operator+(const TColor3<OtherType> &color)
     {
         return TColor3<T>(
             (T)(r + color.r),
@@ -209,7 +210,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor3<T> operator-(const TColor3<OtherType>& color)
+    constexpr TColor3<T> operator-(const TColor3<OtherType> &color)
     {
         return TColor3<T>(
             (T)(r - color.r),
@@ -218,7 +219,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor3<T> operator*(const TColor3<OtherType>& color)
+    constexpr TColor3<T> operator*(const TColor3<OtherType> &color)
     {
         return TColor3<T>(
             (T)(r * color.r),
@@ -227,7 +228,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor3<T> operator*(const OtherType& value)
+    constexpr TColor3<T> operator*(const OtherType &value)
     {
         return TColor3<T>(
             (T)(value * r),
@@ -236,7 +237,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor3<T> operator/(const TColor3<OtherType>& color)
+    constexpr TColor3<T> operator/(const TColor3<OtherType> &color)
     {
         return TColor3<T>(
             (T)(r / color.r),
@@ -280,38 +281,62 @@ public:
             remap_value_min_max<T, OtherType>(b, src_min_value, src_max_value, dst_min_value, dst_max_value));
     }
 
-    constexpr TColor3<T> Clamp(T min_value, T max_value) const
+    constexpr TColor3<T> Clamp(T minValue, T maxValue) const
     {
         return TColor3<T>(
-            clamp<T>(r, min_value, max_value),
-            clamp<T>(g, min_value, max_value),
-            clamp<T>(b, min_value, max_value));
+            Fluxions::clamp<T>(r, minValue, maxValue),
+            Fluxions::clamp<T>(g, minValue, maxValue),
+            Fluxions::clamp<T>(b, minValue, maxValue));
     }
 
-    constexpr TColor3<T> ScaleClamp(T scale, T min_value, T max_value) const
+    constexpr TColor3<T> ScaleClamp(T scale, T minValue, T maxValue) const
     {
         return TColor3<T>(
-            clamp<T>(r * scale, min_value, max_value),
-            clamp<T>(g * scale, min_value, max_value),
-            clamp<T>(b * scale, min_value, max_value));
+            Fluxions::clamp<T>(r * scale, minValue, maxValue),
+            Fluxions::clamp<T>(g * scale, minValue, maxValue),
+            Fluxions::clamp<T>(b * scale, minValue, maxValue));
+    }
+
+    // constexpr TColor3<float> ToColor3f() const noexcept
+    // {
+    //     return TColor3<float>(
+    //         r * to_float_factor,
+    //         g * to_float_factor,
+    //         b * to_float_factor);
+    // }
+
+    // constexpr TColor3<T> &FromColor3f(const TColor3<T> color)
+    // {
+    //     r = (type)(from_float_factor * color.r);
+    //     g = (type)(from_float_factor * color.g);
+    //     b = (type)(from_float_factor * color.b);
+    //     return *this;
+    // }
+
+    constexpr TColor3<T> &clamp() noexcept
+    {
+        r = Fluxions::clamp(r, min_value, max_value);
+        g = Fluxions::clamp(r, min_value, max_value);
+        b = Fluxions::clamp(r, min_value, max_value);
+        return *this;
     }
 
     template <typename OtherType, typename ScaleType>
     constexpr TColor3<OtherType> ToColor3(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
     {
         return TColor3<OtherType>(
-            (OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value));
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(r * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(g * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(b * scale), min_value, max_value));
     }
 
     template <typename OtherType, typename ScaleType>
     constexpr TColor4<OtherType> ToColor4(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
     {
         return TColor4<OtherType>(
-            (OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(r * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(g * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(b * scale), min_value, max_value),
             0);
     }
 
@@ -393,7 +418,7 @@ public:
 #ifdef max
 #undef max
 #endif
-    static constexpr TColor3<T> min(const TColor3<T>& a, const TColor3<T>& b) noexcept
+    static constexpr TColor3<T> min(const TColor3<T> &a, const TColor3<T> &b) noexcept
     {
         return TColor3<T>(
             std::min(a.r, b.r),
@@ -401,14 +426,14 @@ public:
             std::min(a.b, b.b));
     }
 
-    static constexpr TColor3<T> max(const TColor3<T>& a, const TColor3<T>& b) noexcept
+    static constexpr TColor3<T> max(const TColor3<T> &a, const TColor3<T> &b) noexcept
     {
         return TColor3<T>(
             std::max(a.r, b.r),
             std::max(a.g, b.g),
             std::max(a.b, b.b));
     }
-};
+}; // class TColor3
 
 template <typename T>
 constexpr TColor3<T> abs(TColor3<T> color)
@@ -435,7 +460,7 @@ constexpr TColor3<T> negate(TColor3<T> color)
 }
 
 template <typename T>
-constexpr TColor3<T> operator*(const TColor3<T>& lhs, const T rhs)
+constexpr TColor3<T> operator*(const TColor3<T> &lhs, const T rhs)
 {
     return TColor3<T>(
         lhs.r * rhs,
@@ -444,7 +469,7 @@ constexpr TColor3<T> operator*(const TColor3<T>& lhs, const T rhs)
 }
 
 template <typename T>
-constexpr TColor3<T> operator*(const T lhs, const TColor3<T>& rhs)
+constexpr TColor3<T> operator*(const T lhs, const TColor3<T> &rhs)
 {
     return TColor3<T>(
         lhs * rhs.r,
@@ -453,7 +478,7 @@ constexpr TColor3<T> operator*(const T lhs, const TColor3<T>& rhs)
 }
 
 template <typename T>
-constexpr TColor3<T> operator/(const TColor3<T>& lhs, const T rhs)
+constexpr TColor3<T> operator/(const TColor3<T> &lhs, const T rhs)
 {
     return TColor3<T>(
         lhs.r / rhs,
@@ -462,37 +487,37 @@ constexpr TColor3<T> operator/(const TColor3<T>& lhs, const T rhs)
 }
 
 template <typename T>
-constexpr bool operator==(const TColor3<T>& lhs, const TColor3<T>& rhs)
+constexpr bool operator==(const TColor3<T> &lhs, const TColor3<T> &rhs)
 {
     return (lhs.r == rhs.r) && (lhs.g == rhs.g) && (lhs.b == rhs.b);
 }
 
 template <typename T>
-constexpr bool operator!=(const TColor3<T>& lhs, const TColor3<T>& rhs)
+constexpr bool operator!=(const TColor3<T> &lhs, const TColor3<T> &rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T>
-constexpr bool operator<(const TColor3<T>& lhs, const TColor3<T>& rhs)
+constexpr bool operator<(const TColor3<T> &lhs, const TColor3<T> &rhs)
 {
     return (lhs.r < rhs.r) && (lhs.g < rhs.g) && (lhs.b < rhs.b);
 }
 
 template <typename T>
-constexpr bool operator>(const TColor3<T>& lhs, const TColor3<T>& rhs)
+constexpr bool operator>(const TColor3<T> &lhs, const TColor3<T> &rhs)
 {
     return (lhs.r > rhs.r) && (lhs.g > rhs.g) && (lhs.b > rhs.b);
 }
 
 template <typename T>
-constexpr bool operator<=(const TColor3<T>& lhs, const TColor3<T>& rhs)
+constexpr bool operator<=(const TColor3<T> &lhs, const TColor3<T> &rhs)
 {
     return (lhs.r <= rhs.r) && (lhs.g <= rhs.g) && (lhs.b <= rhs.b);
 }
 
 template <typename T>
-constexpr bool operator>=(const TColor3<T>& lhs, const TColor3<T>& rhs)
+constexpr bool operator>=(const TColor3<T> &lhs, const TColor3<T> &rhs)
 {
     return (lhs.r >= rhs.r) && (lhs.g >= rhs.g) && (lhs.b >= rhs.b);
 }
@@ -543,7 +568,7 @@ Color3f HLSToRGBf(float h, float l, float s) noexcept;
 Color3d HLSToRGBd(double h, double l, double s) noexcept;
 
 template <typename T>
-inline TColor3<T> SRGBtoRGB(const TColor3<T>& color) noexcept
+inline TColor3<T> SRGBtoRGB(const TColor3<T> &color) noexcept
 {
     return TColor3<T>(
         SRGBToLinear<T>(color.r),
@@ -552,7 +577,7 @@ inline TColor3<T> SRGBtoRGB(const TColor3<T>& color) noexcept
 }
 
 template <typename T>
-inline TColor3<T> RGBtoSRGB(const TColor3<T>& color) noexcept
+inline TColor3<T> RGBtoSRGB(const TColor3<T> &color) noexcept
 {
     return TColor3<T>(
         LinearToSRGB<T>(color.r),
@@ -560,7 +585,7 @@ inline TColor3<T> RGBtoSRGB(const TColor3<T>& color) noexcept
         LinearToSRGB<T>(color.b));
 }
 
-inline Color3f SRGBtoRGBf(const Color3f& color) noexcept
+inline Color3f SRGBtoRGBf(const Color3f &color) noexcept
 {
     return Color3f(
         SRGBToLinear<f32_t>(color.r),
@@ -568,7 +593,7 @@ inline Color3f SRGBtoRGBf(const Color3f& color) noexcept
         SRGBToLinear<f32_t>(color.b));
 }
 
-inline Color3d SRGBtoRGBd(const Color3d& color) noexcept
+inline Color3d SRGBtoRGBd(const Color3d &color) noexcept
 {
     return Color3d(
         SRGBToLinear<f64_t>(color.r),
@@ -576,7 +601,7 @@ inline Color3d SRGBtoRGBd(const Color3d& color) noexcept
         SRGBToLinear<f64_t>(color.b));
 }
 
-inline Color3f RGBtoSRGBf(const Color3f& color) noexcept
+inline Color3f RGBtoSRGBf(const Color3f &color) noexcept
 {
     return Color3f(
         LinearToSRGB<f32_t>(color.r),
@@ -584,7 +609,7 @@ inline Color3f RGBtoSRGBf(const Color3f& color) noexcept
         LinearToSRGB<f32_t>(color.b));
 }
 
-inline Color3d RGBtoSRGBf(const Color3d& color) noexcept
+inline Color3d RGBtoSRGBf(const Color3d &color) noexcept
 {
     return Color3d(
         LinearToSRGB<f64_t>(color.r),

@@ -20,12 +20,17 @@
 #include <unicornfish_broker.hpp>
 #include <unicornfish_majordomo.hpp>
 
-namespace Uf {
+namespace Uf
+{
+
+template struct std::pair<string, BrokerWorker>;
+template struct std::pair<string, BrokerServiceInfo>;
+
 Broker::Broker()
 {
 }
 
-Broker::Broker(const char* endpoint)
+Broker::Broker(const char *endpoint)
 {
     Create(endpoint);
 }
@@ -35,10 +40,11 @@ Broker::~Broker()
     Delete();
 }
 
-bool Broker::Create(const char* endpoint_)
+bool Broker::Create(const char *endpoint_)
 {
     Delete();
-    if (!brokerSocket.NewRouter(endpoint_)) {
+    if (!brokerSocket.NewRouter(endpoint_))
+    {
         return false;
     }
     endpoint = endpoint_;
@@ -48,7 +54,8 @@ bool Broker::Create(const char* endpoint_)
 
 void Broker::Delete()
 {
-    if (brokerSocket) {
+    if (brokerSocket)
+    {
         brokerSocket.Delete();
         services.clear();
         workers.clear();
@@ -56,25 +63,31 @@ void Broker::Delete()
     }
 }
 
-bool Broker::ProcessWorkerMessage(Frame& sender, Message& msg)
+bool Broker::ProcessWorkerMessage(Frame &sender, Message &msg)
 {
     string workerName = sender.GetHexData();
     bool workerIsReady = WorkerExists(workerName);
-    Worker* worker = FindWorker(workerName);
+    BrokerWorker *worker = FindWorker(workerName);
     worker->identityFrame.Copy(sender);
 
     Majordomo::Command command = msg.PopCommand();
-    if (command == Majordomo::Command::Ready) {
-        if (workerIsReady) {
+    if (command == Majordomo::Command::Ready)
+    {
+        if (workerIsReady)
+        {
             if (verbose)
                 printf("broker: received READY from worker, but worker was ready, disconnecting worker\n");
             DisconnectWorker(worker);
-        } else if (sender.strncmp("mmi.", 4)) {
+        }
+        else if (sender.strncmp("mmi.", 4))
+        {
             // workers aren't allowed to have services that start with "mmm."
             if (verbose)
                 printf("broker: received MMI from worker, but worker can't have MMIs, disconnecting worker\n");
             DisconnectWorker(worker);
-        } else {
+        }
+        else
+        {
             if (verbose)
                 printf("broker: received READY from worker, adding worker to waiting list\n");
             Frame serviceFrame = msg.PopFrame();
@@ -82,8 +95,11 @@ bool Broker::ProcessWorkerMessage(Frame& sender, Message& msg)
             worker->service->numWorkers++;
             WaitWorker(worker);
         }
-    } else if (command == Majordomo::Command::Reply) {
-        if (workerIsReady) {
+    }
+    else if (command == Majordomo::Command::Reply)
+    {
+        if (workerIsReady)
+        {
             // Frame 0 is Empty
             // Frame 1 is MDPW01
             // Frame 2 is 0x03 (REPLY)
@@ -99,26 +115,37 @@ bool Broker::ProcessWorkerMessage(Frame& sender, Message& msg)
                 printf("broker: received reply from worker, now sending reply to client %s\n", clientHexAddress.c_str());
             msg.Send(brokerSocket);
             WaitWorker(worker);
-        } else {
+        }
+        else
+        {
             if (verbose)
                 printf("broker: received reply from worker, but worker was not ready, disconnecting worker\n");
             DisconnectWorker(worker);
         }
-    } else if (command == Majordomo::Command::Heartbeat) {
-        if (workerIsReady) {
+    }
+    else if (command == Majordomo::Command::Heartbeat)
+    {
+        if (workerIsReady)
+        {
             if (verbose)
                 printf("broker: received heartbeat from worker, renewing expiry\n");
             worker->RenewExpiry(zclock_time() + Majordomo::DefaultHeartbeatIntervalMS);
-        } else {
+        }
+        else
+        {
             if (verbose)
                 printf("broker: received heartbeat from worker, but worker was not ready, disconnecting worker\n");
             DisconnectWorker(worker);
         }
-    } else if (command == Majordomo::Command::Disconnect) {
+    }
+    else if (command == Majordomo::Command::Disconnect)
+    {
         if (verbose)
             printf("broker: received disconnect from worker, deleting worker\n");
         DeleteWorker(workerName);
-    } else {
+    }
+    else
+    {
         // invalid input message
         if (verbose)
             printf("broker: received invalid input message\n");
@@ -126,28 +153,33 @@ bool Broker::ProcessWorkerMessage(Frame& sender, Message& msg)
     return true;
 }
 
-bool Broker::ProcessClientMessage(Frame& sender, Message& msg)
+bool Broker::ProcessClientMessage(Frame &sender, Message &msg)
 {
     if (msg.Size() < 2)
         return false;
 
     Frame serviceFrame = msg.PopFrame();
     string requestedServiceName = serviceFrame.GetStrData();
-    ServiceInfo* service = FindService(requestedServiceName);
+    BrokerServiceInfo *service = FindService(requestedServiceName);
 
     // this tells the client who the worker is
     msg.Wrap(sender);
 
     // process MMI requests internally
-    if (serviceFrame.strncmp("mmi.", 4)) {
+    if (serviceFrame.strncmp("mmi.", 4))
+    {
         string returnCode;
-        if (requestedServiceName == "mmi.service") {
+        if (requestedServiceName == "mmi.service")
+        {
             auto service_iterator = services.find(requestedServiceName);
-            if (service_iterator != services.end()) {
+            if (service_iterator != services.end())
+            {
                 // 200 means OK and 404 means Not Found
                 returnCode = service_iterator->second.numWorkers > 0 ? "200" : "404";
             }
-        } else {
+        }
+        else
+        {
             // 501 means Method Not Supported
             returnCode = "501";
         }
@@ -161,7 +193,9 @@ bool Broker::ProcessClientMessage(Frame& sender, Message& msg)
         if (verbose)
             printf("Broker: sending %d frames to client %s\n", (int)msg.Size(), clientAddress.c_str());
         msg.Send(brokerSocket);
-    } else {
+    }
+    else
+    {
         DispatchService(service, msg);
     }
 
@@ -171,9 +205,11 @@ bool Broker::ProcessClientMessage(Frame& sender, Message& msg)
 void Broker::Purge()
 {
     auto worker_iterator = waitingWorkers.begin();
-    while (worker_iterator != waitingWorkers.end()) {
-        Worker* worker = *worker_iterator;
-        if (zclock_time() < worker->expiry) {
+    while (worker_iterator != waitingWorkers.end())
+    {
+        BrokerWorker *worker = *worker_iterator;
+        if (zclock_time() < worker->expiry)
+        {
             // Worker may still be alive
             break;
         }
@@ -192,27 +228,36 @@ bool Broker::RunLoop()
 {
     if (!brokerSocket)
         return false;
-    if (brokerSocket.Poll(Majordomo::DefaultHeartbeatIntervalPollMS)) {
+    if (brokerSocket.Poll(Majordomo::DefaultHeartbeatIntervalPollMS))
+    {
         Message msg;
         msg.Recv(brokerSocket);
 
-        if (msg.Size() >= 3) {
+        if (msg.Size() >= 3)
+        {
             if (verbose)
                 printf("broker: received message size is %d\n", (int)msg.Size());
             Frame sender = msg.PopFrame();
             Frame empty = msg.PopFrame();
             Frame header = msg.PopFrame();
 
-            if (header.GetStrData() == Majordomo::ClientId) {
+            if (header.GetStrData() == Majordomo::ClientId)
+            {
                 ProcessClientMessage(sender, msg);
-            } else if (header.GetStrData() == Majordomo::WorkerId) {
+            }
+            else if (header.GetStrData() == Majordomo::WorkerId)
+            {
                 ProcessWorkerMessage(sender, msg);
-            } else {
+            }
+            else
+            {
                 // need to do error handling here...
                 if (verbose)
                     printf("broker: error with message\n");
             }
-        } else {
+        }
+        else
+        {
             // need to do error handling here...
             if (verbose)
                 printf("broker: error with message size\n");
@@ -225,9 +270,11 @@ bool Broker::RunLoop()
     //	break;
     //}
 
-    if (zclock_time() > heartbeatTime) {
+    if (zclock_time() > heartbeatTime)
+    {
         Purge();
-        for (Worker* worker : waitingWorkers) {
+        for (BrokerWorker *worker : waitingWorkers)
+        {
             if (verbose)
                 printf("broker: sending heartbeat to worker %s\n", worker->key.c_str());
             worker->SendHeartbeat(brokerSocket);
@@ -238,18 +285,19 @@ bool Broker::RunLoop()
     return true;
 }
 
-bool Broker::WorkerExists(const string& workerName) const
+bool Broker::WorkerExists(const string &workerName) const
 {
     auto it = workers.find(workerName);
 
-    return (it != workers.end());
+    return (it != workers.cend());
 }
 
-Broker::Worker* Broker::FindWorker(const string& workerName)
+BrokerWorker *Broker::FindWorker(const string &workerName)
 {
     auto worker_iterator = workers.find(workerName);
 
-    if (worker_iterator == workers.end()) {
+    if (worker_iterator == workers.end())
+    {
         // worker not found
         workers[workerName].name = workerName;
         worker_iterator = workers.find(workerName);
@@ -258,7 +306,7 @@ Broker::Worker* Broker::FindWorker(const string& workerName)
     return &worker_iterator->second;
 }
 
-void Broker::DisconnectWorker(Worker* worker)
+void Broker::DisconnectWorker(BrokerWorker *worker)
 {
     if (verbose)
         printf("Broker: sending disconnect\n");
@@ -266,14 +314,15 @@ void Broker::DisconnectWorker(Worker* worker)
     DeleteWorker(worker->name);
 }
 
-void Broker::DeleteWorker(const string& workerName)
+void Broker::DeleteWorker(const string &workerName)
 {
     auto worker_iterator = workers.find(workerName);
     if (worker_iterator == workers.end())
         return;
-    Worker* worker = &worker_iterator->second;
+    BrokerWorker *worker = &worker_iterator->second;
 
-    if (worker->service) {
+    if (worker->service)
+    {
         worker->service->RemoveWorker(worker);
     }
 
@@ -281,7 +330,7 @@ void Broker::DeleteWorker(const string& workerName)
     workers.erase(worker_iterator);
 }
 
-void Broker::WaitWorker(Worker* worker)
+void Broker::WaitWorker(BrokerWorker *worker)
 {
     if (!worker)
         return;
@@ -292,16 +341,17 @@ void Broker::WaitWorker(Worker* worker)
     DispatchService(worker->service);
 }
 
-bool Broker::ServiceExists(const string& serviceName) const
+bool Broker::ServiceExists(const string &serviceName) const
 {
     auto it = services.find(serviceName);
     return (it != services.end());
 }
 
-Broker::ServiceInfo* Broker::FindService(const string& serviceName)
+BrokerServiceInfo *Broker::FindService(const string &serviceName)
 {
     auto service_iterator = services.find(serviceName);
-    if (service_iterator == services.end()) {
+    if (service_iterator == services.end())
+    {
         // service not found
         services[serviceName].name = serviceName;
         service_iterator = services.find(serviceName);
@@ -310,7 +360,7 @@ Broker::ServiceInfo* Broker::FindService(const string& serviceName)
     return &service_iterator->second;
 }
 
-void Broker::DispatchService(ServiceInfo* service, Message& msg)
+void Broker::DispatchService(BrokerServiceInfo *service, Message &msg)
 {
     if (!service)
         return;
@@ -322,9 +372,9 @@ void Broker::DispatchService(ServiceInfo* service, Message& msg)
     service->Dispatch(brokerSocket);
 }
 
-void Broker::DispatchService(ServiceInfo* service)
+void Broker::DispatchService(BrokerServiceInfo *service)
 {
     Message empty;
     DispatchService(service, empty);
 }
-}
+} // namespace Uf

@@ -21,33 +21,31 @@
 
 #ifdef WIN32
 
-#elif _POSIX_VERSION
+#elif __unix__
 #include <libgen.h> // for dirname() and basename()
 #include <unistd.h> // for realpath()
 #endif
 
 #include <memory.h> // for free()
-#include <regex>
 #include <stdlib.h>
-#include <string>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <regex>
+#include <string>
 #include <vector>
-
-#ifdef USING_ERRNO
-#include <cerrno>
-#endif
 
 #ifdef WIN32
 #include <Windows.h>
 #endif
 
-namespace Fluxions {
+namespace Fluxions
+{
 using namespace std;
 
 // const string BlankString;
 
-#ifdef _POSIX_VERSION
+#ifdef __unix__
 #ifndef _MAX_DRIVE
 #define _MAX_DRIVE 3
 #endif
@@ -62,11 +60,26 @@ using namespace std;
 #endif
 #endif
 
+int stat_with_errno(const string &path, void *Stat)
+{
+#ifdef WIN32
+    _set_errno(0);
+#elif __unix__
+    errno = 0;
+#endif
+
+#ifdef WIN32
+    return _stat(path.c_str(), (struct _stat *)Stat);
+#elif __unix__
+    return stat(path.c_str(), (struct stat *)Stat);
+#endif
+}
+
 FilePathInfo::FilePathInfo()
 {
 }
 
-FilePathInfo::FilePathInfo(const string& filename)
+FilePathInfo::FilePathInfo(const string &filename)
 {
     Set(filename);
 }
@@ -84,7 +97,7 @@ void FilePathInfo::Clear()
     ext.clear();
 }
 
-void FilePathInfo::Set(const string& _path)
+void FilePathInfo::Set(const string &_path)
 {
     Clear();
 
@@ -93,53 +106,59 @@ void FilePathInfo::Set(const string& _path)
     origpath = p;
 
     // updated to use realpath on POSIX
-#ifdef _POSIX_VERSION
+#ifdef __unix__
     fname = "";
-    drive = "";
     dir = "";
     ext = "";
     path = "";
-    folderpath = "";
     fullfname = "";
 
     path = getFullPathName(origpath);
-    char* pathcopy = new char[path.size() + 1];
+    char *pathcopy = new char[path.size() + 1];
     memcpy(pathcopy, &path[0], path.size());
-    char* dirnamePtr = dirname(pathcopy);
-    if (dirnamePtr) {
+    char *dirnamePtr = dirname(pathcopy);
+    if (dirnamePtr)
+    {
         path = dirnamePtr;
-    } else {
+    }
+    else
+    {
         // check errno for error
         dir = getCurrentDirectory();
     }
     delete[] pathcopy;
     pathcopy = new char[path.size() + 1];
     memcpy(pathcopy, &path[0], path.size());
-    char* basenamePtr = basename(pathcopy);
-    if (basenamePtr) {
+    char *basenamePtr = basename(pathcopy);
+    if (basenamePtr)
+    {
         fullfname = basenamePtr;
-    } else {
+    }
+    else
+    {
         // check errno for error
         fullfname = path;
     }
     delete[] pathcopy;
 
-    drive = "";
     dir = path;
 
     string::size_type idx = fullfname.find_last_of(".");
-    if (idx != string::npos) {
+    if (idx != string::npos)
+    {
         ext = fullfname.substr(idx + 1);
         fname = fullfname.substr(0, idx);
-    } else {
+    }
+    else
+    {
         ext = "";
         fname = fullfname;
     }
 #elif defined(WIN32)
-    char driveStr[_MAX_DRIVE] = { 0 };
-    char dirStr[_MAX_DIR] = { 0 };
-    char fnameStr[_MAX_FNAME] = { 0 };
-    char extStr[_MAX_EXT] = { 0 };
+    char driveStr[_MAX_DRIVE] = {0};
+    char dirStr[_MAX_DIR] = {0};
+    char fnameStr[_MAX_FNAME] = {0};
+    char extStr[_MAX_EXT] = {0};
 
     path = getFullPathName(origpath);
 
@@ -153,15 +172,18 @@ void FilePathInfo::Set(const string& _path)
     ext = extStr;
     fullfname = fname + ext;
 
-    if (dir.empty()) {
+    if (dir.empty())
+    {
         testpath = getCurrentDirectory();
         dir = regex_replace(testpath, path_replace, "/");
     }
 
-    if (!dir.empty()) {
+    if (!dir.empty())
+    {
         char backChar = dir.back();
 
-        if (backChar != '/' && backChar != '\\') {
+        if (backChar != '/' && backChar != '\\')
+        {
             dir += "/";
         }
     }
@@ -172,23 +194,26 @@ void FilePathInfo::Set(const string& _path)
     fill_stat_info();
 }
 
-string FilePathInfo::getFullPathName(const string& filename)
+string FilePathInfo::getFullPathName(const string &filename)
 {
     string outputStr;
-#ifdef _POSIX_VERSION
+#ifdef __unix__
     errno = 0;
-    char* pathstr = realpath(filename.c_str(), NULL);
-    if (pathstr != NULL) {
+    char *pathstr = realpath(filename.c_str(), NULL);
+    if (pathstr != NULL)
+    {
         outputStr = pathstr;
         free(pathstr);
-    } else {
+    }
+    else
+    {
         // check errno
         // default behavior is to return the filename (it doesn't exist, but that's okay)
         outputStr = filename;
     }
 #elif defined(WIN32)
-    char pathStr[4096] = { 0 };
-    char** lppPart = { NULL };
+    char pathStr[4096] = {0};
+    char **lppPart = {NULL};
 
     ::GetFullPathNameA(filename.c_str(), 4096, pathStr, lppPart);
 
@@ -203,21 +228,27 @@ string FilePathInfo::getFullPathName(const string& filename)
 string FilePathInfo::getCurrentDirectory()
 {
     string output;
-#ifdef _POSIX_VERSION
-    char* buffer;
+#ifdef __unix__
+    char *buffer;
     buffer = getcwd(NULL, 0);
-    if (buffer == NULL) {
+    if (buffer == NULL)
+    {
         // error
-    } else {
+    }
+    else
+    {
         output = buffer;
         free(buffer);
     }
 #elif defined(WIN32)
     char dirStr[_MAX_DIR + 1];
     DWORD result = ::GetCurrentDirectoryA(_MAX_DIR, dirStr);
-    if (result > 0) {
+    if (result > 0)
+    {
         output = dirStr;
-    } else {
+    }
+    else
+    {
         output = "";
     }
 #endif
@@ -227,17 +258,21 @@ string FilePathInfo::getCurrentDirectory()
     return p;
 }
 
-bool FilePathInfo::TestIfFileExists(const string& filename)
+bool FilePathInfo::TestIfFileExists(const string &filename)
 {
+#ifdef WIN32
     struct _stat Stat;
-    int retval = _stat(filename.c_str(), &Stat);
+#elif __unix__
+    struct stat Stat;
+#endif
+    int retval = stat_with_errno(path.c_str(), &Stat);
     if (retval == 0)
         return true;
     else
         return false;
 }
 
-string FilePathInfo::FindFileIfExists(const vector<string>& pathsToTry)
+string FilePathInfo::FindFileIfExists(const vector<string> &pathsToTry)
 {
     string output;
 
@@ -245,10 +280,14 @@ string FilePathInfo::FindFileIfExists(const vector<string>& pathsToTry)
     if (path.empty())
         return output;
 
-    if (TestIfFileExists(path)) {
+    if (TestIfFileExists(path))
+    {
         return path;
-    } else {
-        for (auto testPathIt : pathsToTry) {
+    }
+    else
+    {
+        for (auto testPathIt : pathsToTry)
+        {
             char backChar = testPathIt.back();
             string testPath = testPathIt;
             if (backChar != '/' && backChar != '\\')
@@ -256,10 +295,13 @@ string FilePathInfo::FindFileIfExists(const vector<string>& pathsToTry)
             else
                 testPath = testPath + fullfname;
 
-            if (TestIfFileExists(testPath)) {
+            if (TestIfFileExists(testPath))
+            {
                 output = testPath;
                 break;
-            } else {
+            }
+            else
+            {
                 // An error has occurred. The file does not exist.
             }
         }
@@ -270,29 +312,38 @@ string FilePathInfo::FindFileIfExists(const vector<string>& pathsToTry)
 
 void FilePathInfo::fill_stat_info()
 {
-    if (path.empty()) {
+    if (path.empty())
+    {
         pathType = PathType::DoesNotExist;
         atime = 0;
         ctime = 0;
         return;
     }
-    struct _stat Stat;
-#ifdef USING_ERRNO
-    errno_t errno;
-    _set_errno(0);
-#endif
     string testpath;
     if (path.back() == '/' || path.back() == '\\')
         testpath = path.substr(0, path.size() - 1);
     else
         testpath = path;
-    int retval = _stat(testpath.c_str(), &Stat);
-    if (retval != 0) {
+
+#ifdef WIN32
+    struct _stat Stat;
+    int S_IFDIR = _S_IFDIR;
+    int S_IFREG = _S_IFREG;
+#define S_IF
+#elif __unix__
+    struct stat Stat;
+#endif
+    int retval = stat_with_errno(testpath.c_str(), &Stat);
+
+    if (retval != 0)
+    {
         pathType = PathType::DoesNotExist;
-    } else {
-        if (Stat.st_mode & _S_IFDIR)
+    }
+    else
+    {
+        if (Stat.st_mode & S_IFDIR)
             pathType = PathType::Directory;
-        else if (Stat.st_mode & _S_IFREG)
+        else if (Stat.st_mode & S_IFREG)
             pathType = PathType::File;
         else
             pathType = PathType::Other;
@@ -301,7 +352,7 @@ void FilePathInfo::fill_stat_info()
     }
 }
 
-string ReadTextFile(const string& filename)
+string ReadTextFile(const string &filename)
 {
     ifstream fin(filename.c_str());
 
@@ -319,7 +370,7 @@ string ReadTextFile(const string& filename)
     return str;
 }
 
-vector<FXubyte> ReadBinaryFile(const string& filename)
+vector<FXubyte> ReadBinaryFile(const string &filename)
 {
     vector<FXubyte> buffer;
     ifstream fin(filename.c_str(), ios::binary);
@@ -332,13 +383,13 @@ vector<FXubyte> ReadBinaryFile(const string& filename)
     size_t size = (size_t)fin.tellg();
     buffer.resize(size);
     fin.seekg(0, ios::beg);
-    fin.read((char*)&buffer[0], size);
+    fin.read((char *)&buffer[0], size);
 
     fin.close();
     return buffer;
 }
 
-string FindPathIfExists(const string& path, const vector<string> pathsToTry)
+string FindPathIfExists(const string &path, const vector<string> pathsToTry)
 {
     string output;
 
@@ -347,12 +398,17 @@ string FindPathIfExists(const string& path, const vector<string> pathsToTry)
     if (fpi.fullfname.empty())
         return output;
 
-    if (TestIfFileExists(path)) {
+    if (TestIfFileExists(path))
+    {
         output = path;
-    } else {
-        for (auto testPathIt : pathsToTry) {
+    }
+    else
+    {
+        for (auto testPathIt : pathsToTry)
+        {
             string testPath = testPathIt + fpi.fullfname;
-            if (TestIfFileExists(testPath)) {
+            if (TestIfFileExists(testPath))
+            {
                 output = testPath;
                 break;
             }
@@ -362,48 +418,64 @@ string FindPathIfExists(const string& path, const vector<string> pathsToTry)
     return output;
 }
 
-string NormalizePathName(const string& basepath, const string& path)
+string NormalizePathName(const string &basepath, const string &path)
 {
     FilePathInfo p1(basepath + "/" + path);
     FilePathInfo p2(path);
 
-    if (p1.pathType == PathType::DoesNotExist) {
-        if (p2.pathType == PathType::DoesNotExist) {
+    if (p1.pathType == PathType::DoesNotExist)
+    {
+        if (p2.pathType == PathType::DoesNotExist)
+        {
             return BlankString;
-        } else {
+        }
+        else
+        {
             return p2.origpath;
         }
-    } else {
+    }
+    else
+    {
         return p1.origpath;
     }
 }
 
-PathType GetPathType(const string& path)
+PathType GetPathType(const string &path)
 {
+#ifdef WIN32
     struct _stat Stat;
-    int retval = _stat(path.c_str(), &Stat);
-    if (retval != 0) {
+    int S_IFDIR = _S_IFDIR;
+    int S_IFREG = _S_IFREG;
+#elif __unix__
+    struct stat Stat;
+#endif
+    int retval = stat_with_errno(path, &Stat);
+    if (retval != 0)
+    {
         // do not print errors...
         return PathType::DoesNotExist;
     }
-    if (Stat.st_mode & _S_IFDIR)
+    if (Stat.st_mode & S_IFDIR)
         return PathType::Directory;
-    else if (Stat.st_mode & _S_IFREG)
+    else if (Stat.st_mode & S_IFREG)
         return PathType::File;
     return PathType::Other;
 }
 
-TimeValue GetPathCreationTime(const string& path)
+TimeValue GetPathCreationTime(const string &path)
 {
+#ifdef WIN32
     struct _stat Stat;
-#ifdef USING_ERRNO
-    errno_t errno;
-    _set_errno(0);
+#elif __unix__
+    struct stat Stat;
 #endif
-    int retval = _stat(path.c_str(), &Stat);
-    if (retval != 0) {
-#ifdef USING_ERRNO
-        switch (errno) {
+
+    int retval = stat_with_errno(path, &Stat);
+
+    if (retval != 0)
+    {
+        switch (errno)
+        {
         case ENOENT:
             cerr << __func__ << ": file not found" << endl;
             break;
@@ -413,24 +485,27 @@ TimeValue GetPathCreationTime(const string& path)
         default:
             cerr << __func__ << ": unknown error in _stat()" << endl;
         }
-#endif
-    } else {
+    }
+    else
+    {
         return Stat.st_ctime;
     }
     return 0;
 }
 
-TimeValue GetPathAccessTime(const string& path)
+TimeValue GetPathAccessTime(const string &path)
 {
+#ifdef WIN32
     struct _stat Stat;
-#ifdef USING_ERRNO
-    errno_t errno;
-    _set_errno(0);
+#elif __unix__
+    struct stat Stat;
 #endif
-    int retval = _stat(path.c_str(), &Stat);
-    if (retval != 0) {
-#ifdef USING_ERRNO
-        switch (errno) {
+    int retval = stat_with_errno(path, &Stat);
+
+    if (retval != 0)
+    {
+        switch (errno)
+        {
         case ENOENT:
             cerr << __func__ << ": file not found" << endl;
             break;
@@ -440,15 +515,16 @@ TimeValue GetPathAccessTime(const string& path)
         default:
             cerr << __func__ << ": unknown error in _stat()" << endl;
         }
-#endif
-    } else {
+    }
+    else
+    {
         return Stat.st_atime;
     }
     return 0;
 }
 
 // Data type IOSTREAM Utilities
-bool ReadBool(istream& istr)
+bool ReadBool(istream &istr)
 {
     string str;
     istr >> str;
@@ -457,35 +533,35 @@ bool ReadBool(istream& istr)
     return false;
 }
 
-int ReadInt(istream& istr)
+int ReadInt(istream &istr)
 {
     int ival;
     istr >> ival;
     return ival;
 }
 
-long long ReadInt64(istream& istr)
+long long ReadInt64(istream &istr)
 {
     long long ival;
     istr >> ival;
     return ival;
 }
 
-float ReadFloat(istream& istr)
+float ReadFloat(istream &istr)
 {
     double fval;
     istr >> fval;
     return (float)fval;
 }
 
-double ReadDouble(istream& istr)
+double ReadDouble(istream &istr)
 {
     double fval;
     istr >> fval;
     return fval;
 }
 
-string ReadString(istream& istr)
+string ReadString(istream &istr)
 {
     string str;
     char c;
@@ -493,19 +569,29 @@ string ReadString(istream& istr)
     bool isQuotes = false;
 
     istr >> ws;
-    while (1) {
+    while (1)
+    {
         c = 0;
         istr >> noskipws >> c;
         istr >> skipws;
-        if (!isQuotes && str.empty() && c == '\"') {
+        if (!isQuotes && str.empty() && c == '\"')
+        {
             isQuotes = true;
-        } else if (isQuotes && c == '\"' && lastC != '\\') {
+        }
+        else if (isQuotes && c == '\"' && lastC != '\\')
+        {
             return str;
-        } else if (c == '\"' && lastC == '\\') {
+        }
+        else if (c == '\"' && lastC == '\\')
+        {
             str.back() = c;
-        } else if (!isQuotes && iswspace(c)) {
+        }
+        else if (!isQuotes && iswspace(c))
+        {
             return str;
-        } else {
+        }
+        else
+        {
             if (c != 0)
                 str += c;
             else
@@ -518,7 +604,7 @@ string ReadString(istream& istr)
     return str;
 }
 
-Vector2f ReadVector2f(istream& istr)
+Vector2f ReadVector2f(istream &istr)
 {
     double x, y;
     istr >> x;
@@ -526,7 +612,7 @@ Vector2f ReadVector2f(istream& istr)
     return Vector2f((float)x, (float)y);
 }
 
-Vector2d ReadVector2d(istream& istr)
+Vector2d ReadVector2d(istream &istr)
 {
     double x, y;
     istr >> x;
@@ -534,7 +620,7 @@ Vector2d ReadVector2d(istream& istr)
     return Vector2d(x, y);
 }
 
-Vector3f ReadVector3f(istream& istr)
+Vector3f ReadVector3f(istream &istr)
 {
     double x, y, z;
     istr >> x;
@@ -543,7 +629,7 @@ Vector3f ReadVector3f(istream& istr)
     return Vector3f((float)x, (float)y, (float)z);
 }
 
-Vector3d ReadVector3d(istream& istr)
+Vector3d ReadVector3d(istream &istr)
 {
     double x, y, z;
     istr >> x;
@@ -552,7 +638,7 @@ Vector3d ReadVector3d(istream& istr)
     return Vector3d(x, y, z);
 }
 
-Vector4f ReadVector4f(istream& istr)
+Vector4f ReadVector4f(istream &istr)
 {
     double x, y, z, w;
     istr >> x;
@@ -562,7 +648,7 @@ Vector4f ReadVector4f(istream& istr)
     return Vector4f((float)x, (float)y, (float)z, (float)w);
 }
 
-Vector4d ReadVector4d(istream& istr)
+Vector4d ReadVector4d(istream &istr)
 {
     double x, y, z, w;
     istr >> x;
@@ -572,7 +658,7 @@ Vector4d ReadVector4d(istream& istr)
     return Vector4d(x, y, z, w);
 }
 
-Color3f ReadColor3f(istream& istr)
+Color3f ReadColor3f(istream &istr)
 {
     double r, g, b;
     istr >> r;
@@ -581,7 +667,7 @@ Color3f ReadColor3f(istream& istr)
     return Color3f((float)r, (float)g, (float)b);
 }
 
-Color3d ReadColor3d(istream& istr)
+Color3d ReadColor3d(istream &istr)
 {
     double r, g, b;
     istr >> r;
@@ -590,7 +676,7 @@ Color3d ReadColor3d(istream& istr)
     return Color3d(r, g, b);
 }
 
-Color4f ReadColor4f(istream& istr)
+Color4f ReadColor4f(istream &istr)
 {
     double r, g, b, a;
     istr >> r;
@@ -600,7 +686,7 @@ Color4f ReadColor4f(istream& istr)
     return Color4f((float)r, (float)g, (float)b, (float)a);
 }
 
-Color4d ReadColor4d(istream& istr)
+Color4d ReadColor4d(istream &istr)
 {
     double r, g, b, a;
     istr >> r;
@@ -610,7 +696,7 @@ Color4d ReadColor4d(istream& istr)
     return Color4d(r, g, b, a);
 }
 
-Quaternionf ReadQuaternionf(istream& istr)
+Quaternionf ReadQuaternionf(istream &istr)
 {
     double a, b, c, d;
     istr >> a;
@@ -620,7 +706,7 @@ Quaternionf ReadQuaternionf(istream& istr)
     return Quaternionf((float)a, (float)b, (float)c, (float)d);
 }
 
-Quaterniond ReadQuaterniond(istream& istr)
+Quaterniond ReadQuaterniond(istream &istr)
 {
     double a, b, c, d;
     istr >> a;
@@ -630,7 +716,7 @@ Quaterniond ReadQuaterniond(istream& istr)
     return Quaterniond(a, b, c, d);
 }
 
-Matrix4f ReadMatrix4f(istream& istr)
+Matrix4f ReadMatrix4f(istream &istr)
 {
     Matrix4f m;
     m.LoadIdentity();
@@ -653,7 +739,7 @@ Matrix4f ReadMatrix4f(istream& istr)
     return m;
 }
 
-Matrix4d ReadMatrix4d(istream& istr)
+Matrix4d ReadMatrix4d(istream &istr)
 {
     Matrix4d m;
     m.LoadIdentity();
@@ -676,7 +762,7 @@ Matrix4d ReadMatrix4d(istream& istr)
     return m;
 }
 
-Matrix4f ReadAffineMatrix4f(istream& istr)
+Matrix4f ReadAffineMatrix4f(istream &istr)
 {
     Matrix4f m;
     m.LoadIdentity();
@@ -699,7 +785,7 @@ Matrix4f ReadAffineMatrix4f(istream& istr)
     return m;
 }
 
-Matrix4d ReadAffineMatrix4d(istream& istr)
+Matrix4d ReadAffineMatrix4d(istream &istr)
 {
     Matrix4d m;
     m.LoadIdentity();
@@ -722,31 +808,39 @@ Matrix4d ReadAffineMatrix4d(istream& istr)
     return m;
 }
 
-SphericalHarmonicf ReadSphericalHarmonicf(istream& istr)
+SphericalHarmonicf ReadSphericalHarmonicf(istream &istr)
 {
     SphericalHarmonicf sph;
     int maxDegree = ReadInt(istr);
-    if (maxDegree >= 0 && maxDegree <= 10) {
+    if (maxDegree >= 0 && maxDegree <= 10)
+    {
         sph.resize(maxDegree);
-        for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+        for (size_t i = 0; i < sph.getMaxCoefficients(); i++)
+        {
             sph[i] = ReadFloat(istr);
         }
-    } else {
+    }
+    else
+    {
         cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << endl;
     }
     return sph;
 }
 
-SphericalHarmonicd ReadSphericalHarmonicd(istream& istr)
+SphericalHarmonicd ReadSphericalHarmonicd(istream &istr)
 {
     SphericalHarmonicd sph;
     int maxDegree = ReadInt(istr);
-    if (maxDegree >= 0 && maxDegree <= 10) {
+    if (maxDegree >= 0 && maxDegree <= 10)
+    {
         sph.resize(maxDegree);
-        for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+        for (size_t i = 0; i < sph.getMaxCoefficients(); i++)
+        {
             sph[i] = ReadFloat(istr);
         }
-    } else {
+    }
+    else
+    {
         cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << endl;
     }
     return sph;
@@ -754,7 +848,7 @@ SphericalHarmonicd ReadSphericalHarmonicd(istream& istr)
 
 // WRITING ROUTINES
 
-ostream& WriteBool(ostream& ostr, bool val)
+ostream &WriteBool(ostream &ostr, bool val)
 {
     if (val == true)
         ostr << "true ";
@@ -763,30 +857,31 @@ ostream& WriteBool(ostream& ostr, bool val)
     return ostr;
 }
 
-ostream& WriteInt(ostream& ostr, int val)
+ostream &WriteInt(ostream &ostr, int val)
 {
     return ostr << val << " ";
 }
 
-ostream& WriteInt64(ostream& ostr, long long val)
+ostream &WriteInt64(ostream &ostr, long long val)
 {
     return ostr << val << " ";
 }
 
-ostream& WriteFloat(ostream& ostr, float val)
+ostream &WriteFloat(ostream &ostr, float val)
 {
     return ostr << val << " ";
 }
 
-ostream& WriteDouble(ostream& ostr, double val)
+ostream &WriteDouble(ostream &ostr, double val)
 {
     return ostr << val << " ";
 }
 
-ostream& WriteString(ostream& ostr, const string& str)
+ostream &WriteString(ostream &ostr, const string &str)
 {
     ostr << "\"";
-    for (auto it = str.begin(); it != str.end(); it++) {
+    for (auto it = str.begin(); it != str.end(); it++)
+    {
         char c = *it;
         if (c == '\"')
             ostr << '\\' << '\"';
@@ -797,67 +892,67 @@ ostream& WriteString(ostream& ostr, const string& str)
     return ostr;
 }
 
-ostream& WriteVector2f(ostream& ostr, const Vector2f& v)
+ostream &WriteVector2f(ostream &ostr, const Vector2f &v)
 {
     return ostr << v.x << " " << v.y << " ";
 }
 
-ostream& WriteVector2d(ostream& ostr, const Vector2d& v)
+ostream &WriteVector2d(ostream &ostr, const Vector2d &v)
 {
     return ostr << v.x << " " << v.y << " ";
 }
 
-ostream& WriteVector3f(ostream& ostr, const Vector3f& v)
+ostream &WriteVector3f(ostream &ostr, const Vector3f &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " ";
 }
 
-ostream& WriteVector3d(ostream& ostr, const Vector3d& v)
+ostream &WriteVector3d(ostream &ostr, const Vector3d &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " ";
 }
 
-ostream& WriteVector4f(ostream& ostr, const Vector4f& v)
+ostream &WriteVector4f(ostream &ostr, const Vector4f &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " " << v.w << " ";
 }
 
-ostream& WriteVector4d(ostream& ostr, const Vector4d& v)
+ostream &WriteVector4d(ostream &ostr, const Vector4d &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " " << v.w << " ";
 }
 
-ostream& WriteColor3f(ostream& ostr, const Color3f& v)
+ostream &WriteColor3f(ostream &ostr, const Color3f &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " ";
 }
 
-ostream& WriteColor3d(ostream& ostr, const Color3d& v)
+ostream &WriteColor3d(ostream &ostr, const Color3d &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " ";
 }
 
-ostream& WriteColor4f(ostream& ostr, const Color4f& v)
+ostream &WriteColor4f(ostream &ostr, const Color4f &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " " << v.a << " ";
 }
 
-ostream& WriteColor4d(ostream& ostr, const Color4d& v)
+ostream &WriteColor4d(ostream &ostr, const Color4d &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " " << v.a << " ";
 }
 
-ostream& WriteQuaternionf(ostream& ostr, const Quaternionf& q)
+ostream &WriteQuaternionf(ostream &ostr, const Quaternionf &q)
 {
     return ostr << q.a << " " << q.b << " " << q.c << " " << q.d << " ";
 }
 
-ostream& WriteQuaterniond(ostream& ostr, const Quaterniond& q)
+ostream &WriteQuaterniond(ostream &ostr, const Quaterniond &q)
 {
     return ostr << q.a << " " << q.b << " " << q.c << " " << q.d << " ";
 }
 
-ostream& WriteMatrix4f(ostream& ostr, const Matrix4f& m)
+ostream &WriteMatrix4f(ostream &ostr, const Matrix4f &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -866,7 +961,7 @@ ostream& WriteMatrix4f(ostream& ostr, const Matrix4f& m)
     return ostr;
 }
 
-ostream& WriteMatrix4d(ostream& ostr, const Matrix4d& m)
+ostream &WriteMatrix4d(ostream &ostr, const Matrix4d &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -875,7 +970,7 @@ ostream& WriteMatrix4d(ostream& ostr, const Matrix4d& m)
     return ostr;
 }
 
-ostream& WriteAffineMatrix4f(ostream& ostr, const Matrix4f& m)
+ostream &WriteAffineMatrix4f(ostream &ostr, const Matrix4f &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -883,7 +978,7 @@ ostream& WriteAffineMatrix4f(ostream& ostr, const Matrix4f& m)
     return ostr;
 }
 
-ostream& WriteAffineMatrix4d(ostream& ostr, const Matrix4d& m)
+ostream &WriteAffineMatrix4d(ostream &ostr, const Matrix4d &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -891,19 +986,21 @@ ostream& WriteAffineMatrix4d(ostream& ostr, const Matrix4d& m)
     return ostr;
 }
 
-ostream& WriteSphericalHarmonicf(ostream& ostr, const SphericalHarmonicf& sph)
+ostream &WriteSphericalHarmonicf(ostream &ostr, const SphericalHarmonicf &sph)
 {
     ostr << sph.GetMaxDegree() << " ";
-    for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+    for (size_t i = 0; i < sph.getMaxCoefficients(); i++)
+    {
         ostr << sph[i] << " ";
     }
     return ostr;
 }
 
-ostream& WriteSphericalHarmonicd(ostream& ostr, const SphericalHarmonicd& sph)
+ostream &WriteSphericalHarmonicd(ostream &ostr, const SphericalHarmonicd &sph)
 {
     ostr << sph.GetMaxDegree() << " ";
-    for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+    for (size_t i = 0; i < sph.getMaxCoefficients(); i++)
+    {
         ostr << sph[i] << " ";
     }
     return ostr;

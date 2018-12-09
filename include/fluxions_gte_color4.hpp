@@ -24,116 +24,91 @@
 #include <fluxions_gte_vector3.hpp>
 #include <fluxions_gte_vector4.hpp>
 
-namespace Fluxions {
-template <typename T>
-class TColor3;
-template <typename T>
-class TColor4;
+namespace Fluxions
+{
+// template <typename T>
+// class TColor3;
 template <typename T>
 class TVector3;
 template <typename T>
 class TVector4;
 
 template <typename T>
-class TColor4 {
-public:
+class TColor4
+{
+  public:
     T r, g, b, a;
 
-    constexpr T* ptr() noexcept { return &r; }
-    constexpr const T* const_ptr() const noexcept { return &r; }
+    constexpr T *ptr() noexcept { return &r; }
+    constexpr const T *const_ptr() const noexcept { return &r; }
 
     using type = T;
 
+    static float to_float_factor;
+    static float from_float_factor;
+
+    static type min_value;
+    static type max_value;
+
+    static unsigned int gl_type; // UNSIGNED_BYTE, FLOAT, etc.
+    static unsigned int gl_size; // 3 for RGB, 4 for RGBA
+
     TColor4()
-        : r(0)
-        , g(0)
-        , b(0)
-        , a(0)
+        : r(0), g(0), b(0), a(0)
     {
     }
 
     TColor4(const T value)
-        : r(value)
-        , g(value)
-        , b(value)
-        , a(value)
+        : r(value), g(value), b(value), a(value)
     {
     }
 
-    TColor4(const T newR, const T newG, const T newB, const T newA)
-        : r(newR)
-        , g(newG)
-        , b(newB)
-        , a(newA)
+    TColor4(const T red, const T green, const T blue, const T alpha)
+        : r(red), g(green), b(blue), a(alpha)
     {
     }
 
-    TColor4(const TColor4<T>& color)
-        : r(color.r)
-        , g(color.g)
-        , b(color.b)
-        , a(color.a)
+    TColor4(const TColor4<T> &color)
+        : r(color.r), g(color.g), b(color.b), a(color.a)
     {
     }
 
-    TColor4(const TColor3<T>& color, const T newA = T(1))
-        : r(color.r)
-        , g(color.g)
-        , b(color.b)
-        , a(newA)
+    TColor4(const TColor3<T> &color, const T alpha = T(1))
+        : r(color.r), g(color.g), b(color.b), a(alpha)
     {
     }
 
     ~TColor4() {}
 
-    const TColor4<T>& reset(const T value)
+    const TColor4<T> &reset(const T value)
     {
         r = g = b = a = value;
         return *this;
     }
 
-    const TColor4<T>& reset(const T newR, const T newG, const T newB, const T newA)
+    const TColor4<T> &reset(const T red, const T green, const T blue, const T alpha)
     {
-        r = newR;
-        g = newG;
-        b = newB;
-        a = newA;
+        r = red;
+        g = green;
+        b = blue;
+        a = alpha;
         return *this;
     }
 
     template <typename OtherType>
-    constexpr operator TColor4<OtherType>() const
+    constexpr operator TColor4<OtherType>() const noexcept
     {
         return TColor4<OtherType>((OtherType)r, (OtherType)g, (OtherType)b, (OtherType)a);
     }
 
     template <typename OtherType>
-    constexpr operator TColor3<OtherType>() const
+    constexpr operator TColor3<OtherType>() const noexcept
     {
-        return TColor4<OtherType>((OtherType)r, (OtherType)g, (OtherType)b);
+        return TColor3<OtherType>((OtherType)r, (OtherType)g, (OtherType)b);
     }
 
     template <typename OtherType>
-    const TColor4<T>& operator=(const TColor3<OtherType>& color)
-    {
-        r = (T)color.r;
-        g = (T)color.g;
-        b = (T)color.b;
-        return *this;
-    }
-
-    template <typename OtherType>
-    const TColor4<T>& operator=(const TColor4<OtherType>& color)
-    {
-        r = (T)color.r;
-        g = (T)color.g;
-        b = (T)color.b;
-        a = (T)color.a;
-        return *this;
-    }
-
-    template <typename OtherType>
-    const TColor4<T>& operator=(const TVector3<OtherType>& color)
+    const TColor4<T> &operator=(const TColor3<OtherType> &color)
     {
         r = (T)color.r;
         g = (T)color.g;
@@ -142,7 +117,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor4<T>& operator=(const TVector4<OtherType>& color)
+    const TColor4<T> &operator=(const TColor4<OtherType> &color)
     {
         r = (T)color.r;
         g = (T)color.g;
@@ -151,7 +126,26 @@ public:
         return *this;
     }
 
-    const TColor4<T>& operator=(const T value)
+    template <typename OtherType>
+    const TColor4<T> &operator=(const TVector3<OtherType> &color)
+    {
+        r = (T)color.r;
+        g = (T)color.g;
+        b = (T)color.b;
+        return *this;
+    }
+
+    template <typename OtherType>
+    const TColor4<T> &operator=(const TVector4<OtherType> &color)
+    {
+        r = (T)color.r;
+        g = (T)color.g;
+        b = (T)color.b;
+        a = (T)color.a;
+        return *this;
+    }
+
+    const TColor4<T> &operator=(const T value)
     {
         r = value;
         g = value;
@@ -161,7 +155,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor4<T>& operator+=(const TColor4<OtherType>& color)
+    const TColor4<T> &operator+=(const TColor4<OtherType> &color)
     {
         r += (T)color.r;
         g += (T)color.g;
@@ -171,7 +165,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor4<T>& operator-=(const TColor4<OtherType>& color)
+    const TColor4<T> &operator-=(const TColor4<OtherType> &color)
     {
         r -= (T)color.r;
         g -= (T)color.g;
@@ -181,7 +175,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor4<T>& operator*=(const TColor4<OtherType>& color)
+    const TColor4<T> &operator*=(const TColor4<OtherType> &color)
     {
         r *= (T)color.r;
         g *= (T)color.g;
@@ -191,7 +185,7 @@ public:
     }
 
     template <typename OtherType>
-    const TColor4<T>& operator/=(const TColor4<OtherType>& color)
+    const TColor4<T> &operator/=(const TColor4<OtherType> &color)
     {
         r /= (T)color.r;
         g /= (T)color.g;
@@ -200,7 +194,7 @@ public:
         return *this;
     }
 
-    const TColor4<T>& operator+=(const T value)
+    const TColor4<T> &operator+=(const T value)
     {
         r += value;
         g += value;
@@ -209,7 +203,7 @@ public:
         return *this;
     }
 
-    const TColor4<T>& operator-=(const T value)
+    const TColor4<T> &operator-=(const T value)
     {
         r -= value;
         g -= value;
@@ -218,7 +212,7 @@ public:
         return *this;
     }
 
-    const TColor4<T>& operator*=(const T value)
+    const TColor4<T> &operator*=(const T value)
     {
         r *= value;
         g *= value;
@@ -227,7 +221,7 @@ public:
         return *this;
     }
 
-    const TColor4<T>& operator/=(const T value)
+    const TColor4<T> &operator/=(const T value)
     {
         r /= value;
         g /= value;
@@ -237,7 +231,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor4<T> operator+(const TColor4<OtherType>& color)
+    constexpr TColor4<T> operator+(const TColor4<OtherType> &color)
     {
         return TColor4<T>(
             r + color.r,
@@ -247,7 +241,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor4<T> operator-(const TColor4<OtherType>& color)
+    constexpr TColor4<T> operator-(const TColor4<OtherType> &color)
     {
         return TColor4<T>(
             r - color.r,
@@ -257,7 +251,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor4<T> operator*(const TColor4<OtherType>& color)
+    constexpr TColor4<T> operator*(const TColor4<OtherType> &color)
     {
         return TColor4<T>(
             r * color.r,
@@ -267,7 +261,7 @@ public:
     }
 
     template <typename OtherType>
-    constexpr TColor4<T> operator/(const TColor4<OtherType>& color)
+    constexpr TColor4<T> operator/(const TColor4<OtherType> &color)
     {
         return TColor4<T>(
             r / color.r,
@@ -319,38 +313,46 @@ public:
     constexpr TColor4<T> Clamp(T min_value, T max_value) const
     {
         return TColor4<T>(
-            clamp<T>(r, min_value, max_value),
-            clamp<T>(g, min_value, max_value),
-            clamp<T>(b, min_value, max_value),
-            clamp<T>(a, min_value, max_value));
+            Fluxions::clamp<T>(r, min_value, max_value),
+            Fluxions::clamp<T>(g, min_value, max_value),
+            Fluxions::clamp<T>(b, min_value, max_value),
+            Fluxions::clamp<T>(a, min_value, max_value));
     }
 
     constexpr TColor4<T> ScaleClamp(T scale, T min_value, T max_value) const
     {
         return TColor4<T>(
-            clamp<T>(r * scale, min_value, max_value),
-            clamp<T>(g * scale, min_value, max_value),
-            clamp<T>(b * scale, min_value, max_value),
-            clamp<T>(a * scale, min_value, max_value));
+            Fluxions::clamp<T>(r * scale, min_value, max_value),
+            Fluxions::clamp<T>(g * scale, min_value, max_value),
+            Fluxions::clamp<T>(b * scale, min_value, max_value),
+            Fluxions::clamp<T>(a * scale, min_value, max_value));
+    }
+
+    constexpr TColor4<T> &clamp() noexcept
+    {
+        r = Fluxions::clamp(r, min_value, max_value);
+        g = Fluxions::clamp(r, min_value, max_value);
+        b = Fluxions::clamp(r, min_value, max_value);
+        return *this;
     }
 
     template <typename OtherType, typename ScaleType>
     constexpr TColor3<OtherType> ToColor3(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
     {
         return TColor3<OtherType>(
-            (OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value));
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(r * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(g * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(b * scale), min_value, max_value));
     }
 
     template <typename OtherType, typename ScaleType>
     constexpr TColor4<OtherType> ToColor4(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
     {
         return TColor4<OtherType>(
-            (OtherType)clamp<OtherType>(OtherType(r * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(g * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(b * scale), min_value, max_value),
-            (OtherType)clamp<OtherType>(OtherType(a * scale), min_value, max_value));
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(r * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(g * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(b * scale), min_value, max_value),
+            (OtherType)Fluxions::clamp<OtherType>(OtherType(a * scale), min_value, max_value));
     }
 
     template <typename OtherType = T>
@@ -452,7 +454,7 @@ constexpr TColor4<T> negate(TColor4<T> color)
 }
 
 template <typename Floating, typename T>
-constexpr TColor4<T> operator*(const TColor4<T>& lhs, const Floating rhs)
+constexpr TColor4<T> operator*(const TColor4<T> &lhs, const Floating rhs)
 {
     return TColor4<T>(
         (T)(lhs.r * rhs),
@@ -462,7 +464,7 @@ constexpr TColor4<T> operator*(const TColor4<T>& lhs, const Floating rhs)
 }
 
 template <typename Floating, typename T>
-constexpr TColor4<T> operator*(const Floating rhs, const TColor4<T>& lhs)
+constexpr TColor4<T> operator*(const Floating rhs, const TColor4<T> &lhs)
 {
     return TColor4<T>(
         (T)(lhs * rhs.r),
@@ -472,7 +474,7 @@ constexpr TColor4<T> operator*(const Floating rhs, const TColor4<T>& lhs)
 }
 
 template <typename T>
-constexpr TColor4<T> operator/(const TColor4<T>& lhs, const T rhs)
+constexpr TColor4<T> operator/(const TColor4<T> &lhs, const T rhs)
 {
     return TColor4<T>(
         lhs.r / rhs,

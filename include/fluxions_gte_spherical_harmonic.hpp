@@ -49,8 +49,8 @@ template <typename VectorType, typename ScalarType>
 class TSphericalHarmonic
 {
   private:
-	int maxCoefficients = 1;
-	int maxDegree = 0;
+	size_t maxCoefficients = 1;
+	size_t maxDegree = 0;
 	std::vector<VectorType> coefficients;
 
   public:
@@ -104,11 +104,11 @@ class TSphericalHarmonic
 
 	TSphericalHarmonic<VectorType, ScalarType> &Accumulate(const TSphericalHarmonic<VectorType, ScalarType> &b, const ScalarType c = 1, int maxDegrees = -1)
 	{
-		int firstIndex = 0;
-		int lastDegree = maxDegree;
+		size_t firstIndex = 0;
+		size_t lastDegree = maxDegree;
 		if (maxDegrees >= 0)
 		{
-			lastDegree = min3(maxDegrees, maxDegree, b.maxDegree);
+			lastDegree = min3<size_t>(maxDegrees, maxDegree, b.maxDegree);
 		}
 		else
 		{
@@ -132,11 +132,11 @@ class TSphericalHarmonic
 
 	TSphericalHarmonic<VectorType, ScalarType> &Accumulate(const TSphericalHarmonic<VectorType, ScalarType> &b, const TSphericalHarmonic<VectorType, ScalarType> &c, int maxDegrees = -1)
 	{
-		int firstIndex = 0;
-		int lastDegree = maxDegree;
+		size_t firstIndex = 0;
+		size_t lastDegree = maxDegree;
 		if (maxDegrees >= 0)
 		{
-			lastDegree = min3(maxDegrees, maxDegree, b.maxDegree);
+			lastDegree = min3<size_t>(maxDegrees, maxDegree, b.maxDegree);
 		}
 		else
 		{
@@ -158,7 +158,7 @@ class TSphericalHarmonic
 		return *this;
 	}
 
-	inline const VectorType operator[](size_t i) const
+	constexpr const VectorType operator[](size_t i) const noexcept
 	{
 		if (i >= 0 && i < maxCoefficients)
 			return coefficients[i];
@@ -166,26 +166,26 @@ class TSphericalHarmonic
 			return VectorType();
 	}
 
-	inline VectorType &operator[](size_t i)
+	constexpr VectorType &operator[](size_t i)
 	{
-		if (i >= 0 && i <= maxCoefficients)
+		if (i <= maxCoefficients)
 			return coefficients[i];
 		else
 			throw std::out_of_range("TSphericalHarmonic<VectorType>::operator[](i): maxDegree must be in the range 0 <= maxDegree <= 10");
 	}
 
-	constexpr int GetMaxDegree() const
+	constexpr size_t GetMaxDegree() const noexcept
 	{
 		return maxDegree;
 	}
 
-	constexpr int getMaxCoefficients() const
+	constexpr size_t getMaxCoefficients() const noexcept
 	{
 		return maxDegree * (maxDegree + 1) + maxDegree + 1;
 	}
 
 	// returns -1 if out of range, or index if in range
-	constexpr int getCoefficientIndex(int l, int m) const
+	constexpr int getCoefficientIndex(int l, int m) const noexcept
 	{
 		if (l >= 0 && l <= maxDegree && abs(m) <= l)
 			return l * (l + 1) + m;
@@ -193,7 +193,7 @@ class TSphericalHarmonic
 			return -1;
 	}
 
-	constexpr auto getCoefficients()
+	constexpr std::vector<VectorType> getCoefficients() noexcept
 	{
 		return coefficients;
 	}

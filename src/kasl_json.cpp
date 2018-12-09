@@ -19,13 +19,14 @@
 #include "stdafx.h"
 #include <kasl_json.hpp>
 
-namespace KASL {
+namespace KASL
+{
 JSON::JSON(JSON::Type whichType)
 {
     type_ = whichType;
 }
 
-JSON::JSON(const JSON& json)
+JSON::JSON(const JSON &json)
 {
     type_ = json.type_;
     if (IsNumber())
@@ -38,7 +39,7 @@ JSON::JSON(const JSON& json)
         copyMap(json.map_);
 }
 
-JSON::JSON(const JSONPtr& json)
+JSON::JSON(const JSONPtr &json)
 {
     if (!json)
         return;
@@ -60,13 +61,14 @@ JSON::~JSON()
     map_.clear();
 }
 
-JSONPtr JSON::operator=(const JSONPtr& rhs)
+JSONPtr JSON::operator=(const JSONPtr &rhs)
 {
     Clear();
     if (!rhs)
         return shared_from_this();
     type_ = rhs->type_;
-    switch (type_) {
+    switch (type_)
+    {
     case Type::Number:
         dval_ = rhs->dval_;
         break;
@@ -79,11 +81,17 @@ JSONPtr JSON::operator=(const JSONPtr& rhs)
     case Type::Object:
         copyMap(rhs->map_);
         break;
+    case Type::True:
+        break;
+    case Type::False:
+        break;
+    case Type::Null:
+        break;
     }
     return shared_from_this();
 }
 
-bool JSON::Equals(const JSONPtr& rhs) const
+bool JSON::Equals(const JSONPtr &rhs) const
 {
     if (!rhs || rhs->type_ != type_)
         return false;
@@ -99,12 +107,14 @@ bool JSON::Equals(const JSONPtr& rhs) const
     if (type_ == Type::String)
         return sval_ == rhs->sval_;
 
-    if (type_ == Type::Array) {
+    if (type_ == Type::Array)
+    {
         if (Length() != rhs->Length())
             return false;
 
         size_t length = array_.size();
-        for (size_t i = 0; i < length; i++) {
+        for (size_t i = 0; i < length; i++)
+        {
             // This should actually never be the case because nullptr != JSON(JSON::Type::Null).
             if (!array_[i] || !rhs->array_[i])
                 return false;
@@ -115,13 +125,15 @@ bool JSON::Equals(const JSONPtr& rhs) const
         return true;
     }
 
-    if (type_ == Type::Object) {
+    if (type_ == Type::Object)
+    {
         if (Length() != rhs->Length())
             return false;
 
         auto m1It = map_.begin();
         auto m2It = rhs->map_.begin();
-        while (m1It != map_.end()) {
+        while (m1It != map_.end())
+        {
             // are the keys the same?
             if (m1It->first != m2It->first)
                 return false;
@@ -136,18 +148,20 @@ bool JSON::Equals(const JSONPtr& rhs) const
     return true;
 }
 
-void JSON::copyArray(const std::vector<JSONPtr>& a)
+void JSON::copyArray(const std::vector<JSONPtr> &a)
 {
     size_t length = a.size();
-    for (size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++)
+    {
         JSONPtr json = JSON::New((a[i]));
         array_.push_back(json);
     }
 }
 
-void JSON::copyMap(const std::map<std::string, JSONPtr>& m)
+void JSON::copyMap(const std::map<std::string, JSONPtr> &m)
 {
-    for (auto it = m.begin(); it != m.end(); it++) {
+    for (auto it = m.begin(); it != m.end(); it++)
+    {
         JSONPtr json = JSON::New((it->second));
         map_[it->first] = json;
     }
@@ -163,22 +177,29 @@ std::string JSON::Serialize() const
         return "true";
     else if (IsFalse())
         return "false";
-    else if (IsNumber()) {
+    else if (IsNumber())
+    {
         ostr << dval_;
-    } else if (IsString()) {
+    }
+    else if (IsString())
+    {
         ostr << "\"";
-        for (size_t i = 0, len = sval_.length(); i < len; i++) {
+        for (size_t i = 0, len = sval_.length(); i < len; i++)
+        {
             if (sval_[i] == '\"')
                 ostr << "\\\"";
             else
                 ostr << sval_[i];
         }
         ostr << "\"";
-    } else if (IsArray()) {
+    }
+    else if (IsArray())
+    {
         ostr << "[";
         int i = 0;
-        for (const JSONPtr& j : array_) {
-            const JSON* json = j.get();
+        for (const JSONPtr &j : array_)
+        {
+            const JSON *json = j.get();
             if (!json)
                 continue;
 
@@ -190,12 +211,14 @@ std::string JSON::Serialize() const
             i++;
         }
         ostr << " ]";
-
-    } else if (IsObject()) {
+    }
+    else if (IsObject())
+    {
         ostr << "{";
         int i = 0;
-        for (const pair<string, JSONPtr>& j : map_) {
-            const JSON* json = j.second.get();
+        for (const pair<string, JSONPtr> &j : map_)
+        {
+            const JSON *json = j.second.get();
             if (!json)
                 continue;
 
@@ -213,7 +236,7 @@ std::string JSON::Serialize() const
     return ostr.str();
 }
 
-bool JSON::Deserialize(const std::string& json)
+bool JSON::Deserialize(const std::string &json)
 {
     Clear();
 
@@ -224,14 +247,18 @@ bool JSON::Deserialize(const std::string& json)
     return DeserializeParseTokens(tokens);
 }
 
-long JSON::DeserializeParseTokens(const TokenVector& tokens, long startIndex)
+long JSON::DeserializeParseTokens(const TokenVector &tokens, long startIndex)
 {
     long len = (long)tokens.size();
-    for (long i = startIndex; i < len; i++) {
-        if (tokens[i].IsIntegerOrDouble()) {
+    for (long i = startIndex; i < len; i++)
+    {
+        if (tokens[i].IsIntegerOrDouble())
+        {
             *this = tokens[i].dval;
             return i;
-        } else if (tokens[i].IsIdentifier()) {
+        }
+        else if (tokens[i].IsIdentifier())
+        {
             if (tokens[i].sval == "null")
                 ;
             else if (tokens[i].sval == "true")
@@ -241,30 +268,41 @@ long JSON::DeserializeParseTokens(const TokenVector& tokens, long startIndex)
             else
                 return -1;
             return i;
-        } else if (tokens[i].IsString()) {
+        }
+        else if (tokens[i].IsString())
+        {
             *this = tokens[i].sval;
             return i;
-        } else if (tokens[i].IsType(TokenType::TT1_LBRACE)) {
+        }
+        else if (tokens[i].IsType(TokenType::TT1_LBRACE))
+        {
             // Object
             type_ = Type::Object;
 
             i++;
-            while (i < len) {
+            while (i < len)
+            {
                 // next we're expecting a STRING, a COLON, and a value, and an optional comma etc...
                 if (i + 3 > len)
                     break;
 
                 string key;
-                if (tokens[i].IsString()) {
+                if (tokens[i].IsString())
+                {
                     key = tokens[i].sval;
                     i++;
-                } else {
+                }
+                else
+                {
                     return -1;
                 }
 
-                if (tokens[i].IsType(TokenType::TT1_COLON)) {
+                if (tokens[i].IsType(TokenType::TT1_COLON))
+                {
                     i++;
-                } else {
+                }
+                else
+                {
                     return -1;
                 }
 
@@ -277,22 +315,28 @@ long JSON::DeserializeParseTokens(const TokenVector& tokens, long startIndex)
 
                 if (i + 1 >= len)
                     return -1;
-                if (tokens[i].IsType(TokenType::TT1_COMMA)) {
+                if (tokens[i].IsType(TokenType::TT1_COMMA))
+                {
                     // we're expecting another object now
                     i++;
-                } else {
+                }
+                else
+                {
                     break;
                 }
             }
             if (!tokens[i].IsType(TokenType::TT1_RBRACE))
                 return -1;
             return i;
-        } else if (tokens[i].IsType(TokenType::TT1_LBRACKET)) {
+        }
+        else if (tokens[i].IsType(TokenType::TT1_LBRACKET))
+        {
             // Array
             type_ = Type::Array;
 
             i++;
-            while (i < len) {
+            while (i < len)
+            {
                 // next we're expecting a a value and an optional comma etc...
                 if (i + 1 > len)
                     break;
@@ -306,20 +350,25 @@ long JSON::DeserializeParseTokens(const TokenVector& tokens, long startIndex)
 
                 if (i + 1 >= len)
                     return -1;
-                if (tokens[i].IsType(TokenType::TT1_COMMA)) {
+                if (tokens[i].IsType(TokenType::TT1_COMMA))
+                {
                     // we're expecting another value now
                     i++;
-                } else {
+                }
+                else
+                {
                     break;
                 }
             }
             if (!tokens[i].IsType(TokenType::TT1_RBRACKET))
                 return -1;
             return i;
-        } else {
+        }
+        else
+        {
             return -1;
         }
     }
     return -1;
 }
-}
+} // namespace KASL

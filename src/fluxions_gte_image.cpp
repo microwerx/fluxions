@@ -21,12 +21,13 @@
 #include <fluxions_gte_image.hpp>
 #include <fstream>
 
-namespace Fluxions {
+namespace Fluxions
+{
 using namespace std;
 
 // C++ Specializations Must Come First
 
-Color3ub RGBFloatToUint8(const Color3f& c)
+Color3ub RGBFloatToUint8(const Color3f &c)
 {
     return Color3ub(
         (unsigned char)clamp((int)(c.r * 255.0f), 0, 255),
@@ -34,7 +35,7 @@ Color3ub RGBFloatToUint8(const Color3f& c)
         (unsigned char)clamp((int)(c.b * 255.0f), 0, 255));
 }
 
-Color3i RGBFloatToInt32(const Color3f& c)
+Color3i RGBFloatToInt32(const Color3f &c)
 {
     return Color3i(
         (int)clamp((int)(c.r * 255.0f), 0, 65535),
@@ -42,559 +43,496 @@ Color3i RGBFloatToInt32(const Color3f& c)
         (int)clamp((int)(c.b * 255.0f), 0, 65535));
 }
 
-template <>
-TImage<Color3ub>& TImage<Color3ub>::ToSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color3ub& c : pixels) {
-        Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_srgb = RGBtoSRGB(color_linear);
-        c = RGBFloatToUint8(color_srgb);
-        // c.r = (unsigned char)clamp((int)(color_srgb.r * 255.0f), 0, 255);
-        // c.g = (unsigned char)clamp((int)(color_srgb.g * 255.0f), 0, 255);
-        // c.b = (unsigned char)clamp((int)(color_srgb.b * 255.0f), 0, 255);
-    }
+// template <>
+// TImage<Color3ub> &TImage<Color3ub>::ToSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color3ub &c : pixels)
+//     {
+//         Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_srgb = RGBtoSRGB(color_linear);
+//         c = RGBFloatToUint8(color_srgb);
+//         // c.r = (unsigned char)clamp((int)(color_srgb.r * 255.0f), 0, 255);
+//         // c.g = (unsigned char)clamp((int)(color_srgb.g * 255.0f), 0, 255);
+//         // c.b = (unsigned char)clamp((int)(color_srgb.b * 255.0f), 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color3i>& TImage<Color3i>::ToSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color3i& c : pixels) {
-        Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_srgb = RGBtoSRGB(color_linear);
-        c = RGBFloatToInt32(color_srgb);
-        // c.r = clamp((int)(color_srgb.r * 255.0f), 0, 65535);
-        // c.g = clamp((int)(color_srgb.g * 255.0f), 0, 65535);
-        // c.b = clamp((int)(color_srgb.b * 255.0f), 0, 65535);
-    }
+// template <>
+// TImage<Color3i> &TImage<Color3i>::ToSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color3i &c : pixels)
+//     {
+//         Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_srgb = RGBtoSRGB(color_linear);
+//         c = RGBFloatToInt32(color_srgb);
+//         // c.r = clamp((int)(color_srgb.r * 255.0f), 0, 65535);
+//         // c.g = clamp((int)(color_srgb.g * 255.0f), 0, 65535);
+//         // c.b = clamp((int)(color_srgb.b * 255.0f), 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4ub>& TImage<Color4ub>::ToSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color4ub& c : pixels) {
-        Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_srgb = RGBtoSRGB(color_linear);
-        c.r = (unsigned char)clamp((int)(color_srgb.r * 255.0f), 0, 255);
-        c.g = (unsigned char)clamp((int)(color_srgb.g * 255.0f), 0, 255);
-        c.b = (unsigned char)clamp((int)(color_srgb.b * 255.0f), 0, 255);
-    }
+// template <>
+// TImage<Color4ub> &TImage<Color4ub>::ToSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color4ub &c : pixels)
+//     {
+//         Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_srgb = RGBtoSRGB(color_linear);
+//         c.r = (unsigned char)clamp((int)(color_srgb.r * 255.0f), 0, 255);
+//         c.g = (unsigned char)clamp((int)(color_srgb.g * 255.0f), 0, 255);
+//         c.b = (unsigned char)clamp((int)(color_srgb.b * 255.0f), 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4i>& TImage<Color4i>::ToSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color4i& c : pixels) {
-        Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_srgb = RGBtoSRGB(color_linear);
-        c.r = clamp((int)(color_srgb.r * 255.0f), 0, 65535);
-        c.g = clamp((int)(color_srgb.g * 255.0f), 0, 65535);
-        c.b = clamp((int)(color_srgb.b * 255.0f), 0, 65535);
-    }
+// template <>
+// TImage<Color4i> &TImage<Color4i>::ToSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color4i &c : pixels)
+//     {
+//         Color3f color_linear(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_srgb = RGBtoSRGB(color_linear);
+//         c.r = clamp((int)(color_srgb.r * 255.0f), 0, 65535);
+//         c.g = clamp((int)(color_srgb.g * 255.0f), 0, 65535);
+//         c.b = clamp((int)(color_srgb.b * 255.0f), 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color3ub>& TImage<Color3ub>::ReverseSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color3ub& c : pixels) {
-        Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_linear = SRGBtoRGB(color_srgb);
-        c.r = (unsigned char)clamp((int)(color_linear.r * 255.0f), 0, 255);
-        c.g = (unsigned char)clamp((int)(color_linear.g * 255.0f), 0, 255);
-        c.b = (unsigned char)clamp((int)(color_linear.b * 255.0f), 0, 255);
-    }
+// template <>
+// TImage<Color3ub> &TImage<Color3ub>::ReverseSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color3ub &c : pixels)
+//     {
+//         Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_linear = SRGBtoRGB(color_srgb);
+//         c.r = (unsigned char)clamp((int)(color_linear.r * 255.0f), 0, 255);
+//         c.g = (unsigned char)clamp((int)(color_linear.g * 255.0f), 0, 255);
+//         c.b = (unsigned char)clamp((int)(color_linear.b * 255.0f), 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color3i>& TImage<Color3i>::ReverseSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color3i& c : pixels) {
-        Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_linear = SRGBtoRGB(color_srgb);
-        c.r = clamp((int)(color_linear.r * 255.0f), 0, 65535);
-        c.g = clamp((int)(color_linear.g * 255.0f), 0, 65535);
-        c.b = clamp((int)(color_linear.b * 255.0f), 0, 65535);
-    }
+// template <>
+// TImage<Color3i> &TImage<Color3i>::ReverseSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color3i &c : pixels)
+//     {
+//         Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_linear = SRGBtoRGB(color_srgb);
+//         c.r = clamp((int)(color_linear.r * 255.0f), 0, 65535);
+//         c.g = clamp((int)(color_linear.g * 255.0f), 0, 65535);
+//         c.b = clamp((int)(color_linear.b * 255.0f), 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4ub>& TImage<Color4ub>::ReverseSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color4ub& c : pixels) {
-        Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_linear = SRGBtoRGB(color_srgb);
-        c.r = (unsigned char)clamp((int)(color_linear.r * 255.0f), 0, 255);
-        c.g = (unsigned char)clamp((int)(color_linear.g * 255.0f), 0, 255);
-        c.b = (unsigned char)clamp((int)(color_linear.b * 255.0f), 0, 255);
-    }
+// template <>
+// TImage<Color4ub> &TImage<Color4ub>::ReverseSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color4ub &c : pixels)
+//     {
+//         Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_linear = SRGBtoRGB(color_srgb);
+//         c.r = (unsigned char)clamp((int)(color_linear.r * 255.0f), 0, 255);
+//         c.g = (unsigned char)clamp((int)(color_linear.g * 255.0f), 0, 255);
+//         c.b = (unsigned char)clamp((int)(color_linear.b * 255.0f), 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4i>& TImage<Color4i>::ReverseSRGB()
-{
-    float scaleFactor = 1.0f / 255.0f;
-    for (Color4i& c : pixels) {
-        Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
-        Color3f color_linear = SRGBtoRGB(color_srgb);
-        c.r = clamp((int)(color_linear.r * 255.0f), 0, 65535);
-        c.g = clamp((int)(color_linear.g * 255.0f), 0, 65535);
-        c.b = clamp((int)(color_linear.b * 255.0f), 0, 65535);
-    }
+// template <>
+// TImage<Color4i> &TImage<Color4i>::ReverseSRGB()
+// {
+//     float scaleFactor = 1.0f / 255.0f;
+//     for (Color4i &c : pixels)
+//     {
+//         Color3f color_srgb(scaleFactor * c.r, scaleFactor * c.g, scaleFactor * c.b);
+//         Color3f color_linear = SRGBtoRGB(color_srgb);
+//         c.r = clamp((int)(color_linear.r * 255.0f), 0, 65535);
+//         c.g = clamp((int)(color_linear.g * 255.0f), 0, 65535);
+//         c.b = clamp((int)(color_linear.b * 255.0f), 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color3ub>& TImage<Color3ub>::ReverseToneMap(float exposure)
-{
-    float tm = 1.0f / (2.5f * powf(2.0f, exposure));
-    for (Color3ub& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = (unsigned char)clamp(_c.r, 0, 255);
-        c.g = (unsigned char)clamp(_c.g, 0, 255);
-        c.b = (unsigned char)clamp(_c.b, 0, 255);
-    }
+// template <>
+// TImage<Color3ub> &TImage<Color3ub>::ReverseToneMap(float exposure)
+// {
+//     float tm = 1.0f / (2.5f * powf(2.0f, exposure));
+//     for (Color3ub &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = (unsigned char)clamp(_c.r, 0, 255);
+//         c.g = (unsigned char)clamp(_c.g, 0, 255);
+//         c.b = (unsigned char)clamp(_c.b, 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color3i>& TImage<Color3i>::ReverseToneMap(float exposure)
-{
-    float tm = 1.0f / (2.5f * powf(2.0f, exposure));
-    for (Color3i& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = clamp(_c.r, 0, 65535);
-        c.g = clamp(_c.g, 0, 65535);
-        c.b = clamp(_c.b, 0, 65535);
-    }
+// template <>
+// TImage<Color3i> &TImage<Color3i>::ReverseToneMap(float exposure)
+// {
+//     float tm = 1.0f / (2.5f * powf(2.0f, exposure));
+//     for (Color3i &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = clamp(_c.r, 0, 65535);
+//         c.g = clamp(_c.g, 0, 65535);
+//         c.b = clamp(_c.b, 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4ub>& TImage<Color4ub>::ReverseToneMap(float exposure)
-{
-    float tm = 1.0f / (2.5f * powf(2.0f, exposure));
-    for (Color4ub& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = (unsigned char)clamp(_c.r, 0, 255);
-        c.g = (unsigned char)clamp(_c.g, 0, 255);
-        c.b = (unsigned char)clamp(_c.b, 0, 255);
-    }
+// template <>
+// TImage<Color4ub> &TImage<Color4ub>::ReverseToneMap(float exposure)
+// {
+//     float tm = 1.0f / (2.5f * powf(2.0f, exposure));
+//     for (Color4ub &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = (unsigned char)clamp(_c.r, 0, 255);
+//         c.g = (unsigned char)clamp(_c.g, 0, 255);
+//         c.b = (unsigned char)clamp(_c.b, 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4i>& TImage<Color4i>::ReverseToneMap(float exposure)
-{
-    float tm = 1.0f / (2.5f * powf(2.0f, exposure));
-    for (Color4i& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = clamp(_c.r, 0, 65535);
-        c.g = clamp(_c.g, 0, 65535);
-        c.b = clamp(_c.b, 0, 65535);
-    }
+// template <>
+// TImage<Color4i> &TImage<Color4i>::ReverseToneMap(float exposure)
+// {
+//     float tm = 1.0f / (2.5f * powf(2.0f, exposure));
+//     for (Color4i &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = clamp(_c.r, 0, 65535);
+//         c.g = clamp(_c.g, 0, 65535);
+//         c.b = clamp(_c.b, 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color3ub>& TImage<Color3ub>::ToneMap(float exposure)
-{
-    float tm = 2.5f * powf(2.0f, exposure);
-    for (Color3ub& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = (unsigned char)clamp(_c.r, 0, 255);
-        c.g = (unsigned char)clamp(_c.g, 0, 255);
-        c.b = (unsigned char)clamp(_c.b, 0, 255);
-    }
+// template <>
+// TImage<Color3ub> &TImage<Color3ub>::ToneMap(float exposure)
+// {
+//     float tm = 2.5f * powf(2.0f, exposure);
+//     for (Color3ub &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = (unsigned char)clamp(_c.r, 0, 255);
+//         c.g = (unsigned char)clamp(_c.g, 0, 255);
+//         c.b = (unsigned char)clamp(_c.b, 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4ub>& TImage<Color4ub>::ToneMap(float exposure)
-{
-    float tm = 2.5f * powf(2.0f, exposure);
-    for (Color4ub& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = (unsigned char)clamp(_c.r, 0, 255);
-        c.g = (unsigned char)clamp(_c.g, 0, 255);
-        c.b = (unsigned char)clamp(_c.b, 0, 255);
-    }
+// template <>
+// TImage<Color4ub> &TImage<Color4ub>::ToneMap(float exposure)
+// {
+//     float tm = 2.5f * powf(2.0f, exposure);
+//     for (Color4ub &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = (unsigned char)clamp(_c.r, 0, 255);
+//         c.g = (unsigned char)clamp(_c.g, 0, 255);
+//         c.b = (unsigned char)clamp(_c.b, 0, 255);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color3i>& TImage<Color3i>::ToneMap(float exposure)
-{
-    float tm = 2.5f * powf(2.0f, exposure);
-    for (Color3i& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = clamp(_c.r, 0, 65535);
-        c.g = clamp(_c.g, 0, 65535);
-        c.b = clamp(_c.b, 0, 65535);
-    }
+// template <>
+// TImage<Color3i> &TImage<Color3i>::ToneMap(float exposure)
+// {
+//     float tm = 2.5f * powf(2.0f, exposure);
+//     for (Color3i &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = clamp(_c.r, 0, 65535);
+//         c.g = clamp(_c.g, 0, 65535);
+//         c.b = clamp(_c.b, 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-TImage<Color4i>& TImage<Color4i>::ToneMap(float exposure)
-{
-    float tm = 2.5f * powf(2.0f, exposure);
-    for (Color4i& c : pixels) {
-        Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
-        c.r = clamp(_c.r, 0, 65535);
-        c.g = clamp(_c.g, 0, 65535);
-        c.b = clamp(_c.b, 0, 65535);
-    }
+// template <>
+// TImage<Color4i> &TImage<Color4i>::ToneMap(float exposure)
+// {
+//     float tm = 2.5f * powf(2.0f, exposure);
+//     for (Color4i &c : pixels)
+//     {
+//         Color3i _c((int)(tm * (float)c.r), (int)(tm * (float)c.g), (int)(tm * (float)c.b));
+//         c.r = clamp(_c.r, 0, 65535);
+//         c.g = clamp(_c.g, 0, 65535);
+//         c.b = clamp(_c.b, 0, 65535);
+//     }
 
-    return *this;
-}
+//     return *this;
+// }
 
-template <>
-void TImage<Color4i>::savePPMRaw(const string& filename, int z)
-{
-    int maxColorFound = 0;
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4i color = getPixel(x, y, z);
-            int ir = color.r;
-            int ig = color.g;
-            int ib = color.b;
-            if (ir > maxColorFound)
-                maxColorFound = ir;
-            if (ig > maxColorFound)
-                maxColorFound = ig;
-            if (ib > maxColorFound)
-                maxColorFound = ib;
-        }
-    }
+// template <>
+// void TImage<Color3i>::loadPPM(const string &filename)
+// {
+//     ifstream fin(filename.c_str());
 
-    if (maxColorFound < 255)
-        maxColorFound = 255;
+//     string magicNumber;
+//     int width;
+//     int height;
+//     int maxInt;
 
-    ofstream fout(filename.c_str());
-    fout << "P3" << endl;
-    fout << imageWidth << " ";
-    fout << imageHeight << " ";
-    fout << maxColorFound << endl;
+//     fin >> magicNumber;
+//     if (magicNumber != "P3")
+//         return;
+//     fin >> width;
+//     fin >> height;
+//     fin >> maxInt;
 
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4i color = getPixel(x, y, z);
-            int ir = color.r;
-            int ig = color.g;
-            int ib = color.b;
-            fout << ir << " " << ig << " " << ib << endl;
-        }
-    }
+//     resize(width, height);
+//     for (int y = 0; y < imageHeight; y++)
+//     {
+//         for (int x = 0; x < imageWidth; x++)
+//         {
+//             Color3i color;
+//             fin >> color.r >> color.g >> color.b;
+//             setPixel(x, y, color);
+//         }
+//     }
 
-    fout.close();
-}
+//     fin.close();
+// }
+
+// template <>
+// void TImage<Color4i>::loadPPM(const string &filename)
+// {
+//     ifstream fin(filename.c_str());
+
+//     string magicNumber;
+//     int width;
+//     int height;
+//     int maxInt;
+
+//     fin >> magicNumber;
+//     if (magicNumber != "P3")
+//         return;
+//     fin >> width;
+//     fin >> height;
+//     fin >> maxInt;
+
+//     resize(width, height);
+//     for (int y = 0; y < imageHeight; y++)
+//     {
+//         for (int x = 0; x < imageWidth; x++)
+//         {
+//             Color4i color;
+//             fin >> color.r >> color.g >> color.b;
+//             setPixel(x, y, color);
+//         }
+//     }
+
+//     fin.close();
+// }
+
+// template <>
+// void TImage<Color3ub>::loadPPM(const string &filename)
+// {
+//     ifstream fin(filename.c_str());
+
+//     string magicNumber;
+//     int width;
+//     int height;
+//     int maxInt;
+
+//     fin >> magicNumber;
+//     if (magicNumber != "P3")
+//         return;
+//     fin >> width;
+//     fin >> height;
+//     fin >> maxInt;
+
+//     resize(width, height);
+//     for (int y = 0; y < imageHeight; y++)
+//     {
+//         for (int x = 0; x < imageWidth; x++)
+//         {
+//             Color3ub color;
+//             fin >> color.r >> color.g >> color.b;
+//             setPixel(x, y, color);
+//         }
+//     }
+
+//     fin.close();
+// }
+
+// template <>
+// void TImage<Color4ub>::loadPPM(const string &filename)
+// {
+//     ifstream fin(filename.c_str());
+
+//     string magicNumber;
+//     int width;
+//     int height;
+//     int maxInt;
+
+//     fin >> magicNumber;
+//     if (magicNumber != "P3")
+//         return;
+//     fin >> width;
+//     fin >> height;
+//     fin >> maxInt;
+
+//     resize(width, height);
+//     for (int y = 0; y < imageHeight; y++)
+//     {
+//         for (int x = 0; x < imageWidth; x++)
+//         {
+//             Color4ub color;
+//             fin >> color.r >> color.g >> color.b;
+//             setPixel(x, y, color);
+//         }
+//     }
+
+//     fin.close();
+// }
+
+// template <>
+// void TImage<Color3f>::loadPPM(const string &filename)
+// {
+//     ifstream fin(filename.c_str());
+
+//     string magicNumber;
+//     int width;
+//     int height;
+//     int maxInt;
+
+//     fin >> magicNumber;
+//     if (magicNumber != "P3")
+//         return;
+//     fin >> width;
+//     fin >> height;
+//     fin >> maxInt;
+
+//     float scaleFactor = 1.0f / maxInt;
+//     resize(width, height);
+//     for (int y = 0; y < imageHeight; y++)
+//     {
+//         for (int x = 0; x < imageWidth; x++)
+//         {
+//             Color3i color;
+//             fin >> color.r >> color.g >> color.b;
+//             Color3f color_srgb(color.r * scaleFactor, color.g * scaleFactor, color.b * scaleFactor);
+//             setPixel(x, y, color_srgb);
+//         }
+//     }
+
+//     fin.close();
+// }
+
+// template <>
+// void TImage<Color4f>::loadPPM(const string &filename)
+// {
+//     ifstream fin(filename.c_str());
+
+//     string magicNumber;
+//     int width;
+//     int height;
+//     int maxInt;
+
+//     fin >> magicNumber;
+//     if (magicNumber != "P3")
+//         return;
+//     fin >> width;
+//     fin >> height;
+//     fin >> maxInt;
+
+//     float scaleFactor = 1.0f / maxInt;
+
+//     resize(width, height);
+//     for (int y = 0; y < imageHeight; y++)
+//     {
+//         for (int x = 0; x < imageWidth; x++)
+//         {
+//             Color3i color;
+//             fin >> color.r >> color.g >> color.b;
+//             Color4f color_srgb(color.r * scaleFactor, color.g * scaleFactor, color.b * scaleFactor, 1.0f);
+//             setPixel(x, y, color_srgb);
+//         }
+//     }
+
+//     fin.close();
+// }
 
 template <typename ColorType>
-TImage<ColorType>& TImage<ColorType>::ToSRGB()
+TImage<ColorType> &TImage<ColorType>::ToSRGB()
 {
-    for (ColorType& c : pixels) {
-        Color3f color_linear = c.ToColor3();
+    for (ColorType &c : pixels)
+    {
+        Color3f color_linear = ToColor3f(c);
         Color3f color_srgb = RGBtoSRGB(color_linear);
-        c.r = color_srgb.r;
-        c.g = color_srgb.g;
-        c.b = color_srgb.b;
-    }
-
-    return *this;
-}
-
-template <>
-void TImage<Color3i>::loadPPM(const string& filename)
-{
-    ifstream fin(filename.c_str());
-
-    string magicNumber;
-    int width;
-    int height;
-    int maxInt;
-
-    fin >> magicNumber;
-    if (magicNumber != "P3")
-        return;
-    fin >> width;
-    fin >> height;
-    fin >> maxInt;
-
-    resize(width, height);
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color3i color;
-            fin >> color.r >> color.g >> color.b;
-            setPixel(x, y, color);
-        }
-    }
-
-    fin.close();
-}
-
-template <>
-void TImage<Color4i>::loadPPM(const string& filename)
-{
-    ifstream fin(filename.c_str());
-
-    string magicNumber;
-    int width;
-    int height;
-    int maxInt;
-
-    fin >> magicNumber;
-    if (magicNumber != "P3")
-        return;
-    fin >> width;
-    fin >> height;
-    fin >> maxInt;
-
-    resize(width, height);
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4i color;
-            fin >> color.r >> color.g >> color.b;
-            setPixel(x, y, color);
-        }
-    }
-
-    fin.close();
-}
-
-template <>
-void TImage<Color3ub>::loadPPM(const string& filename)
-{
-    ifstream fin(filename.c_str());
-
-    string magicNumber;
-    int width;
-    int height;
-    int maxInt;
-
-    fin >> magicNumber;
-    if (magicNumber != "P3")
-        return;
-    fin >> width;
-    fin >> height;
-    fin >> maxInt;
-
-    resize(width, height);
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color3ub color;
-            fin >> color.r >> color.g >> color.b;
-            setPixel(x, y, color);
-        }
-    }
-
-    fin.close();
-}
-
-template <>
-void TImage<Color4ub>::loadPPM(const string& filename)
-{
-    ifstream fin(filename.c_str());
-
-    string magicNumber;
-    int width;
-    int height;
-    int maxInt;
-
-    fin >> magicNumber;
-    if (magicNumber != "P3")
-        return;
-    fin >> width;
-    fin >> height;
-    fin >> maxInt;
-
-    resize(width, height);
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4ub color;
-            fin >> color.r >> color.g >> color.b;
-            setPixel(x, y, color);
-        }
-    }
-
-    fin.close();
-}
-
-template <>
-void TImage<Color3f>::loadPPM(const string& filename)
-{
-    ifstream fin(filename.c_str());
-
-    string magicNumber;
-    int width;
-    int height;
-    int maxInt;
-
-    fin >> magicNumber;
-    if (magicNumber != "P3")
-        return;
-    fin >> width;
-    fin >> height;
-    fin >> maxInt;
-
-    float scaleFactor = 1.0f / maxInt;
-    resize(width, height);
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color3i color;
-            fin >> color.r >> color.g >> color.b;
-            Color3f color_srgb(color.r * scaleFactor, color.g * scaleFactor, color.b * scaleFactor);
-            setPixel(x, y, color_srgb);
-        }
-    }
-
-    fin.close();
-}
-
-template <>
-void TImage<Color4f>::loadPPM(const string& filename)
-{
-    ifstream fin(filename.c_str());
-
-    string magicNumber;
-    int width;
-    int height;
-    int maxInt;
-
-    fin >> magicNumber;
-    if (magicNumber != "P3")
-        return;
-    fin >> width;
-    fin >> height;
-    fin >> maxInt;
-
-    float scaleFactor = 1.0f / maxInt;
-
-    resize(width, height);
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color3i color;
-            fin >> color.r >> color.g >> color.b;
-            Color4f color_srgb(color.r * scaleFactor, color.g * scaleFactor, color.b * scaleFactor, 1.0f);
-            setPixel(x, y, color_srgb);
-        }
-    }
-
-    fin.close();
-}
-
-template <>
-void TImage<Color3ub>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void* _pixels)
-{
-    unsigned int toFormat = 3;
-    unsigned int toType = GL_UNSIGNED_BYTE;
-
-    _setImageData(format, type, toFormat, toType, width, height, depth, _pixels);
-}
-
-template <>
-void TImage<Color4ub>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void* _pixels)
-{
-    unsigned int toFormat = 4;
-    unsigned int toType = GL_UNSIGNED_BYTE;
-
-    _setImageData(format, type, toFormat, toType, width, height, depth, _pixels);
-}
-
-template <>
-void TImage<Color3i>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void* _pixels)
-{
-    unsigned int toFormat = 3;
-    unsigned int toType = GL_UNSIGNED_BYTE;
-
-    _setImageData(format, type, toFormat, toType, width, height, depth, _pixels);
-}
-
-template <>
-void TImage<Color4i>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void* _pixels)
-{
-    unsigned int toFormat = 4;
-    unsigned int toType = GL_UNSIGNED_BYTE;
-
-    _setImageData(format, type, toFormat, toType, width, height, depth, _pixels);
-}
-
-template <>
-void TImage<Color3f>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void* _pixels)
-{
-    unsigned int toFormat = 3;
-    unsigned int toType = GL_FLOAT;
-
-    _setImageData(format, type, toFormat, toType, width, height, depth, _pixels);
-}
-
-template <>
-void TImage<Color4f>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void* _pixels)
-{
-    unsigned int toFormat = 4;
-    unsigned int toType = GL_FLOAT;
-
-    _setImageData(format, type, toFormat, toType, width, height, depth, _pixels);
-}
-
-template <typename ColorType>
-TImage<ColorType>& TImage<ColorType>::ReverseSRGB()
-{
-    for (ColorType& c : pixels) {
-        Color3f color_srgb = c.ToColor3();
-        Color3f color_linear = SRGBtoRGB(color_srgb);
-        c.r = color_linear.r;
-        c.g = color_linear.g;
-        c.b = color_linear.b;
+        FromColor3f(c, color_srgb.clamp());
     }
 
     return *this;
 }
 
 template <typename ColorType>
-TImage<ColorType>& TImage<ColorType>::ReverseToneMap(float exposure)
+TImage<ColorType> &TImage<ColorType>::ReverseSRGB()
 {
-    float tm = 1.0f / (2.5f * powf(2.0f, exposure));
-    for (ColorType& c : pixels) {
-        c = (ColorType)(c * tm);
+    for (ColorType &c : pixels)
+    {
+        Color3f color_srgb = ToColor3f(c);
+        Color3f color_linear = SRGBtoRGB(color_srgb);
+        FromColor3f(c, color_linear.clamp());
     }
 
     return *this;
 }
 
 template <typename ColorType>
-TImage<ColorType>& TImage<ColorType>::ToneMap(float exposure)
+TImage<ColorType> &TImage<ColorType>::ReverseToneMap(float exposure)
+{
+    float tm = 1.0f / (2.5f * powf(2.0f, exposure));
+    for (ColorType &c : pixels)
+    {
+        Color3f color = ToColor3f(c);
+        color *= tm;
+        FromColor3f(c, color.clamp());
+    }
+
+    return *this;
+}
+
+template <typename ColorType>
+TImage<ColorType> &TImage<ColorType>::ToneMap(float exposure)
 {
     float tm = 2.5f * powf(2.0f, exposure);
-    for (ColorType& c : pixels) {
-        c = (ColorType)(c * tm);
+    for (ColorType &c : pixels)
+    {
+        Color3f color = ToColor3f(c);
+        color *= tm;
+        FromColor3f(c, color.clamp());
     }
 
     return *this;
@@ -603,7 +541,8 @@ TImage<ColorType>& TImage<ColorType>::ToneMap(float exposure)
 template <typename ColorType>
 void TImage<ColorType>::scaleColors(const float x)
 {
-    for (ColorType& c : pixels) {
+    for (ColorType &c : pixels)
+    {
         c *= (typename ColorType::type)x;
     }
 }
@@ -616,11 +555,14 @@ TImage<ColorType> TImage<ColorType>::ScaleImage(int newWidth, int newHeight, boo
     int newDepth = imageDepth;
     Vector3d d(imageWidth / (double)newWidth, imageHeight / (double)newHeight, imageDepth / (double)newDepth);
     Vector3d src;
-    for (int z = 0; z < newDepth; z++) {
+    for (int z = 0; z < newDepth; z++)
+    {
         src.y = 0.0;
-        for (int y = 0; y < newHeight; y++) {
+        for (int y = 0; y < newHeight; y++)
+        {
             src.x = 0.0;
-            for (int x = 0; x < newWidth; x++) {
+            for (int x = 0; x < newWidth; x++)
+            {
                 // truncate coordinates
                 Vector3i pint((int)src.x, (int)src.y, (int)src.z);
                 ColorType closestPixel = getPixelUnsafe(pint.x, pint.y, pint.z);
@@ -636,26 +578,12 @@ TImage<ColorType> TImage<ColorType>::ScaleImage(int newWidth, int newHeight, boo
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMRaw(const string& filename, int z)
+void TImage<ColorType>::savePPMRaw(const string &filename, int z)
 {
-    int maxColorFound = 0;
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4f color = getPixel(x, y, z);
-            int ir = int(255.99f * color.r);
-            int ig = int(255.99f * color.g);
-            int ib = int(255.99f * color.b);
-            if (ir > maxColorFound)
-                maxColorFound = ir;
-            if (ig > maxColorFound)
-                maxColorFound = ig;
-            if (ib > maxColorFound)
-                maxColorFound = ib;
-        }
-    }
-
-    if (maxColorFound < 255)
-        maxColorFound = 255;
+    const float scale = ColorType::to_float_factor * 255.0f;
+    float maxColorFound = maxrgb() * scale;
+    if (maxColorFound < 255.0f)
+        maxColorFound = 255.0f;
 
     ofstream fout(filename.c_str());
     fout << "P3" << endl;
@@ -663,12 +591,14 @@ void TImage<ColorType>::savePPMRaw(const string& filename, int z)
     fout << imageHeight << " ";
     fout << maxColorFound << endl;
 
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4f color = getPixel(x, y, z);
-            int ir = int(255.99f * color.r);
-            int ig = int(255.99f * color.g);
-            int ib = int(255.99f * color.b);
+    for (int y = 0; y < imageHeight; y++)
+    {
+        for (int x = 0; x < imageWidth; x++)
+        {
+            Color3f color = getPixel(x, y, z) * scale;
+            int ir = (int)color.r;
+            int ig = (int)color.g;
+            int ib = (int)color.b;
             fout << ir << " " << ig << " " << ib << endl;
         }
     }
@@ -677,36 +607,81 @@ void TImage<ColorType>::savePPMRaw(const string& filename, int z)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPM(const string& filename, int z, bool flipy)
+void TImage<ColorType>::loadPPM(const string &filename)
 {
-    int max_intensity = 0;
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4i color = ToColor4i(getPixel(x, y, z), 1.0f, 0, 255);
-            max_intensity = std::max({ max_intensity, color.r, color.g, color.b });
+    ifstream fin(filename.c_str());
+
+    string magicNumber;
+    int width;
+    int height;
+    int maxInt;
+
+    fin >> magicNumber;
+    while (!magicNumber.empty() && magicNumber[0] == '#')
+    {
+        // skip comments
+        fin >> magicNumber;
+    }
+    if (magicNumber != "P3")
+        return;
+    fin >> width;
+    fin >> height;
+    fin >> maxInt;
+
+    // decide what to do...
+    // const unsigned int size = ColorType::gl_size;
+    // const unsigned int type = ColorType::gl_type;
+    const float scale = ColorType::from_float_factor / 255.99f;
+
+    resize(width, height);
+    for (int y = 0; y < imageHeight; y++)
+    {
+        for (int x = 0; x < imageWidth; x++)
+        {
+            Color3f color;
+            fin >> color.r >> color.g >> color.b;
+            color *= scale;
+            ColorType dst;
+            FromColor3f(dst, color);
+            setPixel(x, y, dst);
         }
     }
 
-    if (max_intensity < 255)
-        max_intensity = 255;
+    fin.close();
+}
+
+template <typename ColorType>
+void TImage<ColorType>::savePPM(const string &filename, int z, bool flipy)
+{
+    const float scale = ColorType::to_float_factor * 255.99f;
+    float maxColorFound = maxrgb() * scale;
+    if (maxColorFound < 255.0f)
+        maxColorFound = 255.0f;
 
     ofstream fout(filename.c_str());
     fout << "P3" << endl;
     fout << imageWidth << " ";
     fout << imageHeight << " ";
-    fout << max_intensity << endl;
+    fout << maxColorFound << endl;
 
     int y1 = 0;
     int y2 = imageHeight;
     int dy = 1;
-    if (flipy) {
+    if (flipy)
+    {
         y1 = imageHeight - 1;
         y2 = -1;
         dy = -1;
     }
-    for (int y = y1; y != y2; y += dy) {
-        for (int x = 0; x < imageWidth; x++) {
-            Color4i color = ToColor4i(getPixel(x, y, z), 1.0f, 0, 255);
+    for (int y = y1; y != y2; y += dy)
+    {
+        for (int x = 0; x < imageWidth; x++)
+        {
+            ColorType c = getPixel(x, y, z);
+            Color3i color(
+                clamp((int)(c.r * scale), 0, 255),
+                clamp((int)(c.g * scale), 0, 255),
+                clamp((int)(c.b * scale), 0, 255));
             fout << color.r << " " << color.g << " " << color.b << endl;
         }
     }
@@ -715,10 +690,11 @@ void TImage<ColorType>::savePPM(const string& filename, int z, bool flipy)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMi(const string& filename, float scale, int minValue, int maxValue, int z, bool flipy)
+void TImage<ColorType>::savePPMi(const string &filename, float scale, int minValue, int maxValue, int z, bool flipy)
 {
-    if (maxValue <= 0) {
-        maxValue = (int)(scale * getMaximum());
+    if (maxValue <= 0)
+    {
+        maxValue = (int)(scale * maxrgb());
     }
 
     ofstream fout(filename.c_str());
@@ -731,13 +707,16 @@ void TImage<ColorType>::savePPMi(const string& filename, float scale, int minVal
     int y1 = 0;
     int y2 = imageHeight;
     int dy = 1;
-    if (flipy) {
+    if (flipy)
+    {
         y1 = imageHeight - 1;
         y2 = -1;
         dy = -1;
     }
-    for (int y = y1; y != y2; y += dy) {
-        for (int x = 0; x < imageWidth; x++) {
+    for (int y = y1; y != y2; y += dy)
+    {
+        for (int x = 0; x < imageWidth; x++)
+        {
             Color4i color = ToColor4i(getPixel(x, y, z), scale, minValue, maxValue);
             fout << color.r << " " << color.g << " " << color.b << endl;
         }
@@ -747,7 +726,7 @@ void TImage<ColorType>::savePPMi(const string& filename, float scale, int minVal
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMHDRI(const string& filename, int z)
+void TImage<ColorType>::savePPMHDRI(const string &filename, int z)
 {
     ofstream fout(filename.c_str());
 
@@ -756,9 +735,12 @@ void TImage<ColorType>::savePPMHDRI(const string& filename, int z)
     fout << imageHeight << " ";
     fout << "1.0" << endl;
 
-    for (int y = 0; y < imageHeight; y++) {
-        for (int x = 0; x < imageWidth; x++) {
-            ColorType color = getPixel(x, y, z);
+    for (int y = 0; y < imageHeight; y++)
+    {
+        for (int x = 0; x < imageWidth; x++)
+        {
+            ColorType c = getPixel(x, y, z);
+            Color3f color = ToColor3f(c);
             fout << color.r << " " << color.g << " " << color.b << endl;
         }
     }
@@ -780,15 +762,22 @@ void TImage<ColorType>::resize(int width, int height, int depth)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::clear(const ColorType& clearcolor)
+void TImage<ColorType>::clear(const ColorType &clearcolor)
 {
-    for (ColorType& c : pixels) {
+    for (ColorType &c : pixels)
+    {
         c = clearcolor;
     }
 }
 
 template <typename ColorType>
-void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, int width, int height, int depth, void* _pixels)
+void TImage<ColorType>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void *_pixels)
+{
+    _setImageData(format, type, ColorType::gl_type, ColorType::gl_size, width, height, depth, _pixels);
+}
+
+template <typename ColorType>
+void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, int width, int height, int depth, void *_pixels)
 {
     float scaleFactor_itof = 1.0f / 255.99f;
     float scaleFactor_ftoi = 255.99f;
@@ -803,38 +792,53 @@ void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int from
 
     resize(width, height, depth);
     int count = width * height * depth;
-    if (fromType == GL_UNSIGNED_BYTE && toType == GL_FLOAT) {
-        unsigned char* data = (unsigned char*)_pixels;
-        for (int i = 0; i < count; i++) {
-            typename ColorType::type* v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++) {
+    if (fromType == GL_UNSIGNED_BYTE && toType == GL_FLOAT)
+    {
+        unsigned char *data = (unsigned char *)_pixels;
+        for (int i = 0; i < count; i++)
+        {
+            typename ColorType::type *v = pixels[i].ptr();
+            for (int j = 0; j < stride; j++)
+            {
                 v[j] = (typename ColorType::type)clamp(scaleFactor_itof * data[j], 0, 255);
             }
             data += stride;
         }
-    } else if (fromType == GL_FLOAT && toType == GL_UNSIGNED_BYTE) {
-        float* data = (float*)_pixels;
-        for (int i = 0; i < count; i++) {
-            typename ColorType::type* v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++) {
+    }
+    else if (fromType == GL_FLOAT && toType == GL_UNSIGNED_BYTE)
+    {
+        float *data = (float *)_pixels;
+        for (int i = 0; i < count; i++)
+        {
+            typename ColorType::type *v = pixels[i].ptr();
+            for (int j = 0; j < stride; j++)
+            {
                 v[j] = (typename ColorType::type)clamp(scaleFactor_ftoi * data[j], 0, 255);
             }
             data += stride;
         }
-    } else if (fromType == GL_UNSIGNED_BYTE && toType == GL_UNSIGNED_BYTE) {
-        unsigned char* data = (unsigned char*)_pixels;
-        for (int i = 0; i < count; i++) {
-            typename ColorType::type* v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++) {
+    }
+    else if (fromType == GL_UNSIGNED_BYTE && toType == GL_UNSIGNED_BYTE)
+    {
+        unsigned char *data = (unsigned char *)_pixels;
+        for (int i = 0; i < count; i++)
+        {
+            typename ColorType::type *v = pixels[i].ptr();
+            for (int j = 0; j < stride; j++)
+            {
                 v[j] = (typename ColorType::type)data[j];
             }
             data += stride;
         }
-    } else if (fromType == GL_FLOAT && toType == GL_FLOAT) {
-        float* data = (float*)_pixels;
-        for (int i = 0; i < count; i++) {
-            typename ColorType::type* v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++) {
+    }
+    else if (fromType == GL_FLOAT && toType == GL_FLOAT)
+    {
+        float *data = (float *)_pixels;
+        for (int i = 0; i < count; i++)
+        {
+            typename ColorType::type *v = pixels[i].ptr();
+            for (int j = 0; j < stride; j++)
+            {
                 v[j] = (typename ColorType::type)data[j];
             }
             data += stride;
@@ -853,8 +857,10 @@ bool TImage<ColorType>::flipX(int z)
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
-    for (size_t x = 0; x < size; x++) {
-        for (size_t y = 0; y < size; y++) {
+    for (size_t x = 0; x < size; x++)
+    {
+        for (size_t y = 0; y < size; y++)
+        {
             size_t sx = size - x - 1;
             size_t sy = y;
             size_t dst_offset = y * size + x;
@@ -877,8 +883,10 @@ bool TImage<ColorType>::flipY(int z)
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
-    for (size_t x = 0; x < size; x++) {
-        for (size_t y = 0; y < size; y++) {
+    for (size_t x = 0; x < size; x++)
+    {
+        for (size_t y = 0; y < size; y++)
+        {
             size_t sx = x;
             size_t sy = size - y - 1;
             size_t dst_offset = y * size + x;
@@ -894,15 +902,17 @@ bool TImage<ColorType>::flipY(int z)
 template <typename ColorType>
 bool TImage<ColorType>::rotateLeft90(int z)
 {
-    if (empty() || imageWidth != imageHeight)
+    if (empty() || (imageWidth != imageHeight))
         return false;
 
     vector<ColorType> tmp(imageWidth * imageHeight);
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
-    for (size_t x = 0; x < size; x++) {
-        for (size_t y = 0; y < size; y++) {
+    for (size_t x = 0; x < size; x++)
+    {
+        for (size_t y = 0; y < size; y++)
+        {
             int sx = (int)(size - y - 1);
             int sy = (int)x;
             size_t dst_offset = y * size + x;
@@ -911,10 +921,10 @@ bool TImage<ColorType>::rotateLeft90(int z)
         }
     }
     //copy(tmp.begin(), tmp.end(), pixels.begin() + zoffset);
-    void* dst = &pixels[zoffset];
-    void* src = &tmp[0];
-    size_t count = zstride * sizeof(ColorType);
-    memcpy(dst, src, count);
+    void *pdst = &pixels[zoffset];
+    void *psrc = &tmp[0];
+    size_t n = zstride * sizeof(ColorType);
+    memcpy(pdst, psrc, n);
     // memcpy(&pixels[zoffset], &tmp[0], zstride * sizeof(ColorType));
 
     return true;
@@ -930,8 +940,10 @@ bool TImage<ColorType>::rotateRight90(int z)
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
-    for (size_t x = 0; x < size; x++) {
-        for (size_t y = 0; y < size; y++) {
+    for (size_t x = 0; x < size; x++)
+    {
+        for (size_t y = 0; y < size; y++)
+        {
             int sx = (int)y;
             int sy = (int)(size - x - 1);
             size_t dst_offset = y * size + x;
@@ -940,7 +952,10 @@ bool TImage<ColorType>::rotateRight90(int z)
         }
     }
 
-    memcpy(&pixels[zoffset], &tmp[0], zstride * sizeof(ColorType));
+    void *dst = &pixels[zoffset];
+    void *src = &tmp[0];
+    size_t n = zstride * sizeof(ColorType);
+    memcpy(dst, src, n);
     //copy(tmp.begin(), tmp.end(), pixels.begin() + zoffset);
 
     return true;
@@ -966,13 +981,18 @@ bool TImage<ColorType>::convertRectToCubeMap()
     vector<ColorType> src = pixels;
     resize(size, size, 6);
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         int k = swizzle[i];
         // demultiplex the data
         size_t dst_offset = i * zstride;
         size_t src_offset = k * size;
-        for (int y = 0; y < size; y++) {
-            memcpy(&pixels[dst_offset], &src[src_offset], size * sizeof(ColorType));
+        for (int y = 0; y < size; y++)
+        {
+            void *pdst = &pixels[dst_offset];
+            void *psrc = &src[src_offset];
+            size_t n = size * sizeof(ColorType);
+            memcpy(pdst, psrc, n);
             dst_offset += size;
             src_offset += 6 * size;
         }
@@ -987,7 +1007,7 @@ bool TImage<ColorType>::convertRectToCubeMap()
 template <typename ColorType>
 bool TImage<ColorType>::convertCubeMapToRect()
 {
-    if (empty() || imageWidth != imageHeight && imageDepth != 6)
+    if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
         return false;
 
     rotateLeft90(2);
@@ -1006,13 +1026,18 @@ bool TImage<ColorType>::convertCubeMapToRect()
         0, // NEGATIVE X
     };
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         int k = swizzle[i];
         // demultiplex the data
         size_t src_offset = i * size * size;
         size_t dst_offset = k * size;
-        for (int y = 0; y < size; y++) {
-            memcpy(&pixels[dst_offset], &tmp[src_offset], size * sizeof(ColorType));
+        for (int y = 0; y < size; y++)
+        {
+            void *pdst = &pixels[dst_offset];
+            void *psrc = &tmp[src_offset];
+            size_t n = size * sizeof(ColorType);
+            memcpy(pdst, psrc, n);
             src_offset += size;
             dst_offset += 6 * size;
         }
@@ -1025,7 +1050,8 @@ template <typename ColorType>
 double TImage<ColorType>::getIntensity() const
 {
     double I = 0.0;
-    for (auto& c : pixels) {
+    for (auto &c : pixels)
+    {
         I += c.Intensity();
     }
     return I;
@@ -1035,7 +1061,8 @@ template <typename ColorType>
 double TImage<ColorType>::getMinimum() const
 {
     double I = 1e6;
-    for (auto& c : pixels) {
+    for (auto &c : pixels)
+    {
         if (c.Intensity() < I)
             I = c.Intensity();
     }
@@ -1046,7 +1073,8 @@ template <typename ColorType>
 double TImage<ColorType>::getMaximum() const
 {
     double I = -1e6;
-    for (auto& c : pixels) {
+    for (auto &c : pixels)
+    {
         if (c.Intensity() > I)
             I = c.Intensity();
     }
@@ -1057,7 +1085,8 @@ template <typename ColorType>
 double TImage<ColorType>::getAverage() const
 {
     double I = 0.0;
-    for (auto& c : pixels) {
+    for (auto &c : pixels)
+    {
         I += c.Intensity();
     }
     I /= (double)getNumPixels();

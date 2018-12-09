@@ -49,8 +49,12 @@ string Hatchetfish::makeDTG()
 #else
     chrono::time_point<chrono::system_clock> tp = chrono::system_clock::now();
     time_t t = chrono::system_clock::to_time_t(tp);
-    tm* _Tm;
+    tm *_Tm = nullptr;
+#ifdef WIN32
     localtime_s(_Tm, &t);
+#elif __unix__
+    localtime_r(&t, _Tm);
+#endif
     strftime(msg, 50, "%Y%m%d%H%M%S", _Tm);
 #endif
     dtg = msg;
@@ -69,15 +73,19 @@ string Hatchetfish::makeTimeStamp()
 #else
     chrono::time_point<chrono::system_clock> tp = chrono::system_clock::now();
     time_t t = chrono::system_clock::to_time_t(tp);
-    tm* _Tm;
+    tm *_Tm = nullptr;
+#ifdef WIN32
     localtime_s(_Tm, &t);
+#elif __unix__
+    localtime_r(&t, _Tm);
+#endif
     strftime(msg, 50, "%T", _Tm);
 #endif
     timeStamp = msg;
     return timeStamp;
 }
 
-const std::string& Hatchetfish::makeMessage(const char* category, const char* msg, va_list args)
+const std::string &Hatchetfish::makeMessage(const char *category, const char *msg, va_list args)
 {
     ostringstream ostr;
     makeTimeStamp();
@@ -100,7 +108,7 @@ const std::string& Hatchetfish::makeMessage(const char* category, const char* ms
     return lastMessage;
 }
 
-const std::string& Hatchetfish::makeMessagefn(const char* category, const char* fn, const char* msg, va_list args)
+const std::string &Hatchetfish::makeMessagefn(const char *category, const char *fn, const char *msg, va_list args)
 {
     ostringstream ostr;
     makeTimeStamp();
@@ -126,7 +134,7 @@ const std::string& Hatchetfish::makeMessagefn(const char* category, const char* 
     return lastMessage;
 }
 
-void Hatchetfish::log(const char* category, const char* msg, ...)
+void Hatchetfish::log(const char *category, const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -137,7 +145,7 @@ void Hatchetfish::log(const char* category, const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::logfn(const char* category, const char* fn, const char* msg, ...)
+void Hatchetfish::logfn(const char *category, const char *fn, const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -148,7 +156,7 @@ void Hatchetfish::logfn(const char* category, const char* fn, const char* msg, .
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::info(const char* msg, ...)
+void Hatchetfish::info(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -159,7 +167,7 @@ void Hatchetfish::info(const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::infofn(const char* fn, const char* msg, ...)
+void Hatchetfish::infofn(const char *fn, const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -170,7 +178,7 @@ void Hatchetfish::infofn(const char* fn, const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::warning(const char* msg, ...)
+void Hatchetfish::warning(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -181,7 +189,7 @@ void Hatchetfish::warning(const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::warningfn(const char* fn, const char* msg, ...)
+void Hatchetfish::warningfn(const char *fn, const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -192,7 +200,7 @@ void Hatchetfish::warningfn(const char* fn, const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::error(const char* msg, ...)
+void Hatchetfish::error(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -203,7 +211,7 @@ void Hatchetfish::error(const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::errorfn(const char* fn, const char* msg, ...)
+void Hatchetfish::errorfn(const char *fn, const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -214,7 +222,7 @@ void Hatchetfish::errorfn(const char* fn, const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::debug(const char* msg, ...)
+void Hatchetfish::debug(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -225,7 +233,7 @@ void Hatchetfish::debug(const char* msg, ...)
         fprintf(fout, "%s\n", lastMessage.c_str());
 }
 
-void Hatchetfish::debugfn(const char* fn, const char* msg, ...)
+void Hatchetfish::debugfn(const char *fn, const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
@@ -241,11 +249,12 @@ void Hatchetfish::flush()
     fflush(fout);
 }
 
-void Hatchetfish::setOutputFile(FILE* fileStream)
+void Hatchetfish::setOutputFile(FILE *fileStream)
 {
     if (fileStream == stdin)
         return;
-    if (fout != NULL && fout != stderr && fout != stdout) {
+    if (fout != NULL && fout != stderr && fout != stdout)
+    {
         fclose(fout);
     }
     if (fileStream == NULL)
@@ -275,9 +284,10 @@ void Hatchetfish::resetClock()
     t0 = t1 = chrono::high_resolution_clock::now();
 }
 
-void Hatchetfish::saveStats(const string& filenameprefix)
+void Hatchetfish::saveStats(const string &filenameprefix)
 {
-    for (auto& stat : stats) {
+    for (auto &stat : stats)
+    {
         computeStat(stat.first);
         ofstream fout_(filenameprefix + stat.first + ".csv", ios::app);
 
@@ -285,7 +295,8 @@ void Hatchetfish::saveStats(const string& filenameprefix)
         fout_ << fixed << setprecision(6);
 
         int i = 0;
-        for (auto& datapoint : stat.second.X) {
+        for (auto &datapoint : stat.second.X)
+        {
             if (i > 300)
                 break;
             fout_ << filenameprefix << "," << i++ << "," << datapoint.timeMeasured << ",";
@@ -296,35 +307,37 @@ void Hatchetfish::saveStats(const string& filenameprefix)
     }
 }
 
-void Hatchetfish::takeStat(const string& name)
+void Hatchetfish::takeStat(const string &name)
 {
     double elapsedTime = getSecondsElapsed();
-    auto& X = stats[name].X;
+    auto &X = stats[name].X;
     double deltaTime = 0.0;
     double r = 0.0;
-    if (!X.empty()) {
+    if (!X.empty())
+    {
         deltaTime = elapsedTime - X.back().timeMeasured;
         r = deltaTime - X.back().x;
     }
 
-    X.push_back({ elapsedTime, deltaTime, r });
+    X.push_back({elapsedTime, deltaTime, r});
 }
 
-void Hatchetfish::takeStat(const string& name, double xval)
+void Hatchetfish::takeStat(const string &name, double xval)
 {
     double elapsedTime = getSecondsElapsed();
-    auto& X = stats[name].X;
+    auto &X = stats[name].X;
     double r = 0.0;
-    if (!X.empty()) {
+    if (!X.empty())
+    {
         r = xval - X.back().x;
     }
 
-    X.push_back({ elapsedTime, xval, r });
+    X.push_back({elapsedTime, xval, r});
 }
 
-void Hatchetfish::resetStat(const string& name)
+void Hatchetfish::resetStat(const string &name)
 {
-    auto& stat = stats[name];
+    auto &stat = stats[name];
     stat.lcl = 0.0;
     stat.ucl = 0.0;
     stat.xbar = 0.0;
@@ -332,25 +345,28 @@ void Hatchetfish::resetStat(const string& name)
     stat.X.clear();
 }
 
-void Hatchetfish::computeStat(const string& name, bool filter)
+void Hatchetfish::computeStat(const string &name, bool filter)
 {
-    auto& stat = stats[name];
+    TimeDataPoints &stat = stats[name];
     stat.lcl = 0.0;
     stat.ucl = 0.0;
     stat.xbar = 0.0;
     stat.rbar = 0.0;
 
     stat.computeStats();
-    if (filter) {
-        auto size = stat.X.size();
-        auto i = 0;
+    if (filter)
+    {
+        size_t size = stat.X.size();
+        size_t i = 0;
         double lastx = 0.0;
         double nextx = stat.xbar;
         // filter out obviously bad data points
-        for (auto& datapoint : stat.X) {
+        for (TimeDataPoint &datapoint : stat.X)
+        {
             lastx = (i == 0) ? stat.xbar : stat.X[i - 1].x;
             nextx = (i < size - 1) ? stat.X[i + 1].x : stat.xbar;
-            if (abs(datapoint.x - stat.xbar) > abs(10.0 * stat.xbar)) {
+            if (abs(datapoint.x - stat.xbar) > abs(10.0 * stat.xbar))
+            {
                 datapoint.x = 0.5 * (nextx + lastx);
             }
             i++;

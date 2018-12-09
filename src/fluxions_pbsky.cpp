@@ -22,7 +22,8 @@
 #include <fluxions_gte_image.hpp>
 #include <fluxions_pbsky.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 using Real = float;
 const int NUM_WAVELENGTHS = 11;
 
@@ -37,23 +38,21 @@ Real wavelengths[NUM_WAVELENGTHS] = {
     600.0f,
     640.0f,
     680.0f,
-    720.0f
-};
+    720.0f};
 
 // weights to integrate the tristimulus values about a
 Real tristimulus[NUM_WAVELENGTHS][3] = {
-    { 0.0f, 0.0f, 0.0f },
-    { 0.0f, 0.0f, 0.0f },
-    { 0.0174f, 0.0018f, 0.0881f },
-    { 0.1056f, 0.0173f, 0.585f },
-    { 0.037f, 0.0656f, 0.2973f },
-    { 0.0359f, 0.2406f, 0.0287f },
-    { 0.2179f, 0.3455f, 0.0009f },
-    { 0.3822f, 0.2433f, 0.0f },
-    { 0.1805f, 0.0768f, 0.0f },
-    { 0.0224f, 0.0087f, 0.0f },
-    { 0.0013f, 0.0005f, 0.0f }
-};
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
+    {0.0174f, 0.0018f, 0.0881f},
+    {0.1056f, 0.0173f, 0.585f},
+    {0.037f, 0.0656f, 0.2973f},
+    {0.0359f, 0.2406f, 0.0287f},
+    {0.2179f, 0.3455f, 0.0009f},
+    {0.3822f, 0.2433f, 0.0f},
+    {0.1805f, 0.0768f, 0.0f},
+    {0.0224f, 0.0087f, 0.0f},
+    {0.0013f, 0.0005f, 0.0f}};
 
 template <typename T>
 T flterrzero(T x)
@@ -92,7 +91,8 @@ void HosekWilkiePBSky::Init(Real turbidity, Color4f albedo_, Real elevation, Rea
     elevation *= (float)FX_DEGREES_TO_RADIANS;
     azimuth *= (float)FX_DEGREES_TO_RADIANS;
 
-    if (this->albedo.r != albedo_.r || this->albedo.g != albedo_.g || this->albedo.b != albedo_.b || this->sunTurbidity != turbidity || this->sunElevation != elevation) {
+    if (this->albedo.r != albedo_.r || this->albedo.g != albedo_.g || this->albedo.b != albedo_.b || this->sunTurbidity != turbidity || this->sunElevation != elevation)
+    {
         Delete();
     }
 
@@ -129,8 +129,10 @@ void HosekWilkiePBSky::Init(Real turbidity, Color4f albedo_, Real elevation, Rea
 
 void HosekWilkiePBSky::Delete()
 {
-    try {
-        for (int i = 0; i < 3; i++) {
+    try
+    {
+        for (int i = 0; i < 3; i++)
+        {
             if (rgbRadianceState[i])
                 arhosekskymodelstate_free(rgbRadianceState[i]);
             rgbRadianceState[i] = nullptr;
@@ -145,7 +147,9 @@ void HosekWilkiePBSky::Delete()
         //		arhosekskymodelstate_free(sunRadianceState[i]);
         //	sunRadianceState[i] = nullptr;
         //}
-    } catch (...) {
+    }
+    catch (...)
+    {
         hflog.error("%s(): unknown error freeing memory.", __FUNCTION__);
     }
 }
@@ -160,11 +164,13 @@ void HosekWilkiePBSky::resetStatisticSamples()
 
 void HosekWilkiePBSky::addStatisticSample(Real amount)
 {
-    if (minValue > amount) {
+    if (minValue > amount)
+    {
         minValue = amount;
         //cout << "minValue: " << minValue << endl;
     }
-    if (maxValue < amount) {
+    if (maxValue < amount)
+    {
         maxValue = amount;
         //cout << "maxValue: " << maxValue << endl;
     }
@@ -172,7 +178,7 @@ void HosekWilkiePBSky::addStatisticSample(Real amount)
     nSamples++;
 }
 
-void HosekWilkiePBSky::ComputeThetaGamma(Real inclination, Real azimuth, Real* outTheta, Real* outGamma) const
+void HosekWilkiePBSky::ComputeThetaGamma(Real inclination, Real azimuth, Real *outTheta, Real *outGamma) const
 {
     Real v[3];
     v[0] = sin(inclination) * cos(azimuth);
@@ -184,7 +190,7 @@ void HosekWilkiePBSky::ComputeThetaGamma(Real inclination, Real azimuth, Real* o
     *outTheta = inclination;
 }
 
-void HosekWilkiePBSky::ComputeThetaGamma(Real x, Real y, Real z, Real* outTheta, Real* outGamma) const
+void HosekWilkiePBSky::ComputeThetaGamma(Real x, Real y, Real z, Real *outTheta, Real *outGamma) const
 {
     Real length = sqrtf(x * x + y * y + z * z);
     Real v[3];
@@ -194,14 +200,20 @@ void HosekWilkiePBSky::ComputeThetaGamma(Real x, Real y, Real z, Real* outTheta,
     Real cosine = clamp(v[0] * sun[0] + v[1] * sun[1] + v[2] * sun[2], -1.0f, 1.0f);
     Real gamma = acos(cosine);
     Real theta = acos(v[2]);
-    if (isfinite(gamma)) {
+    if (isfinite(gamma))
+    {
         *outGamma = gamma;
-    } else {
+    }
+    else
+    {
         *outGamma = 0.0;
     }
-    if (isfinite(theta)) {
+    if (isfinite(theta))
+    {
         *outTheta = theta;
-    } else {
+    }
+    else
+    {
         *outTheta = 0.0;
     }
 }
@@ -221,11 +233,12 @@ Real HosekWilkiePBSky::Compute(Real theta, Real gamma, int index)
     return amount;
 }
 
-void HosekWilkiePBSky::ComputeSunRadiance(Real theta, Real gamma, Color4f& output) const
+void HosekWilkiePBSky::ComputeSunRadiance(Real theta, Real gamma, Color4f &output) const
 {
     Color4f xyz;
 
-    for (int i = 0; i < NUM_WAVELENGTHS; i++) {
+    for (int i = 0; i < NUM_WAVELENGTHS; i++)
+    {
         Real amount = theta > FX_PIOVERTWO ? 0.0f : (float)arhosekskymodel_solar_radiance(sunRadianceState, theta, gamma, wavelengths[i]);
         xyz.r += tristimulus[i][0] * amount;
         xyz.g += tristimulus[i][1] * amount;
@@ -234,10 +247,9 @@ void HosekWilkiePBSky::ComputeSunRadiance(Real theta, Real gamma, Color4f& outpu
 
     // convert XYZ to sRGB
     Real m[3][3] = {
-        { 3.2406f, -1.5372f, -0.4986f },
-        { -0.9689f, 1.8758f, 0.0415f },
-        { 0.0557f, -0.2040f, 1.0570f }
-    };
+        {3.2406f, -1.5372f, -0.4986f},
+        {-0.9689f, 1.8758f, 0.0415f},
+        {0.0557f, -0.2040f, 1.0570f}};
 
     Color4f rgb_linear(
         xyz.r * m[0][0] + xyz.g * m[0][1] + xyz.b * m[0][2],
@@ -264,7 +276,8 @@ Real HosekWilkiePBSky::ComputeSunRadiance2(Real theta, Real gamma, int index)
 
     Color4f xyz;
 
-    for (int i = 0; i < NUM_WAVELENGTHS; i++) {
+    for (int i = 0; i < NUM_WAVELENGTHS; i++)
+    {
         //Real amount = arhosekskymodel_solar_radiance(sunRadianceState[i], theta, gamma, wavelengths[i]);
         amount = (float)arhosekskymodel_inscattered_radiance(sunRadianceState, theta, gamma, wavelengths[i]);
         if (theta < 1.0f)
@@ -288,10 +301,9 @@ Real HosekWilkiePBSky::ComputeSunRadiance2(Real theta, Real gamma, int index)
 
     // convert XYZ to sRGB
     Real m[3][3] = {
-        { 3.2406f, -1.5372f, -0.4986f },
-        { -0.9689f, 1.8758f, 0.0415f },
-        { 0.0557f, -0.2040f, 1.0570f }
-    };
+        {3.2406f, -1.5372f, -0.4986f},
+        {-0.9689f, 1.8758f, 0.0415f},
+        {0.0557f, -0.2040f, 1.0570f}};
 
     Color4f rgb_linear(
         xyz.r * m[0][0] + xyz.g * m[0][1] + xyz.b * m[0][2],
@@ -314,7 +326,7 @@ Real HosekWilkiePBSky::ComputeSunRadiance2(Real theta, Real gamma, int index)
     return 0.0f;
 }
 
-void HosekWilkiePBSky::ComputeSunRadiance3(Real theta, Real gamma, Color4f& output)
+void HosekWilkiePBSky::ComputeSunRadiance3(Real theta, Real gamma, Color4f &output)
 {
     //return Compute(theta, gamma, index);
 
@@ -324,7 +336,8 @@ void HosekWilkiePBSky::ComputeSunRadiance3(Real theta, Real gamma, Color4f& outp
 
     Color4f xyz;
 
-    for (int i = 0; i < NUM_WAVELENGTHS; i++) {
+    for (int i = 0; i < NUM_WAVELENGTHS; i++)
+    {
         //Real amount = arhosekskymodel_solar_radiance(sunRadianceState[i], theta, gamma, wavelengths[i]);
         amount = (float)arhosekskymodel_inscattered_radiance(sunRadianceState, theta, gamma, wavelengths[i]);
 
@@ -346,12 +359,13 @@ void HosekWilkiePBSky::ComputeSunRadiance3(Real theta, Real gamma, Color4f& outp
     output.b = xyz.b;
 }
 
-void HosekWilkiePBSky::ComputeSunRadiance4(Real theta, Real gamma, Color4f& output)
+void HosekWilkiePBSky::ComputeSunRadiance4(Real theta, Real gamma, Color4f &output)
 {
     Color4f xyz;
 
     // Return 0 if we are outside of the domain of this function.
-    if (theta < 0.0 || theta >= FX_PIOVERTWO || gamma < 0.0) {
+    if (theta < 0.0 || theta >= FX_PIOVERTWO || gamma < 0.0)
+    {
         output.r = 0.5f;
         output.g = 0.5f;
         output.b = 0.5f;
@@ -372,12 +386,13 @@ void HosekWilkiePBSky::ComputeSunRadiance4(Real theta, Real gamma, Color4f& outp
         addStatisticSample(output.b);
 }
 
-void HosekWilkiePBSky::ComputeSunRadiance4_NoStatistics(Real theta, Real gamma, Color4f& output) const
+void HosekWilkiePBSky::ComputeSunRadiance4_NoStatistics(Real theta, Real gamma, Color4f &output) const
 {
     Color4f xyz;
 
     // Return 0 if we are outside of the domain of this function.
-    if (theta < 0.0 || theta >= FX_PIOVERTWO || gamma < 0.0) {
+    if (theta < 0.0 || theta >= FX_PIOVERTWO || gamma < 0.0)
+    {
         output.r = 0.0f;
         output.g = 0.0f;
         output.b = 0.0f;
@@ -455,7 +470,7 @@ int classifyCubeFaceFromVector(float x, float y, float z)
     return -1;
 }
 
-void makeST(float x, float y, float z, float* s, float* t, int* whichFace)
+void makeST(float x, float y, float z, float *s, float *t, int *whichFace)
 {
     // ma is absolute value
     float ax = fabs(x);
@@ -476,42 +491,48 @@ void makeST(float x, float y, float z, float* s, float* t, int* whichFace)
     float sc = 0.0f;
     float tc = 0.0f;
     // GL_TEXTURE_CUBE_MAP_POSITIVE_X
-    if (sx && ax >= ay && ax >= az) {
+    if (sx && ax >= ay && ax >= az)
+    {
         ma = ax;
         sc = z;
         tc = y;
         *whichFace = 0;
     }
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_X
-    if (!sx && ax >= ay && ax >= az) {
+    if (!sx && ax >= ay && ax >= az)
+    {
         ma = ax;
         sc = z;
         tc = y;
         *whichFace = 1;
     }
     // GL_TEXTURE_CUBE_MAP_POSITIVE_Y
-    if (sy && ay >= ax && ay >= az) {
+    if (sy && ay >= ax && ay >= az)
+    {
         ma = ay;
         sc = x;
         tc = z;
         *whichFace = 2;
     }
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
-    if (!sy && ay >= ax && ay >= az) {
+    if (!sy && ay >= ax && ay >= az)
+    {
         ma = ay;
         sc = x;
         tc = z;
         *whichFace = 3;
     }
     // GL_TEXTURE_CUBE_MAP_POSITIVE_Z
-    if (sz && az >= ax && az >= ay) {
+    if (sz && az >= ax && az >= ay)
+    {
         ma = az;
         sc = x;
         tc = y;
         *whichFace = 4;
     }
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-    if (!sz && az >= ax && az >= ay) {
+    if (!sz && az >= ax && az >= ay)
+    {
         ma = az;
         sc = x;
         tc = y;
@@ -554,7 +575,8 @@ Vector3f makeCubeVector(int face, float s, float t)
     float sc = 2.0f * s - 1;
     float tc = 2.0f * t - 1;
 
-    switch (face) {
+    switch (face)
+    {
     case 0:
         x = 1.0;
         y = tc;
@@ -641,7 +663,8 @@ Vector3f makeCubeVector2(int face, float s, float t)
     float sc = 2.0f * s - 1;
     float tc = 2.0f * t - 1;
 
-    switch (face) {
+    switch (face)
+    {
     case 0:
         x = 1.0;
         y = tc;
@@ -736,7 +759,7 @@ void PhysicallyBasedSky::SetLocalDate(int day, int month, int year, bool isdst, 
     ComputeSunFromLocale();
 }
 
-void PhysicallyBasedSky::SetCivilDateTime(const Astronomy::PA::CivilDateTime& dtg)
+void PhysicallyBasedSky::SetCivilDateTime(const Astronomy::PA::CivilDateTime &dtg)
 {
     astroCalc.SetDateTime(dtg.day, dtg.month, dtg.year, dtg.isdst, dtg.timeZoneOffset, dtg.hh, dtg.mm, dtg.ss, dtg.ss_frac);
     ComputeSunFromLocale();
@@ -771,17 +794,22 @@ void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sa
 
     // Loop through each texel and compute (s, t) coordinates such that each
     // ray goes the center of each pixel.
-    for (int face = 0; face < 6; face++) {
-        for (int is = 0; is < resolution; is++) {
-            for (int it = 0; it < resolution; it++) {
+    for (int face = 0; face < 6; face++)
+    {
+        for (int is = 0; is < resolution; is++)
+        {
+            for (int it = 0; it < resolution; it++)
+            {
                 float s = (is + 0.5f) / (float)resolution;
                 float t = (it + 0.5f) / (float)resolution;
                 Color4f color;
 
-                for (int curSample = 0; curSample < nSamples; curSample++) {
+                for (int curSample = 0; curSample < nSamples; curSample++)
+                {
                     float sp = s;
                     float tp = t;
-                    if (curSample >= 1) {
+                    if (curSample >= 1)
+                    {
                         sp += randomSampler(-1.0, 1.0) * sampleRadius;
                         tp += randomSampler(-1.0, 1.0) * sampleRadius;
                     }
@@ -796,7 +824,8 @@ void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sa
                     float gamma;
                     pbsky.ComputeThetaGamma(v.x, -v.z, v.y, &theta, &gamma);
 
-                    if (theta >= 0.0f) {
+                    if (theta >= 0.0f)
+                    {
                         pbsky.ComputeSunRadiance4(theta, gamma, sampleColor);
 
                         sampleColor.r = flterrzero(sampleColor.r * sampleScale);
@@ -819,7 +848,9 @@ void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sa
                         //	sampleColor.g = 0.0f;
                         //	sampleColor.b = 0.0f;
                         //}
-                    } else {
+                    }
+                    else
+                    {
                         sampleColor = groundRadiance * sampleScale;
                     }
                     // debug to see if cube map is mapped properly
@@ -844,18 +875,21 @@ void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sa
         }
     }
 
-    if (normalize) {
+    if (normalize)
+    {
         //float average = pbsky.totalValue / pbsky.nSamples;
         float invScale = 1.0f / (sampleScale * pbsky.maxValue);
         //generatedCubeMap.scaleColors(invScale);
         invScale = 1.0f / pbsky.GetSunDiskRadiance().ToVector3().length();
         generatedCubeMap.scaleColors(invScale);
-    } else {
+    }
+    else
+    {
         // float average = pbsky.totalValue / pbsky.nSamples;
-        float invScale = 1.0f / (sampleScale * pbsky.maxValue);
-        //generatedCubeMap.scaleColors(invScale);
-        invScale = 1.0f / pbsky.GetSunDiskRadiance().ToVector3().length();
-        //generatedCubeMap.scaleColors(2.5f * powf(2.0f, -6.0f));
+        // float invScale = 1.0f / (sampleScale * pbsky.maxValue);
+        // generatedCubeMap.scaleColors(invScale);
+        // invScale = 1.0f / pbsky.GetSunDiskRadiance().ToVector3().length();
+        // generatedCubeMap.scaleColors(2.5f * powf(2.0f, -6.0f));
     }
 
     minRgbValue = pbsky.minValue;
@@ -879,12 +913,15 @@ void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normaliz
     float dv = 2.0f / (generatedCylMap.height() - 1.0f);
 
     float u = -1.0f;
-    for (i = 0; i < width; i++) {
+    for (i = 0; i < width; i++)
+    {
         float v = -1.0f;
-        for (j = 0; j < height; j++) {
+        for (j = 0; j < height; j++)
+        {
             Color4f color;
 
-            for (int s = 0; s < nSamples; s++) {
+            for (int s = 0; s < nSamples; s++)
+            {
                 Color4f sampleColor;
                 float us = (float)(u) + randomSampler(-du, du) * sampleRadius;
                 float vs = (float)(v) + randomSampler(-dv, dv) * sampleRadius;
@@ -899,7 +936,8 @@ void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normaliz
                 float gamma;
                 pbsky.ComputeThetaGamma(inclination, azimuth, &theta, &gamma);
 
-                if (theta >= 0.0f) {
+                if (theta >= 0.0f)
+                {
                     //sampleColor.r = pbsky.ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
                     //sampleColor.g = pbsky.ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
                     //sampleColor.b = pbsky.ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
@@ -922,10 +960,13 @@ void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normaliz
         u += du;
     }
 
-    if (normalize) {
+    if (normalize)
+    {
         float invScale = 1.0f / pbsky.maxValue;
-        for (i = 0; i < width; i++) {
-            for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++)
+        {
+            for (j = 0; j < height; j++)
+            {
                 Color4f color = generatedCylMap.getPixel(i, j);
                 color *= invScale;
             }
