@@ -19,6 +19,11 @@
 #include "stdafx.h"
 #include <fluxions_simple_geometry_mesh.hpp>
 
+template class std::vector<Fluxions::SimpleGeometryMesh::AttribInfo>;
+template class std::vector<Fluxions::SimpleGeometryMesh::Index>;
+template class std::vector<Fluxions::SimpleGeometryMesh::Vertex>;
+template class std::vector<Fluxions::SimpleGeometryMesh::Surface>;
+
 namespace Fluxions
 {
 void SimpleGeometryMesh::Reset()

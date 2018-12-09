@@ -320,7 +320,7 @@ void FramebufferObject::AddRenderbuffer(GLenum whichAttachment, GLenum whichInte
 	rt.useMultisamples = useMultisamples;
 	rt.object = 0;
 	rt.projectionViewMatrix = projectionViewMatrix;
-	renderTargets.push_back(pair<GLenum, RenderTarget>(whichAttachment, rt));
+	renderTargets.push_back(std::pair<GLenum, RenderTarget>(whichAttachment, rt));
 	dirty = true;
 }
 
@@ -330,8 +330,8 @@ void FramebufferObject::AddTexture2D(GLenum attachment, GLenum target, GLenum wh
 	rt.attachment = attachment;
 	rt.internalformat = whichInternalformat;
 	rt.generateMipmaps = generateMipmaps;
-	rt.levels = generateMipmaps ? (int)(log(max(width, height)) / log(2.0)) : 1;
-	rt.levels = max(1, rt.levels);
+	rt.levels = generateMipmaps ? (int)(log(std::max(width, height)) / log(2.0)) : 1;
+	rt.levels = std::max(1, rt.levels);
 	rt.object = 0;
 	rt.width = width;
 	rt.height = height;
@@ -340,7 +340,7 @@ void FramebufferObject::AddTexture2D(GLenum attachment, GLenum target, GLenum wh
 	rt.useMultisamples = useMultisamples;
 	rt.target = target;
 	rt.projectionViewMatrix = projectionViewMatrix;
-	renderTargets.push_back(pair<GLenum, RenderTarget>(whichInternalformat, rt));
+	renderTargets.push_back(std::pair<GLenum, RenderTarget>(whichInternalformat, rt));
 	dirty = true;
 }
 
@@ -350,8 +350,8 @@ void FramebufferObject::AddTextureCubeMap(GLenum attachment, GLenum target, GLen
 	rt.attachment = attachment;
 	rt.internalformat = whichInternalformat;
 	rt.generateMipmaps = generateMipmaps;
-	rt.levels = generateMipmaps ? (int)(log(max(width, height)) / log(2.0)) : 1;
-	rt.levels = max(1, rt.levels);
+	rt.levels = generateMipmaps ? (int)(log(std::max(width, height)) / log(2.0)) : 1;
+	rt.levels = std::max(1, rt.levels);
 	rt.object = 0;
 	rt.width = width;
 	rt.height = height;
@@ -360,7 +360,7 @@ void FramebufferObject::AddTextureCubeMap(GLenum attachment, GLenum target, GLen
 	rt.useMultisamples = useMultisamples;
 	rt.target = target;
 	rt.projectionViewMatrix = projectionViewMatrix;
-	renderTargets.push_back(pair<GLenum, RenderTarget>(whichInternalformat, rt));
+	renderTargets.push_back(std::pair<GLenum, RenderTarget>(whichInternalformat, rt));
 	dirty = true;
 }
 } // namespace Fluxions

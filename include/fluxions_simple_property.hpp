@@ -145,7 +145,7 @@ class TSimpleProperty : public SimpleProperty
 	TSimpleProperty(PropertyType propertyType, Args... args)
 		: SimpleProperty(propertyType), value(std::forward<Args>(args)...) {}
 
-	virtual const type_info &GetTypeID() const { return typeid(T); }
+	virtual const std::type_info &GetTypeID() const { return typeid(T); }
 
 	const T &Value() const { return value; }
 	T &Value() { return value; }
@@ -264,7 +264,7 @@ inline std::shared_ptr<TSimpleProperty<T>> DynamicSharedSimplePropertyCast(const
 	if (!ptr || ptr->GetTypeID() != typeid(T))
 		return nullptr;
 
-	return dynamic_pointer_cast<TSimpleProperty<T>>(ptr);
+	return std::dynamic_pointer_cast<TSimpleProperty<T>>(ptr);
 }
 
 template <typename T>
@@ -440,10 +440,10 @@ class SimpleAssociativePropertyList
 	{
 		SharedSimplePropertyPtr ptr = Get(name);
 		if (!ptr)
-			throw bad_cast("T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid");
+			throw std::bad_cast("T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid");
 
 		if (ptr->GetTypeID() != typeid(T))
-			throw bad_cast("T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible");
+			throw std::bad_cast("T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible");
 
 		return *(CastAsPropertyTypeValuePtr<T>(ptr));
 	}

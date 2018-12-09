@@ -456,7 +456,7 @@ bool SimpleMaterialSystem::Save(const std::string &mtllibName, const std::string
         SimpleMaterialLibrary *pmtllib = currentMtlLibPtr;
 
         std::ofstream fout;
-        fout.open(filename.c_str(), ios::out);
+        fout.open(filename.c_str(), std::ios::out);
         if (!fout)
             continue;
         for (auto map = pmtllib->maps.begin(); map != pmtllib->maps.end(); map++)
@@ -832,7 +832,7 @@ void SetMaterialDefaults(SimpleMaterial &mtl)
     mtl.Properties["map_bump"] = MakeSharedStringProperty("");
 }
 
-std::ostream &WriteMaterialstd::ostream &ostr, const SimpleMaterial &mtl)
+std::ostream &WriteMaterial(std::ostream &ostr, const SimpleMaterial &mtl)
 {
     ostr << "Kd ";
     WriteColor3f(ostr, mtl.Kd);
@@ -1010,7 +1010,7 @@ std::ostream &WriteMaterialstd::ostream &ostr, const SimpleMaterial &mtl)
     return ostr;
 }
 
-std::istream &ReadMaterial(istream &istr, SimpleMaterial &mtl)
+std::istream &ReadMaterial(std::istream &istr, SimpleMaterial &mtl)
 {
     return istr;
 }

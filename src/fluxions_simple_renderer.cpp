@@ -233,7 +233,7 @@ void SimpleRenderer<IndexType, GLIndexType>::Index(IndexType index)
 }
 
 template <typename IndexType, GLenum GLIndexType>
-void SimpleRenderer<IndexType, GLIndexType>::Index(vector<IndexType> indices)
+void SimpleRenderer<IndexType, GLIndexType>::Index(std::vector<IndexType> indices)
 {
 	// a baseIndex of < 0 means to use the current surface first vertex as 0
 	for_each(indices.begin(), indices.end(), [&](IndexType i) {

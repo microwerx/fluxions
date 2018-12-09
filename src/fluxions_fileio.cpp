@@ -100,8 +100,8 @@ void FilePathInfo::Set(const std::string &_path)
 {
     Clear();
 
-    regex path_replace("[/\\]+", regex::awk);
-    std::string p = regex_replace(_path, path_replace, "/");
+    std::regex path_replace("[/\\]+", std::regex::awk);
+    std::string p = std::regex_replace(_path, path_replace, "/");
     origpath = p;
 
     // updated to use realpath on POSIX
@@ -218,8 +218,8 @@ std::string FilePathInfo::getFullPathName(const std::string &filename)
 
     outputStr = pathStr;
 #endif
-    regex path_replace("[/\\]+", regex::awk);
-    std::string p = regex_replace(outputStr, path_replace, "/");
+    std::regex path_replace("[/\\]+", std::regex::awk);
+    std::string p = std::regex_replace(outputStr, path_replace, "/");
 
     return p;
 }
@@ -251,8 +251,8 @@ std::string FilePathInfo::getCurrentDirectory()
         output = "";
     }
 #endif
-    regex path_replace("[/\\]+", regex::awk);
-    std::string p = regex_replace(output, path_replace, "/");
+    std::regex path_replace("[/\\]+", std::regex::awk);
+    std::string p = std::regex_replace(output, path_replace, "/");
 
     return p;
 }
@@ -359,10 +359,10 @@ std::string ReadTextFile(const std::string &filename)
         return "";
 
     std::string str;
-    fin.seekg(0, ios::end);
+    fin.seekg(0, std::ios::end);
     size_t size = (size_t)fin.tellg();
     str.resize(size);
-    fin.seekg(0, ios::beg);
+    fin.seekg(0, std::ios::beg);
     fin.read(&str[0], size);
 
     fin.close();
@@ -372,16 +372,16 @@ std::string ReadTextFile(const std::string &filename)
 std::vector<FXubyte> ReadBinaryFile(const std::string &filename)
 {
     std::vector<FXubyte> buffer;
-    std::ifstream fin(filename.c_str(), ios::binary);
+    std::ifstream fin(filename.c_str(), std::ios::binary);
 
     if (!fin)
         return buffer;
 
     std::string str;
-    fin.seekg(0, ios::end);
+    fin.seekg(0, std::ios::end);
     size_t size = (size_t)fin.tellg();
     buffer.resize(size);
-    fin.seekg(0, ios::beg);
+    fin.seekg(0, std::ios::beg);
     fin.read((char *)&buffer[0], size);
 
     fin.close();
@@ -476,13 +476,13 @@ TimeValue GetPathCreationTime(const std::string &path)
         switch (errno)
         {
         case ENOENT:
-            cerr << __func__ << ": file not found" << std::endl;
+            std::cerr << __func__ << ": file not found" << std::endl;
             break;
         case EINVAL:
-            cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
+            std::cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
             break;
         default:
-            cerr << __func__ << ": unknown error in _stat()" << std::endl;
+            std::cerr << __func__ << ": unknown error in _stat()" << std::endl;
         }
     }
     else
@@ -506,13 +506,13 @@ TimeValue GetPathAccessTime(const std::string &path)
         switch (errno)
         {
         case ENOENT:
-            cerr << __func__ << ": file not found" << std::endl;
+            std::cerr << __func__ << ": file not found" << std::endl;
             break;
         case EINVAL:
-            cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
+            std::cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
             break;
         default:
-            cerr << __func__ << ": unknown error in _stat()" << std::endl;
+            std::cerr << __func__ << ": unknown error in _stat()" << std::endl;
         }
     }
     else
@@ -567,12 +567,12 @@ std::string ReadString(std::istream &istr)
     char lastC = 0;
     bool isQuotes = false;
 
-    istr >> ws;
+    istr >> std::ws;
     while (1)
     {
         c = 0;
-        istr >> noskipws >> c;
-        istr >> skipws;
+        istr >> std::noskipws >> c;
+        istr >> std::skipws;
         if (!isQuotes && str.empty() && c == '\"')
         {
             isQuotes = true;
@@ -821,7 +821,7 @@ SphericalHarmonicf ReadSphericalHarmonicf(std::istream &istr)
     }
     else
     {
-        cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
+        std::cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
     }
     return sph;
 }
@@ -840,7 +840,7 @@ SphericalHarmonicd ReadSphericalHarmonicd(std::istream &istr)
     }
     else
     {
-        cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
+        std::cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
     }
     return sph;
 }

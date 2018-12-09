@@ -706,7 +706,7 @@ class SimpleSceneGraph
     SimpleCamera camera;
     SimpleEnvironment environment;
 
-    TResourceManager<string> shaderMaps;
+    TResourceManager<std::string> shaderMaps;
     TResourceManager<SimpleSphere> spheres;
     TResourceManager<SimpleGeometryGroup> geometry;
     TResourceManager<OBJStaticModel> geometryObjects;
@@ -723,7 +723,7 @@ class SimpleSceneGraph
     bool ReadConfFile(const std::string &filename);
     bool ReadObjFile(const std::string &filename, const std::string &name);
     bool ReadTexmap(const std::string &name, const std::string &texmap);
-    bool ReadCamera(const istream &istr);
+    bool ReadCamera(const std::istream &istr);
 
     // Rendering tools
     void ApplySpheresToCurrentProgram();

@@ -111,7 +111,7 @@ class TSphericalHarmonic
 		}
 		else
 		{
-			lastDegree = min(maxDegree, b.maxDegree);
+			lastDegree = std::min(maxDegree, b.maxDegree);
 		}
 		size_t lastIndex = lastDegree * (lastDegree + 1);
 
@@ -139,7 +139,7 @@ class TSphericalHarmonic
 		}
 		else
 		{
-			lastDegree = min(maxDegree, b.maxDegree);
+			lastDegree = std::min(maxDegree, b.maxDegree);
 		}
 		size_t lastIndex = lastDegree * (lastDegree + 1);
 
@@ -383,10 +383,10 @@ void TSphericalHarmonic<VectorType, ScalarType>::readFromFile(const std::string 
 		return;
 
 	std::string str;
-	fin.seekg(0, ios::end);
+	fin.seekg(0, std::ios::end);
 	size_t size = (size_t)fin.tellg();
 	str.resize(size);
-	fin.seekg(0, ios::beg);
+	fin.seekg(0, std::ios::beg);
 	fin.read(&str[0], size);
 
 	fin.close();

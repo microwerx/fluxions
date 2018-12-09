@@ -347,9 +347,9 @@ void GLUTWidget::OnInit(const std::vector<std::string> &args)
 
     glewInit();
 
-    cerr << __FUNCTION__ << "() -- initialized GLUT" << std::endl;
-    cerr << "GL_VERSION: " << glGetString(GL_VERSION) << std::endl;
-    cerr << "GL_VENDOR: " << glGetString(GL_VENDOR) << std::endl;
+    std::cerr << __FUNCTION__ << "() -- initialized GLUT" << std::endl;
+    std::cerr << "GL_VERSION: " << glGetString(GL_VERSION) << std::endl;
+    std::cerr << "GL_VENDOR: " << glGetString(GL_VENDOR) << std::endl;
     // cerr << "GL_EXTENSIONS: "
 
     Widget::OnInit(args);

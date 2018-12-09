@@ -47,7 +47,7 @@ void Socket::Delete()
     m_socketType = SocketType::NONE;
 }
 
-bool Socket::SetupSocket(string endpoint, std::string subPrefix, SocketType socketType)
+bool Socket::SetupSocket(std::string endpoint, std::string subPrefix, SocketType socketType)
 {
     if (!socket)
         return false;

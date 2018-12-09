@@ -127,7 +127,7 @@ void SimpleAssociativePropertyList::Add(const std::string &name, SharedSimplePro
 	if (usedIndex < 0)
 	{
 		// nope, add new element.
-		properties.push_back(pair<string, SharedSimplePropertyPtr>(name, valuePtr));
+		properties.push_back(std::pair<std::string, SharedSimplePropertyPtr>(name, valuePtr));
 		usedIndex = (int)properties.size() - 1;
 		nameIndex[name] = usedIndex;
 	}
@@ -203,7 +203,7 @@ SharedSimplePropertyPtr &SimpleAssociativePropertyList::operator[](const std::st
 	int index = GetIndexOf(name);
 	if (index < 0)
 	{
-		properties.push_back(pair<string, SharedSimplePropertyPtr>(name, SharedSimplePropertyPtr()));
+		properties.push_back(std::pair<std::string, SharedSimplePropertyPtr>(name, SharedSimplePropertyPtr()));
 		index = (int)properties.size() - 1;
 		nameIndex[name] = index;
 	}
@@ -433,7 +433,7 @@ DECLARE_SPECIALIZATION(unsigned)
 DECLARE_SPECIALIZATION(float)
 DECLARE_SPECIALIZATION(bool)
 DECLARE_SPECIALIZATION(double)
-DECLARE_SPECIALIZATION(string)
+DECLARE_SPECIALIZATION(std::string)
 DECLARE_SPECIALIZATION(Vector2f)
 DECLARE_SPECIALIZATION(Vector3f)
 DECLARE_SPECIALIZATION(Vector4f)

@@ -788,7 +788,7 @@ class SimpleRenderer
     void NewObject();
 
     void Index(IndexType index);
-    void Index(vector<IndexType> indices);
+    void Index(std::vector<IndexType> indices);
 
     void VertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
     void Vertex4s(GLshort x, GLshort y, GLshort z, GLshort w);

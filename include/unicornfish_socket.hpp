@@ -100,7 +100,7 @@ class Socket
 	zsock_t *socket = nullptr;
 	zpoller_t *poller = nullptr;
 
-	bool SetupSocket(string endpoint_, std::string subPrefix_, SocketType socketType_);
+	bool SetupSocket(std::string endpoint_, std::string subPrefix_, SocketType socketType_);
 };
 
 using SocketCPtr = Socket *;

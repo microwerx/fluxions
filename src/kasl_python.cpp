@@ -365,7 +365,7 @@ int test_PythonInterpreter(int argc, char **argv)
 
     PythonInterpreter python;
 
-    python.init(string("TestPythonInterpreter"));
+    python.init(std::string("TestPythonInterpreter"));
     python.run();
     python.start();
     bool done = false;

@@ -19,6 +19,11 @@
 #include "stdafx.h"
 #include <fluxions_sphl.hpp>
 
+template class std::vector<Fluxions::TVector3<int>>;
+template class std::vector<Fluxions::SimpleGeometryMesh::Vertex>;
+template class std::vector<unsigned int>;
+template class std::vector<Fluxions::TVector3<float>>;
+
 namespace Fluxions
 {
 
@@ -83,7 +88,7 @@ void Sphl::copyCoefficients(const SimpleSSPHHLight &sphl, int maxDegrees, bool s
 	}
 	else
 	{
-		maxDegree = min(sphl.maxDegree, maxDegrees);
+		maxDegree = std::min(sphl.maxDegree, maxDegrees);
 	}
 
 	makeSimpleSPHLs = simpleSPHLs;
