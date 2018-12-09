@@ -25,7 +25,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 class SimpleGeometryMesh
 {

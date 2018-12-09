@@ -19,8 +19,8 @@
 #include "stdafx.h"
 #include <regex>
 #include <kasl.hpp>
-#include "fluxions_renderer.hpp"
-#include "fluxions_fileio.hpp"
+#include <fluxions_renderer.hpp>
+#include <fluxions_fileio.hpp>
 
 namespace Fluxions
 {

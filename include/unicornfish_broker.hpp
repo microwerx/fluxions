@@ -28,7 +28,6 @@
 
 namespace Uf
 {
-using namespace std;
 
 class Socket;
 class BrokerWorker;

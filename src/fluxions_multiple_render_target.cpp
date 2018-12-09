@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include "fluxions_multiple_render_target.hpp"
+#include <fluxions_multiple_render_target.hpp>
 
 #define IFTOSTRING(thing, value) \
 	if ((thing) == (value))      \

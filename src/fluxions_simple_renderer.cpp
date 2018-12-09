@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include "fluxions.hpp"
+#include <fluxions.hpp>
 
 namespace Fluxions
 {

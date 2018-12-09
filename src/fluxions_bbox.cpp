@@ -18,7 +18,7 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
 #include <algorithm>
-#include "fluxions_bbox.hpp"
+#include <fluxions_bbox.hpp>
 
 #ifdef min
 #undef min

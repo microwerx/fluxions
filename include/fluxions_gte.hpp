@@ -42,7 +42,6 @@
 
 namespace Fluxions
 {
-// using namespace std;
 
 // Matrix Vector Multiplication
 

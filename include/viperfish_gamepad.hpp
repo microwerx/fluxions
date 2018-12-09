@@ -23,7 +23,6 @@
 
 namespace Viperfish
 {
-using namespace std;
 
 class AnalogBitset
 {

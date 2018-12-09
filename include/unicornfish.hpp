@@ -41,7 +41,6 @@
 
 namespace Uf
 {
-using namespace std;
 }
 
 #endif

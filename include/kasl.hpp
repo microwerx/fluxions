@@ -35,7 +35,6 @@
 
 namespace KASL
 {
-using namespace std;
 using StringType = std::string;
 
 enum class TokenType

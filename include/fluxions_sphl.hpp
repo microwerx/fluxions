@@ -24,7 +24,6 @@
 #include <fluxions_gte.hpp>
 #include <fluxions_simple_geometry_mesh.hpp>
 
-using namespace std;
 namespace Fluxions
 {
 

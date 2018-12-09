@@ -17,23 +17,18 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include "fluxions_simple_renderer.hpp"
-
+#include <fluxions_simple_renderer.hpp>
 
 namespace Fluxions
 {
-	//SimpleUniformBuffer::SimpleUniformBuffer()
-	//{
+//SimpleUniformBuffer::SimpleUniformBuffer()
+//{
 
-	//}
+//}
 
+//SimpleUniformBuffer::~SimpleUniformBuffer()
+//{
 
+//}
 
-	//SimpleUniformBuffer::~SimpleUniformBuffer()
-	//{
-
-	//}
-
-
-
-}
+} // namespace Fluxions

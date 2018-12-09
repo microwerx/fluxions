@@ -20,8 +20,8 @@
 #define FLUXIONS_MULTIPLE_RENDER_TARGETS_HPP
 
 #include <fluxions_stdcxx.hpp>
-#include "fluxions_opengl.hpp"
-#include "fluxions_gte.hpp"
+#include <fluxions_opengl.hpp>
+#include <fluxions_gte.hpp>
 
 namespace Fluxions
 {

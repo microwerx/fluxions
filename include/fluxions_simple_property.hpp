@@ -28,7 +28,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 enum class PropertyType
 {
@@ -192,7 +191,7 @@ inline SharedSimplePropertyPtr MakeSharedSimpleProperty(PropertyType propertyTyp
 }
 
 template <typename T>
-TSimpleProperty<T> *CastAsPropertyType(SimpleProperty *ptr)
+inline TSimpleProperty<T> *CastAsPropertyType(SimpleProperty *ptr)
 {
 	if (!ptr || ptr->GetTypeID() != typeid(T))
 		return nullptr;
@@ -201,19 +200,19 @@ TSimpleProperty<T> *CastAsPropertyType(SimpleProperty *ptr)
 }
 
 template <typename T>
-TSimpleProperty<T> *CastAsPropertyType(UniqueSimplePropertyPtr &ptr)
+inline TSimpleProperty<T> *CastAsPropertyType(UniqueSimplePropertyPtr &ptr)
 {
 	return CastAsPropertyType<T>(ptr.get());
 }
 
 template <typename T>
-TSimpleProperty<T> *CastAsPropertyType(SharedSimplePropertyPtr &ptr)
+inline TSimpleProperty<T> *CastAsPropertyType(SharedSimplePropertyPtr &ptr)
 {
 	return CastAsPropertyType<T>(ptr.get());
 }
 
 template <typename T>
-const TSimpleProperty<T> *CastAsPropertyType(const SimpleProperty *ptr)
+inline const TSimpleProperty<T> *CastAsPropertyType(const SimpleProperty *ptr)
 {
 	if (!ptr || ptr->GetTypeID() != typeid(T))
 		return nullptr;
@@ -222,19 +221,19 @@ const TSimpleProperty<T> *CastAsPropertyType(const SimpleProperty *ptr)
 }
 
 template <typename T>
-const TSimpleProperty<T> *CastAsPropertyType(const std::unique_ptr<SimpleProperty> &ptr)
+inline const TSimpleProperty<T> *CastAsPropertyType(const std::unique_ptr<SimpleProperty> &ptr)
 {
 	return CastAsPropertyType<T>(ptr.get());
 }
 
 template <typename T>
-const TSimpleProperty<T> *CastAsPropertyType(const std::shared_ptr<SimpleProperty> &ptr)
+inline const TSimpleProperty<T> *CastAsPropertyType(const std::shared_ptr<SimpleProperty> &ptr)
 {
 	return CastAsPropertyType<T>(ptr.get());
 }
 
 template <typename T>
-const T *CastAsPropertyTypeValuePtr(const SimpleProperty *ptr)
+inline const T *CastAsPropertyTypeValuePtr(const SimpleProperty *ptr)
 {
 	const TSimpleProperty<T> *propertyPtr = CastAsPropertyType<T>(ptr);
 

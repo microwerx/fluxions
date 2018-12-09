@@ -19,6 +19,91 @@
 #include "stdafx.h"
 #include <fluxions_simple_property.hpp>
 
+template class std::shared_ptr<Fluxions::SimpleProperty>;
+template class std::unique_ptr<Fluxions::SimpleProperty>;
+template class std::map<std::string, int>;
+
+// #define DECLARE_PROPERTY_TYPE(ctype, type, TypeName)                         \
+// 	using TypeName##Property = Fluxions::TSimpleProperty<ctype>;             \
+// 	template class Fluxions::TSimpleProperty<ctype>;                         \
+// 	template class std::unique_ptr<TypeName##Property>;                      \
+// 	template class std::shared_ptr<TypeName##Property>;                      \
+// 	template std::unique_ptr<Fluxions::TSimpleProperty<T>> Fluxions::MakeProperty<ctype>(PropertyType::type, value); \
+// 	template std::unique_ptr<Fluxions::TSimpleProperty<T>> Fluxions::MakeUniqueProperty<ctype>(PropertyType::type, value); \
+// 	template std::shared_ptr<Fluxions::TSimpleProperty<T>> Fluxions::MakeSharedProperty<ctype>(PropertyType::type, value);\
+// 	template Fluxions::UniqueSimplePropertyPtr Fluxions::MakeSimpleProperty<ctype>(PropertyType::type, value); \
+// 	template Fluxions::CastAsPropertyTypeValuePtr<ctype>(ptr);               \
+// 	template Fluxions::DynamicSharedSimplePropertyCast<ctype>(ptr);          \
+// 	template Fluxions::StaticUniqueSimplePropertyCast<ctype>(ptr);           \
+
+// DECLARE_PROPERTY_TYPE(bool, BOOL, Bool)
+// DECLARE_PROPERTY_TYPE(int, INT, Int)
+// DECLARE_PROPERTY_TYPE(float, FLOAT, Float)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector2f, VEC2, Vec2)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector3f, VEC3, Vec3)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector4f, VEC4, Vec4)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector2i, BVEC2, BVec2)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector3i, BVEC3, BVec3)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector4i, BVEC4, BVec4)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector2i, IVEC2, IVec2)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector3i, IVEC3, IVec3)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector4i, IVEC4, IVec4)
+// DECLARE_PROPERTY_TYPE(Fluxions::Color3f, VEC3, Col3)
+// DECLARE_PROPERTY_TYPE(Fluxions::Color4f, VEC4, Col4)
+// DECLARE_PROPERTY_TYPE(Fluxions::Matrix2f, MAT2, Mat2)
+// DECLARE_PROPERTY_TYPE(Fluxions::Matrix3f, MAT3, Mat3)
+// DECLARE_PROPERTY_TYPE(Fluxions::Matrix4f, MAT4, Mat4)
+// DECLARE_PROPERTY_TYPE(int, SAMPLER2D, Sampler2D)
+// DECLARE_PROPERTY_TYPE(int, SAMPLERCUBE, SamplerCube)
+// DECLARE_PROPERTY_TYPE(unsigned, UINT, Uint)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector2ui, UVEC2, UVec2)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector3ui, UVEC3, UVec3)
+// DECLARE_PROPERTY_TYPE(Fluxions::Vector4ui, UVEC4, UVec4)
+// DECLARE_PROPERTY_TYPE(Fluxions::Matrix2f, MAT2X2, Mat2x2)
+// //DECLARE_PROPERTY_TYPE(Fluxions::Matrix2x3f, MAT2X3, Mat2x3)
+// //DECLARE_PROPERTY_TYPE(Fluxions::Matrix2x4f, MAT2X4, Mat2x4)
+// //DECLARE_PROPERTY_TYPE(Fluxions::Matrix3x2f, MAT3X2, Mat3x2)
+// DECLARE_PROPERTY_TYPE(Fluxions::Matrix3f, MAT3X3, Mat3x3)
+// //DECLARE_PROPERTY_TYPE(Fluxions::Matrix3x4f, MAT3X4, Mat3x4)
+// //DECLARE_PROPERTY_TYPE(Fluxions::Matrix4x2f, MAT4X2, Mat4x2)
+// //DECLARE_PROPERTY_TYPE(Fluxions::Matrix4x3f, MAT4X3, Mat4x3)
+// DECLARE_PROPERTY_TYPE(Fluxions::Matrix4f, MAT4X4, Mat4x4)
+// DECLARE_PROPERTY_TYPE(int, SAMPLER3D, Sampler3D)
+// DECLARE_PROPERTY_TYPE(int, SAMPLERCUBESHADOW, SamplerCubeShadow)
+// DECLARE_PROPERTY_TYPE(int, SAMPLER2DSHADOW, Sampler2DShadow)
+// DECLARE_PROPERTY_TYPE(int, SAMPLER2DARRAY, Sampler2DArray)
+// DECLARE_PROPERTY_TYPE(int, SAMPLER2DARRAYSHADOW, Sampler2DArrayShadow)
+// DECLARE_PROPERTY_TYPE(int, ISAMPLER2D, ISampler2D)
+// DECLARE_PROPERTY_TYPE(int, ISAMPLER3D, ISampler3D)
+// DECLARE_PROPERTY_TYPE(int, ISAMPLERCUBE, ISamplerCube)
+// DECLARE_PROPERTY_TYPE(int, ISAMPLER2DARRAY, ISampler2DArray)
+// DECLARE_PROPERTY_TYPE(int, USAMPLER2D, USampler2D)
+// DECLARE_PROPERTY_TYPE(int, USAMPLER3D, USampler3D)
+// DECLARE_PROPERTY_TYPE(int, USAMPLERCUBE, USamplerCube)
+// DECLARE_PROPERTY_TYPE(int, USAMPLER2DARRAY, USampler2DArray)
+// DECLARE_PROPERTY_TYPE(int, ISAMPLER2DMS, ISampler2DMS)
+// DECLARE_PROPERTY_TYPE(int, IIMAGE2D, IImage2D)
+// DECLARE_PROPERTY_TYPE(int, IIMAGE3D, IImage3D)
+// DECLARE_PROPERTY_TYPE(int, IIMAGECUBE, IImageCube)
+// DECLARE_PROPERTY_TYPE(int, IIMAGE2DARRAY, IImage2DArray)
+// DECLARE_PROPERTY_TYPE(unsigned, ATOMIC_UINT, AtomicUint)
+// DECLARE_PROPERTY_TYPE(int, USAMPLER2DMS, USampler2DMS)
+// DECLARE_PROPERTY_TYPE(int, UIMAGE2D, UImage2D)
+// DECLARE_PROPERTY_TYPE(int, UIMAGE3D, UImage3D)
+// DECLARE_PROPERTY_TYPE(int, UIMAGECUBE, UImageCube)
+// DECLARE_PROPERTY_TYPE(int, UIMAGE2DARRAY, UImage2DArray)
+// DECLARE_PROPERTY_TYPE(int, SAMPLER2DMS, Sampler2DMS)
+// DECLARE_PROPERTY_TYPE(int, IMAGE2D, Image2D)
+// DECLARE_PROPERTY_TYPE(int, IMAGE3D, Image3D)
+// DECLARE_PROPERTY_TYPE(int, IMAGECUBE, ImageCube)
+// DECLARE_PROPERTY_TYPE(int, IMAGE2DARRAY, Image2DArray)
+// DECLARE_PROPERTY_TYPE(double, DOUBLE, Double)
+// DECLARE_PROPERTY_TYPE(int, UNIFORM_BLOCK, UniformBlock)
+// DECLARE_PROPERTY_TYPE(int, BUFFER_BLOCK, BufferBlock)
+// DECLARE_PROPERTY_TYPE(std::string, STRING, String)
+
+// #undef DECLARE_PROPERTY_TYPE
+
 namespace Fluxions
 {
 SimpleAssociativePropertyList::SimpleAssociativePropertyList()

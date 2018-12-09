@@ -19,19 +19,18 @@
 #ifndef FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 #define FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 
-#include "fluxions_corona.hpp"
-#include "fluxions_fileio.hpp"
-#include "fluxions_gte.hpp"
-#include "fluxions_multiple_render_target.hpp"
-#include "fluxions_opengl.hpp"
-#include "fluxions_pbsky.hpp"
-#include "fluxions_resource_manager.hpp"
-#include "fluxions_simple_materials.hpp"
+#include <fluxions_corona.hpp>
+#include <fluxions_fileio.hpp>
+#include <fluxions_gte.hpp>
+#include <fluxions_multiple_render_target.hpp>
+#include <fluxions_opengl.hpp>
+#include <fluxions_pbsky.hpp>
+#include <fluxions_resource_manager.hpp>
+#include <fluxions_simple_materials.hpp>
 #include <fluxions_stdcxx.hpp>
 
 namespace Fluxions
 {
-using namespace std;
 
 struct SimpleRenderConfiguration
 {

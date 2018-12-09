@@ -25,7 +25,6 @@
 
 namespace Viperfish
 {
-using namespace std;
 
 class ImGuiWidget : public Widget
 {

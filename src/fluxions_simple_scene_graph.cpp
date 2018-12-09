@@ -16,12 +16,12 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "fluxions_simple_scene_graph.hpp"
-#include "fluxions.hpp"
-#include "fluxions_fileio.hpp"
 #include "stdafx.h"
 #include <future>
 #include <stdio.h>
+#include <fluxions_simple_scene_graph.hpp>
+#include <fluxions.hpp>
+#include <fluxions_fileio.hpp>
 
 namespace Fluxions
 {

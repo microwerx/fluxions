@@ -26,7 +26,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 namespace SSPHH
 {

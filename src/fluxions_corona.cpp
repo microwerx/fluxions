@@ -16,13 +16,18 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "fluxions_corona.hpp"
-#include "fluxions.hpp"
 #include "stdafx.h"
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <fluxions_corona.hpp>
+#include <fluxions.hpp>
+
+template class std::vector<Fluxions::OBJStaticModel::Vertex>;
+template class std::vector<GLuint>;
+template class std::vector<Fluxions::OBJStaticModel::Surface>;
+template class std::map<std::string, Fluxions::OBJStaticModel>;
 
 namespace Fluxions
 {
@@ -71,8 +76,6 @@ OBJStaticModel::~OBJStaticModel()
 
 bool OBJStaticModel::LoadOBJ(const string &filename)
 {
-    using namespace std;
-
     bool cacheDoesNotExist = true;
     string cache_filename = filename + ".cache";
 

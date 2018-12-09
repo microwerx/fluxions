@@ -22,8 +22,8 @@
 
 #include <float.h>
 #include <numeric>
-#include "fluxions_gte.hpp"
-#include "fluxions_gte_vector3.hpp"
+#include <fluxions_gte.hpp>
+#include <fluxions_gte_vector3.hpp>
 
 namespace Fluxions
 {

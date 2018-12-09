@@ -31,7 +31,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 // Some C routines to compute legendre polynomials and spherical harmonics
 double legendre_polynomial(int l, int m, double x);

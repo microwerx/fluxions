@@ -27,7 +27,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 namespace ES2
 {

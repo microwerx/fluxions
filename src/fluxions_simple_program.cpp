@@ -16,16 +16,17 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "fluxions_simple_renderer.hpp"
 #include "stdafx.h"
 #include <iostream>
+#include <fluxions_simple_renderer.hpp>
 
-namespace Fluxions {
-using namespace std;
-
-const char* SimpleProgram::AttribUniformInfo::GetNameOfType()
+namespace Fluxions
 {
-    switch (type) {
+
+const char *SimpleProgram::AttribUniformInfo::GetNameOfType()
+{
+    switch (type)
+    {
     case GL_INT:
         return "GL_INT";
     case GL_INT_VEC2:
@@ -157,14 +158,15 @@ void SimpleProgram::Create()
 
 void SimpleProgram::Delete()
 {
-    if (program) {
+    if (program)
+    {
         hflog.info("%s(): program %d deleted.", __FUNCTION__, program);
         glDeleteProgram(program);
         program = 0;
     }
 }
 
-GLint SimpleProgram::GetAttribLocation(const char* name)
+GLint SimpleProgram::GetAttribLocation(const char *name)
 {
     if (!linked)
         return -1;
@@ -174,7 +176,7 @@ GLint SimpleProgram::GetAttribLocation(const char* name)
     return it->second.index;
 }
 
-GLint SimpleProgram::GetUniformLocation(const char* name)
+GLint SimpleProgram::GetUniformLocation(const char *name)
 {
     if (!linked)
         return -1;
@@ -184,7 +186,7 @@ GLint SimpleProgram::GetUniformLocation(const char* name)
     return it->second.index;
 }
 
-GLint SimpleProgram::GetUniformBlockIndex(const char* name)
+GLint SimpleProgram::GetUniformBlockIndex(const char *name)
 {
     if (!linked)
         return -1;
@@ -200,16 +202,19 @@ void SimpleProgram::Use()
     glUseProgram(program);
 }
 
-bool SimpleProgram::ApplyUniform(const string& uniformName, SimpleUniform uniform)
+bool SimpleProgram::ApplyUniform(const string &uniformName, SimpleUniform uniform)
 {
     if (!linked)
         return false;
     GLint loc = GetUniformLocation(uniformName.c_str());
-    if (loc >= 0) {
+    if (loc >= 0)
+    {
         //uniform.location = loc;
         uniform.SetProgramUniform(loc);
         return true;
-    } else {
+    }
+    else
+    {
         // hflog.warning("%s(): Program %i tried to set invalid/unused uniform %s", __FUNCTION__, program, uniformName.c_str());
         return false;
     }
@@ -219,17 +224,21 @@ void SimpleProgram::ApplyUniforms(map<string, SimpleUniform> uniforms)
 {
     if (!linked)
         return;
-    for (auto it = uniforms.begin(); it != uniforms.end(); ++it) {
+    for (auto it = uniforms.begin(); it != uniforms.end(); ++it)
+    {
         GLint loc = GetUniformLocation(it->first.c_str());
-        if (loc >= 0) {
+        if (loc >= 0)
+        {
             it->second.SetProgramUniform(loc);
-        } else {
+        }
+        else
+        {
             hflog.info("%s(): unable to set uniform %s (%d) for program %d.", __FUNCTION__, it->first.c_str(), loc, program);
         }
     }
 }
 
-void SimpleProgram::AttachShaders(shared_ptr<SimpleShader>& shaderPtr)
+void SimpleProgram::AttachShaders(shared_ptr<SimpleShader> &shaderPtr)
 {
     if (!shaderPtr)
         return;
@@ -239,7 +248,7 @@ void SimpleProgram::AttachShaders(shared_ptr<SimpleShader>& shaderPtr)
     linked = false;
 }
 
-void SimpleProgram::BindAttribLocation(GLuint index, const char* name)
+void SimpleProgram::BindAttribLocation(GLuint index, const char *name)
 {
     glBindAttribLocation(program, index, name);
     linked = false;
@@ -247,14 +256,15 @@ void SimpleProgram::BindAttribLocation(GLuint index, const char* name)
 
 bool SimpleProgram::Link()
 {
-    if (program == 0 || !glIsProgram(program)) {
+    if (program == 0 || !glIsProgram(program))
+    {
         hflog.error("%s(): program does not exist", __FUNCTION__, program);
         return false;
     }
 
     auto numAttached = 0;
     vector<shared_ptr<SimpleShader>>::iterator shaderIt;
-    for (auto& shaderIt : shaders) // shaderIt = shaders.begin(); shaderIt != shaders.end(); ++shaderIt)
+    for (auto &shaderIt : shaders) // shaderIt = shaders.begin(); shaderIt != shaders.end(); ++shaderIt)
     {
         GLuint shader = shaderIt->shader;
         glAttachShader(program, shader);
@@ -282,7 +292,8 @@ bool SimpleProgram::Link()
         linked = false;
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufSize);
     infoLog.resize(bufSize);
-    if (bufSize > 0) {
+    if (bufSize > 0)
+    {
         glGetProgramInfoLog(program, bufSize, NULL, &infoLog[0]);
     }
 
@@ -291,18 +302,21 @@ bool SimpleProgram::Link()
     glGetProgramiv(program, GL_VALIDATE_STATUS, &validateStatus_);
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufSize);
     validateLog.resize(bufSize);
-    if (bufSize > 0) {
+    if (bufSize > 0)
+    {
         glGetProgramInfoLog(program, 0, NULL, &validateLog[0]);
     }
 
-    for (shaderIt = shaders.begin(); shaderIt != shaders.end(); ++shaderIt) {
+    for (shaderIt = shaders.begin(); shaderIt != shaders.end(); ++shaderIt)
+    {
         // (*shaderIt).reset();
     }
     // shaders.clear();
 
     activeAttributes.clear();
     activeUniforms.clear();
-    if (linked) {
+    if (linked)
+    {
         // get list of active attributes/uniforms
         char buffer[4096];
         int length;
@@ -318,7 +332,8 @@ bool SimpleProgram::Link()
         glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribLength);
         glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttribs);
 
-        for (int i = 0; i < numUniforms; i++) {
+        for (int i = 0; i < numUniforms; i++)
+        {
             glGetActiveUniform(program, i, maxUniformLength, &length, &size, &type, buffer);
             string name = buffer;
             activeUniforms[name].index = glGetUniformLocation(program, buffer);
@@ -328,7 +343,8 @@ bool SimpleProgram::Link()
             hflog.info("%s(): uniform (%02d) %20s %s", __FUNCTION__, activeUniforms[name].index, activeUniforms[name].GetNameOfType(), name.c_str());
         }
 
-        for (int i = 0; i < numAttribs; i++) {
+        for (int i = 0; i < numAttribs; i++)
+        {
             glGetActiveAttrib(program, i, maxAttribLength, &length, &size, &type, buffer);
             string name = buffer;
             activeAttributes[name].index = glGetAttribLocation(program, buffer);
@@ -338,19 +354,20 @@ bool SimpleProgram::Link()
         }
     }
 
-    if (linked) {
+    if (linked)
+    {
         hflog.info("%s(): program %d linked.", __FUNCTION__, program);
     }
 
     return linked;
 }
 
-const string& SimpleProgram::GetInfoLog()
+const string &SimpleProgram::GetInfoLog()
 {
     return infoLog;
 }
 
-void SimpleProgram::SetUniformBlock(const string& uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size)
+void SimpleProgram::SetUniformBlock(const string &uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size)
 {
     GLuint blockIndex = glGetUniformBlockIndex(program, uniformBlockName.c_str());
     glUniformBlockBinding(program, blockIndex, blockBindingIndex);
@@ -384,7 +401,8 @@ void SimpleUniformBlockSystem::Create(GLsizei totalMemory, GLuint blockIndex)
 
 void SimpleUniformBlockSystem::Delete()
 {
-    if (uniformBlockBufferId != 0) {
+    if (uniformBlockBufferId != 0)
+    {
         hflog.info("%s(): uniform block %d deleted.", __FUNCTION__, uniformBlockBufferId);
         glDeleteBuffers(1, &uniformBlockBufferId);
         uniformBlockBufferId = 0;
@@ -399,10 +417,10 @@ void SimpleUniformBlockSystem::Update()
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void SimpleUniformBlockSystem::UpdateSubData(GLsizei offset, GLsizei size, GLbyte* data)
+void SimpleUniformBlockSystem::UpdateSubData(GLsizei offset, GLsizei size, GLbyte *data)
 {
     glBindBuffer(GL_UNIFORM_BUFFER, uniformBlockBufferId);
     glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
-}
+} // namespace Fluxions

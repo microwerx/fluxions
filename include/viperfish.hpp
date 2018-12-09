@@ -39,7 +39,6 @@
 
 namespace Viperfish
 {
-using namespace std;
 
 template <class T, class... _Types>
 static shared_ptr<T> MakeShared(_Types &&... _Args) { return shared_ptr<T>(new T(forward<_Types>(_Args)...)); }

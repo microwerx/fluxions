@@ -24,7 +24,6 @@
 #include <fluxions_simple_scene_graph.hpp>
 #include <fluxions_sphl.hpp>
 
-using namespace std;
 namespace Fluxions
 {
 class SphlSampler

@@ -25,7 +25,6 @@
 
 namespace Uf
 {
-using namespace std;
 
 class Curl
 {

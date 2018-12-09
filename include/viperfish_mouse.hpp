@@ -22,11 +22,12 @@
 #include <fluxions_gte.hpp>
 #include <viperfish_utilities.hpp>
 
-namespace Viperfish {
-using namespace std;
+namespace Viperfish
+{
 using namespace Fluxions;
 
-struct MouseDragState {
+struct MouseDragState
+{
     int button;
     Vector2i startPosition;
     Vector2i endPosition;
@@ -42,26 +43,29 @@ struct MouseDragState {
     void Update(Vector2i newPosition, double currentTime);
 };
 
-struct MouseClickState {
+struct MouseClickState
+{
     int button;
     Vector2i position;
     Vector2i startPosition;
     Vector2i dposition;
     double clickTime;
 
-    void FillFromDrag(const MouseDragState& mds);
+    void FillFromDrag(const MouseDragState &mds);
 };
 
-struct MouseDoubleClickState {
+struct MouseDoubleClickState
+{
     int button;
     Vector2i position;
     Vector2i deltaPosition;
     double deltaTime;
-    void FillFromClicks(int button, const MouseClickState& mcs1, const MouseClickState& mcs2);
+    void FillFromClicks(int button, const MouseClickState &mcs1, const MouseClickState &mcs2);
     bool IsDoubleClick() const;
 };
 
-struct MouseState {
+struct MouseState
+{
     map<int, bool> buttons;
     Vector2i position;
     Vector2i previousPosition;
@@ -77,9 +81,9 @@ struct MouseState {
     void OnMove(int x, int y);
     void OnButtonDown(int button);
     void OnButtonUp(int button);
-    void OnDrag(const MouseDragState& mds);
-    void OnClick(const MouseClickState& mcs);
-    void OnDoubleClick(const MouseDoubleClickState& mdcs);
+    void OnDrag(const MouseDragState &mds);
+    void OnClick(const MouseClickState &mcs);
+    void OnDoubleClick(const MouseDoubleClickState &mdcs);
 };
 } // namespace Viperfish
 

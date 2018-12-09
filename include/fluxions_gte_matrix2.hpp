@@ -22,17 +22,18 @@
 #include <fluxions_gte_math.hpp>
 #include <type_traits>
 
-namespace Fluxions {
-using namespace std;
+namespace Fluxions
+{
 
 template <typename T>
-class TMatrix2 {
-public:
+class TMatrix2
+{
+  public:
     T m11, m21;
     T m12, m22;
 
-    constexpr T* ptr() noexcept { return &m11; }
-    constexpr const T* const_ptr() const noexcept { return &m11; }
+    constexpr T *ptr() noexcept { return &m11; }
+    constexpr const T *const_ptr() const noexcept { return &m11; }
 
     using type = T;
 
@@ -68,14 +69,14 @@ public:
 
     constexpr TMatrix2(const T M[4]) noexcept
     {
-        T* m = &m11;
+        T *m = &m11;
         m[0] = M[0];
         m[1] = M[1];
         m[2] = M[2];
         m[3] = M[3];
     }
 
-    constexpr TMatrix2(const TMatrix2<T>& M) noexcept
+    constexpr TMatrix2(const TMatrix2<T> &M) noexcept
     {
         m11 = M.m11;
         m12 = M.m12;
@@ -83,7 +84,7 @@ public:
         m22 = M.m22;
     }
 
-    constexpr TMatrix2(TMatrix2<T>&& M) noexcept
+    constexpr TMatrix2(TMatrix2<T> &&M) noexcept
     {
         m11 = std::move(M.m11);
         m12 = std::move(M.m12);
@@ -91,7 +92,7 @@ public:
         m22 = std::move(M.m22);
     }
 
-    constexpr TMatrix2<T>& operator=(const TMatrix2<T>& M) noexcept
+    constexpr TMatrix2<T> &operator=(const TMatrix2<T> &M) noexcept
     {
         m11 = M.m11;
         m12 = M.m12;
@@ -100,7 +101,7 @@ public:
         return *this;
     }
 
-    constexpr TMatrix2<T>& operator=(TMatrix2<T>&& M) noexcept
+    constexpr TMatrix2<T> &operator=(TMatrix2<T> &&M) noexcept
     {
         m11 = std::move(M.m11);
         m12 = std::move(M.m12);
@@ -127,24 +128,24 @@ public:
         return *this = MakeZero();
     }
 
-    constexpr auto MultMatrix(const TMatrix2<T>& M) noexcept
+    constexpr auto MultMatrix(const TMatrix2<T> &M) noexcept
     {
         return *this = (TMatrix2<T>)multiply(*this, M);
     }
 
-    constexpr auto operator*=(const TMatrix2<T>& M) noexcept
+    constexpr auto operator*=(const TMatrix2<T> &M) noexcept
     {
         return *this = (TMatrix2<T>)multiply(*this, M);
     }
 
-    constexpr auto operator+=(const TMatrix2<T>& M) noexcept
+    constexpr auto operator+=(const TMatrix2<T> &M) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 + M.m11, m12 + M.m12,
                    m21 + M.m21, m22 + M.m22);
     }
 
-    constexpr auto operator-=(const TMatrix2<T>& M) noexcept
+    constexpr auto operator-=(const TMatrix2<T> &M) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 - M.m11, m12 - M.m12,
@@ -274,7 +275,7 @@ public:
     }
 
     template <typename U>
-    static constexpr auto multiply(const TMatrix2<T>& m1, const TMatrix2<U> m2) noexcept
+    static constexpr auto multiply(const TMatrix2<T> &m1, const TMatrix2<U> m2) noexcept
     {
         return TMatrix2<common_type_t<T, U>>(
             m1.m11 * m2.m11 + m1.m12 * m2.m21,

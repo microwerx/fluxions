@@ -17,9 +17,9 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include "fluxions_opengl.hpp"
-#include "fluxions_es2_state_info.hpp"
-#include "fluxions_es2_renderer.hpp"
+#include <fluxions_opengl.hpp>
+#include <fluxions_es2_state_info.hpp>
+#include <fluxions_es2_renderer.hpp>
 
 namespace Fluxions
 {

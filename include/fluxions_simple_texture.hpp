@@ -20,7 +20,7 @@
 #define FLUXIONS_SIMPLE_TEXTURE_HPP
 
 #include <fluxions_stdcxx.hpp>
-#include "fluxions_opengl.hpp"
+#include <fluxions_opengl.hpp>
 
 namespace Fluxions
 {

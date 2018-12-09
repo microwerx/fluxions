@@ -24,7 +24,6 @@
 
 namespace Uf
 {
-using namespace std;
 
 class Message;
 

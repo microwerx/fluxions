@@ -23,14 +23,13 @@
 #include <vector>
 #include <map>
 #include <algorithm>
-#include "fluxions_gte.hpp"
-#include "fluxions_simple_renderer.hpp"
-#include "fluxions_bbox.hpp"
-#include "fluxions_precompiled_models.hpp"
+#include <fluxions_gte.hpp>
+#include <fluxions_simple_renderer.hpp>
+#include <fluxions_bbox.hpp>
+#include <fluxions_precompiled_models.hpp>
 
 namespace Fluxions
 {
-// using namespace std;
 
 class OBJStaticModel
 {

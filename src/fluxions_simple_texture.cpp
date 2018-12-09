@@ -17,13 +17,13 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include "fluxions_opengl.hpp"
-#include "fluxions_simple_texture.hpp"
 #ifdef WIN32
 #include <SDL2/SDL_image.h>
 #else
 #include <SDL2/SDL_image.h>
 #endif
+#include <fluxions_opengl.hpp>
+#include <fluxions_simple_texture.hpp>
 
 namespace Fluxions
 {

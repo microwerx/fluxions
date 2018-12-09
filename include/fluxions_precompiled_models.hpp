@@ -19,7 +19,7 @@
 #ifndef FLUXIONS_PRECOMPILED_MODELS_HPP
 #define FLUXIONS_PRECOMPILED_MODELS_HPP
 
-#include "fluxions_opengl.hpp"
+#include <fluxions_opengl.hpp>
 
 namespace Fluxions
 {

@@ -24,7 +24,6 @@
 
 namespace Viperfish
 {
-using namespace std;
 
 struct KeyboardState
 {

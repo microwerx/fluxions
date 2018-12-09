@@ -17,10 +17,10 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include "fluxions_gte_quaternion.hpp"
+#include <fluxions_gte_quaternion.hpp>
 
 namespace Fluxions
 {
-	template class TQuaternion<float>;
-	template class TQuaternion<double>;
-}
+template class TQuaternion<float>;
+template class TQuaternion<double>;
+} // namespace Fluxions

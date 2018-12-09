@@ -32,7 +32,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 class SimpleUniform
 {

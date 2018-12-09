@@ -17,13 +17,13 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include "fluxions_ssphh.hpp"
+#include <fluxions_ssphh.hpp>
 
 namespace Fluxions
 {
-	namespace SSPHH
-	{
+namespace SSPHH
+{
 
-	} // namespace SSPHH
+} // namespace SSPHH
 
 } // namespace Fluxions

@@ -33,7 +33,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 class OpenGLNameTranslator
 {

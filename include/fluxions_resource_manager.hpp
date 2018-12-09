@@ -27,7 +27,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 extern const string BlankString;
 

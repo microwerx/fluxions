@@ -26,7 +26,7 @@ GCH = $(SRCDIR)/stdafx.h.gch
 CC = gcc
 CCFLAGS = -Wall -I$(INCDIR) -I$(DEP_INCDIR) `python3-config --includes`
 CXX = g++
-CXXFLAGS = -std=c++14 -g -Wall -I$(INCDIR) -I$(DEP_INCDIR) `python3-config --includes`
+CXXFLAGS = -std=c++14 -g -fno-implicit-templates -Wall -I$(INCDIR) -I$(DEP_INCDIR) `python3-config --includes`
 LDFLAGS = -LGLEW -LGL -LGLU -Lglut
 
 .PHONY: all clean precompiled

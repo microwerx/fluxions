@@ -41,7 +41,6 @@
 
 namespace Fluxions
 {
-using namespace std;
 
 // const string BlankString;
 

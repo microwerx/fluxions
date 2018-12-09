@@ -20,7 +20,7 @@
 #define FLUXIONS_ES2_RENDERER_HPP
 
 #include <memory>
-#include "fluxions_renderer.hpp"
+#include <fluxions_renderer.hpp>
 
 namespace Fluxions
 {

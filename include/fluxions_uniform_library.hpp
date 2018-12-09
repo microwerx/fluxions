@@ -27,11 +27,10 @@
 #include <vector>
 #include <map>
 
-#include "fluxions.hpp"
+#include <fluxions.hpp>
 
 namespace Fluxions
 {
-// using namespace std;
 }
 
 #endif
