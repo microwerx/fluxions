@@ -1,12 +1,3 @@
-# FLUXIONS_SRCDIR = src
-# FLUXIONS_INCDIR = include
-# FLUXIONS_OBJDIR = build
-# FLUXIONS_SOURCES = $(wildcard $(FLUXIONS_SRCDIR)/*.cpp)
-# FLUXIONS_HEADERS = $(wildcard $(FLUXIONS_INCDIR)/*.hpp)
-# FLUXIONS_OBJECTS = $(patsubst $(FLUXIONS_SRCDIR)/%.cpp,$(FLUXIONS_OBJDIR)/%.o,$(FLUXIONS_SOURCES))
-# FLUXIONS_TARGET = build/libfluxions.a
-# FLUXIONS_GCH = $(FLUXIONS_SRCDIR)/stdafx.h.gch
-
 # requires the following packages
 # libczmq-dev libzmq3-dev libcurl4-gnutls-dev libsodium-dev zlib1g-dev python3-dev freeglut3-dev libglew-dev
 # development packages
@@ -31,11 +22,6 @@ DEPOBJECTS = $(patsubst $(DEP_SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(DEPCXXSOURCES)) $(pa
 OBJECTS = $(SRCOBJECTS) $(DEPOBJECTS)
 TARGET = build/libfluxions.a
 GCH = $(SRCDIR)/stdafx.h.gch
-
-# DEP_SRCDIR = dep/src
-# DEP_SOURCES = $(wildcard $(DEP_SRCDIR)/*.c*)
-# DEP_HEADERS = $(wildcard $(DEP_INCDIR)/*.h*)
-# DEP_OBJECTS = $(DEP_SOURCES:.cpp=.o)
 
 CC = gcc
 CCFLAGS = -Wall -I$(INCDIR) -I$(DEP_INCDIR) `python3-config --includes`
@@ -63,8 +49,8 @@ $(TARGET): $(OBJECTS)
 $(GCH): $(SRCDIR)/stdafx.h $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJDIR)/%.o: $(CXXSOURCES)/%.cpp $(GCH)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# $(OBJDIR)/%.o: $(CXXSOURCES)/%.cpp $(GCH)
+# 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(GCH)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
