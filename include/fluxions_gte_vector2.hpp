@@ -20,16 +20,19 @@
 #ifndef FLUXIONS_VECTOR2_HPP
 #define FLUXIONS_VECTOR2_HPP
 
+#include <type_traits>
 #include "fluxions_gte_math.hpp"
 
-namespace Fluxions {
+namespace Fluxions
+{
 template <typename T>
-class TVector2 {
-public:
+class TVector2
+{
+  public:
     T x, y;
 
-    constexpr T* ptr() noexcept { return &x; }
-    constexpr const T* const_ptr() const noexcept { return &x; }
+    constexpr T *ptr() noexcept { return &x; }
+    constexpr const T *const_ptr() const noexcept { return &x; }
 
     using type = T;
 
@@ -45,13 +48,13 @@ public:
         y = _y;
     }
 
-    constexpr TVector2(const TVector2<T>& V) noexcept
+    constexpr TVector2(const TVector2<T> &V) noexcept
     {
         x = V.x;
         y = V.y;
     }
 
-    constexpr TVector2(TVector2<T>&& V) noexcept
+    constexpr TVector2(TVector2<T> &&V) noexcept
     {
         x = std::move(V.x);
         y = std::move(V.y);
@@ -63,7 +66,7 @@ public:
         y = V[1];
     }
 
-    constexpr auto operator=(const TVector2<T>& V) noexcept
+    constexpr auto operator=(const TVector2<T> &V) noexcept
     {
         x = V.x;
         y = V.y;
@@ -76,7 +79,7 @@ public:
         return TVector2<U>(static_cast<U>(x), static_cast<U>(y));
     }
 
-    constexpr TVector2<T>& reset(T _x = 0, T _y = 0) noexcept
+    constexpr TVector2<T> &reset(T _x = 0, T _y = 0) noexcept
     {
         x = _x;
         y = _y;
@@ -116,7 +119,7 @@ public:
     }
 
     template <typename U>
-    constexpr auto operator+=(const TVector2<U>& V) noexcept
+    constexpr auto operator+=(const TVector2<U> &V) noexcept
     {
         x += V.x;
         y += V.y;
@@ -124,7 +127,7 @@ public:
     }
 
     template <typename U>
-    const TVector2<T>& operator-=(const TVector2<U>& V) noexcept
+    const TVector2<T> &operator-=(const TVector2<U> &V) noexcept
     {
         x -= V.x;
         y -= V.y;
@@ -281,13 +284,13 @@ public:
 //}
 
 template <typename U>
-constexpr auto DotProduct(const TVector2<U>& v1, const TVector2<U>& v2) noexcept
+constexpr auto DotProduct(const TVector2<U> &v1, const TVector2<U> &v2) noexcept
 {
     return v1.x * v2.x + v1.y * v2.y;
 }
 
 template <typename U>
-constexpr auto dot(const TVector2<U>& v1, const TVector2<U>& v2) noexcept
+constexpr auto dot(const TVector2<U> &v1, const TVector2<U> &v2) noexcept
 {
     return v1.x * v2.x + v1.y * v2.y;
 }
@@ -337,77 +340,77 @@ extern template class TVector2<int>;
 extern template class TVector2<unsigned int>;
 
 template <typename T, typename U>
-constexpr auto operator+(const U a, const TVector2<T>& V)
+constexpr auto operator+(const U a, const TVector2<T> &V)
 {
-    return TVector2<common_type_t<U, T>>(a + V.x, a + V.y);
+    return TVector2<std::common_type_t<U, T>>(a + V.x, a + V.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator+(const TVector2<T>& V, const U a) noexcept
+constexpr auto operator+(const TVector2<T> &V, const U a) noexcept
 {
-    return TVector2<common_type_t<U, T>>(V.x + a, V.y + a);
+    return TVector2<std::common_type_t<U, T>>(V.x + a, V.y + a);
 }
 
 template <typename T, typename U>
-constexpr auto operator-(const U a, const TVector2<T>& V)
+constexpr auto operator-(const U a, const TVector2<T> &V)
 {
-    return TVector2<common_type_t<U, T>>(a - V.x, a - V.y);
+    return TVector2<std::common_type_t<U, T>>(a - V.x, a - V.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator-(const TVector2<T>& V, const U a) noexcept
+constexpr auto operator-(const TVector2<T> &V, const U a) noexcept
 {
-    return TVector2<common_type_t<U, T>>(V.x - a, V.y - a);
+    return TVector2<std::common_type_t<U, T>>(V.x - a, V.y - a);
 }
 
 template <typename T, typename U>
-constexpr auto operator*(const U a, const TVector2<T>& V)
+constexpr auto operator*(const U a, const TVector2<T> &V)
 {
-    return TVector2<common_type_t<U, T>>(a * V.x, a * V.y);
+    return TVector2<std::common_type_t<U, T>>(a * V.x, a * V.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator*(const TVector2<T>& V, const U a) noexcept
+constexpr auto operator*(const TVector2<T> &V, const U a) noexcept
 {
-    return TVector2<common_type_t<U, T>>(V.x * a, V.y * a);
+    return TVector2<std::common_type_t<U, T>>(V.x * a, V.y * a);
 }
 
 template <typename T, typename U>
-constexpr auto operator/(const U a, const TVector2<T>& V)
+constexpr auto operator/(const U a, const TVector2<T> &V)
 {
-    return TVector2<common_type_t<U, T>>(a / V.x, a / V.y);
+    return TVector2<std::common_type_t<U, T>>(a / V.x, a / V.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator/(const TVector2<T>& V, const U a) noexcept
+constexpr auto operator/(const TVector2<T> &V, const U a) noexcept
 {
-    return TVector2<common_type_t<U, T>>(V.x / a, V.y / a);
+    return TVector2<std::common_type_t<U, T>>(V.x / a, V.y / a);
 }
 
 template <typename T, typename U>
-constexpr auto operator+(const TVector2<T>& v1, const TVector2<U>& v2) noexcept
+constexpr auto operator+(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
 {
-    return TVector2<common_type_t<T, U>>(
+    return TVector2<std::common_type_t<T, U>>(
         v1.x + v2.x,
         v1.y + v2.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator-(const TVector2<T>& v1, const TVector2<U>& v2) noexcept
+constexpr auto operator-(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
 {
-    return TVector2<common_type_t<T, U>>(
+    return TVector2<std::common_type_t<T, U>>(
         v1.x - v2.x,
         v1.y - v2.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator==(const TVector2<T>& v1, const TVector2<U>& v2) noexcept
+constexpr auto operator==(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
 {
     return (v1.x == v2.x && v1.y == v2.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator!=(const TVector2<T>& v1, const TVector2<U>& v2) noexcept
+constexpr auto operator!=(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
 {
     return (v1.x != v2.x || v1.y != v2.y);
 }

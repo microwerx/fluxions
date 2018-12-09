@@ -40,19 +40,20 @@ class BrokerWorker
 	string name;
 	string key;
 	string serviceName;
-	Frame identityFrame;
-	int64_t expiry;
+	Frame *identityFrame;
+	int64_t expiry = 0;
 	BrokerServiceInfo *service = nullptr;
-	size_t count;
+	size_t count = 0;
 	bool heartbeatSent = false;
 
-	// does not takes ownership of identityFrame
 	BrokerWorker()
 	{
+		identityFrame = new Frame();
 	}
 
 	~BrokerWorker()
 	{
+		delete identityFrame;
 	}
 
 	operator bool() const { return (bool)identityFrame; }
@@ -85,12 +86,12 @@ class BrokerWorker
 
 	void SendCommand(Majordomo::Command command, Message &msg, Socket &socket)
 	{
-		string workerHexAddress = identityFrame.GetHexData();
+		string workerHexAddress = identityFrame->GetHexData();
 		if (!msg)
 			msg.Create();
 		msg.Push(command);
 		msg.Push(Majordomo::WorkerId);
-		msg.Wrap(identityFrame);
+		msg.Wrap(*identityFrame);
 		// if (verbose) printf("broker::service sending client request to worker %s\n", workerHexAddress.c_str());
 		msg.Send(socket);
 	}
@@ -107,7 +108,7 @@ class BrokerServiceInfo
 	string name;
 	list<Message> requests;
 	list<BrokerWorker *> waitingWorkers;
-	size_t numWorkers;
+	size_t numWorkers = 0;
 
 	void AddWorker(BrokerWorker *worker)
 	{
@@ -193,7 +194,7 @@ class Broker
 	list<BrokerWorker *> waitingWorkers;
 	int64_t heartbeatTime = 0;
 	bool verbose = false;
-};
+}; // class Broker
 } // namespace Uf
 
 #endif

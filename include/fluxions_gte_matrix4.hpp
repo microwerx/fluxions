@@ -23,20 +23,22 @@
 #include <fluxions_gte_vector3.hpp>
 #include <fluxions_gte_vector4.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 using namespace std;
 
 template <typename T>
-class TMatrix4 {
-public:
+class TMatrix4
+{
+  public:
     // normal access (column major)
     T m11, m21, m31, m41;
     T m12, m22, m32, m42;
     T m13, m23, m33, m43;
     T m14, m24, m34, m44;
 
-    constexpr T* ptr() noexcept { return &m11; }
-    constexpr const T* const_ptr() const noexcept { return &m11; }
+    constexpr T *ptr() noexcept { return &m11; }
+    constexpr const T *const_ptr() const noexcept { return &m11; }
 
     using type = T;
 
@@ -64,7 +66,7 @@ public:
         m44 = 1;
     }
 
-    constexpr TMatrix4(const TMatrix4<T>& M) noexcept
+    constexpr TMatrix4(const TMatrix4<T> &M) noexcept
     {
         m11 = M.m11;
         m12 = M.m12;
@@ -84,7 +86,7 @@ public:
         m44 = M.m44;
     }
 
-    TMatrix4(TMatrix4<T>&& M) noexcept
+    TMatrix4(TMatrix4<T> &&M) noexcept
     {
         m11 = std::move(M.m11);
         m12 = std::move(M.m12);
@@ -150,23 +152,25 @@ public:
 
     TMatrix4(const T M[numrows()][numcols()]) noexcept
     {
-        const T* _v = M[0];
-        T* v = &m11;
-        for (auto i = 0; i < size(); i++) {
+        const T *_v = M[0];
+        T *v = &m11;
+        for (size_t i = 0; i < size(); i++)
+        {
             v[i] = _v[i];
         }
     }
 
     TMatrix4(const T M[size()]) noexcept
     {
-        const T* _v = M;
-        T* v = &m11;
-        for (auto i = 0; i < size(); i++) {
+        const T *_v = M;
+        T *v = &m11;
+        for (size_t i = 0; i < size(); i++)
+        {
             v[i] = _v[i];
         }
     }
 
-    constexpr auto operator=(const TMatrix4<T>& M) noexcept
+    constexpr auto operator=(const TMatrix4<T> &M) noexcept
     {
         m11 = M.m11;
         m12 = M.m12;
@@ -188,7 +192,7 @@ public:
     }
 
     template <typename U>
-    constexpr auto operator=(const TMatrix4<U>& M) noexcept
+    constexpr auto operator=(const TMatrix4<U> &M) noexcept
     {
         m11 = static_cast<T>(M.m11);
         m12 = static_cast<T>(M.m12);
@@ -210,7 +214,7 @@ public:
     }
 
     template <typename U>
-    constexpr TMatrix4<T>& operator=(const U value) noexcept
+    constexpr TMatrix4<T> &operator=(const U value) noexcept
     {
         m11 = static_cast<T>(value);
         m12 = static_cast<T>(value);
@@ -253,7 +257,8 @@ public:
     // col(i) returns the ith column of the matrix (i = 1 is column 1)
     constexpr TVector4<T> col(int i) const noexcept
     {
-        switch (i) {
+        switch (i)
+        {
         case 1:
             return col1();
         case 2:
@@ -269,7 +274,8 @@ public:
     // row(i) returns the ith row of the matrix (i = 1 is row 1)
     constexpr TVector4<T> row(int i) const noexcept
     {
-        switch (i) {
+        switch (i)
+        {
         case 1:
             return row1();
         case 2:
@@ -283,7 +289,7 @@ public:
     }
 
     template <typename U>
-    static constexpr auto compAdd(const TMatrix4<T>& m1, const TMatrix4<U>& m2) noexcept
+    static constexpr auto compAdd(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
         return TMatrix4<common_type_t<T, U>>(
             m1.m11 + m2.m11, m1.m12 + m2.m12, m1.m13 + m2.m13, m1.m14 + m2.m14,
@@ -293,7 +299,7 @@ public:
     }
 
     template <typename U>
-    static constexpr auto compSub(const TMatrix4<T>& m1, const TMatrix4<U>& m2) noexcept
+    static constexpr auto compSub(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
         return TMatrix4<common_type_t<T, U>>(
             m1.m11 - m2.m11, m1.m12 - m2.m12, m1.m13 - m2.m13, m1.m14 - m2.m14,
@@ -303,7 +309,7 @@ public:
     }
 
     template <typename U>
-    static constexpr auto compMult(const TMatrix4<T>& m1, const TMatrix4<U>& m2) noexcept
+    static constexpr auto compMult(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
         return TMatrix4<common_type_t<T, U>>(
             m1.m11 * m2.m11, m1.m12 * m2.m12, m1.m13 * m2.m13, m1.m14 * m2.m14,
@@ -313,7 +319,7 @@ public:
     }
 
     template <typename U>
-    static constexpr auto compDiv(const TMatrix4<T>& m1, const TMatrix4<U>& m2) noexcept
+    static constexpr auto compDiv(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
         return TMatrix4<common_type_t<T, U>>(
             m1.m11 / m2.m11, m1.m12 / m2.m12, m1.m13 / m2.m13, m1.m14 / m2.m14,
@@ -323,7 +329,7 @@ public:
     }
 
     template <typename U>
-    static constexpr auto multiply(const TMatrix4<T>& m1, const TMatrix4<U>& m2) noexcept
+    static constexpr auto multiply(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
         return TMatrix4<common_type_t<T, U>>(
             (m1.m14 * m2.m41 + m1.m13 * m2.m31 + m1.m12 * m2.m21 + m1.m11 * m2.m11),
@@ -372,19 +378,19 @@ public:
     }
 
     template <typename U>
-    constexpr auto MultMatrix(const TMatrix4<U>& M) noexcept
+    constexpr auto MultMatrix(const TMatrix4<U> &M) noexcept
     {
         return *this = multiply(*this, M);
     }
 
     template <typename U>
-    constexpr auto operator*=(const TMatrix4<U>& M) noexcept
+    constexpr auto operator*=(const TMatrix4<U> &M) noexcept
     {
         return *this = multiply(*this, M);
     }
 
     template <typename U>
-    constexpr auto operator+=(const TMatrix4<U>& M) noexcept
+    constexpr auto operator+=(const TMatrix4<U> &M) noexcept
     {
         m11 += M.m11;
         m12 += M.m12;
@@ -406,7 +412,7 @@ public:
     }
 
     template <typename U>
-    constexpr auto operator-=(const TMatrix4<U>& M) noexcept
+    constexpr auto operator-=(const TMatrix4<U> &M) noexcept
     {
         m11 -= M.m11;
         m12 -= M.m12;
@@ -589,7 +595,7 @@ public:
         return *this *= MakeCubeMatrix(face);
     }
 
-    constexpr auto CubeMatrixPosition(int face, const TVector3<T>& position) noexcept
+    constexpr auto CubeMatrixPosition(int face, const TVector3<T> &position) noexcept
     {
         return *this *= MakeCubeMatrixPosition(face, position);
     }
@@ -630,21 +636,21 @@ public:
         T t18 = m21 * m32 - m22 * m31;
 
         return TMatrix4<T>(m22 * t3 - m23 * t2 + m24 * t1,
-            -m12 * t3 + m13 * t2 - m14 * t1,
-            m12 * t6 - m13 * t5 + m14 * t4,
-            -m12 * t9 + m13 * t8 - m14 * t7,
-            -m21 * t3 + m23 * t11 - m24 * t10,
-            m11 * t3 - m13 * t11 + m14 * t10,
-            -m11 * t6 + m13 * t13 - m14 * t12,
-            m11 * t9 - m13 * t15 + m14 * t14,
-            m21 * t2 - m22 * t11 + m24 * t16,
-            -m11 * t2 + m12 * t11 - m14 * t16,
-            m11 * t5 - m12 * t13 + m14 * t17,
-            -m11 * t8 + m12 * t15 - m14 * t18,
-            -m21 * t1 + m22 * t10 - m23 * t16,
-            m11 * t1 - m12 * t10 + m13 * t16,
-            -m11 * t4 + m12 * t12 - m13 * t17,
-            m11 * t7 - m12 * t14 + m13 * t18);
+                           -m12 * t3 + m13 * t2 - m14 * t1,
+                           m12 * t6 - m13 * t5 + m14 * t4,
+                           -m12 * t9 + m13 * t8 - m14 * t7,
+                           -m21 * t3 + m23 * t11 - m24 * t10,
+                           m11 * t3 - m13 * t11 + m14 * t10,
+                           -m11 * t6 + m13 * t13 - m14 * t12,
+                           m11 * t9 - m13 * t15 + m14 * t14,
+                           m21 * t2 - m22 * t11 + m24 * t16,
+                           -m11 * t2 + m12 * t11 - m14 * t16,
+                           m11 * t5 - m12 * t13 + m14 * t17,
+                           -m11 * t8 + m12 * t15 - m14 * t18,
+                           -m21 * t1 + m22 * t10 - m23 * t16,
+                           m11 * t1 - m12 * t10 + m13 * t16,
+                           -m11 * t4 + m12 * t12 - m13 * t17,
+                           m11 * t7 - m12 * t14 + m13 * t18);
     }
 
     constexpr auto Adjugate() noexcept
@@ -876,7 +882,7 @@ public:
                                          U.x, U.y, U.z, 0.0,
                                          -F.x, -F.y, -F.z, 0.0,
                                          0.0, 0.0, 0.0, 1.0),
-            TMatrix4<T>::MakeTranslation(-eye.x, -eye.y, -eye.z));
+                                     TMatrix4<T>::MakeTranslation(-eye.x, -eye.y, -eye.z));
     }
 
     static constexpr auto MakeShadowBias() noexcept
@@ -894,7 +900,8 @@ public:
         if (face >= 0x8515 && face <= 0x851A)
             face -= 0x8515;
 
-        switch (face) {
+        switch (face)
+        {
         case 0: // GL_TEXTURE_CUBE_MAP_POSITIVE_X
             return TMatrix4<T>::MakeRotation(90.0, 0.0, 1.0, 0.0);
             break;
@@ -917,13 +924,14 @@ public:
         return TMatrix4<T>::MakeIdentity();
     }
 
-    static constexpr TMatrix4<T> MakeCubeMatrixPosition(int face, const TVector3<T>& position) noexcept
+    static constexpr TMatrix4<T> MakeCubeMatrixPosition(int face, const TVector3<T> &position) noexcept
     {
         // support GL_TEXTURE_CUBE_MAP_POSITIVE_X, ... constants
         if (face >= 0x8515 && face <= 0x851A)
             face -= 0x8515;
 
-        switch (face) {
+        switch (face)
+        {
         case 0: // GL_TEXTURE_CUBE_MAP_POSITIVE_X
             return TMatrix4<T>::MakeLookAt(position, position + TVector3<T>(1, 0, 0), TVector3<T>(0, -1, 0));
             break;
@@ -1647,13 +1655,13 @@ using Matrix4f = TMatrix4<float>;
 using Matrix4d = TMatrix4<double>;
 
 template <typename T, typename U>
-constexpr auto operator*(const TMatrix4<T>& m1, const TMatrix4<U>& m2) noexcept
+constexpr auto operator*(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
 {
     return TMatrix4<T>::multiply(m1, m2);
 }
 
 template <typename T, typename U>
-constexpr auto operator*(const TMatrix4<T>& M, const TVector2<U>& V) noexcept
+constexpr auto operator*(const TMatrix4<T> &M, const TVector2<U> &V) noexcept
 {
     return TVector2<common_type_t<T, U>>(
         M.m11 * V.x + M.m12 * V.y,
@@ -1661,7 +1669,7 @@ constexpr auto operator*(const TMatrix4<T>& M, const TVector2<U>& V) noexcept
 }
 
 template <typename T, typename U>
-constexpr auto operator*(const TMatrix4<T>& M, const TVector3<U>& V) noexcept
+constexpr auto operator*(const TMatrix4<T> &M, const TVector3<U> &V) noexcept
 {
     return TVector2<common_type_t<T, U>>(
         M.m11 * V.x + M.m12 * V.y + M.m13 * V.z,
@@ -1670,7 +1678,7 @@ constexpr auto operator*(const TMatrix4<T>& M, const TVector3<U>& V) noexcept
 }
 
 template <typename T, typename U>
-constexpr auto operator*(const TMatrix4<T>& M, const TVector4<U>& V) noexcept
+constexpr auto operator*(const TMatrix4<T> &M, const TVector4<U> &V) noexcept
 {
     return TVector4<common_type_t<T, U>>(
         M.m11 * V.x + M.m12 * V.y + M.m13 * V.z + M.m14 * V.w,

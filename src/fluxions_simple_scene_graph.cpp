@@ -21,39 +21,50 @@
 #include "fluxions_fileio.hpp"
 #include "stdafx.h"
 #include <future>
+#include <stdio.h>
 
-namespace Fluxions {
+namespace Fluxions
+{
 using namespace std;
 
-void async_pbsky_compute(Fluxions::PhysicallyBasedSky* pbsky, bool genCubeMap, bool genCylMap, bool* completed, double* timeElapsed = nullptr)
+#ifdef __unix__
+auto sprintf_s = sprintf;
+#endif
+
+void async_pbsky_compute(Fluxions::PhysicallyBasedSky *pbsky, bool genCubeMap, bool genCylMap, bool *completed, double *timeElapsed = nullptr)
 {
     Viperfish::StopWatch stopwatch;
 
-    if (genCubeMap) {
+    if (genCubeMap)
+    {
         pbsky->ComputeCubeMap(64, false, 1.0f);
     }
-    if (genCylMap) {
+    if (genCylMap)
+    {
         pbsky->ComputeCylinderMap(128, 32);
         //pbsky.generatedCylMap.savePPM("pbsky.ppm");
     }
 
     stopwatch.Stop();
-    if (timeElapsed != nullptr) {
+    if (timeElapsed != nullptr)
+    {
         *timeElapsed = stopwatch.GetMillisecondsElapsed();
     }
-    if (completed != nullptr) {
+    if (completed != nullptr)
+    {
         *completed = true;
     }
 }
 
-void SimpleEnvironment::Update(const BoundingBoxf& bbox)
+void SimpleEnvironment::Update(const BoundingBoxf &bbox)
 {
     pbsky.ComputeSunGroundRadiances();
     curSunDirTo = pbsky.GetSunVector();
-    curGroundRadiance = pbsky.GetGroundRadiance().ToVector4();
-    curSunDiskRadiance = pbsky.GetSunDiskRadiance().ToVector4();
+    curGroundRadiance = pbsky.GetGroundRadiance();
+    curSunDiskRadiance = pbsky.GetSunDiskRadiance();
 
-    if (within(bbox.MaxSize(), 0.0f, 1000.0f)) {
+    if (within(bbox.MaxSize(), 0.0f, 1000.0f))
+    {
         //const float padding = 1.0f;
         //const float size = bbox.MaxSize();
         //float correctRadius = sqrtf(0.75f) * boundingBox.MaxSize();
@@ -68,7 +79,9 @@ void SimpleEnvironment::Update(const BoundingBoxf& bbox)
         sunShadowMapFarZ = sunShadowMapDistance + radius;
         sunShadowMapOrigin = curSunDirTo.norm() * sunShadowMapDistance + sunShadowMapTarget;
         sunShadowMapUp = ((curSunDirTo.cross(Vector3f(0.0f, 1.0f, 0.0f))).cross(curSunDirTo)).norm();
-    } else {
+    }
+    else
+    {
         sunShadowMapUp.reset(0.0f, 1.0f, 0.0f);
         sunShadowMapOrigin = curSunDirTo.norm() * 20.0f;
         sunShadowMapTarget.reset(0.0f, 0.0f, 0.0f);
@@ -86,12 +99,14 @@ void SimpleEnvironment::Update(const BoundingBoxf& bbox)
     sunShadowViewMatrix.LookAt(sunShadowMapOrigin, sunShadowMapTarget, sunShadowMapUp);
     sunShadowInverseViewMatrix = sunShadowViewMatrix.AsInverse();
 
-    if (isSkyComputed && pbskyColorMapId != 0) {
+    if (isSkyComputed && pbskyColorMapId != 0)
+    {
         glutSetErrorMessage(__FILE__, __LINE__, "%s", __FUNCTION__);
         glBindTexture(GL_TEXTURE_CUBE_MAP, pbskyColorMapId);
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++)
+        {
             GLsizei size = pbsky.generatedCubeMap.width();
-            void* pixels = pbsky.generatedCubeMap.getPixels(i);
+            void *pixels = pbsky.generatedCubeMap.getPixels(i);
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA32F, size, size, 0, GL_RGBA, GL_FLOAT, pixels);
         }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -116,7 +131,8 @@ void SimpleEnvironment::ComputePBSky()
     auto handle = async(std::launch::async, async_pbsky_compute, &pbsky, pbskyGenCubeMap, pbskyGenCylMap, &isSkyComputed, &lastSkyGenTime);
 }
 
-struct SimpleRendererUniforms {
+struct SimpleRendererUniforms
+{
     /* This was this code, but g++ doesn't like it. The better solution would be
 		 * to create a pack() function which creates a memory buffer with the contents
 		 * packed into it.
@@ -167,13 +183,13 @@ struct SimpleRendererUniforms {
     }
 };
 
-struct SimpleUniformBuffer {
+struct SimpleUniformBuffer
+{
     string uniformBufferName;
     GLuint blockBinding;
 
-    SimpleUniformBuffer(const string& name, GLuint blockBinding)
-        : uniformBufferName(name)
-        , blockBinding(blockBinding)
+    SimpleUniformBuffer(const string &name, GLuint blockBinding)
+        : uniformBufferName(name), blockBinding(blockBinding)
     {
     }
 
@@ -210,7 +226,7 @@ void SimpleSceneGraph::Reset()
     //geometry.Clear();
 }
 
-bool SimpleSceneGraph::Load(const string& filename)
+bool SimpleSceneGraph::Load(const string &filename)
 {
     // Use this as a template
     //ifstream fin(filename.c_str());
@@ -239,7 +255,8 @@ bool SimpleSceneGraph::Load(const string& filename)
     name = scenefpi.fname;
     ifstream fin(filename.c_str());
 
-    if (!fin) {
+    if (!fin)
+    {
         return false;
     }
 
@@ -256,7 +273,8 @@ bool SimpleSceneGraph::Load(const string& filename)
     int totallinecount = 0;
     string str;
     istringstream istr;
-    while (1) {
+    while (1)
+    {
         // read a line from the file and set up a string stream.
         str.clear();
         getline(fin, str);
@@ -264,7 +282,8 @@ bool SimpleSceneGraph::Load(const string& filename)
         linecount++;
         totallinecount++;
 
-        if (!fin) {
+        if (!fin)
+        {
             break;
         }
 
@@ -273,41 +292,61 @@ bool SimpleSceneGraph::Load(const string& filename)
         str.clear();
         istr >> str;
 
-        if (str == "transform") {
+        if (str == "transform")
+        {
             currentTransform = ReadAffineMatrix4f(istr);
-        } else if (str == "mtllib") {
+        }
+        else if (str == "mtllib")
+        {
             string mtllibFilename = ReadString(istr);
             FilePathInfo fpi(mtllibFilename);
             string filenameToTry = fpi.FindFileIfExists(pathsToTry);
-            if (filenameToTry.empty()) {
+            if (filenameToTry.empty())
+            {
                 hflog.error("%s(): MTLLIB %s was not found.", __FUNCTION__, mtllibFilename.c_str());
-            } else {
-                if (materials.Load(fpi.fname, filenameToTry)) {
+            }
+            else
+            {
+                if (materials.Load(fpi.fname, filenameToTry))
+                {
                     hflog.info("%s(): MTLLIB %s loaded.", __FUNCTION__, mtllibFilename.c_str());
-                } else {
+                }
+                else
+                {
                     hflog.error("%s(): MTLLIB %s had an error while loading.", __FUNCTION__, mtllibFilename.c_str());
                 }
             }
-        } else if (str == "conffile") {
+        }
+        else if (str == "conffile")
+        {
             string confFilename = ReadString(istr);
             FilePathInfo fpi(confFilename);
             string filenameToTry = fpi.FindFileIfExists(pathsToTry);
-            if (filenameToTry.empty()) {
+            if (filenameToTry.empty())
+            {
                 hflog.error("%s(): CONF file %s was not found.", __FUNCTION__, confFilename.c_str());
-            } else {
+            }
+            else
+            {
                 if (ReadConfFile(filenameToTry))
                     hflog.info("%s(): CONF file %s loaded.", __FUNCTION__, confFilename.c_str());
                 else
                     hflog.error("%s(): CONF file %s had an error while loading.", __FUNCTION__, confFilename.c_str());
             }
-        } else if (str == "geometryGroup") {
+        }
+        else if (str == "geometryGroup")
+        {
             string geoFilename = ReadString(istr);
             FilePathInfo fpi(geoFilename);
             string filenametoTry = fpi.FindFileIfExists(pathsToTry);
-            if (filenametoTry.empty()) {
+            if (filenametoTry.empty())
+            {
                 hflog.error("%s(): OBJ file %s was not found.", __FUNCTION__, geoFilename.c_str());
-            } else {
-                if (ReadObjFile(filenametoTry, fpi.fname)) {
+            }
+            else
+            {
+                if (ReadObjFile(filenametoTry, fpi.fname))
+                {
                     GLuint id = geometry.Create(fpi.fname);
 
                     SimpleGeometryGroup geometryGroup;
@@ -327,20 +366,29 @@ bool SimpleSceneGraph::Load(const string& filename)
 
                     boundingBox += tminBound.xyz();
                     boundingBox += tmaxBound.xyz();
-                } else {
+                }
+                else
+                {
                     hflog.error("%s(): OBJ file %s had an error while loading", __FUNCTION__, geoFilename.c_str());
                 }
             }
-        } else if (str == "enviro") {
+        }
+        else if (str == "enviro")
+        {
             istr >> str;
-            if (str == "color") {
+            if (str == "color")
+            {
                 environment.hasColor = true;
                 environment.color = ReadVector3f(istr);
-            } else if (str == "texmap") {
+            }
+            else if (str == "texmap")
+            {
                 environment.hasTexmap = true;
                 environment.texmap = ReadString(istr);
             }
-        } else if (str == "pbsky") {
+        }
+        else if (str == "pbsky")
+        {
             Color4f groundAlbedo;
             float turbidity;
             float latitude;
@@ -361,7 +409,9 @@ bool SimpleSceneGraph::Load(const string& filename)
                 groundAlbedo.r,
                 groundAlbedo.g,
                 groundAlbedo.b);
-        } else if (str == "datetime") {
+        }
+        else if (str == "datetime")
+        {
             int month = 7;
             int day = 1;
             int year = 2017;
@@ -379,12 +429,15 @@ bool SimpleSceneGraph::Load(const string& filename)
 
             environment.pbsky.SetLocalDate(day, month, year, isdst != 0, 0);
             environment.pbsky.SetLocalTime(hours, minutes, seconds, 0.0f);
-        } else if (str == "camera") {
+        }
+        else if (str == "camera")
+        {
             string type = ReadString(istr);
             bool isBadCamera = true;
             camera.projectionMatrix.LoadIdentity();
             camera.viewMatrix.LoadIdentity();
-            if (type == "perspective_otrf") {
+            if (type == "perspective_otrf")
+            {
                 Vector3f origin = ReadVector3f(istr);
                 Vector3f target = ReadVector3f(istr);
                 Vector3f roll = ReadVector3f(istr);
@@ -395,11 +448,13 @@ bool SimpleSceneGraph::Load(const string& filename)
                 camera.fov = fov;
                 camera.projectionMatrix.LoadIdentity();
                 camera.projectionMatrix.PerspectiveY(camera.fov,
-                    camera.imageAspect,
-                    camera.imageNearZ,
-                    camera.imageFarZ);
+                                                     camera.imageAspect,
+                                                     camera.imageNearZ,
+                                                     camera.imageFarZ);
                 camera.viewMatrix.LookAt(origin, target, roll);
-            } else if (type == "perspective_tmf") {
+            }
+            else if (type == "perspective_tmf")
+            {
                 Matrix4f tm = ReadAffineMatrix4f(istr);
                 float fov = ReadFloat(istr);
                 isBadCamera = false;
@@ -408,11 +463,13 @@ bool SimpleSceneGraph::Load(const string& filename)
                 camera.fov = fov;
                 camera.projectionMatrix.LoadIdentity();
                 camera.projectionMatrix.Perspective(camera.fov,
-                    camera.imageAspect,
-                    camera.imageNearZ,
-                    camera.imageFarZ);
+                                                    camera.imageAspect,
+                                                    camera.imageNearZ,
+                                                    camera.imageFarZ);
                 camera.viewMatrix = tm;
-            } else if (type == "ortho_otrw") {
+            }
+            else if (type == "ortho_otrw")
+            {
                 Vector3f origin = ReadVector3f(istr);
                 Vector3f target = ReadVector3f(istr);
                 Vector3f roll = ReadVector3f(istr);
@@ -422,7 +479,9 @@ bool SimpleSceneGraph::Load(const string& filename)
                 camera.isOrtho = true;
                 camera.width = width;
                 // TODO (projection and view matrix)
-            } else if (type == "ortho_tmw") {
+            }
+            else if (type == "ortho_tmw")
+            {
                 Matrix4f tm = ReadMatrix4f(istr);
                 float width = ReadFloat(istr);
                 isBadCamera = false;
@@ -431,10 +490,13 @@ bool SimpleSceneGraph::Load(const string& filename)
                 camera.width = (float)width;
                 camera.viewMatrix = tm;
                 // TODO (projection matrix)
-            } else {
+            }
+            else
+            {
                 hflog.error("%s(): unsupported camera format %s.", __FUNCTION__, type.c_str());
             }
-            if (!isBadCamera) {
+            if (!isBadCamera)
+            {
                 float fstop = 16.0f;
                 float filmWidth = 35.0f;
                 float focalDist = 100.0f;
@@ -447,23 +509,35 @@ bool SimpleSceneGraph::Load(const string& filename)
                 string bokehImg;
 
                 // read optional components
-                while (istr) {
+                while (istr)
+                {
                     istr >> str;
-                    if (str == "fstop") {
+                    if (str == "fstop")
+                    {
                         fstop = ReadFloat(istr);
-                    } else if (str == "filmWidth") {
+                    }
+                    else if (str == "filmWidth")
+                    {
                         filmWidth = ReadFloat(istr);
-                    } else if (str == "focalDist") {
+                    }
+                    else if (str == "focalDist")
+                    {
                         focalDist = ReadFloat(istr);
-                    } else if (str == "bokehPolygonal") {
+                    }
+                    else if (str == "bokehPolygonal")
+                    {
                         bokehPolygonalBlades = ReadFloat(istr);
                         bokehPolygonalRotation = ReadFloat(istr);
-                    } else if (str == "region") {
+                    }
+                    else if (str == "region")
+                    {
                         regionStartX = ReadFloat(istr);
                         regionStartY = ReadFloat(istr);
                         regionEndX = ReadFloat(istr);
                         regionEndY = ReadFloat(istr);
-                    } else if (str == "bokehImg") {
+                    }
+                    else if (str == "bokehImg")
+                    {
                         bokehImg = ReadString(istr);
                     }
                 }
@@ -479,23 +553,32 @@ bool SimpleSceneGraph::Load(const string& filename)
                 camera.regionEndX = regionEndX;
                 camera.regionEndY = regionEndY;
             }
-        } else if (str == "tonemap") {
+        }
+        else if (str == "tonemap")
+        {
             environment.toneMapScale = clamp(ReadFloat(istr), -12.0f, 12.0f);
             environment.toneMapExposure = environment.toneMapScale;
-        } else if (str == "gamma") {
+        }
+        else if (str == "gamma")
+        {
             environment.toneMapGamma = clamp(ReadFloat(istr), -6.0f, 6.0f);
-        } else if (str == "sun") {
+        }
+        else if (str == "sun")
+        {
             environment.hasSun = true;
             str = ReadString(istr);
-            if (str == "dirTo") {
+            if (str == "dirTo")
+            {
                 environment.sunDirTo = ReadVector3f(istr);
             }
             str = ReadString(istr);
-            if (str == "color") {
+            if (str == "color")
+            {
                 environment.sunColor = ReadVector3f(istr);
             }
             str = ReadString(istr);
-            if (str == "sizeMult") {
+            if (str == "sizeMult")
+            {
                 environment.sunSize = ReadFloat(istr);
             }
             environment.sunDirTo.normalize();
@@ -508,11 +591,15 @@ bool SimpleSceneGraph::Load(const string& filename)
             environment.sunShadowViewMatrix.LoadIdentity();
             environment.sunShadowViewMatrix.LookAt(environment.curSunDirTo * environment.sunSize, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
             environment.sunShadowInverseViewMatrix = environment.sunShadowViewMatrix.AsInverse();
-        } else if (str == "newmap") {
+        }
+        else if (str == "newmap")
+        {
             string mapname = ReadString(istr);
             string texmap = ReadString(istr);
             bool result = ReadTexmap(mapname, texmap);
-        } else if (str == "sphere") {
+        }
+        else if (str == "sphere")
+        {
             string mtlName = ReadString(istr);
 
             GLuint id = spheres.Create();
@@ -524,7 +611,9 @@ bool SimpleSceneGraph::Load(const string& filename)
             sphere.mtlId = materials.GetMaterialId(mtlName);
             sphere.objectId = id;
             spheres[id] = sphere;
-        } else if (str == "pointLight" || str == "light") {
+        }
+        else if (str == "pointLight" || str == "light")
+        {
             SimplePointLight spl;
             spl.name = ReadString(istr);
             spl.index = pointLights.size();
@@ -533,7 +622,9 @@ bool SimpleSceneGraph::Load(const string& filename)
             spl.position = ReadVector3f(istr);
 
             pointLights.push_back(spl);
-        } else if (str == "sphLight") {
+        }
+        else if (str == "sphLight")
+        {
             SimpleSSPHHLight sphl;
             sphl.name = ReadString(istr);
             sphl.index = (int)ssphhLights.size();
@@ -546,9 +637,11 @@ bool SimpleSceneGraph::Load(const string& filename)
             sphl.msph[2] = sphl.msph[0];
             sphl.Standardize();
             ssphhLights.push_back(sphl);
-        } else if (str == "sphl") {
+        }
+        else if (str == "sphl")
+        {
             ssphhLights.resize(ssphhLights.size() + 1);
-            SimpleSSPHHLight& sphl = ssphhLights.back();
+            SimpleSSPHHLight &sphl = ssphhLights.back();
             sphl.name = ReadString(istr);
             sphl.index = (int)ssphhLights.size() - 1;
             sphl.E0 = ReadFloat(istr);
@@ -567,7 +660,7 @@ bool SimpleSceneGraph::Load(const string& filename)
     return false;
 }
 
-bool SimpleSceneGraph::Save(const string& filename)
+bool SimpleSceneGraph::Save(const string &filename)
 {
     FilePathInfo fpi(filename);
 
@@ -579,11 +672,14 @@ bool SimpleSceneGraph::Save(const string& filename)
 
     // 1. Camera
     fout << "camera ";
-    if (camera.isOrtho) {
+    if (camera.isOrtho)
+    {
         fout << "ortho_tmw ";
         WriteAffineMatrix4f(fout, camera.viewMatrix);
         fout << camera.width;
-    } else {
+    }
+    else
+    {
         fout << "perspective_tmf ";
         WriteAffineMatrix4f(fout, camera.viewMatrix);
         fout << camera.fov;
@@ -591,37 +687,43 @@ bool SimpleSceneGraph::Save(const string& filename)
     fout << endl;
 
     // 2. Environment
-    if (environment.hasColor) {
+    if (environment.hasColor)
+    {
         fout << "enviro color ";
-        WriteVector3f(fout, environment.color);
+        WriteColor3f(fout, environment.color);
         fout << endl;
     }
-    if (environment.hasTexmap) {
+    if (environment.hasTexmap)
+    {
         fout << "enviro texmap ";
         WriteString(fout, environment.texmap);
         fout << endl;
     }
-    if (environment.hasSun) {
+    if (environment.hasSun)
+    {
         fout << "sun dirTo ";
         WriteVector3f(fout, environment.curSunDirTo);
         fout << "color ";
-        WriteVector3f(fout, environment.sunColor);
+        WriteColor3f(fout, environment.sunColor);
         fout << "sizeMult ";
         WriteDouble(fout, environment.sunSize);
         fout << endl;
     }
 
     // 3. Newmaps
-    for (auto it = shaderMaps.begin(); it != shaderMaps.end(); it++) {
+    for (auto it = shaderMaps.begin(); it != shaderMaps.end(); it++)
+    {
         fout << "newmap " << it->first << " ";
         WriteString(fout, it->second);
         fout << endl;
     }
 
     // 4. Spheres
-    for (auto it = spheres.begin(); it != spheres.end(); it++) {
-        SimpleSphere& sphere = it->second;
-        if (materials.GetLibraryId() != sphere.mtllibId) {
+    for (auto it = spheres.begin(); it != spheres.end(); it++)
+    {
+        SimpleSphere &sphere = it->second;
+        if (materials.GetLibraryId() != sphere.mtllibId)
+        {
             materials.SetLibrary(sphere.mtllibName);
 
             fout << "mtllib " << sphere.mtllibName << endl;
@@ -635,9 +737,11 @@ bool SimpleSceneGraph::Save(const string& filename)
     }
 
     // 5. Geometry Groups
-    for (auto it = geometry.begin(); it != geometry.end(); it++) {
-        SimpleGeometryGroup& geo = it->second;
-        if (materials.GetLibraryId() != geo.mtllibId) {
+    for (auto it = geometry.begin(); it != geometry.end(); it++)
+    {
+        SimpleGeometryGroup &geo = it->second;
+        if (materials.GetLibraryId() != geo.mtllibId)
+        {
             materials.SetLibrary(geo.mtllibName);
 
             fout << "mtllib " << geo.mtllibName << endl;
@@ -650,8 +754,9 @@ bool SimpleSceneGraph::Save(const string& filename)
     fout.close();
 
     // 6. Output geometry files
-    for (auto it = geometry.begin(); it != geometry.end(); it++) {
-        SimpleGeometryGroup& geo = it->second;
+    for (auto it = geometry.begin(); it != geometry.end(); it++)
+    {
+        SimpleGeometryGroup &geo = it->second;
         geometryObjects[geo.objectId].SaveOBJ(geo.objectName);
     }
 
@@ -661,12 +766,12 @@ bool SimpleSceneGraph::Save(const string& filename)
     return true;
 }
 
-const BoundingBoxf& SimpleSceneGraph::GetBoundingBox()
+const BoundingBoxf &SimpleSceneGraph::GetBoundingBox()
 {
     return boundingBox;
 }
 
-bool SimpleSceneGraph::ReadMtlLibFile(const string& filename)
+bool SimpleSceneGraph::ReadMtlLibFile(const string &filename)
 {
     // Use this as a template
     //ifstream fin(filename.c_str());
@@ -695,19 +800,20 @@ bool SimpleSceneGraph::ReadMtlLibFile(const string& filename)
     return true;
 }
 
-bool SimpleSceneGraph::ReadConfFile(const string& filename)
+bool SimpleSceneGraph::ReadConfFile(const string &filename)
 {
     return false;
 }
 
-bool SimpleSceneGraph::ReadObjFile(const string& filename, const string& geometryName)
+bool SimpleSceneGraph::ReadObjFile(const string &filename, const string &geometryName)
 {
     if (geometryObjects.IsAHandle(filename))
         return true;
 
     OBJStaticModel model;
     bool result = model.LoadOBJ(filename);
-    if (!result) {
+    if (!result)
+    {
         return false;
     }
 
@@ -715,12 +821,12 @@ bool SimpleSceneGraph::ReadObjFile(const string& filename, const string& geometr
     return true;
 }
 
-bool SimpleSceneGraph::ReadTexmap(const string& texmapName, const string& texmap)
+bool SimpleSceneGraph::ReadTexmap(const string &texmapName, const string &texmap)
 {
     return false;
 }
 
-bool SimpleSceneGraph::ReadCamera(const istream& istr)
+bool SimpleSceneGraph::ReadCamera(const istream &istr)
 {
     return false;
 }
@@ -730,7 +836,8 @@ void SimpleSceneGraph::InitTexUnits()
     KillTexUnits();
 
     // Push some texture_ units to our resource manager so we can dish these out as necessary
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++)
+    {
         GLuint id = 16 + i;
         textureUnits.Add(id);
     }
@@ -745,8 +852,9 @@ void SimpleSceneGraph::BuildBuffers()
 {
     InitTexUnits();
     renderer.Reset();
-    for (auto it = geometry.begin(); it != geometry.end(); it++) {
-        SimpleGeometryGroup& geo = it->second;
+    for (auto it = geometry.begin(); it != geometry.end(); it++)
+    {
+        SimpleGeometryGroup &geo = it->second;
         renderer.SetCurrentObjectId(geo.objectId);
         renderer.SetCurrentMtlLibId(geo.mtllibId);
         renderer.SetCurrentObjectName(geo.objectName);
@@ -765,21 +873,25 @@ void SimpleSceneGraph::BuildBuffers()
     environment.sunDepthMapUnit = GetTexUnit();
     environment.pbskyColorMapUnit = GetTexUnit();
 
-    if (environment.enviroColorMapId == 0) {
+    if (environment.enviroColorMapId == 0)
+    {
         glGenTextures(1, &environment.enviroColorMapId);
     }
-    if (environment.sunColorMapId == 0) {
+    if (environment.sunColorMapId == 0)
+    {
         glGenTextures(1, &environment.sunColorMapId);
     }
-    if (environment.sunDepthMapId == 0) {
+    if (environment.sunDepthMapId == 0)
+    {
         glGenTextures(1, &environment.sunDepthMapId);
     }
-    if (environment.pbskyColorMapId == 0) {
+    if (environment.pbskyColorMapId == 0)
+    {
         glGenTextures(1, &environment.pbskyColorMapId);
     }
 }
 
-void SimpleSceneGraph::Render(SimpleProgram& program)
+void SimpleSceneGraph::Render(SimpleProgram &program)
 {
     SimpleUniform InverseCameraMatrix;
     SimpleUniform CameraMatrix;
@@ -850,7 +962,8 @@ void SimpleSceneGraph::Render(SimpleProgram& program)
 
     vector<float> spherePositions;
     vector<float> sphereKe;
-    for (auto sphIt = spheres.begin(); sphIt != spheres.end(); sphIt++) {
+    for (auto sphIt = spheres.begin(); sphIt != spheres.end(); sphIt++)
+    {
         if (spherePositions.size() > 8)
             break;
         Vector4f pos(0, 0, 0, 1);
@@ -876,26 +989,28 @@ void SimpleSceneGraph::Render(SimpleProgram& program)
     glUniform1i(program_loc_sphere_count, (int)spherePositions.size());
 
     // apply each material separately
-    for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
-        SimpleMaterialLibrary& mtllib = libIt->second;
+    for (auto libIt = materials.begin(); libIt != materials.end(); libIt++)
+    {
+        SimpleMaterialLibrary &mtllib = libIt->second;
         mtllibName = mtllib.name;
         mtllibId = materials.GetLibraryId(mtllib.name);
         materials.SetLibrary(mtllib.name);
 
         if (debugging)
             cout << "SimpleSceneGraph::Render() -- using mtllib " << mtllib.name << endl;
-        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++) {
+        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++)
+        {
             mtlId = mtlIt->first;
             mtlName = materials.GetMaterialName(mtlId);
             while (mtlName.back() == '\0')
                 mtlName.resize(mtlName.size() - 1);
-            SimpleMaterial& mtl = mtlIt->second;
+            SimpleMaterial &mtl = mtlIt->second;
             materials.SetMaterial(mtlName);
 
             if (debugging)
                 cout << "SimpleSceneGraph::Render() -- using mtl " << mtlId << endl;
 
-            map<string, SimpleMap*> textures;
+            map<string, SimpleMap *> textures;
             GLuint unit = 0;
             if (!mtl.map_Ka.empty())
                 textures["map_Ka"] = materials.GetTextureMap(mtl.map_Ka);
@@ -931,9 +1046,11 @@ void SimpleSceneGraph::Render(SimpleProgram& program)
             if (mtl.map_Tr.empty())
                 glUniform1f(program_loc_map_Tr_mix, 0.0f);
 
-            for (auto tmapIt = textures.begin(); tmapIt != textures.end(); tmapIt++) {
-                SimpleMap* pMap = tmapIt->second;
-                if (pMap) {
+            for (auto tmapIt = textures.begin(); tmapIt != textures.end(); tmapIt++)
+            {
+                SimpleMap *pMap = tmapIt->second;
+                if (pMap)
+                {
                     pMap->unitId = 0; // unit;
                     pMap->samplerId = pMap->textureObject.samplerObject.GetId();
                     pMap->textureId = pMap->textureObject.GetTextureId();
@@ -960,8 +1077,9 @@ void SimpleSceneGraph::Render(SimpleProgram& program)
             glUniform3fv(program_loc_Tr, 1, mtl.Tf.const_ptr());
             glUniform1fv(program_loc_Tf, 1, &mtl.Tr);
 
-            for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
-                SimpleGeometryGroup& geo = geoIt->second;
+            for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++)
+            {
+                SimpleGeometryGroup &geo = geoIt->second;
                 if (debugging)
                     cout << "SimpleSceneGraph::Render() -- using OBJ " << geo.objectName << endl;
                 objectId = geo.objectId;
@@ -980,9 +1098,11 @@ void SimpleSceneGraph::Render(SimpleProgram& program)
             }
 
             // Turn off textures
-            for (auto tmapIt = textures.begin(); tmapIt != textures.end(); tmapIt++) {
-                SimpleMap* pMap = tmapIt->second;
-                if (pMap) {
+            for (auto tmapIt = textures.begin(); tmapIt != textures.end(); tmapIt++)
+            {
+                SimpleMap *pMap = tmapIt->second;
+                if (pMap)
+                {
                     glutBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
 
                     GLint program_loc = program.GetUniformLocation(tmapIt->first.c_str());
@@ -1001,7 +1121,7 @@ void SimpleSceneGraph::Render(SimpleProgram& program)
         cout << "SimpleSceneGraph::Render() -- END\n";
 }
 
-void SimpleSceneGraph::RenderZOnly(SimpleProgram& program)
+void SimpleSceneGraph::RenderZOnly(SimpleProgram &program)
 {
     // Render a bare bones, basic Z only version of this scene
     SimpleUniform InverseCameraMatrix;
@@ -1032,25 +1152,28 @@ void SimpleSceneGraph::RenderZOnly(SimpleProgram& program)
     GLint program_loc_Kd = program.GetUniformLocation("Kd");
 
     // apply each material separately
-    for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
-        SimpleMaterialLibrary& mtllib = libIt->second;
+    for (auto libIt = materials.begin(); libIt != materials.end(); libIt++)
+    {
+        SimpleMaterialLibrary &mtllib = libIt->second;
         mtllibName = mtllib.name;
         mtllibId = materials.GetLibraryId(mtllib.name);
         materials.SetLibrary(mtllib.name);
 
-        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++) {
+        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++)
+        {
             mtlId = mtlIt->first;
             mtlName = materials.GetMaterialName(mtlId);
             while (mtlName.back() == '\0')
                 mtlName.resize(mtlName.size() - 1);
-            SimpleMaterial& mtl = mtlIt->second;
+            SimpleMaterial &mtl = mtlIt->second;
             materials.SetMaterial(mtlName);
 
             // Apply Diffuse Uniforms to the program shader
             glUniform3fv(program_loc_Kd, 1, mtl.Kd.const_ptr());
 
-            for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
-                SimpleGeometryGroup& geo = geoIt->second;
+            for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++)
+            {
+                SimpleGeometryGroup &geo = geoIt->second;
                 objectId = geo.objectId;
                 groupId = 0;
 
@@ -1068,7 +1191,7 @@ void SimpleSceneGraph::RenderZOnly(SimpleProgram& program)
     }
 }
 
-void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix)
+void SimpleSceneGraph::Render(SimpleProgram &program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix, Matrix4f &cameraMatrix)
 {
     Matrix4f inverseCameraMatrix = cameraMatrix.AsInverse();
     Vector4f cameraPosition(0, 0, 0, 1);
@@ -1090,7 +1213,7 @@ void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials, bool us
     //program.ApplyUniform("CameraPosition", CameraPosition);
     //program.ApplyUniform("CameraMatrix", CameraMatrix);
     program.ApplyUniform("InverseCameraMatrix", (SimpleUniform)cameraMatrix.AsInverse());
-    program.ApplyUniform("SunE0", SimpleUniform(environment.curSunDiskRadiance)); // .ssg.SimpleUniform(sunDiskRadiance.toVector4f()));
+    program.ApplyUniform("SunE0", SimpleUniform(environment.curSunDiskRadiance));   // .ssg.SimpleUniform(sunDiskRadiance.toVector4f()));
     program.ApplyUniform("GroundE0", SimpleUniform(environment.curGroundRadiance)); // SimpleUniform(groundRadiance.toVector4f()));
     program.ApplyUniform("SunShadowBiasMatrix", SimpleUniform(environment.sunShadowBiasMatrix));
     program.ApplyUniform("SunShadowProjectionMatrix", SimpleUniform(environment.sunShadowProjectionMatrix));
@@ -1098,25 +1221,28 @@ void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials, bool us
     program.ApplyUniform("SunShadowInverseViewMatrix", SimpleUniform(environment.sunShadowInverseViewMatrix));
 
     // apply each material separately (use the idea that material state changes are worse than geometry ones
-    for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
-        SimpleMaterialLibrary& mtllib = libIt->second;
+    for (auto libIt = materials.begin(); libIt != materials.end(); libIt++)
+    {
+        SimpleMaterialLibrary &mtllib = libIt->second;
         string mtllibName = mtllib.name;
         GLuint mtllibId = materials.GetLibraryId(mtllib.name);
         materials.SetLibrary(mtllib.name);
 
         // loop through each material
-        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++) {
+        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++)
+        {
             GLuint mtlId = mtlIt->first;
             string mtlName = materials.GetMaterialName(mtlId);
-            SimpleMaterial& mtl = mtlIt->second;
+            SimpleMaterial &mtl = mtlIt->second;
             materials.SetMaterial(mtlName);
 
             if (useMaterials)
                 ApplyMaterialToCurrentProgram(mtl, useMaps);
 
             // loop through each geometry object
-            for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
-                SimpleGeometryGroup& geo = geoIt->second;
+            for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++)
+            {
+                SimpleGeometryGroup &geo = geoIt->second;
                 GLuint objectId = geo.objectId;
                 GLuint groupId = 0;
                 renderer.ApplyIdToMtlNames(mtlName, mtlIt->first);
@@ -1140,7 +1266,7 @@ void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials, bool us
     glutBindTextureAndSampler(environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, 0, 0);
 }
 
-void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
+void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration &rc)
 {
     //double sceneMaxSize = boundingBox.MaxSize();
     //double sceneDiagonal = ceil(sqrtf(2.0 * sceneMaxSize * sceneMaxSize));
@@ -1162,40 +1288,49 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
 
     SimpleProgramPtr program;
 
-    if (rc.useZOnly) {
+    if (rc.useZOnly)
+    {
         program = rc.zShaderProgram;
-    } else {
+    }
+    else
+    {
         program = rc.shaderProgram;
     }
 
     if (program->IsLinked() == false)
         return;
 
-    if (rc.renderToFBO) {
+    if (rc.renderToFBO)
+    {
         rc.fbo.Use();
     }
 
     GLbitfield clearBits = rc.GetClearBits();
 
-    if (rc.enableDepthTest) {
+    if (rc.enableDepthTest)
+    {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(rc.depthComparisonTest);
     }
 
-    if (rc.enableCullFace) {
+    if (rc.enableCullFace)
+    {
         glEnable(GL_CULL_FACE);
         glCullFace(rc.cullFaceMode);
     }
 
-    if (rc.clearColorBuffer) {
+    if (rc.clearColorBuffer)
+    {
         glClearColor(rc.clearColor.r, rc.clearColor.g, rc.clearColor.b, rc.clearColor.a);
     }
 
     if (clearBits)
         glClear(clearBits);
 
-    if (!rc.useZOnly) {
-        if (rc.enableSRGB) {
+    if (!rc.useZOnly)
+    {
+        if (rc.enableSRGB)
+        {
             glEnable(GL_FRAMEBUFFER_SRGB);
         }
 
@@ -1212,12 +1347,14 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
 
         GLbitfield clearBits = rc.GetClearBits();
 
-        if (rc.enableDepthTest) {
+        if (rc.enableDepthTest)
+        {
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(rc.depthComparisonTest);
         }
 
-        if (rc.clearColorBuffer) {
+        if (rc.clearColorBuffer)
+        {
             glClearColor(rc.clearColor.r, rc.clearColor.g, rc.clearColor.b, rc.clearColor.a);
         }
 
@@ -1227,12 +1364,15 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
         Matrix4f projectionMatrix;
         Matrix4f cameraMatrix;
 
-        if (rc.useSceneCamera) {
+        if (rc.useSceneCamera)
+        {
             projectionMatrix.LoadIdentity();
             projectionMatrix.PerspectiveY(camera.fov, camera.imageAspect, camera.imageNearZ, camera.imageFarZ);
             cameraMatrix = rc.preCameraMatrix * camera.viewMatrix * rc.postCameraMatrix;
             //glViewport(0, 0, camera.imageWidth, camera.imageHeight);
-        } else {
+        }
+        else
+        {
             projectionMatrix.LoadIdentity();
             projectionMatrix.PerspectiveY(rc.fov, (float)rc.viewportRect.aspectRatio(), rc.znear, rc.zfar);
             cameraMatrix = rc.preCameraMatrix * rc.postCameraMatrix;
@@ -1248,47 +1388,60 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
 
         glViewport(rc.viewportRect.x, rc.viewportRect.y, rc.viewportRect.w, rc.viewportRect.h);
 
-        if (rc.recomputeProjectionMatrix) {
+        if (rc.recomputeProjectionMatrix)
+        {
             rc.projectionMatrix.LoadIdentity();
             rc.projectionMatrix.PerspectiveY(rc.fov, (float)rc.viewportRect.aspectRatio(), rc.znear, rc.zfar);
         }
         projectionMatrix = rc.projectionMatrix;
 
-        if (rc.isCubeMap) {
+        if (rc.isCubeMap)
+        {
             projectionMatrix.LoadIdentity();
             projectionMatrix.Perspective(90.0f, 1.0f, rc.znear, rc.zfar);
             Vector4f cameraPosition(0, 0, 0, 1);
             cameraPosition = cameraMatrix * cameraPosition;
-            if (rc.defaultCubeFace >= 0 && rc.defaultCubeFace < 6) {
+            if (rc.defaultCubeFace >= 0 && rc.defaultCubeFace < 6)
+            {
                 cameraMatrix.LoadIdentity();
                 cameraMatrix.CubeMatrixPosition(rc.defaultCubeFace, -cameraPosition.xyz());
                 Render(*program, rc.useMaterials, rc.useMaps, rc.useZOnly, projectionMatrix, cameraMatrix);
-            } else {
-                for (int i = 0; i < 6; i++) {
+            }
+            else
+            {
+                for (int i = 0; i < 6; i++)
+                {
                     cameraMatrix.LoadIdentity();
                     cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
                     cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
                     Render(*program, rc.useMaterials, rc.useMaps, rc.useZOnly, projectionMatrix, cameraMatrix);
                 }
             }
-        } else {
+        }
+        else
+        {
             glutBindTextureAndSampler(environment.sunColorMapUnit, GL_TEXTURE_2D, environment.sunColorMapId, environment.sunColorMapSamplerId);
             glutBindTextureAndSampler(environment.sunDepthMapUnit, GL_TEXTURE_2D, environment.sunDepthMapId, environment.sunDepthMapSamplerId);
             Render(*program, rc.useMaterials, rc.useMaps, rc.useZOnly, projectionMatrix, cameraMatrix);
             glutBindTextureAndSampler(environment.sunColorMapUnit, GL_TEXTURE_2D, 0, 0);
             glutBindTextureAndSampler(environment.sunDepthMapUnit, GL_TEXTURE_2D, 0, 0);
         }
-        if (rc.enableSRGB) {
+        if (rc.enableSRGB)
+        {
             glDisable(GL_FRAMEBUFFER_SRGB);
         }
-    } else {
-        if (rc.isCubeMap) {
+    }
+    else
+    {
+        if (rc.isCubeMap)
+        {
             // vec3 LightPosition
             // float ZFar
             // mat4 CubeShadowMatrices[6]
 
             Matrix4f cubeShadowMatrices[6];
-            for (int face = 0; face < 6; face++) {
+            for (int face = 0; face < 6; face++)
+            {
                 cubeShadowMatrices[face] = Matrix4f::MakePerspective(90.0f, 1.0f, rc.znear, rc.zfar) * Matrix4f::MakeCubeMatrixPosition(face, rc.cameraPosition.xyz());
             }
             SimpleUniform shadowmats(GL_FLOAT_MAT4, 6, 0, cubeShadowMatrices[0].ptr());
@@ -1301,7 +1454,9 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
 
             glViewport(rc.viewportRect.x, rc.viewportRect.y, rc.viewportRect.w, rc.viewportRect.h);
             RenderZOnly(program);
-        } else {
+        }
+        else
+        {
             program->Use();
             program->ApplyUniform("ZNear", (SimpleUniform)rc.znear);
             program->ApplyUniform("ZFar", (SimpleUniform)rc.zfar);
@@ -1314,11 +1469,13 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
         }
     }
 
-    if (rc.renderToFBO) {
+    if (rc.renderToFBO)
+    {
         rc.fbo.RestoreGLState();
     }
 
-    if (rc.enableDebugView) {
+    if (rc.enableDebugView)
+    {
         glUseProgram(0);
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -1327,7 +1484,8 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
         glPushMatrix();
         glLoadMatrixf(rc.cameraMatrix.const_ptr());
 
-        for (int i = 0; i < spheres.size(); i++) {
+        for (size_t i = 0; i < spheres.size(); i++)
+        {
             glPushMatrix();
             glMultMatrixf(spheres[i].transform.const_ptr());
             glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1335,9 +1493,10 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
             glPopMatrix();
         }
 
-        for (int i = 0; i < pointLights.size(); i++) {
+        for (size_t i = 0; i < pointLights.size(); i++)
+        {
             glPushMatrix();
-            const float* v = pointLights[i].position.const_ptr();
+            const float *v = pointLights[i].position.const_ptr();
             glTranslatef(v[0], v[1], v[2]);
             float E0 = pointLights[i].E0;
             glColor4f(E0, E0, E0, 1.0f);
@@ -1367,9 +1526,9 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
         float height = (environment.sunShadowMapOrigin - environment.sunShadowMapTarget).length();
         float base = sqrt(1.0f - powf(cosf(fov / 2.0f), 2.0f)) * height; // sqrt(1 - powf(cos(22.5 degrees)))
 
-        float correctRadius = sqrtf(0.75f) * boundingBox.MaxSize();
-        float correctBase = correctRadius;
-        float correctHeight = sqrt(1.0f - powf(sinf(fov / 2.0f), 2.0f)) * 4.0f * correctRadius;
+        // float correctRadius = sqrtf(0.75f) * boundingBox.MaxSize();
+        // float correctBase = correctRadius;
+        // float correctHeight = sqrt(1.0f - powf(sinf(fov / 2.0f), 2.0f)) * 4.0f * correctRadius;
 
         //glutWireSphere(correctRadius, 32, 16);
         //glutWireCone(correctBase, correctHeight, 16, 1);
@@ -1402,20 +1561,24 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
         glPopMatrix();
     }
 
-    for (int i = 0; i < 16; i++) {
-        if (ssphhLights.size() > i && ssphhLights[i].colorSphlMap.unit > 0) {
+    for (unsigned i = 0; i < 16; i++)
+    {
+        if (ssphhLights.size() > i && ssphhLights[i].colorSphlMap.unit > 0)
+        {
             FreeTexUnit(ssphhLights[i].colorSphlMap.unit);
             FreeTexUnit(ssphhLights[i].depthSphlMap.unit);
             FreeTexUnit(ssphhLights[i].environmentLightProbeMap.unit);
         }
     }
 
-    if (rc.enableDepthTest) {
+    if (rc.enableDepthTest)
+    {
         glDisable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
     }
 
-    if (rc.enableCullFace) {
+    if (rc.enableCullFace)
+    {
         glDisable(GL_CULL_FACE);
         glCullFace(GL_BACK);
     }
@@ -1423,7 +1586,7 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
     glUseProgram(0);
 }
 
-void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) const
+void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration &rc) const
 {
     if (!rc.useZOnly)
         return;
@@ -1436,26 +1599,31 @@ void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) 
 
     GLbitfield clearBits = rc.GetClearBits();
 
-    if (rc.enableDepthTest) {
+    if (rc.enableDepthTest)
+    {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(rc.depthComparisonTest);
     }
 
-    if (rc.enableCullFace) {
+    if (rc.enableCullFace)
+    {
         glEnable(GL_CULL_FACE);
         glCullFace(rc.cullFaceMode);
     }
 
-    if (rc.clearColorBuffer) {
+    if (rc.clearColorBuffer)
+    {
         glClearColor(rc.clearColor.r, rc.clearColor.g, rc.clearColor.b, rc.clearColor.a);
     }
 
     if (clearBits)
         glClear(clearBits);
 
-    if (rc.isCubeMap) {
+    if (rc.isCubeMap)
+    {
         Matrix4f cubeShadowMatrices[6];
-        for (int face = 0; face < 6; face++) {
+        for (int face = 0; face < 6; face++)
+        {
             cubeShadowMatrices[face] = Matrix4f::MakePerspective(90.0f, 1.0f, rc.znear, rc.zfar) * Matrix4f::MakeCubeMatrixPosition(face, rc.cameraPosition.xyz());
         }
         SimpleUniform shadowmats;
@@ -1466,13 +1634,16 @@ void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) 
         program->ApplyUniform("ZNear", (SimpleUniform)rc.znear);
         program->ApplyUniform("ZFar", (SimpleUniform)rc.zfar);
         GLint csmLoc = program->GetUniformLocation("CubeShadowMatrices[0]");
-        if (csmLoc >= 0) {
+        if (csmLoc >= 0)
+        {
             glUniformMatrix4fv(csmLoc, 6, GL_FALSE, cubeShadowMatrices[0].const_ptr());
         }
 
         glViewport(rc.viewportRect.x, rc.viewportRect.y, rc.viewportRect.w, rc.viewportRect.h);
         RenderZOnly(program);
-    } else {
+    }
+    else
+    {
         // 2D Only
         Matrix4f projectionMatrix;
         Matrix4f cameraMatrix;
@@ -1492,12 +1663,14 @@ void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) 
         RenderZOnly(program);
     }
 
-    if (rc.enableDepthTest) {
+    if (rc.enableDepthTest)
+    {
         glDisable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
     }
 
-    if (rc.enableCullFace) {
+    if (rc.enableCullFace)
+    {
         glDisable(GL_CULL_FACE);
         glCullFace(GL_BACK);
     }
@@ -1505,14 +1678,15 @@ void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) 
     glUseProgram(0);
 }
 
-void SimpleSceneGraph::RenderZOnly(SimpleProgramPtr& program) const
+void SimpleSceneGraph::RenderZOnly(SimpleProgramPtr &program) const
 {
     if (!program)
         return;
 
     // loop through each geometry object
-    for (auto geoIt = geometry.cbegin(); geoIt != geometry.cend(); geoIt++) {
-        const SimpleGeometryGroup& geo = geoIt->second;
+    for (auto geoIt = geometry.cbegin(); geoIt != geometry.cend(); geoIt++)
+    {
+        const SimpleGeometryGroup &geo = geoIt->second;
 
         // Apply object specific uniforms like transformation matrices
         SimpleUniform ModelViewMatrix = geo.transform * geo.addlTransform;
@@ -1548,12 +1722,12 @@ void SimpleSceneGraph::ApplyGlobalSettingsToCurrentProgram()
         glUniform1f(locs.toneMapGamma, environment.toneMapGamma);
 }
 
-void SimpleSceneGraph::SetUniforms(SimpleProgramPtr& program)
+void SimpleSceneGraph::SetUniforms(SimpleProgramPtr &program)
 {
     if (!program)
         return;
     program->Use();
-    GLint enviroCubeMap = program->GetUniformLocation("enviroCube");
+    // GLint enviroCubeMap = program->GetUniformLocation("enviroCube");
 
     program->ApplyUniform("EnviroColorMap", (SimpleUniform)environment.enviroColorMapUnit);
 
@@ -1586,7 +1760,8 @@ void SimpleSceneGraph::ApplySpheresToCurrentProgram()
     vector<float> spherePositions;
     vector<float> sphereKe;
     int numSpheres = 0;
-    for (auto sphIt = spheres.begin(); sphIt != spheres.end(); sphIt++) {
+    for (auto sphIt = spheres.begin(); sphIt != spheres.end(); sphIt++)
+    {
         if (spherePositions.size() > 8)
             break;
         Vector4f pos(0, 0, 0, 1);
@@ -1596,9 +1771,10 @@ void SimpleSceneGraph::ApplySpheresToCurrentProgram()
         radius = radius - pos;
         float length = radius.length();
         pos.w = length;
-        SimpleMaterial* mtl = materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
+        SimpleMaterial *mtl = materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
         // only push spheres that are emissive...
-        if (mtl) {
+        if (mtl)
+        {
             spherePositions.push_back(pos.x);
             spherePositions.push_back(pos.y);
             spherePositions.push_back(pos.z);
@@ -1612,7 +1788,8 @@ void SimpleSceneGraph::ApplySpheresToCurrentProgram()
             numSpheres++;
         }
     }
-    if (numSpheres > 0) {
+    if (numSpheres > 0)
+    {
         if (locs.sphere_array >= 0)
             glUniform4fv(locs.sphere_array, numSpheres, &spherePositions[0]);
         if (locs.sphere_Ke >= 0)
@@ -1621,24 +1798,26 @@ void SimpleSceneGraph::ApplySpheresToCurrentProgram()
     if (locs.sphere_count >= 0)
         glUniform1i(locs.sphere_count, numSpheres);
 
-    int v_Enabled[16] = { 0 };
+    int v_Enabled[16] = {0};
     Vector3f v_E0[16];
     Vector3f v_Position[16];
-    int v_LightProbeCubeMapUnit[16] = { 0 };
-    int v_EnvironmentCubeMapUnit[16] = { 0 };
-    int v_DepthShadowCubeMapUnit[16] = { 0 };
-    GLuint v_LightProbeCubeMapTexId[16] = { 0 };
-    GLuint v_EnvironmentCubeMapTexId[16] = { 0 };
-    GLuint v_DepthShadowCubeMapTexId[16] = { 0 };
-    GLfloat v_DepthShadowZFar[16] = { 0.0 };
-    Vector3f v_sph[16 * 9] = { 0.0 };
+    int v_LightProbeCubeMapUnit[16] = {0};
+    int v_EnvironmentCubeMapUnit[16] = {0};
+    int v_DepthShadowCubeMapUnit[16] = {0};
+    GLuint v_LightProbeCubeMapTexId[16] = {0};
+    GLuint v_EnvironmentCubeMapTexId[16] = {0};
+    GLuint v_DepthShadowCubeMapTexId[16] = {0};
+    GLfloat v_DepthShadowZFar[16] = {0.0};
+    Vector3f v_sph[16 * 9] = {0.0};
     int v_MaxIndex = -1;
 
-    for (int i = 0; i < 16; i++) {
+    for (unsigned i = 0; i < 16; i++)
+    {
         if (locs.sphl_lights_enabled[i] < 0)
             continue;
 
-        if (ssphhLights.size() > i && ssphhLights[i].enabled) {
+        if (ssphhLights.size() > i && ssphhLights[i].enabled)
+        {
             v_MaxIndex = i;
             v_Enabled[i] = 1;
             v_E0[i] = Vector3f(ssphhLights[i].E0);
@@ -1653,18 +1832,21 @@ void SimpleSceneGraph::ApplySpheresToCurrentProgram()
             v_DepthShadowCubeMapUnit[i] = ssphhLights[i].depthSphlMap.unit = GetTexUnit();
             glutBindTexture(v_DepthShadowCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_DepthShadowCubeMapTexId[i]);
             v_DepthShadowZFar[i] = ssphhLights[i].depthSphlMap.zfar;
-            for (int sph = 0; sph < 9; sph++) {
+            for (int sph = 0; sph < 9; sph++)
+            {
                 v_sph[i * 9 + sph].x = ssphhLights[i].msph[0].getCoefficient(sph);
                 v_sph[i * 9 + sph].y = ssphhLights[i].msph[1].getCoefficient(sph);
                 v_sph[i * 9 + sph].z = ssphhLights[i].msph[2].getCoefficient(sph);
             }
         }
     }
-    if (v_MaxIndex >= 0) {
+    if (v_MaxIndex >= 0)
+    {
         if (locs.sphl_light_count >= 0)
             glUniform1i(locs.sphl_light_count, v_MaxIndex + 1);
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++)
+        {
             glUniform1iv(locs.sphl_lights_enabled[i], 1, &v_Enabled[i]);
             glUniform3fv(locs.sphl_lights_E0[i], 1, v_E0[i].const_ptr());
             glUniform3fv(locs.sphl_lights_position[i], 1, v_Position[i].const_ptr());
@@ -1672,23 +1854,27 @@ void SimpleSceneGraph::ApplySpheresToCurrentProgram()
             glUniform1iv(locs.sphl_lights_environmentCubeMap[i], 1, &v_EnvironmentCubeMapUnit[i]);
             glUniform1iv(locs.sphl_lights_depthShadowCubeMap[i], 1, &v_DepthShadowCubeMapUnit[i]);
             glUniform1fv(locs.sphl_lights_depthShadowZFar[i], 1, &v_DepthShadowZFar[i]);
-            for (int j = 0; j < 9; j++) {
+            for (int j = 0; j < 9; j++)
+            {
                 glUniform3fv(locs.sphl_lights_sph[i][j], 9, v_sph[i * 9].const_ptr());
             }
         }
 
         glActiveTexture(GL_TEXTURE0);
-    } else {
+    }
+    else
+    {
         if (locs.sphl_light_count >= 0)
             glUniform1i(locs.sphl_light_count, 0);
     }
 }
 
-void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps)
+void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial &mtl, bool useMaps)
 {
     GLuint unit = 1;
 
-    if (useMaps) {
+    if (useMaps)
+    {
         if (!mtl.map_Ka.empty())
             currentTextures["map_Ka"] = materials.GetTextureMap(mtl.map_Ka);
         if (!mtl.map_Kd.empty())
@@ -1724,9 +1910,11 @@ void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool u
         //if (mtl.map_bump.empty()) glUniform1f(locs.map_bump_mix, 0.0f);
         //if (mtl.map_normal.empty()) glUniform1f(locs.map_normal_mix, 0.0f);
 
-        for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
-            SimpleMap* pMap = tmapIt->second;
-            if (pMap) {
+        for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++)
+        {
+            SimpleMap *pMap = tmapIt->second;
+            if (pMap)
+            {
                 if (pMap->unitId <= 0)
                     pMap->unitId = GetTexUnit();
                 pMap->samplerId = pMap->textureObject.samplerObject.GetId();
@@ -1734,7 +1922,8 @@ void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool u
                 pMap->textureObject.Bind(pMap->unitId, false);
                 glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0);
 
-                if (pMap->samplerId == 0) {
+                if (pMap->samplerId == 0)
+                {
                     glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);
                     glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);
                     glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_WRAP_R, GL_REPEAT);
@@ -1744,44 +1933,68 @@ void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool u
 
                 pMap->map_loc = -1;
                 pMap->map_mix_loc = -1;
-                if (tmapIt->first == "map_Ka") {
+                if (tmapIt->first == "map_Ka")
+                {
                     pMap->map_loc = locs.map_Ka;
                     pMap->map_mix_loc = locs.map_Ka_mix;
-                } else if (tmapIt->first == "map_Kd") {
+                }
+                else if (tmapIt->first == "map_Kd")
+                {
                     pMap->map_loc = locs.map_Kd;
                     pMap->map_mix_loc = locs.map_Kd_mix;
-                } else if (tmapIt->first == "map_Ks") {
+                }
+                else if (tmapIt->first == "map_Ks")
+                {
                     pMap->map_loc = locs.map_Ks;
                     pMap->map_mix_loc = locs.map_Ks_mix;
-                } else if (tmapIt->first == "map_Ke") {
+                }
+                else if (tmapIt->first == "map_Ke")
+                {
                     pMap->map_loc = locs.map_Ke;
                     pMap->map_mix_loc = locs.map_Ke_mix;
-                } else if (tmapIt->first == "map_Ni") {
+                }
+                else if (tmapIt->first == "map_Ni")
+                {
                     pMap->map_loc = locs.map_Ni;
                     pMap->map_mix_loc = locs.map_Ni_mix;
-                } else if (tmapIt->first == "map_Ns") {
+                }
+                else if (tmapIt->first == "map_Ns")
+                {
                     pMap->map_loc = locs.map_Ns;
                     pMap->map_mix_loc = locs.map_Ns_mix;
-                } else if (tmapIt->first == "map_Tf") {
+                }
+                else if (tmapIt->first == "map_Tf")
+                {
                     pMap->map_loc = locs.map_Tf;
                     pMap->map_mix_loc = locs.map_Tf_mix;
-                } else if (tmapIt->first == "map_Tr") {
+                }
+                else if (tmapIt->first == "map_Tr")
+                {
                     pMap->map_loc = locs.map_Tr;
                     pMap->map_mix_loc = locs.map_Tr_mix;
-                } else if (tmapIt->first == "map_bump") {
+                }
+                else if (tmapIt->first == "map_bump")
+                {
                     pMap->map_loc = locs.map_bump;
                     pMap->map_mix_loc = locs.map_bump_mix;
-                } else if (tmapIt->first == "map_normal") {
+                }
+                else if (tmapIt->first == "map_normal")
+                {
                     pMap->map_loc = locs.map_normal;
                     pMap->map_mix_loc = locs.map_normal_mix;
-                } else if (tmapIt->first == "PBmap") {
+                }
+                else if (tmapIt->first == "PBmap")
+                {
                     pMap->map_loc = locs.PBmap;
                     pMap->map_mix_loc = locs.PBmap_mix;
                 }
 
-                if (pMap->unitId < 0 || pMap->unitId >= g_MaxCombinedTextureUnits) {
+                if (pMap->unitId < 0 || pMap->unitId >= g_MaxCombinedTextureUnits)
+                {
                     hflog.error("%s(): pMap->unitId (%d) is out of range.", __FUNCTION__, pMap->unitId);
-                } else {
+                }
+                else
+                {
                     if (pMap->map_loc >= 0)
                         glUniform1i(pMap->map_loc, pMap->unitId);
                     if (pMap->map_mix_loc >= 0)
@@ -1824,7 +2037,8 @@ void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool u
         glUniform1fv(locs.PBk, 1, &mtl.PBk);
 
     // The better way to do this is to first find all the locations for the material, then apply them...
-    for (auto uniform : locs.newLocationList) {
+    for (auto uniform : locs.newLocationList)
+    {
         // uniform.first = mapname
         // uniform.second = details
     }
@@ -1833,15 +2047,18 @@ void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool u
 void SimpleSceneGraph::DisableCurrentTextures()
 {
     // Turn off textures and reset program unit bindings to 0
-    for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
-        SimpleMap* pMap = tmapIt->second;
-        if (pMap) {
+    for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++)
+    {
+        SimpleMap *pMap = tmapIt->second;
+        if (pMap)
+        {
             glutBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
 
             glUniform1i(pMap->map_loc, 0);
             glUniform1f(pMap->map_mix_loc, 0.0f);
 
-            if (pMap->unitId != 0) {
+            if (pMap->unitId != 0)
+            {
                 FreeTexUnit(pMap->unitId);
             }
         }
@@ -1853,7 +2070,7 @@ void SimpleSceneGraph::DisableCurrentTextures()
 
 //
 
-void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram& program)
+void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram &program)
 {
     locations.clear();
     locations["Ka"] = Ka = program.GetUniformLocation("Ka");
@@ -1898,7 +2115,8 @@ void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram& progra
     locations["SpheresCount"] = sphere_count = program.GetUniformLocation("SpheresCount");
     locations["SpheresKe"] = sphere_Ke = program.GetUniformLocation("SpheresKe[0]");
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++)
+    {
         char name[64];
         sprintf_s(name, "SphlLights[%d].Enabled", i);
         locations[name] = sphl_lights_enabled[i] = program.GetUniformLocation(name);
@@ -1914,7 +2132,8 @@ void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram& progra
         locations[name] = sphl_lights_depthShadowCubeMap[i] = program.GetUniformLocation(name);
         sprintf_s(name, "SphlLights[%d].DepthShadowZFar", i);
         locations[name] = sphl_lights_depthShadowZFar[i] = program.GetUniformLocation(name);
-        for (int j = 0; j < 9; j++) {
+        for (int j = 0; j < 9; j++)
+        {
             sphl_lights_sph[i][j] = -1;
             sprintf_s(name, "SphlLights[%d].sph[%d]", i, j);
             locations[name] = sphl_lights_sph[i][j] = program.GetUniformLocation(name);
@@ -1945,7 +2164,8 @@ void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram& progra
     // Do the new way by finding out what uniforms the program actually has, or is looking for...
     newLocationList.Clear();
 
-    for (auto uniform : program.activeUniforms) {
+    for (auto uniform : program.activeUniforms)
+    {
         // uniform.first is the mapname of the uniform...
         // uniform.second has the details...
 
@@ -1957,7 +2177,8 @@ void SimpleSceneGraph::InitSphls()
 {
     ssphhLights.clear();
     ssphhLights.resize(MaxSphlLights);
-    for (int i = 0; i < MaxSphlLights; i++) {
+    for (int i = 0; i < MaxSphlLights; i++)
+    {
         ssphhLights[i].ChangeDegrees(MaxSphlDegree);
         ssphhLights[i].enabled = false;
     }
@@ -1965,13 +2186,14 @@ void SimpleSceneGraph::InitSphls()
 
 void SimpleSceneGraph::MakeSphlsUnclean()
 {
-    for (int i = 0; i < ssphhLights.size(); i++) {
+    for (size_t i = 0; i < ssphhLights.size(); i++)
+    {
         ssphhLights[i].dirty = true;
         ssphhLights[i].depthSphlMap.dirty = true;
     }
 }
 
-void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc)
+void RenderCubeShadowMap(const SimpleSceneGraph &ssg, SimpleCubeTexture &scs, const SimpleRenderConfiguration &rc)
 {
     glutSetErrorMessage("fluxions_simple_scene_graph.cpp", __LINE__, __FUNCTION__);
 
@@ -1986,9 +2208,12 @@ void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, co
     glGenFramebuffers(1, &cubeShadowFbo);
     glBindFramebuffer(GL_FRAMEBUFFER, cubeShadowFbo);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, scs.texture.GetTexture(), 0);
-    if (rc.fbo_gen_color) {
+    if (rc.fbo_gen_color)
+    {
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, rc.fbo_color_map, 0);
-    } else {
+    }
+    else
+    {
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
     }
@@ -2001,7 +2226,8 @@ void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, co
     else
         fboComplete = true;
 
-    if (!fboComplete) {
+    if (!fboComplete)
+    {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         hflog.error("%s(): Framebuffer not complete!", __FUNCTION__);
         scs.buildTime = -1.0;
@@ -2013,7 +2239,8 @@ void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, co
 
     // remove texture from fbo
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0);
-    if (rc.fbo_gen_color) {
+    if (rc.fbo_gen_color)
+    {
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

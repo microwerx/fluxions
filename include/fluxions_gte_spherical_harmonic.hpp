@@ -64,10 +64,10 @@ class TSphericalHarmonic
 	}
 
 	void reset() { resize(maxDegree, VectorType(0)); }
-	void reset(int maxDegree_) { resize(maxDegree_, VectorType(0)); }
-	void reset(int maxDegree_, const VectorType &value) { resize(maxDegree_, value); }
-	void resize(int maxDegree_);
-	void resize(int maxDegree_, const VectorType &value);
+	void reset(size_t maxDegree_) { resize(maxDegree_, VectorType(0)); }
+	void reset(size_t maxDegree_, const VectorType &value) { resize(maxDegree_, value); }
+	void resize(size_t maxDegree_);
+	void resize(size_t maxDegree_, const VectorType &value);
 	void readFromString(const string &data);
 	void readFromFile(const string &filename);
 
@@ -90,7 +90,7 @@ class TSphericalHarmonic
 	{
 		if (coefficients.size() != b.coefficients.size())
 		{
-			hflog.error("%s(): spherical harmonics do not have the same degree! addition not done.", __FUNCTION__);
+			//hflog.error("%s(): spherical harmonics do not have the same degree! addition not done.", __FUNCTION__);
 			return *this;
 		}
 
@@ -185,12 +185,12 @@ class TSphericalHarmonic
 	}
 
 	// returns -1 if out of range, or index if in range
-	constexpr int getCoefficientIndex(int l, int m) const noexcept
+	constexpr size_t getCoefficientIndex(size_t l, int m) const noexcept
 	{
-		if (l >= 0 && l <= maxDegree && abs(m) <= l)
+		if (l <= maxDegree && (size_t)abs(m) <= l)
 			return l * (l + 1) + m;
 		else
-			return -1;
+			return 0;
 	}
 
 	constexpr std::vector<VectorType> getCoefficients() noexcept
@@ -198,19 +198,11 @@ class TSphericalHarmonic
 		return coefficients;
 	}
 
-	constexpr VectorType getCoefficient(int l, int m) const
+	constexpr VectorType getCoefficient(size_t l, int m) const
 	{
-		int index = getCoefficientIndex(l, m);
-		if (index >= 0)
+		size_t index = getCoefficientIndex(l, m);
+		if (index < coefficients.size())
 			return coefficients[index];
-		else
-			return VectorType();
-	}
-
-	constexpr VectorType getCoefficient(int lm) const
-	{
-		if (lm >= 0 && lm < coefficients.size())
-			return coefficients[lm];
 		else
 			return VectorType();
 	}
@@ -223,17 +215,11 @@ class TSphericalHarmonic
 			return VectorType();
 	}
 
-	inline void setCoefficient(int l, int m, const VectorType x)
+	inline void setCoefficient(size_t l, int m, const VectorType x)
 	{
-		int index = getCoefficientIndex(l, m);
-		if (index >= 0)
+		size_t index = getCoefficientIndex(l, m);
+		if (index < coefficients.size())
 			coefficients[index] = x;
-	}
-
-	inline void setCoefficient(int lm, const VectorType x)
-	{
-		if (lm >= 0 && lm < coefficients.size())
-			coefficients[lm] = x;
 	}
 
 	inline void setCoefficient(size_t lm, const VectorType x)
@@ -251,7 +237,7 @@ class TSphericalHarmonic
 		return VectorType(1);
 	}
 
-	constexpr VectorType K(int l, int m)
+	constexpr VectorType K(size_t l, int m)
 	{
 		ScalarType fourPi = (ScalarType)12.566370614359172953850573533118;
 		ScalarType invFourPi = (ScalarType)0.07957747154594766788444188168626;
@@ -306,7 +292,7 @@ class TSphericalHarmonic
 };
 
 template <typename VectorType, typename ScalarType>
-void TSphericalHarmonic<VectorType, ScalarType>::resize(int maxDegree_)
+void TSphericalHarmonic<VectorType, ScalarType>::resize(size_t maxDegree_)
 {
 	if (maxDegree_ < 0 || maxDegree_ > 10)
 	{
@@ -320,7 +306,7 @@ void TSphericalHarmonic<VectorType, ScalarType>::resize(int maxDegree_)
 }
 
 template <typename VectorType, typename ScalarType>
-void TSphericalHarmonic<VectorType, ScalarType>::resize(int maxDegree_, const VectorType &value)
+void TSphericalHarmonic<VectorType, ScalarType>::resize(size_t maxDegree_, const VectorType &value)
 {
 	if (maxDegree_ < 0 || maxDegree_ > 10)
 	{

@@ -32,13 +32,13 @@
 #include <windows.h>
 #endif
 
-inline std::string wstring_to_string(const std::wstring& wstr)
+inline std::string wstring_to_string(const std::wstring &wstr)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     return converter.to_bytes(wstr);
 }
 
-inline std::wstring string_to_wstring(const std::string& str)
+inline std::wstring string_to_wstring(const std::string &str)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     return converter.from_bytes(str);
@@ -54,7 +54,8 @@ inline std::wstring string_to_wstring(const std::string& str)
 
 #include "kasl_python.hpp"
 
-namespace KASL {
+namespace KASL
+{
 using namespace std;
 
 PythonInterpreter::PythonInterpreter()
@@ -65,9 +66,10 @@ PythonInterpreter::~PythonInterpreter()
 {
 }
 
-bool PythonInterpreter::init(const string& programName)
+bool PythonInterpreter::init(const string &programName)
 {
-    if (myThread.joinable()) {
+    if (myThread.joinable())
+    {
         // we don't want to initialize a thread that's already running...
         return false;
     }
@@ -79,10 +81,13 @@ bool PythonInterpreter::init(const string& programName)
 
 void PythonInterpreter::kill()
 {
-    if (myThread.joinable()) {
+    if (myThread.joinable())
+    {
         // thread is already running, so send the message to kill it...
         addCommand(Command::Kill);
-    } else {
+    }
+    else
+    {
         currentState = State::InitialState;
         commandDeque.clear();
     }
@@ -129,7 +134,7 @@ void PythonInterpreter::unlock()
     myMutex.unlock();
 }
 
-void PythonInterpreter::addCommand(Command cmd, const string& str)
+void PythonInterpreter::addCommand(Command cmd, const string &str)
 {
     lock();
     commandDeque.push_back(pair<Command, string>(cmd, str));
@@ -144,11 +149,13 @@ bool PythonInterpreter::processSingleCommand()
     bool retval = false;
     // pop front of vector and process the single command...
     lock();
-    if (!commandDeque.empty()) {
+    if (!commandDeque.empty())
+    {
         pair<Command, string> curCmd = commandDeque.front();
         commandDeque.pop_front();
         unlock();
-        switch (curCmd.first) {
+        switch (curCmd.first)
+        {
         case Command::Init:
             onInit();
             break;
@@ -187,7 +194,9 @@ bool PythonInterpreter::processSingleCommand()
         }
         retval = true;
         cmdCount++;
-    } else {
+    }
+    else
+    {
         unlock();
     }
 
@@ -205,28 +214,36 @@ bool PythonInterpreter::doThreadLoop()
     return true;
 }
 
-void PythonInterpreter::thread_func(const string& programName, PythonInterpreter* pPyInterpreter)
+void PythonInterpreter::thread_func(const string &programName, PythonInterpreter *pPyInterpreter)
 {
     if (pPyInterpreter == nullptr)
         return;
-
+#ifdef WIN32
     BOOL result = AllocConsole();
     hflog.info("%(): Opening Console: result = %d", __FUNCTION__, result);
+#endif
     cout << "PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: starting[" << programName << "]..." << endl;
-    try {
-        if (pPyInterpreter->currentState == PythonInterpreter::State::InitialState) {
+    try
+    {
+        if (pPyInterpreter->currentState == PythonInterpreter::State::InitialState)
+        {
             pPyInterpreter->flush();
         }
 
-        while (pPyInterpreter->doThreadLoop()) {
+        while (pPyInterpreter->doThreadLoop())
+        {
             //this_thread::yield();
             //this_thread::sleep_for(1ms);
             this_thread::sleep_for(chrono::seconds(1));
         }
-    } catch (const exception& e) {
+    }
+    catch (const exception &e)
+    {
         cerr << "EXCEPTION! PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: " << endl;
         cerr << e.what() << endl;
-    } catch (...) {
+    }
+    catch (...)
+    {
         cerr << "EXCEPTION! PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]" << endl;
     }
 
@@ -237,7 +254,7 @@ void PythonInterpreter::onInit()
 {
     //cout << "OnInit" << endl;
     wstring wstr = string_to_wstring(myProgramName);
-    wchar_t* wstrPtr = &wstr[0];
+    wchar_t *wstrPtr = &wstr[0];
     Py_SetProgramName(wstrPtr);
     Py_Initialize();
     PySys_SetArgv(1, &wstrPtr);
@@ -269,12 +286,12 @@ void PythonInterpreter::onStop()
     currentState = State::Ready;
 }
 
-void PythonInterpreter::onImportModule(const string& param)
+void PythonInterpreter::onImportModule(const string &param)
 {
-    PyObject* pName = Py_BuildValue("s", param.c_str());
+    PyObject *pName = Py_BuildValue("s", param.c_str());
     if (pName == nullptr)
         return;
-    PyObject* pModule = PyImport_Import(pName);
+    PyObject *pModule = PyImport_Import(pName);
 
     if (pName)
         Py_DECREF(pName);
@@ -282,11 +299,11 @@ void PythonInterpreter::onImportModule(const string& param)
         Py_DECREF(pName);
 }
 
-void PythonInterpreter::onCallFunction(const string& param)
+void PythonInterpreter::onCallFunction(const string &param)
 {
 }
 
-void PythonInterpreter::onPyRun_SimpleString(const string& param)
+void PythonInterpreter::onPyRun_SimpleString(const string &param)
 {
     if (currentState != State::Started)
         return;
@@ -294,51 +311,55 @@ void PythonInterpreter::onPyRun_SimpleString(const string& param)
     PyRun_SimpleString(param.c_str());
 }
 
-void PythonInterpreter::onPyRun_AnyFile(const string& param)
+void PythonInterpreter::onPyRun_AnyFile(const string &param)
 {
     if (currentState != State::Started)
         return;
     //cout << "OnPyRun_AnyFile: " << param << endl;
 }
 
-void PythonInterpreter::onPyRun_SimpleFile(const string& param)
+void PythonInterpreter::onPyRun_SimpleFile(const string &param)
 {
     if (currentState != State::Started)
         return;
     //cout << "OnPyRun_SimpleFile: " << param << endl;
-    FILE* fin = _Py_fopen(param.c_str(), "r+");
-    if (fin) {
-        try {
+    FILE *fin = _Py_fopen(param.c_str(), "r+");
+    if (fin)
+    {
+        try
+        {
             int retval = PyRun_SimpleFileExFlags(fin, param.c_str(), 1, nullptr);
             cout << "retval: " << retval << endl;
-        } catch (...) {
+        }
+        catch (...)
+        {
             // ergh...
         }
     }
 }
 
-void PythonInterpreter::onPyRun_InteractiveOne(const string& param)
+void PythonInterpreter::onPyRun_InteractiveOne(const string &param)
 {
     if (currentState != State::Started)
         return;
     //cout << "OnPyRun_InteractiveOne: " << param << endl;
 }
 
-void PythonInterpreter::onPyRun_InteractiveLoop(const string& param)
+void PythonInterpreter::onPyRun_InteractiveLoop(const string &param)
 {
     if (currentState != State::Started)
         return;
     //cout << "OnPyRun_InteractiveLoop: " << param << endl;
 }
 
-void PythonInterpreter::onPyRun_File(const string& param)
+void PythonInterpreter::onPyRun_File(const string &param)
 {
     if (currentState != State::Started)
         return;
     //cout << "OnPyRun_File: " << param << endl;
 }
 
-int test_PythonInterpreter(int argc, char** argv)
+int test_PythonInterpreter(int argc, char **argv)
 {
     cout << "PythonInterpreter TEST" << endl;
 
@@ -349,7 +370,8 @@ int test_PythonInterpreter(int argc, char** argv)
     python.start();
     bool done = false;
     size_t cmdcount = python.getCommandCount();
-    while (!done) {
+    while (!done)
+    {
         while (cmdcount == python.getCommandCount())
             this_thread::yield();
         cout << "Enter a command: " << flush;
@@ -357,11 +379,16 @@ int test_PythonInterpreter(int argc, char** argv)
         //cin.clear();
         //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         getline(cin, cmdline);
-        if (cmdline.size() == 0) {
+        if (cmdline.size() == 0)
+        {
             done = true;
-        } else if (cmdline == "quit") {
+        }
+        else if (cmdline == "quit")
+        {
             done = true;
-        } else {
+        }
+        else
+        {
             cmdcount = python.getCommandCount();
             // python.addCommand(PythonInterpreter::Command::PyRun_SimpleString, cmdline);
             python.addCommand(PythonInterpreter::Command::PyRun_SimpleFile, cmdline);
@@ -371,4 +398,4 @@ int test_PythonInterpreter(int argc, char** argv)
     python.join();
     return 0;
 }
-}
+} // namespace KASL

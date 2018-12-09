@@ -29,10 +29,12 @@
 #include "fluxions_simple_materials.hpp"
 #include <fluxions_stdcxx.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 using namespace std;
 
-struct SimpleRenderConfiguration {
+struct SimpleRenderConfiguration
+{
     bool useMaps = true;
     bool useMaterials = true;
     bool useZOnly = false;
@@ -89,13 +91,14 @@ struct SimpleRenderConfiguration {
     Matrix4f projectionMatrix;
     Matrix4f preCameraMatrix;
     Matrix4f postCameraMatrix;
-    Matrix4f cameraMatrix; // the actual camera matrix used...
+    Matrix4f cameraMatrix;   // the actual camera matrix used...
     Vector4f cameraPosition; // the actual camera position used...
 
     GLbitfield GetClearBits() const;
 };
 
-struct SimpleGeometryGroup {
+struct SimpleGeometryGroup
+{
     Matrix4f transform;
     Matrix4f addlTransform;
     BoundingBoxf bbox;
@@ -109,7 +112,8 @@ struct SimpleGeometryGroup {
     GLuint mtllibId = 0;
 };
 
-struct SimpleCamera {
+struct SimpleCamera
+{
     bool isOrtho;
     bool isPerspective;
     Matrix4f projectionMatrix;
@@ -145,7 +149,8 @@ struct SimpleCamera {
     }
 };
 
-struct SimpleEnvironment {
+struct SimpleEnvironment
+{
     bool hasColor = false;
     bool hasTexmap = false;
     bool hasSun = false;
@@ -161,7 +166,7 @@ struct SimpleEnvironment {
     // GLuint curSkyTextureId = 0;
     // GLuint curSkySamplerId = 0;
 
-    Vector3f sunColor;
+    Color3f sunColor;
     float sunSize = 1.0;
     GLint isHemisphere = 0;
     float sunShadowMapDistance = 20.0f;
@@ -200,18 +205,19 @@ struct SimpleEnvironment {
     GLuint pbskyColorMapId = 0;
     GLuint pbskyColorMapSamplerId = 0;
 
-    void Update(const BoundingBoxf& bbox);
+    void Update(const BoundingBoxf &bbox);
     void ComputePBSky();
     bool IsSkyComputed() const { return isSkyComputed; }
     double LastSkyGenTime() const { return lastSkyGenTime; }
 
-private:
+  private:
     bool isSkyComputing = false;
     bool isSkyComputed = false;
     double lastSkyGenTime = 0.0;
 };
 
-struct SimpleSphere {
+struct SimpleSphere
+{
     Matrix4f transform;
     string mtllibName;
     string mtlName;
@@ -220,7 +226,8 @@ struct SimpleSphere {
     GLuint objectId = 0;
 };
 
-struct SimpleGpuTexture {
+struct SimpleGpuTexture
+{
     //SimpleGpuTexture(SimpleGpuTexture & copy)
     //{
     //	target_ = copy.target_;
@@ -245,7 +252,8 @@ struct SimpleGpuTexture {
             throw "Unsupported Texture Target";
 
         target_ = target;
-        try {
+        try
+        {
             texture_ = make_shared<GLuint>(0);
             GLuint texture;
             glGenTextures(1, &texture);
@@ -253,14 +261,17 @@ struct SimpleGpuTexture {
             glutDebugBindTexture(target_, *texture_);
             glutDebugBindTexture(target_, 0);
             // hflog.info("%s(): Created texture %d", __FUNCTION__, *texture_);
-        } catch (...) {
+        }
+        catch (...)
+        {
             // hflog.error("%s(): glGenTextures() failed", __FUNCTION__);
         }
     }
 
     ~SimpleGpuTexture()
     {
-        if (texture_.use_count() == 1) {
+        if (texture_.use_count() == 1)
+        {
             GLuint texture = *texture_;
             glDeleteTextures(1, &texture);
             // hflog.info("%s(): Deleted texture %d", __FUNCTION__, *texture_);
@@ -292,15 +303,19 @@ struct SimpleGpuTexture {
     {
         if (!texture_)
             return;
-        if (target_ == GL_TEXTURE_2D) {
+        if (target_ == GL_TEXTURE_2D)
+        {
             created_ = true;
             Bind(0);
             glTexImage2D(target_, 0, internalformat, width, height, 0, format, type, nullptr);
             Unbind();
-        } else if (target_ == GL_TEXTURE_CUBE_MAP) {
+        }
+        else if (target_ == GL_TEXTURE_CUBE_MAP)
+        {
             created_ = true;
             Bind(0);
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 6; i++)
+            {
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalformat, width, height, 0, format, type, nullptr);
             }
             Unbind();
@@ -360,7 +375,7 @@ struct SimpleGpuTexture {
         return *texture_;
     }
 
-private:
+  private:
     GLenum target_ = GL_TEXTURE_CUBE_MAP;
     int lastUnitBound_ = -1;
     //GLuint texture_ = 0;
@@ -373,12 +388,13 @@ static const int MaxSphlDegree = 9;
 static const int DefaultSphlDegree = 2;
 static const int SphlSunIndex = MaxSphlLights;
 
-struct SphlImageTexture {
+struct SphlImageTexture
+{
     Image4f lightProbe;
     SimpleGpuTexture texture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
 
-    bool LoadLightProbe(const string& path);
-    bool SphToLightProbe(const MultispectralSph4f& sph);
+    bool LoadLightProbe(const string &path);
+    bool SphToLightProbe(const MultispectralSph4f &sph);
     bool UploadLightProbe();
 };
 
@@ -434,7 +450,8 @@ struct SphlImageTexture {
 //	}
 //};
 
-struct SimpleCubeTexture {
+struct SimpleCubeTexture
+{
     GLint unit = 0;
     GLint samplerId = 0;
     double buildTime = 0.0;
@@ -443,8 +460,9 @@ struct SimpleCubeTexture {
     bool dirty = true;
 };
 
-class SimpleSSPHHLight {
-public:
+class SimpleSSPHHLight
+{
+  public:
     bool enabled = true;
     float E0 = 1.0f;
     float falloffRadius = 100.0f;
@@ -492,20 +510,20 @@ public:
     ~SimpleSSPHHLight();
 
     // Reads from a Corona Light Probe (a cube map stored images from left to right in a single image).
-    bool ReadCoronaLightProbe(const string& path);
+    bool ReadCoronaLightProbe(const string &path);
     // Saves to a Corona Light Probe (a cube map with cube faces stored from left to right in a single image).
-    bool SaveCoronaLightProbe(const string& path);
+    bool SaveCoronaLightProbe(const string &path);
 
     // Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-    bool SaveJsonSph(const string& path);
+    bool SaveJsonSph(const string &path);
     // Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-    bool ReadJsonSph(const string& path);
+    bool ReadJsonSph(const string &path);
 
-    bool LightProbeToSph(const Image4f& lightProbe, MultispectralSph4f& sph);
-    bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe);
-    bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe, int maxDegree);
-    bool UploadLightProbe(Image4f& lightProbe, SimpleGpuTexture& texture);
-    bool UploadLightProbe(Image4f& lightProbe, GLuint& texture);
+    bool LightProbeToSph(const Image4f &lightProbe, MultispectralSph4f &sph);
+    bool SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe);
+    bool SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe, int maxDegree);
+    bool UploadLightProbe(Image4f &lightProbe, SimpleGpuTexture &texture);
+    bool UploadLightProbe(Image4f &lightProbe, GLuint &texture);
 
     Color3f GetCoefficientColor(int l, int m) const;
     float GetCoefficient(int j, int l, int m) const;
@@ -542,12 +560,13 @@ public:
 };
 
 class SimpleSceneGraph;
-class SimpleSSPHH {
-public:
+class SimpleSSPHH
+{
+  public:
     SimpleSSPHH();
     ~SimpleSSPHH();
 
-    void INIT(SimpleSceneGraph& ssg);
+    void INIT(SimpleSceneGraph &ssg);
     void GEN();
     void VIZ();
     void HIER(bool includeSelf = true, bool includeNeighbor = true, int maxDegrees = -1);
@@ -556,14 +575,15 @@ public:
     bool savePPMs = false;
     bool convToPNG = false;
 
-private:
-    struct Qpair {
+  private:
+    struct Qpair
+    {
         int index = -1;
         float p = 0.0f;
     };
 
     string sceneName;
-    vector<SimpleSSPHHLight>* sphls_ = nullptr;
+    vector<SimpleSSPHHLight> *sphls_ = nullptr;
     size_t size_ = 0;
 
     // GEN creates this light probe
@@ -583,7 +603,8 @@ private:
     vector<Sph4f> neighbor;
 };
 
-struct SimplePointLight {
+struct SimplePointLight
+{
     string name;
     size_t index;
     float E0;
@@ -593,7 +614,8 @@ struct SimplePointLight {
     SimpleCubeTexture scs;
 };
 
-struct __ShaderProgramLocations {
+struct __ShaderProgramLocations
+{
     GLint Ka = -1;
     GLint Kd = -1;
     GLint Ks = -1;
@@ -639,14 +661,14 @@ struct __ShaderProgramLocations {
     GLint sphere_Ke = -1;
 
     GLint sphl_light_count = -1;
-    GLint sphl_lights_enabled[16] = { -1 };
-    GLint sphl_lights_position[16] = { -1 };
-    GLint sphl_lights_E0[16] = { -1 };
-    GLint sphl_lights_lightProbeCubeMap[16] = { -1 };
-    GLint sphl_lights_environmentCubeMap[16] = { -1 };
-    GLint sphl_lights_depthShadowCubeMap[16] = { -1 };
-    GLint sphl_lights_depthShadowZFar[16] = { -1 };
-    GLint sphl_lights_sph[16][9] = { -1 };
+    GLint sphl_lights_enabled[16] = {-1};
+    GLint sphl_lights_position[16] = {-1};
+    GLint sphl_lights_E0[16] = {-1};
+    GLint sphl_lights_lightProbeCubeMap[16] = {-1};
+    GLint sphl_lights_environmentCubeMap[16] = {-1};
+    GLint sphl_lights_depthShadowCubeMap[16] = {-1};
+    GLint sphl_lights_depthShadowZFar[16] = {-1};
+    GLint sphl_lights_sph[16][9] = {-1};
 
     GLint toneMapScale = -1;
     GLint toneMapExposure = -1;
@@ -670,11 +692,12 @@ struct __ShaderProgramLocations {
 
     SimpleAssociativePropertyList newLocationList;
 
-    void GetMaterialProgramLocations(SimpleProgram& program);
+    void GetMaterialProgramLocations(SimpleProgram &program);
 };
 
-class SimpleSceneGraph {
-public:
+class SimpleSceneGraph
+{
+  public:
     string name;
     vector<string> sceneFileLines;
     vector<string> pathsToTry;
@@ -694,45 +717,46 @@ public:
     SimpleMaterialSystem materials;
     mutable SimpleRenderer_GLuint renderer;
     __ShaderProgramLocations locs;
-    map<string, SimpleMap*> currentTextures;
+    map<string, SimpleMap *> currentTextures;
     SimpleSSPHH ssphh;
 
-    bool ReadMtlLibFile(const string& filename);
-    bool ReadConfFile(const string& filename);
-    bool ReadObjFile(const string& filename, const string& name);
-    bool ReadTexmap(const string& name, const string& texmap);
-    bool ReadCamera(const istream& istr);
+    bool ReadMtlLibFile(const string &filename);
+    bool ReadConfFile(const string &filename);
+    bool ReadObjFile(const string &filename, const string &name);
+    bool ReadTexmap(const string &name, const string &texmap);
+    bool ReadCamera(const istream &istr);
 
     // Rendering tools
     void ApplySpheresToCurrentProgram();
     void ApplyGlobalSettingsToCurrentProgram();
-    void ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
+    void ApplyMaterialToCurrentProgram(SimpleMaterial &mtl, bool useMaps);
     void DisableCurrentTextures();
 
-private:
+  private:
     BoundingBoxf boundingBox;
 
     TSimpleResourceManager<GLuint> textureUnits;
     void InitTexUnits();
     void KillTexUnits();
 
-public:
+  public:
     GLuint GetTexUnit() { return textureUnits.Create(); }
-    void FreeTexUnit(GLuint& id)
+    void FreeTexUnit(GLuint &id)
     {
         textureUnits.Delete(id);
         id = 0;
     }
-    void FreeTexUnit(GLint& id)
+    void FreeTexUnit(GLint &id)
     {
-        if (id > 0) {
+        if (id > 0)
+        {
             GLuint tid = static_cast<GLuint>(id);
             textureUnits.Delete(tid);
             id = 0;
         }
     }
 
-public:
+  public:
     SimpleSceneGraph();
     ~SimpleSceneGraph();
 
@@ -740,30 +764,30 @@ public:
     /// <para>Resets scene graph to initial conditions. It's completely empty with default values.</para></summary>
     void Reset();
 
-    bool Load(const string& filename);
-    bool Save(const string& filename);
+    bool Load(const string &filename);
+    bool Save(const string &filename);
 
-    const BoundingBoxf& GetBoundingBox();
+    const BoundingBoxf &GetBoundingBox();
 
     /// Note this is where we went wrong, by including rendering information in the scene graph...
 
     void BuildBuffers();
-    void Render(SimpleProgram& program);
-    void RenderZOnly(SimpleProgram& program);
+    void Render(SimpleProgram &program);
+    void RenderZOnly(SimpleProgram &program);
 
-    void Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
+    void Render(SimpleProgram &program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix, Matrix4f &cameraMatrix);
 
-    void AdvancedRender(SimpleRenderConfiguration& rc);
-    void AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) const;
-    void RenderZOnly(SimpleProgramPtr& program) const;
+    void AdvancedRender(SimpleRenderConfiguration &rc);
+    void AdvancedRenderZOnly(const SimpleRenderConfiguration &rc) const;
+    void RenderZOnly(SimpleProgramPtr &program) const;
 
-    void SetUniforms(SimpleProgramPtr& shader);
+    void SetUniforms(SimpleProgramPtr &shader);
 
     void InitSphls();
     void MakeSphlsUnclean();
 };
 
-void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc);
+void RenderCubeShadowMap(const SimpleSceneGraph &ssg, SimpleCubeTexture &scs, const SimpleRenderConfiguration &rc);
 } // namespace Fluxions
 
 #endif

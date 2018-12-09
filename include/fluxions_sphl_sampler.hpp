@@ -37,11 +37,11 @@ class SphlSampler
 	void sampleCubeMap(const Image4f &cubeMap, MultispectralSph4f &msph);
 
   private:
-	const int pxscale = 4;
+	const size_t pxscale = 4;
 	Image3i sampleMap;
-	int ix = 128; // 628;
-	int iy = 64;  // 314;
-	int numSamples = 0;
+	size_t ix = 128; // 628;
+	size_t iy = 64;  // 314;
+	size_t numSamples = 0;
 	vector<Vector3f> randomVectors;
 	vector<double> theta;
 	vector<double> phi;

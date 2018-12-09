@@ -22,7 +22,8 @@
 #include <fluxions_fileio.hpp>
 #include <fluxions_xml.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 CoronaSceneFile::CoronaSceneFile()
 {
 }
@@ -31,7 +32,7 @@ CoronaSceneFile::~CoronaSceneFile()
 {
 }
 
-void CoronaSceneFile::SetCameraType(const string& newCameraType)
+void CoronaSceneFile::SetCameraType(const string &newCameraType)
 {
     if (newCameraType == "perspective")
         cameraType = newCameraType;
@@ -39,7 +40,7 @@ void CoronaSceneFile::SetCameraType(const string& newCameraType)
         cameraType = newCameraType;
 }
 
-void CoronaSceneFile::SetPerspectiveCamera(const Vector3f& origin, const Vector3f& target, const Vector3f& roll, const float horizontalFieldOfViewInDegrees)
+void CoronaSceneFile::SetPerspectiveCamera(const Vector3f &origin, const Vector3f &target, const Vector3f &roll, const float horizontalFieldOfViewInDegrees)
 {
     cameraOrigin = origin;
     cameraTarget = target;
@@ -48,7 +49,7 @@ void CoronaSceneFile::SetPerspectiveCamera(const Vector3f& origin, const Vector3
     cameraType = "perspective";
 }
 
-void CoronaSceneFile::SetCubeMapCamera(const Vector3f& origin, const Vector3f& target, const Vector3f& roll)
+void CoronaSceneFile::SetCubeMapCamera(const Vector3f &origin, const Vector3f &target, const Vector3f &roll)
 {
     cameraOrigin = origin;
     cameraTarget = target;
@@ -56,7 +57,7 @@ void CoronaSceneFile::SetCubeMapCamera(const Vector3f& origin, const Vector3f& t
     cameraType = "cubemap";
 }
 
-void CoronaSceneFile::WriteSCN(const string& filename, const SimpleSceneGraph& ssg)
+void CoronaSceneFile::WriteSCN(const string &filename, const SimpleSceneGraph &ssg)
 {
     SetCameraType("perspective");
     Vector3f origin = ssg.camera.viewMatrix.col4().xyz();
@@ -98,13 +99,13 @@ void CoronaSceneFile::WriteSCN(const string& filename, const SimpleSceneGraph& s
     fout.close();
 }
 
-void CoronaSceneFile::WriteCubeMapSCN(const string& filename, const SimpleSceneGraph& ssg)
+void CoronaSceneFile::WriteCubeMapSCN(const string &filename, const SimpleSceneGraph &ssg)
 {
     Vector3f cameraPosition = ssg.camera.actualViewMatrix.col4().xyz();
     WriteCubeMapSCN(filename, ssg, cameraPosition);
 }
 
-void CoronaSceneFile::WriteCubeMapSCN(const string& filename, const SimpleSceneGraph& ssg, const Vector3f& cameraPosition)
+void CoronaSceneFile::WriteCubeMapSCN(const string &filename, const SimpleSceneGraph &ssg, const Vector3f &cameraPosition)
 {
     SetCubeMapCamera(cameraPosition, cameraPosition + Vector3f(0.0f, 0.0f, -1.0f), Vector3f(0.0f, 1.0f, 0.0f));
 
@@ -128,7 +129,7 @@ void CoronaSceneFile::WriteCubeMapSCN(const string& filename, const SimpleSceneG
     fout.close();
 }
 
-void CoronaSceneFile::WriteSkySCN(const string& filename, const SimpleSceneGraph& ssg)
+void CoronaSceneFile::WriteSkySCN(const string &filename, const SimpleSceneGraph &ssg)
 {
     ofstream fout(filename);
     if (!fout)
@@ -145,10 +146,11 @@ void CoronaSceneFile::WriteSkySCN(const string& filename, const SimpleSceneGraph
     fout.close();
 }
 
-bool CoronaSceneFile::WriteSphlVizSCN(const string& filename, const SimpleSceneGraph& ssg, int sourceLightIndex, int receivingLightIndex)
+bool CoronaSceneFile::WriteSphlVizSCN(const string &filename, const SimpleSceneGraph &ssg, int sourceLightIndex, int receivingLightIndex)
 {
     int lastIndex = (int)ssg.ssphhLights.size() - 1;
-    if (!within(sourceLightIndex, -1, lastIndex) || !within(receivingLightIndex, -1, lastIndex)) {
+    if (!within(sourceLightIndex, -1, lastIndex) || !within(receivingLightIndex, -1, lastIndex))
+    {
         return false;
     }
 
@@ -161,11 +163,14 @@ bool CoronaSceneFile::WriteSphlVizSCN(const string& filename, const SimpleSceneG
                                                    << endl;
 
     // Camera
-    if (receivingLightIndex < 0) {
+    if (receivingLightIndex < 0)
+    {
         Vector3f position = ssg.camera.actualViewMatrix.col4().xyz();
         SetCubeMapCamera(position, Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
-    } else {
-        const SimpleSSPHHLight& sphl2 = ssg.ssphhLights[receivingLightIndex];
+    }
+    else
+    {
+        const SimpleSSPHHLight &sphl2 = ssg.ssphhLights[receivingLightIndex];
         Vector3f tmp = sphl2.position.xyz();
         Vector3f position(tmp.x, -tmp.z, tmp.y);
         Vector3f target(position.x, position.y - 1.0f, position.z);
@@ -176,10 +181,13 @@ bool CoronaSceneFile::WriteSphlVizSCN(const string& filename, const SimpleSceneG
     // Geometry Groups
     writeGeometryGroups(fout, ssg);
 
-    if (sourceLightIndex < 0) {
+    if (sourceLightIndex < 0)
+    {
         writeSun(fout, ssg);
-    } else {
-        const SimpleSSPHHLight& sphl1 = ssg.ssphhLights[sourceLightIndex];
+    }
+    else
+    {
+        const SimpleSSPHHLight &sphl1 = ssg.ssphhLights[sourceLightIndex];
         Matrix4f lightMatrix(
             0.1f, 0.0f, 0.0f, sphl1.position.x,
             0.0f, 0.1f, 0.0f, -sphl1.position.z,
@@ -204,7 +212,7 @@ bool CoronaSceneFile::WriteSphlVizSCN(const string& filename, const SimpleSceneG
     return true;
 }
 
-void CoronaSceneFile::writeCamera(ostream& ostr)
+void CoronaSceneFile::writeCamera(ostream &ostr)
 {
     Matrix4f fixMatrix(
         1.0f, 0.0f, 0.0f, 0.0f,
@@ -212,13 +220,15 @@ void CoronaSceneFile::writeCamera(ostream& ostr)
         0.0f, -1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f);
     XmlBeginTag(ostr, "camera", cameraType, 1) << endl;
-    if (cameraType == "perspective") {
+    if (cameraType == "perspective")
+    {
         Matrix4f fixed = cameraMatrix * fixMatrix;
         // Vector4f position = fixed.col4();
         XmlMatrix4f(ostr, "tm", fixed, 2) << endl;
         XmlFloat(ostr, "fov", cameraHorizontalFieldOfViewInDegrees, 2) << endl;
     }
-    if (cameraType == "cubemap") {
+    if (cameraType == "cubemap")
+    {
         XmlVector3f(ostr, "origin", cameraOrigin, 2) << endl;
         XmlVector3f(ostr, "target", cameraTarget, 2) << endl;
         XmlVector3f(ostr, "roll", cameraRoll, 2) << endl;
@@ -227,7 +237,7 @@ void CoronaSceneFile::writeCamera(ostream& ostr)
                                  << endl;
 }
 
-void CoronaSceneFile::writeSun(ostream& ostr, const SimpleSceneGraph& ssg)
+void CoronaSceneFile::writeSun(ostream &ostr, const SimpleSceneGraph &ssg)
 {
     string lights_mtllib = "ssphh_lights.mtl";
     XmlString(ostr, "mtllib", lights_mtllib, 1) << endl;
@@ -255,8 +265,9 @@ void CoronaSceneFile::writeSun(ostream& ostr, const SimpleSceneGraph& ssg)
     // XmlString(ostr, "mtllib", "ssphh_lights.mtl", 1) << endl;
 
     const float size = 0.1f;
-    for (size_t i = 0; i < ssg.pointLights.size(); i++) {
-        const SimplePointLight& pointLight = ssg.pointLights[i];
+    for (size_t i = 0; i < ssg.pointLights.size(); i++)
+    {
+        const SimplePointLight &pointLight = ssg.pointLights[i];
         Matrix4f lightMatrix(
             size, 0.0f, 0.0f, pointLight.position.x,
             0.0f, size, 0.0f, -pointLight.position.z,
@@ -291,7 +302,8 @@ void CoronaSceneFile::writeSun(ostream& ostr, const SimpleSceneGraph& ssg)
     XmlEndTag(fout, "mapDefinition", 1) << endl
                                         << endl;
 
-    for (int i = 0; i < ssg.pointLights.size(); i++) {
+    for (size_t i = 0; i < ssg.pointLights.size(); i++)
+    {
         ostringstream name;
         name << "PointLight" << i;
         XmlBeginTag(fout, "materialDefinition", "name", name.str(), 1) << endl;
@@ -313,9 +325,10 @@ void CoronaSceneFile::ClearCache()
     geometryGroups.clear();
 }
 
-void CoronaSceneFile::WriteCache(const SimpleSceneGraph& ssg)
+void CoronaSceneFile::WriteCache(const SimpleSceneGraph &ssg)
 {
-    if (geometryGroups.empty()) {
+    if (geometryGroups.empty())
+    {
         map<string, int> written_materials;
         map<string, string> written_maps;
 
@@ -327,73 +340,90 @@ void CoronaSceneFile::WriteCache(const SimpleSceneGraph& ssg)
         string mtl_name;
         int obj_count = 0;
         auto it = ssg.geometry.cbegin();
-        for (size_t i = 0; i < ssg.geometry.size(); i++, it++) {
-            const SimpleGeometryGroup& sgo = it->second;
-            const OBJStaticModel& obj = ssg.geometryObjects[sgo.objectId];
+        for (size_t i = 0; i < ssg.geometry.size(); i++, it++)
+        {
+            const SimpleGeometryGroup &sgo = it->second;
+            const OBJStaticModel &obj = ssg.geometryObjects[sgo.objectId];
 
             if (obj.Surfaces.empty())
                 continue;
 
-            for (auto& surface : obj.Surfaces) {
+            for (auto &surface : obj.Surfaces)
+            {
                 ostringstream obj_pathname;
                 obj_pathname << "corona_export/object_" << setw(3) << setfill('0') << obj_count << "_" << sgo.objectName << ".obj";
                 ofstream obj_fout(obj_pathname.str());
 
                 mtl_name = sgo.objectName + "_" + surface.materialName;
-                for (auto& c : mtl_name) {
+                for (auto &c : mtl_name)
+                {
                     if (c == ' ')
                         c = '_';
                 }
 
-                if (written_materials[mtl_name] == false) {
-                    const SimpleMaterial* mtl = ssg.materials.GetLibraryMaterial(sgo.mtllibName, surface.materialName);
-                    if (mtl) {
+                if (written_materials[mtl_name] == false)
+                {
+                    const SimpleMaterial *mtl = ssg.materials.GetLibraryMaterial(sgo.mtllibName, surface.materialName);
+                    if (mtl)
+                    {
                         written_materials[mtl_name] = (int)written_materials.size();
                         mtl_fout << "newmtl " << mtl_name << endl;
 
                         mtl_fout << "Kd ";
                         WriteColor3f(mtl_fout, mtl->Kd);
                         mtl_fout << endl;
-                        if (enableKs) {
+                        if (enableKs)
+                        {
                             mtl_fout << "Ks ";
                             WriteColor3f(mtl_fout, mtl->Ks);
                             mtl_fout << endl;
-                        } else {
+                        }
+                        else
+                        {
                             mtl_fout << "Ks 0.0 0.0 0.0" << endl;
                         }
                         mtl_fout << endl;
 
                         //ostream & fout = mtlxml_fout;
 
-                        if (!mtl->map_Kd.empty()) {
+                        if (!mtl->map_Kd.empty())
+                        {
                             written_maps[mtl->map_Kd] = ssg.materials.GetMapPath(mtl->map_Kd);
                         }
-                        if (!mtl->map_bump.empty()) {
+                        if (!mtl->map_bump.empty())
+                        {
                             written_maps[mtl->map_bump] = ssg.materials.GetMapPath(mtl->map_bump);
                         }
 
                         XmlBeginTag(mtlxml_fout, "materialDefinition", "name", mtl_name, 1) << endl;
                         XmlBeginTag(mtlxml_fout, "material", "Native", 2) << endl;
-                        if (!mtl->map_Kd.empty()) {
+                        if (!mtl->map_Kd.empty())
+                        {
                             XmlBeginTag(mtlxml_fout, "diffuse", 3) << endl;
                             XmlBeginTag(mtlxml_fout, "map", "Reference", 4);
                             mtlxml_fout << mtl->map_Kd;
                             XmlEndTag(mtlxml_fout, "map") << endl;
                             XmlEndTag(mtlxml_fout, "diffuse", 3) << endl;
-                        } else {
+                        }
+                        else
+                        {
                             if (mtl->PBk > 0.0)
                                 XmlColor3f(mtlxml_fout, "diffuse", Color3f(), 3) << endl;
                             else
                                 XmlColor3f(mtlxml_fout, "diffuse", mtl->Kd, 3) << endl;
                         }
 
-                        if (enableKs) {
+                        if (enableKs)
+                        {
                             XmlBeginTag(mtlxml_fout, "reflect", 3) << endl;
                             XmlColor3f(mtlxml_fout, "color", mtl->Ks, 4) << endl;
 
-                            if (mtl->PBk > 0.0) {
+                            if (mtl->PBk > 0.0)
+                            {
                                 XmlFloat(mtlxml_fout, "ior", 999, 4) << endl;
-                            } else {
+                            }
+                            else
+                            {
                                 XmlFloat(mtlxml_fout, "ior", mtl->PBior, 4) << endl;
                             }
                             // Corona uses glossiness which is the reverse of roughness
@@ -414,31 +444,38 @@ void CoronaSceneFile::WriteCache(const SimpleSceneGraph& ssg)
                         XmlEndTag(mtlxml_fout, "materialDefinition", 1) << endl;
                     }
                 }
-                if (0) {
+                if (0)
+                {
                     obj_fout << "mtllib "
                              << "materials_corona.mtl" << endl;
                     obj_fout << "usemtl " << mtl_name << endl;
-                } else {
+                }
+                else
+                {
                     obj_fout << "usemtl " << written_materials[mtl_name] << endl;
                 }
                 // output vertices
                 obj_fout << "# surface(" << surface.first << ", " << surface.count << ") \"" << surface.surfaceName << "\"" << endl;
-                for (int index = surface.first; index < surface.first + surface.count; index++) {
+                for (int index = surface.first; index < surface.first + surface.count; index++)
+                {
                     obj_fout << "v ";
                     WriteVector3f(obj_fout, obj.Vertices[index].position) << endl;
                 }
-                for (int index = surface.first; index < surface.first + surface.count; index++) {
+                for (int index = surface.first; index < surface.first + surface.count; index++)
+                {
                     obj_fout << "vn ";
                     WriteVector3f(obj_fout, obj.Vertices[index].normal) << endl;
                 }
-                for (int index = surface.first; index < surface.first + surface.count; index++) {
+                for (int index = surface.first; index < surface.first + surface.count; index++)
+                {
                     obj_fout << "vt ";
                     WriteVector2f(obj_fout, obj.Vertices[index].texcoord) << endl;
                 }
 
                 // output triangle faces
                 int count = 0;
-                for (int index = surface.first; index < surface.first + surface.count; index++, count++) {
+                for (int index = surface.first; index < surface.first + surface.count; index++, count++)
+                {
                     if (count % 3 == 0)
                         obj_fout << endl
                                  << "f ";
@@ -476,7 +513,8 @@ void CoronaSceneFile::WriteCache(const SimpleSceneGraph& ssg)
 
         mtl_fout.close();
 
-        for (auto& mapIt : written_maps) {
+        for (auto &mapIt : written_maps)
+        {
             XmlCoronaMapTexture(mtlxml_fout, "mapDefinition", mapIt.first, mapIt.first, 1, 2.2f) << endl;
 
 #ifdef WIN32
@@ -495,7 +533,7 @@ void CoronaSceneFile::WriteCache(const SimpleSceneGraph& ssg)
     }
 }
 
-void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph& ssg, bool enableKs_)
+void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph &ssg, bool enableKs_)
 {
     map<string, int> written_materials;
     map<string, string> written_maps;
@@ -508,73 +546,90 @@ void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph& ssg, bool enableKs_
     string mtl_name;
     // size_t obj_count = 0;
     auto it = ssg.geometry.cbegin();
-    for (size_t i = 0; i < ssg.geometry.size(); i++, it++) {
-        const SimpleGeometryGroup& sgo = it->second;
-        const OBJStaticModel& obj = ssg.geometryObjects[sgo.objectId];
+    for (size_t i = 0; i < ssg.geometry.size(); i++, it++)
+    {
+        const SimpleGeometryGroup &sgo = it->second;
+        const OBJStaticModel &obj = ssg.geometryObjects[sgo.objectId];
 
         if (obj.Surfaces.empty())
             continue;
 
-        for (auto& surface : obj.Surfaces) {
+        for (auto &surface : obj.Surfaces)
+        {
             //ostringstream obj_pathname;
             //obj_pathname << "corona_export/object_" << setw(3) << setfill('0') << obj_count << "_" << sgo.objectName << ".obj";
             //ofstream obj_fout(obj_pathname.str());
 
             mtl_name = sgo.objectName + "_" + surface.materialName;
-            for (auto& c : mtl_name) {
+            for (auto &c : mtl_name)
+            {
                 if (c == ' ')
                     c = '_';
             }
 
-            if (written_materials[mtl_name] == false) {
-                const SimpleMaterial* mtl = ssg.materials.GetLibraryMaterial(sgo.mtllibName, surface.materialName);
-                if (mtl) {
+            if (written_materials[mtl_name] == false)
+            {
+                const SimpleMaterial *mtl = ssg.materials.GetLibraryMaterial(sgo.mtllibName, surface.materialName);
+                if (mtl)
+                {
                     written_materials[mtl_name] = (int)written_materials.size();
                     mtl_fout << "newmtl " << mtl_name << endl;
 
                     mtl_fout << "Kd ";
                     WriteColor3f(mtl_fout, mtl->Kd);
                     mtl_fout << endl;
-                    if (enableKs_) {
+                    if (enableKs_)
+                    {
                         mtl_fout << "Ks ";
                         WriteColor3f(mtl_fout, mtl->Ks);
                         mtl_fout << endl;
-                    } else {
+                    }
+                    else
+                    {
                         mtl_fout << "Ks 0.0 0.0 0.0" << endl;
                     }
                     mtl_fout << endl;
 
                     //ostream & fout = mtlxml_fout;
 
-                    if (!mtl->map_Kd.empty()) {
+                    if (!mtl->map_Kd.empty())
+                    {
                         written_maps[mtl->map_Kd] = ssg.materials.GetMapPath(mtl->map_Kd);
                     }
-                    if (!mtl->map_bump.empty()) {
+                    if (!mtl->map_bump.empty())
+                    {
                         written_maps[mtl->map_bump] = ssg.materials.GetMapPath(mtl->map_bump);
                     }
 
                     XmlBeginTag(mtlxml_fout, "materialDefinition", "name", mtl_name, 1) << endl;
                     XmlBeginTag(mtlxml_fout, "material", "Native", 2) << endl;
-                    if (!mtl->map_Kd.empty()) {
+                    if (!mtl->map_Kd.empty())
+                    {
                         XmlBeginTag(mtlxml_fout, "diffuse", 3) << endl;
                         XmlBeginTag(mtlxml_fout, "map", "Reference", 4);
                         mtlxml_fout << mtl->map_Kd;
                         XmlEndTag(mtlxml_fout, "map") << endl;
                         XmlEndTag(mtlxml_fout, "diffuse", 3) << endl;
-                    } else {
+                    }
+                    else
+                    {
                         if (mtl->PBk > 0.0)
                             XmlColor3f(mtlxml_fout, "diffuse", Color3f(), 3) << endl;
                         else
                             XmlColor3f(mtlxml_fout, "diffuse", mtl->Kd, 3) << endl;
                     }
 
-                    if (enableKs_) {
+                    if (enableKs_)
+                    {
                         XmlBeginTag(mtlxml_fout, "reflect", 3) << endl;
                         XmlColor3f(mtlxml_fout, "color", mtl->Ks, 4) << endl;
 
-                        if (mtl->PBk > 0.0) {
+                        if (mtl->PBk > 0.0)
+                        {
                             XmlFloat(mtlxml_fout, "ior", 999, 4) << endl;
-                        } else {
+                        }
+                        else
+                        {
                             XmlFloat(mtlxml_fout, "ior", mtl->PBior, 4) << endl;
                         }
                         // Corona uses glossiness which is the reverse of roughness
@@ -596,7 +651,8 @@ void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph& ssg, bool enableKs_
 
     mtl_fout.close();
 
-    for (auto& mapIt : written_maps) {
+    for (auto &mapIt : written_maps)
+    {
         XmlCoronaMapTexture(mtlxml_fout, "mapDefinition", mapIt.first, mapIt.first, 1, 2.2f) << endl;
 
 #ifdef WIN32
@@ -615,14 +671,15 @@ void CoronaSceneFile::WriteMaterials(const SimpleSceneGraph& ssg, bool enableKs_
     mtlxml_fout.close();
 }
 
-void CoronaSceneFile::writeGeometryGroups(ostream& ostr, const SimpleSceneGraph& ssg)
+void CoronaSceneFile::writeGeometryGroups(ostream &ostr, const SimpleSceneGraph &ssg)
 {
     WriteCache(ssg);
     XmlBeginTag(ostr, "mtllib", 1);
     ostr << "corona_export/materials_corona.mtl";
     XmlEndTag(ostr, "mtllib");
     ostr << endl;
-    for (auto& gg : geometryGroups) {
+    for (auto &gg : geometryGroups)
+    {
         XmlBeginTag(ostr, "geometryGroup", 1) << endl;
         XmlBeginTag(ostr, "object", "file", 2) << get<0>(gg);
         XmlEndTag(ostr, "object") << endl;
@@ -639,7 +696,7 @@ void CoronaSceneFile::writeGeometryGroups(ostream& ostr, const SimpleSceneGraph&
 // CoronaJob ////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
-CoronaJob::CoronaJob(const string& name, Type jobtype, int arg1, int arg2)
+CoronaJob::CoronaJob(const string &name, Type jobtype, int arg1, int arg2)
 {
     scene_name = name;
     scene_path = name + ".scn";
@@ -653,7 +710,8 @@ CoronaJob::CoronaJob(const string& name, Type jobtype, int arg1, int arg2)
 
     type = jobtype;
 
-    switch (jobtype) {
+    switch (jobtype)
+    {
     case Type::GEN:
         sendLight = SphlSunIndex;
         recvLight = arg1;
@@ -681,38 +739,48 @@ CoronaJob::~CoronaJob()
 {
 }
 
-void CoronaJob::Start(CoronaSceneFile& coronaScene, SimpleSceneGraph& ssg)
+void CoronaJob::Start(CoronaSceneFile &coronaScene, SimpleSceneGraph &ssg)
 {
-    if (state != State::Ready) {
+    if (state != State::Ready)
+    {
         return;
     }
 
-    if (!ignoreCache) {
+    if (!ignoreCache)
+    {
         FilePathInfo fpi(isHQ ? hq_output_path_exr : output_path_exr);
-        if (fpi.Exists()) {
+        if (fpi.Exists())
+        {
             state = State::Finished;
             return;
         }
     }
 
-    if (1) {
+    if (1)
+    {
         float tonemap = ssg.environment.toneMapExposure;
-        if (type == Type::VIZ) {
+        if (type == Type::VIZ)
+        {
             tonemap = 0.0f;
         }
-        if (type == Type::GEN) {
+        if (type == Type::GEN)
+        {
             tonemap = 0.0f;
         }
         ofstream fout(scene_name + "_tonemap.conf");
         fout << "Float colorMap.simpleExposure = " << tonemap << endl;
-        if (type == Type::REF) {
+        if (type == Type::REF)
+        {
             fout << "Int image.width = " << imageWidth << endl;
             fout << "Int image.height = " << imageHeight << endl;
-        } else {
+        }
+        else
+        {
             fout << "Int image.width = " << 6 * 128 << endl;
             fout << "Int image.height = " << 128 << endl;
         }
-        if (!isHQ) {
+        if (!isHQ)
+        {
             fout << "Int shading.maxRayDepth = " << maxRayDepth << endl;
             fout << "Int progressive.passLimit = " << passLimit << endl;
         }
@@ -722,7 +790,8 @@ void CoronaJob::Start(CoronaSceneFile& coronaScene, SimpleSceneGraph& ssg)
     double t0 = hflog.getSecondsElapsed();
     state = State::Running;
     bool result = true;
-    switch (type) {
+    switch (type)
+    {
     case Type::REF:
         coronaScene.WriteSCN(scene_path, ssg);
         result = Run();
@@ -759,12 +828,13 @@ void CoronaJob::Start(CoronaSceneFile& coronaScene, SimpleSceneGraph& ssg)
 #endif
 }
 
-void CoronaJob::CopySPH(const Sph4f& sph_)
+void CoronaJob::CopySPH(const Sph4f &sph_)
 {
     if (!IsFinished() && !IsGEN() && !IsVIZ())
         return;
     memset(sph, 0, sizeof(float) * 484);
-    for (size_t i = 0; i < sph_.size(); i++) {
+    for (size_t i = 0; i < sph_.size(); i++)
+    {
         sph[121 * 0 + i] = sph_.r().getCoefficient(i);
         sph[121 * 1 + i] = sph_.g().getCoefficient(i);
         sph[121 * 2 + i] = sph_.g().getCoefficient(i);
@@ -772,10 +842,11 @@ void CoronaJob::CopySPH(const Sph4f& sph_)
     }
 }
 
-void CoronaJob::CopySPHToSph4f(Sph4f& sph_)
+void CoronaJob::CopySPHToSph4f(Sph4f &sph_)
 {
     sph_.resize(MaxSphlDegree);
-    for (size_t i = 0; i < sph_.size(); i++) {
+    for (size_t i = 0; i < sph_.size(); i++)
+    {
         sph_.r().setCoefficient(i, sph[121 * 0 + i]);
         sph_.g().setCoefficient(i, sph[121 * 1 + i]);
         sph_.b().setCoefficient(i, sph[121 * 2 + i]);
@@ -788,15 +859,21 @@ string CoronaJob::MakeCoronaCommandLine()
     ostringstream cmd;
     cmd << "\"C:\\Program Files\\Corona\\Corona.exe\" " << scene_path << " -silent";
 
-    if (isHDR) {
+    if (isHDR)
+    {
         cmd << " -oR " << (isHQ ? hq_output_path_exr : output_path_exr);
-    } else {
+    }
+    else
+    {
         cmd << " -o " << (isHQ ? hq_output_path_exr : output_path_exr);
     }
 
-    if (isHQ) {
+    if (isHQ)
+    {
         cmd << " -c " << hq_conf_path;
-    } else {
+    }
+    else
+    {
         cmd << " -c " << conf_path;
     }
 
@@ -808,9 +885,12 @@ string CoronaJob::MakeCoronaCommandLine()
 string CoronaJob::MakeConvertCommandLine()
 {
     ostringstream cmd;
-    if (isHQ) {
+    if (isHQ)
+    {
         cmd << "magick " << hq_output_path_exr << " -compress none " << hq_output_path_ppm;
-    } else {
+    }
+    else
+    {
         cmd << "magick " << output_path_exr << " -compress none " << output_path_ppm;
     }
     return cmd.str();
@@ -820,7 +900,8 @@ bool CoronaJob::Run()
 {
     int retval = 0;
     retval = lastCoronaRetval = system(MakeCoronaCommandLine().c_str());
-    if (retval != 0) {
+    if (retval != 0)
+    {
         hflog.errorfn(__FUNCTION__, "unable to run corona");
         return false;
     }
@@ -831,7 +912,8 @@ bool CoronaJob::Run()
         ostringstream cmd;
         cmd << "magick " << output_path_exr << " " << output_path_png;
         retval = lastConvertRetval = system(cmd.str().c_str());
-        if (retval != 0) {
+        if (retval != 0)
+        {
             hflog.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
             return false;
         }
@@ -840,7 +922,8 @@ bool CoronaJob::Run()
         ostringstream cmd;
         cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
         retval = lastConvertRetval = system(cmd.str().c_str());
-        if (retval != 0) {
+        if (retval != 0)
+        {
             hflog.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
             return false;
         }
@@ -870,7 +953,7 @@ string CoronaJob::ToString() const
     return ostr.str();
 }
 
-void CoronaJob::FromString(const string& str)
+void CoronaJob::FromString(const string &str)
 {
 }
 
@@ -878,7 +961,7 @@ void CoronaJob::FromString(const string& str)
 // Static CoronaJob methods //////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-string CoronaJob::MakeREFName(const string& prefix, bool isCubeMap, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
+string CoronaJob::MakeREFName(const string &prefix, bool isCubeMap, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
 {
     ostringstream ostr;
 
@@ -891,7 +974,8 @@ string CoronaJob::MakeREFName(const string& prefix, bool isCubeMap, bool isHDR, 
         ostr << "_hdr";
     if (isHQ)
         ostr << "_hq";
-    else {
+    else
+    {
         ostr << "_" << setw(2) << setfill('0') << MaxRayDepth;
         ostr << "_" << setw(2) << setfill('0') << PassLimit;
         if (ks)
@@ -900,7 +984,7 @@ string CoronaJob::MakeREFName(const string& prefix, bool isCubeMap, bool isHDR, 
     return ostr.str();
 }
 
-string CoronaJob::MakeVIZName(const string& prefix, int srcLightIndex, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
+string CoronaJob::MakeVIZName(const string &prefix, int srcLightIndex, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
 {
     ostringstream ostr;
     if (!prefix.empty())
@@ -910,7 +994,8 @@ string CoronaJob::MakeVIZName(const string& prefix, int srcLightIndex, int recvL
         ostr << "_hdr";
     if (isHQ)
         ostr << "_hq";
-    else {
+    else
+    {
         ostr << "_" << setw(2) << setfill('0') << MaxRayDepth;
         ostr << "_" << setw(2) << setfill('0') << PassLimit;
         if (ks)
@@ -919,7 +1004,7 @@ string CoronaJob::MakeVIZName(const string& prefix, int srcLightIndex, int recvL
     return ostr.str();
 }
 
-string CoronaJob::MakeGENName(const string& prefix, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
+string CoronaJob::MakeGENName(const string &prefix, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
 {
     ostringstream ostr;
     if (!prefix.empty())
@@ -929,7 +1014,8 @@ string CoronaJob::MakeGENName(const string& prefix, int recvLightIndex, bool isH
         ostr << "_hdr";
     if (isHQ)
         ostr << "_hq";
-    else {
+    else
+    {
         if (MaxRayDepth >= 0)
             ostr << "_" << setw(2) << setfill('0') << MaxRayDepth;
         if (PassLimit >= 0)
@@ -940,7 +1026,7 @@ string CoronaJob::MakeGENName(const string& prefix, int recvLightIndex, bool isH
     return ostr.str();
 }
 
-string CoronaJob::MakeHIERName(const string& prefix, int sendLightIndex, int MaxDegrees)
+string CoronaJob::MakeHIERName(const string &prefix, int sendLightIndex, int MaxDegrees)
 {
     ostringstream ostr;
     if (!prefix.empty())

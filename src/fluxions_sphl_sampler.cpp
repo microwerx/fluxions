@@ -19,7 +19,8 @@
 #include "stdafx.h"
 #include <fluxions_sphl_sampler.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 SphlSampler::SphlSampler()
 {
     resize(ix, iy);
@@ -27,7 +28,8 @@ SphlSampler::SphlSampler()
 
 void SphlSampler::resize(int samplesX, int samplesY)
 {
-    if (numSamples != ix * iy) {
+    if (numSamples != ix * iy)
+    {
         numSamples = ix * iy;
         randomVectors.resize(numSamples);
         theta.resize(numSamples);
@@ -41,18 +43,23 @@ void SphlSampler::resize(int samplesX, int samplesY)
         Vector3f avgVector;
 
         // Create stratified set of samples on the sphere.
-        for (int b = 0; b < iy; b++) {
-            for (int a = 0; a < ix; a++) {
+        for (size_t b = 0; b < iy; b++)
+        {
+            for (size_t a = 0; a < ix; a++)
+            {
                 float x = 0.0f;
 
                 float y = 0.0f;
                 float sampleTheta = 0.0f;
                 float samplePhi = 0.0f;
                 int method = 1;
-                if (method == 0) {
+                if (method == 0)
+                {
                     x = randomSampler(0.0f, 1.0f);
                     y = randomSampler(0.0f, 1.0f);
-                } else if (method == 1) {
+                }
+                else if (method == 1)
+                {
                     x = randomSampler((a + 0.25f) / ix, (a + 0.75f) / ix);
                     y = randomSampler((b + 0.25f) / iy, (b + 0.75f) / iy);
                 }
@@ -66,7 +73,8 @@ void SphlSampler::resize(int samplesX, int samplesY)
         }
 
         sampleMap.resize(ix * pxscale, iy * pxscale);
-        for (int i = 0; i < numSamples; i++) {
+        for (size_t i = 0; i < numSamples; i++)
+        {
             //float rtheta = randomSampler(0.0f, FX_PI);
             //float rphi = randomSampler(0, 8.0 * FX_PI);
             //randomVectors[i].from_theta_phi(rtheta, rphi);
@@ -84,16 +92,19 @@ void SphlSampler::resize(int samplesX, int samplesY)
             debug_sides[i] = side;
         }
 
-        //for (int i = 0; i < 6; i++)
+        //for (size_t i = 0; i < 6; i++)
         //{
         //	cout << "side " << i << " = " << count(debug_sides.begin(), debug_sides.end(), i) << endl;
         //}
         avgVector *= 1.0 / numSamples;
         // cout << "Average vector: (" << avgVector.x << ", " << avgVector.y << ", " << avgVector.z << ")" << endl;
-        for (int l = 0; l <= 10; l++) {
-            for (int m = -l; m <= l; m++) {
-                for (int i = 0; i < numSamples; i++) {
-                    int lm = l * (l + 1) + m;
+        for (int l = 0; l <= 10; l++)
+        {
+            for (int m = -l; m <= l; m++)
+            {
+                for (size_t i = 0; i < numSamples; i++)
+                {
+                    size_t lm = l * (l + 1) + m;
                     double sph_value = spherical_harmonic(l, m, theta[i], phi[i]);
                     sph[i * 121 + lm] = sph_value;
                 }
@@ -102,13 +113,14 @@ void SphlSampler::resize(int samplesX, int samplesY)
     }
 }
 
-void SphlSampler::saveSampleMap(const string& path, int pixelScale)
+void SphlSampler::saveSampleMap(const string &path, int pixelScale)
 {
     Color3i White(255);
 
     sampleMap.reset();
     sampleMap.resize(ix * pixelScale, iy * pixelScale);
-    for (int i = 0; i < numSamples; i++) {
+    for (size_t i = 0; i < numSamples; i++)
+    {
         int px = (int)(ix * pixelScale * (phi[i] / FX_PI));
         int py = (int)(iy * pixelScale * (theta[i] + FX_PI) / FX_TWOPI);
 
@@ -117,16 +129,18 @@ void SphlSampler::saveSampleMap(const string& path, int pixelScale)
     sampleMap.savePPMi(path, 1.0f, 0, 255);
 }
 
-void SphlSampler::sampleCubeMap(const Image4f& cubeMap, MultispectralSph4f& msph)
+void SphlSampler::sampleCubeMap(const Image4f &cubeMap, MultispectralSph4f &msph)
 {
     if (cubeMap.empty() || !cubeMap.IsCubeMap())
         return;
 
     size_t numCoefs = msph[0].getMaxCoefficients();
-    for (int lm = 0; lm < numCoefs; lm++) {
+    for (size_t lm = 0; lm < numCoefs; lm++)
+    {
         Color4f coef;
         float pixelArea = (4.0f * FX_F32_PI) / numSamples;
-        for (int i = 0; i < numSamples; i++) {
+        for (size_t i = 0; i < numSamples; i++)
+        {
             Color4f texel = cubeMap.getPixelCubeMap(randomVectors[i]);
             coef += texel * (float)sph[i * 121 + lm];
         }

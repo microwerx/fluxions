@@ -19,8 +19,9 @@
 #include "stdafx.h"
 #include <fluxions_sphl_sampler.hpp>
 
-namespace Fluxions {
-bool SphlImageTexture::LoadLightProbe(const string& path)
+namespace Fluxions
+{
+bool SphlImageTexture::LoadLightProbe(const string &path)
 {
     FilePathInfo fpi(path);
     if (fpi.DoesNotExist())
@@ -31,25 +32,31 @@ bool SphlImageTexture::LoadLightProbe(const string& path)
     return true;
 }
 
-bool SphlImageTexture::SphToLightProbe(const MultispectralSph4f& sph)
+bool SphlImageTexture::SphToLightProbe(const MultispectralSph4f &sph)
 {
     float v_coefs[4][121];
 
     int maxDegree = sph[0].GetMaxDegree();
     int numCoefs = sph[0].getMaxCoefficients();
-    for (int j = 0; j < 4; j++) {
-        for (int lm = 0; lm < numCoefs; lm++) {
+    for (int j = 0; j < 4; j++)
+    {
+        for (int lm = 0; lm < numCoefs; lm++)
+        {
             v_coefs[j][lm] = sph[j][lm];
         }
-        for (int lm = numCoefs; lm < 121; lm++) {
+        for (int lm = numCoefs; lm < 121; lm++)
+        {
             v_coefs[j][lm] = 0.0f;
         }
     }
 
     lightProbe.resize(32, 32, 6);
-    for (int face = 0; face < lightProbe.depth(); face++) {
-        for (int s = 0; s < lightProbe.width(); s++) {
-            for (int t = 0; t < lightProbe.height(); t++) {
+    for (int face = 0; face < lightProbe.depth(); face++)
+    {
+        for (int s = 0; s < lightProbe.width(); s++)
+        {
+            for (int t = 0; t < lightProbe.height(); t++)
+            {
                 float _s = (float)s / (float)lightProbe.width();
                 float _t = (float)t / (float)lightProbe.height();
                 Vector3f v;
@@ -74,7 +81,8 @@ bool SphlImageTexture::SphToLightProbe(const MultispectralSph4f& sph)
 bool SphlImageTexture::UploadLightProbe()
 {
     texture.Bind(0);
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, lightProbe.width(), lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
     }
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
@@ -126,8 +134,10 @@ void SimpleSSPHHLight::ResizeHierarchies(int size)
 
 void SimpleSSPHHLight::Randomize(float size)
 {
-    for (int l = 0; l <= maxDegree; l++) {
-        for (int m = -l; m <= l; m++) {
+    for (int l = 0; l <= maxDegree; l++)
+    {
+        for (int m = -l; m <= l; m++)
+        {
             msph[0].setCoefficient(l, m, randomSampler(-size, size));
             msph[1].setCoefficient(l, m, randomSampler(-size, size));
             msph[2].setCoefficient(l, m, randomSampler(-size, size));
@@ -138,7 +148,7 @@ void SimpleSSPHHLight::Randomize(float size)
 }
 
 // Reads from a Corona Light Probe (a cube map stored images from left to right in a single image).
-bool SimpleSSPHHLight::ReadCoronaLightProbe(const string& path)
+bool SimpleSSPHHLight::ReadCoronaLightProbe(const string &path)
 {
     FilePathInfo fpi(path);
     if (fpi.DoesNotExist())
@@ -164,7 +174,7 @@ bool SimpleSSPHHLight::ReadCoronaLightProbe(const string& path)
 }
 
 // Saves to a Corona Light Probe (a cube map with cube faces stored from left to right in a single image).
-bool SimpleSSPHHLight::SaveCoronaLightProbe(const string& path)
+bool SimpleSSPHHLight::SaveCoronaLightProbe(const string &path)
 {
     FilePathInfo fpi(path);
 
@@ -176,14 +186,15 @@ bool SimpleSSPHHLight::SaveCoronaLightProbe(const string& path)
 }
 
 // Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-bool SimpleSSPHHLight::SaveJsonSph(const string& path)
+bool SimpleSSPHHLight::SaveJsonSph(const string &path)
 {
     FilePathInfo fpi(path);
-    KASL::JSONPtr json = KASL::JSON::MakeObject({ { "maxDegree", KASL::JSON::MakeNumber(msph[0].GetMaxDegree()) },
-        { "coefs", KASL::JSON::MakeArray() } });
+    KASL::JSONPtr json = KASL::JSON::MakeObject({{"maxDegree", KASL::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
+                                                 {"coefs", KASL::JSON::MakeArray()}});
 
     auto coefs = json->getMember("coefs");
-    for (int j = 0; j < 4; j++) {
+    for (int j = 0; j < 4; j++)
+    {
         vector<float> coef_f = msph[j].getCoefficients();
         KASL::JSONPtr jsonArray = KASL::JSON::MakeArray(coef_f);
         coefs->PushBack(jsonArray);
@@ -197,14 +208,15 @@ bool SimpleSSPHHLight::SaveJsonSph(const string& path)
 }
 
 // Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-bool SimpleSSPHHLight::ReadJsonSph(const string& path)
+bool SimpleSSPHHLight::ReadJsonSph(const string &path)
 {
     FilePathInfo fpi(path);
     if (fpi.DoesNotExist())
         return false;
     ifstream fin(fpi.path);
     string buffer;
-    while (!fin) {
+    while (!fin)
+    {
         string line;
         getline(fin, line);
         buffer += "\n";
@@ -213,17 +225,21 @@ bool SimpleSSPHHLight::ReadJsonSph(const string& path)
     fin.close();
 
     KASL::JSONPtr json = KASL::JSON::New();
-    if (!json->Deserialize(buffer)) {
+    if (!json->Deserialize(buffer))
+    {
         hflog.error("Unable to read JSON SPH");
         return false;
     }
 
-    if (json->IsObject() && json->getMember("maxDegree")->IsNumber() && json->getMember("coefs")->IsArray() && json->getMember("coefs")->Size() == 4 && json->getMember("coefs")->getElement(0)->IsArray() && json->getMember("coefs")->getElement(1)->IsArray() && json->getMember("coefs")->getElement(2)->IsArray() && json->getMember("coefs")->getElement(3)->IsArray()) {
-        int jsonMaxDegree = json->getMember("maxDegree")->AsInt();
+    if (json->IsObject() && json->getMember("maxDegree")->IsNumber() && json->getMember("coefs")->IsArray() && json->getMember("coefs")->Size() == 4 && json->getMember("coefs")->getElement(0)->IsArray() && json->getMember("coefs")->getElement(1)->IsArray() && json->getMember("coefs")->getElement(2)->IsArray() && json->getMember("coefs")->getElement(3)->IsArray())
+    {
+        // int jsonMaxDegree = json->getMember("maxDegree")->AsInt();
         KASL::JSONPtr coefs = json->getMember("coefs");
-        for (int j = 0; j < 4; j++) {
+        for (size_t j = 0; j < 4; j++)
+        {
             KASL::JSONPtr e = coefs->getElement(j);
-            if (e->IsArray()) {
+            if (e->IsArray())
+            {
                 vector<float> coefJ;
                 coefJ = e->AsFloatArray();
             }
@@ -232,7 +248,7 @@ bool SimpleSSPHHLight::ReadJsonSph(const string& path)
     return false;
 }
 
-bool SimpleSSPHHLight::LightProbeToSph(const Image4f& lightProbe, MultispectralSph4f& sph)
+bool SimpleSSPHHLight::LightProbeToSph(const Image4f &lightProbe, MultispectralSph4f &sph)
 {
     SphlSampler sphlSampler;
     sphlSampler.resize(64, 32);
@@ -241,13 +257,16 @@ bool SimpleSSPHHLight::LightProbeToSph(const Image4f& lightProbe, MultispectralS
     return false;
 }
 
-bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe)
+bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe)
 {
     float v_coefs[4][121];
 
-    for (int j = 0; j < 4; j++) {
-        for (int l = 0; l <= maxDegree; l++) {
-            for (int m = -l; m <= l; m++) {
+    for (int j = 0; j < 4; j++)
+    {
+        for (int l = 0; l <= maxDegree; l++)
+        {
+            for (int m = -l; m <= l; m++)
+            {
                 auto lm = sph[j].getCoefficientIndex(l, m);
                 v_coefs[j][lm] = E0 * sph[j][lm];
             }
@@ -255,9 +274,12 @@ bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& l
     }
 
     lightProbe.resize(32, 32, 6);
-    for (int face = 0; face < lightProbe.depth(); face++) {
-        for (int s = 0; s < lightProbe.width(); s++) {
-            for (int t = 0; t < lightProbe.height(); t++) {
+    for (int face = 0; face < lightProbe.depth(); face++)
+    {
+        for (int s = 0; s < lightProbe.width(); s++)
+        {
+            for (int t = 0; t < lightProbe.height(); t++)
+            {
                 float _s = (float)s / (float)lightProbe.width();
                 float _t = (float)t / (float)lightProbe.height();
                 Vector3f v;
@@ -279,15 +301,18 @@ bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& l
     return true;
 }
 
-bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe, int maxDegree_)
+bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe, int maxDegree_)
 {
     float v_coefs[4][121];
 
     maxDegree_ = min(maxDegree_, this->maxDegree);
 
-    for (int j = 0; j < 4; j++) {
-        for (int l = 0; l <= maxDegree_; l++) {
-            for (int m = -l; m <= l; m++) {
+    for (int j = 0; j < 4; j++)
+    {
+        for (int l = 0; l <= maxDegree_; l++)
+        {
+            for (int m = -l; m <= l; m++)
+            {
                 auto lm = sph[j].getCoefficientIndex(l, m);
                 v_coefs[j][lm] = E0 * sph[j][lm];
             }
@@ -295,9 +320,12 @@ bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& l
     }
 
     lightProbe.resize(32, 32, 6);
-    for (int face = 0; face < lightProbe.depth(); face++) {
-        for (int s = 0; s < lightProbe.width(); s++) {
-            for (int t = 0; t < lightProbe.height(); t++) {
+    for (int face = 0; face < lightProbe.depth(); face++)
+    {
+        for (int s = 0; s < lightProbe.width(); s++)
+        {
+            for (int t = 0; t < lightProbe.height(); t++)
+            {
                 float _s = (float)s / (float)lightProbe.width();
                 float _t = (float)t / (float)lightProbe.height();
                 Vector3f v;
@@ -319,14 +347,15 @@ bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& l
     return true;
 }
 
-bool SimpleSSPHHLight::UploadLightProbe(Image4f& lightProbe, SimpleGpuTexture& texture)
+bool SimpleSSPHHLight::UploadLightProbe(Image4f &lightProbe, SimpleGpuTexture &texture)
 {
     if (lightProbe.empty())
         lightProbe.resize(32, 32, 6);
 
     texture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
     texture.Bind(0);
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, lightProbe.width(), lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
     }
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
@@ -334,18 +363,20 @@ bool SimpleSSPHHLight::UploadLightProbe(Image4f& lightProbe, SimpleGpuTexture& t
     return true;
 }
 
-bool SimpleSSPHHLight::UploadLightProbe(Image4f& lightProbe, GLuint& texture)
+bool SimpleSSPHHLight::UploadLightProbe(Image4f &lightProbe, GLuint &texture)
 {
     if (lightProbe.empty())
         lightProbe.resize(32, 32, 6);
 
-    if (texture == 0) {
+    if (texture == 0)
+    {
         glGenTextures(1, &texture);
     }
     //texture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
     //texture.Bind(0);
     glutDebugBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, lightProbe.width(), lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
     }
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
@@ -400,32 +431,44 @@ void SimpleSSPHHLight::SetCoefficient(int j, int l, int m, float value)
     int minM = 0;
     int maxM = 0;
 
-    if (j < 0) {
+    if (j < 0)
+    {
         minJ = 0;
         maxJ = 4;
-    } else {
+    }
+    else
+    {
         minJ = j;
         maxJ = j + 1;
     }
 
-    if (l < 0) {
+    if (l < 0)
+    {
         minL = 0;
         maxL = maxDegree;
         m = -maxL - 1;
-    } else {
+    }
+    else
+    {
         minL = l;
         maxL = l + 1;
     }
-    for (int _j = minJ; _j < maxJ; _j++) {
-        for (int _l = minL; _l <= maxL; _l++) {
-            if (m < -_l) {
+    for (int _j = minJ; _j < maxJ; _j++)
+    {
+        for (int _l = minL; _l <= maxL; _l++)
+        {
+            if (m < -_l)
+            {
                 minM = -_l;
                 maxM = _l;
-            } else {
+            }
+            else
+            {
                 minM = m;
                 maxM = m;
             }
-            for (int _m = minM; _m <= maxM; _m++) {
+            for (int _m = minM; _m <= maxM; _m++)
+            {
                 msph[_j].setCoefficient(_l, _m, value);
             }
         }
@@ -445,31 +488,43 @@ void SimpleSSPHHLight::RandomizeCoefficient(int j, int l, int m, float minValue,
     int minM = 0;
     int maxM = 0;
 
-    if (j < 0) {
+    if (j < 0)
+    {
         minJ = 0;
         maxJ = 4;
-    } else {
+    }
+    else
+    {
         minJ = j;
         maxJ = j + 1;
     }
 
-    if (l < 0) {
+    if (l < 0)
+    {
         minL = 0;
         maxL = maxDegree;
-    } else {
+    }
+    else
+    {
         minL = l;
         maxL = l + 1;
     }
-    for (int _j = minJ; _j < maxJ; _j++) {
-        for (int _l = minL; _l <= maxL; _l++) {
-            if (m < 0) {
+    for (int _j = minJ; _j < maxJ; _j++)
+    {
+        for (int _l = minL; _l <= maxL; _l++)
+        {
+            if (m < 0)
+            {
                 minM = -_l;
                 maxM = _l;
-            } else {
+            }
+            else
+            {
                 minM = m;
                 maxM = m;
             }
-            for (int _m = minM; _m <= maxM; _m++) {
+            for (int _m = minM; _m <= maxM; _m++)
+            {
                 msph[_j].setCoefficient(_l, _m, randomSampler(minValue, maxValue));
             }
         }
@@ -575,15 +630,17 @@ void SimpleSSPHHLight::SetHierarchyDescription()
     //hier_description = ostr.str();
 }
 
-bool MakeStandardizedSph(SphericalHarmonicf& sph, MultispectralSph4f& msph)
+bool MakeStandardizedSph(SphericalHarmonicf &sph, MultispectralSph4f &msph)
 {
-    for (int i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++)
+    {
         if (sph.GetMaxDegree() != msph[i].GetMaxDegree())
             return false;
     }
     auto lmmax = sph.getMaxCoefficients();
 
-    for (auto lm = 0; lm < lmmax; lm++) {
+    for (size_t lm = 0; lm < lmmax; lm++)
+    {
         float r = msph[0].getCoefficient(lm);
         float g = msph[1].getCoefficient(lm);
         float b = msph[2].getCoefficient(lm);
@@ -593,11 +650,12 @@ bool MakeStandardizedSph(SphericalHarmonicf& sph, MultispectralSph4f& msph)
     return true;
 }
 
-bool MakeIntensityChannel4f(MultispectralSph4f& msph)
+bool MakeIntensityChannel4f(MultispectralSph4f &msph)
 {
-    auto lmmax = msph[0].getMaxCoefficients();
+    size_t lmmax = msph[0].getMaxCoefficients();
 
-    for (auto lm = 0; lm < lmmax; lm++) {
+    for (size_t lm = 0; lm < lmmax; lm++)
+    {
         float r = msph[0].getCoefficient(lm);
         float g = msph[1].getCoefficient(lm);
         float b = msph[2].getCoefficient(lm);
@@ -606,11 +664,12 @@ bool MakeIntensityChannel4f(MultispectralSph4f& msph)
     return true;
 }
 
-bool MakeLuminanceChannel4f(MultispectralSph4f& msph)
+bool MakeLuminanceChannel4f(MultispectralSph4f &msph)
 {
-    auto lmmax = msph[0].getMaxCoefficients();
+    size_t lmmax = msph[0].getMaxCoefficients();
 
-    for (auto lm = 0; lm < lmmax; lm++) {
+    for (size_t lm = 0; lm < lmmax; lm++)
+    {
         float r = msph[0].getCoefficient(lm);
         float g = msph[1].getCoefficient(lm);
         float b = msph[2].getCoefficient(lm);
@@ -631,41 +690,49 @@ SimpleSSPHH::~SimpleSSPHH()
 {
 }
 
-void SimpleSSPHH::INIT(SimpleSceneGraph& ssg)
+void SimpleSSPHH::INIT(SimpleSceneGraph &ssg)
 {
     sceneName = ssg.name;
     sphls_ = &ssg.ssphhLights;
     size_ = sphls_->size();
     S.resize(size_);
-    for (auto& S_i : S) {
+    for (auto &S_i : S)
+    {
         S_i.resize(MaxSphlDegree, 0.0f);
     }
     H.resize(size_);
-    for (auto& h_i : H) {
+    for (auto &h_i : H)
+    {
         h_i.resize(size_);
-        for (auto& h_ij : h_i) {
+        for (auto &h_ij : h_i)
+        {
             h_ij.resize(MaxSphlDegree, 0.0f);
         }
     }
     P.resize(size_);
-    for (auto& p : P) {
+    for (auto &p : P)
+    {
         p.resize(size_, 0.0f);
     }
     Q.resize(size_);
-    for (int i = 0; i < size_; i++) {
+    for (size_t i = 0; i < size_; i++)
+    {
         Q[i].index = i;
     }
     Qsorted.resize(size_);
     Sprime.resize(size_);
-    for (auto& S_i : Sprime) {
+    for (auto &S_i : Sprime)
+    {
         S_i.resize(MaxSphlDegree);
     }
     self.resize(size_);
-    for (auto& s : self) {
+    for (auto &s : self)
+    {
         s.resize(MaxSphlDegree);
     }
     neighbor.resize(size_);
-    for (auto& n : neighbor) {
+    for (auto &n : neighbor)
+    {
         n.resize(MaxSphlDegree);
     }
 }
@@ -674,22 +741,26 @@ void SimpleSSPHH::GEN()
 {
     if (!sphls_)
         return;
-    auto& sphls = *sphls_;
+    auto &sphls = *sphls_;
 
     int i = 0;
-    for (auto& sphl : *sphls_) {
+    for (auto &sphl : *sphls_)
+    {
         S[i].resize(sphl.maxDegree);
         sphl.LightProbeToSph(sphl.vizgenLightProbes[i], S[i].msph);
         H[i][i] = S[i];
         P[i][i] = 1.0f;
 
         float lm0, lm1, lm2, lm3;
-        if (sphl.maxDegree >= 1) {
+        if (sphl.maxDegree >= 1)
+        {
             lm0 = S[i].a().getCoefficient(0);
             lm1 = S[i].a().getCoefficient(1);
             lm2 = S[i].a().getCoefficient(2);
             lm3 = S[i].a().getCoefficient(3);
-        } else {
+        }
+        else
+        {
             lm0 = -1.0f;
             lm1 = -1.0f;
             lm2 = -1.0f;
@@ -704,14 +775,17 @@ void SimpleSSPHH::VIZ()
 {
     if (!sphls_)
         return;
-    auto& sphls = *sphls_;
+    auto &sphls = *sphls_;
 
-    for (int i = 0; i < size_; i++) {
-        auto& sphl = sphls[i];
-        for (int j = 0; j < size_; j++) {
+    for (size_t i = 0; i < size_; i++)
+    {
+        auto &sphl = sphls[i];
+        for (size_t j = 0; j < size_; j++)
+        {
             if (i == j)
                 continue;
-            if (sphl.vizgenLightProbes.empty()) {
+            if (sphl.vizgenLightProbes.empty())
+            {
                 hflog.error("%s(): VIZ() called with no light probes!", __FUNCTION__);
                 continue;
             }
@@ -720,7 +794,8 @@ void SimpleSSPHH::VIZ()
             sphl.LightProbeToSph(sphl.vizgenLightProbes[j], H[i][j].msph);
 
             string basename = CoronaJob::MakeVIZName(sceneName, i, j);
-            if (savePPMs) {
+            if (savePPMs)
+            {
                 Image4f lightProbe(32, 32, 6);
                 sphl.SphToLightProbe(H[i][j].msph, lightProbe);
                 lightProbe.convertCubeMapToRect();
@@ -733,12 +808,15 @@ void SimpleSSPHH::VIZ()
             P[i][j] = 0.25f;
 
             float lm0, lm1, lm2, lm3;
-            if (sphl.maxDegree >= 1) {
+            if (sphl.maxDegree >= 1)
+            {
                 lm0 = H[i][j].a().getCoefficient(0);
                 lm1 = H[i][j].a().getCoefficient(1);
                 lm2 = H[i][j].a().getCoefficient(2);
                 lm3 = H[i][j].a().getCoefficient(3);
-            } else {
+            }
+            else
+            {
                 lm0 = -1.0f;
                 lm1 = -1.0f;
                 lm2 = -1.0f;
@@ -754,14 +832,16 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
 {
     if (!sphls_)
         return;
-    auto& sphls = *sphls_;
-    for (int i = 0; i < size_; i++) {
-        for (int j = 0; j < size_; j++) {
+    auto &sphls = *sphls_;
+    for (size_t i = 0; i < size_; i++)
+    {
+        for (size_t j = 0; j < size_; j++)
+        {
             Q[j].index = j;
             Q[j].p = P[i][j];
         }
         Qsorted = Q;
-        sort(Qsorted.begin(), Qsorted.end(), [](Qpair& a, Qpair& b) {
+        sort(Qsorted.begin(), Qsorted.end(), [](Qpair &a, Qpair &b) {
             if (a.p > b.p)
                 return true;
             return false;
@@ -769,24 +849,33 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
         Sprime[i].reset();
         self[i].reset();
         neighbor[i].reset();
-        for (int j = 0; j < size_; j++) {
-            if (includeNeighbor && Q[j].index != i)
-                Sprime[i].Accumulate(H[i][j], S[Q[j].index], MaxDegrees);
-            if (includeSelf && Q[j].index == i)
-                Sprime[i].Accumulate(S[Q[j].index], Q[j].p, MaxDegrees);
+        for (size_t j = 0; j < size_; j++)
+        {
+            assert(Q[j].index >= 0);
+            size_t Qj_index = (size_t)Q[j].index;
+            if (includeNeighbor && Qj_index != i)
+                Sprime[i].Accumulate(H[i][j], S[Qj_index], MaxDegrees);
+            if (includeSelf && Qj_index == i)
+                Sprime[i].Accumulate(S[Qj_index], Q[j].p, MaxDegrees);
 
-            if (Q[j].index == i) {
-                self[i].Accumulate(S[Q[j].index], Q[j].p, MaxDegrees);
-            } else {
-                neighbor[i].Accumulate(H[i][j], S[Q[j].index], MaxDegrees);
+            if (Qj_index == i)
+            {
+                self[i].Accumulate(S[Qj_index], Q[j].p, MaxDegrees);
+            }
+            else
+            {
+                neighbor[i].Accumulate(H[i][j], S[Qj_index], MaxDegrees);
             }
             float lm0, lm1, lm2, lm3;
-            if (H[i][j].a().GetMaxDegree() >= 1) {
+            if (H[i][j].a().GetMaxDegree() >= 1)
+            {
                 lm0 = Sprime[i].a().getCoefficient(0);
                 lm1 = Sprime[i].a().getCoefficient(1);
                 lm2 = Sprime[i].a().getCoefficient(2);
                 lm3 = Sprime[i].a().getCoefficient(3);
-            } else {
+            }
+            else
+            {
                 lm0 = -1.0f;
                 lm1 = -1.0f;
                 lm2 = -1.0f;
@@ -796,7 +885,8 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
         }
     }
 
-    for (int i = 0; i < size_; i++) {
+    for (size_t i = 0; i < size_; i++)
+    {
         sphls[i].self = self[i];
         sphls[i].neighbor = neighbor[i];
         sphls[i].SphToLightProbe(Sprime[i].msph, sphls[i].lightProbe_hier);
@@ -804,7 +894,8 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
 
         string base = CoronaJob::MakeHIERName(sceneName, i, MaxDegrees);
 
-        if (savePPMs) {
+        if (savePPMs)
+        {
             Image4f lightProbeSprime;
             sphls[i].SphToLightProbe(Sprime[i].msph, lightProbeSprime, MaxDegrees);
             lightProbeSprime.convertCubeMapToRect();
@@ -813,7 +904,8 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
         if (saveJSONs)
             Sprime[i].SaveJSON(base + "_01_Sprime.json");
 
-        if (savePPMs) {
+        if (savePPMs)
+        {
             Image4f lightProbeSelf;
             sphls[i].SphToLightProbe(self[i].msph, lightProbeSelf, MaxDegrees);
             lightProbeSelf.convertCubeMapToRect();
@@ -822,7 +914,8 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
         if (saveJSONs)
             self[i].SaveJSON(base + "_02_self.json");
 
-        if (savePPMs) {
+        if (savePPMs)
+        {
             Image4f lightProbeNeighbor;
             sphls[i].SphToLightProbe(neighbor[i].msph, lightProbeNeighbor, MaxDegrees);
             lightProbeNeighbor.convertCubeMapToRect();
@@ -832,12 +925,15 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
             neighbor[i].SaveJSON(base + "_03_neighbor.json");
 
         float lm0, lm1, lm2, lm3;
-        if (Sprime[i].a().GetMaxDegree() >= 1) {
+        if (Sprime[i].a().GetMaxDegree() >= 1)
+        {
             lm0 = Sprime[i].a().getCoefficient(0);
             lm1 = Sprime[i].a().getCoefficient(1);
             lm2 = Sprime[i].a().getCoefficient(2);
             lm3 = Sprime[i].a().getCoefficient(3);
-        } else {
+        }
+        else
+        {
             lm0 = -1.0f;
             lm1 = -1.0f;
             lm2 = -1.0f;
@@ -847,4 +943,4 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
     }
     return;
 }
-}
+} // namespace Fluxions

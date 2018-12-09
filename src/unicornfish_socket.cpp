@@ -18,9 +18,10 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
 #include <unicornfish_socket.hpp>
-#include <varargs.h>
+// #include <varargs.h>
 
-namespace Uf {
+namespace Uf
+{
 Socket::Socket()
 {
 }
@@ -59,7 +60,7 @@ bool Socket::SetupSocket(string endpoint, string subPrefix, SocketType socketTyp
     return true;
 }
 
-bool Socket::NewPub(const string& endpoint)
+bool Socket::NewPub(const string &endpoint)
 {
     Delete();
 
@@ -73,7 +74,7 @@ bool Socket::NewPub(const string& endpoint)
     return true;
 }
 
-bool Socket::NewSub(const string& endpoint, const string& subPrefix)
+bool Socket::NewSub(const string &endpoint, const string &subPrefix)
 {
     Delete();
 
@@ -88,7 +89,7 @@ bool Socket::NewSub(const string& endpoint, const string& subPrefix)
     return true;
 }
 
-bool Socket::NewReq(const string& endpoint)
+bool Socket::NewReq(const string &endpoint)
 {
     Delete();
 
@@ -101,7 +102,7 @@ bool Socket::NewReq(const string& endpoint)
     return true;
 }
 
-bool Socket::NewRep(const string& endpoint)
+bool Socket::NewRep(const string &endpoint)
 {
     Delete();
 
@@ -114,7 +115,7 @@ bool Socket::NewRep(const string& endpoint)
     return true;
 }
 
-bool Socket::NewDealer(const string& endpoint)
+bool Socket::NewDealer(const string &endpoint)
 {
     Delete();
 
@@ -125,7 +126,7 @@ bool Socket::NewDealer(const string& endpoint)
     return SetupSocket(endpoint, "", SocketType::DEALER);
 }
 
-bool Socket::NewRouter(const string& endpoint)
+bool Socket::NewRouter(const string &endpoint)
 {
     Delete();
 
@@ -136,7 +137,7 @@ bool Socket::NewRouter(const string& endpoint)
     return SetupSocket(endpoint, "", SocketType::ROUTER);
 }
 
-bool Socket::NewPush(const string& endpoint)
+bool Socket::NewPush(const string &endpoint)
 {
     Delete();
 
@@ -147,7 +148,7 @@ bool Socket::NewPush(const string& endpoint)
     return SetupSocket(endpoint, "", SocketType::PUSH);
 }
 
-bool Socket::NewPull(const string& endpoint)
+bool Socket::NewPull(const string &endpoint)
 {
     Delete();
 
@@ -158,7 +159,7 @@ bool Socket::NewPull(const string& endpoint)
     return SetupSocket(endpoint, "", SocketType::PULL);
 }
 
-bool Socket::NewXPub(const string& endpoint)
+bool Socket::NewXPub(const string &endpoint)
 {
     Delete();
 
@@ -170,7 +171,7 @@ bool Socket::NewXPub(const string& endpoint)
     return SetupSocket(endpoint, "", SocketType::XPUB);
 }
 
-bool Socket::NewXSub(const string& endpoint)
+bool Socket::NewXSub(const string &endpoint)
 {
     Delete();
 
@@ -182,7 +183,7 @@ bool Socket::NewXSub(const string& endpoint)
     return SetupSocket(endpoint, "", SocketType::XSUB);
 }
 
-bool Socket::NewPair(const string& endpoint)
+bool Socket::NewPair(const string &endpoint)
 {
     Delete();
 
@@ -193,7 +194,7 @@ bool Socket::NewPair(const string& endpoint)
     return SetupSocket(endpoint, "", SocketType::PAIR);
 }
 
-bool Socket::NewStream(const string& endpoint)
+bool Socket::NewStream(const string &endpoint)
 {
     Delete();
 
@@ -239,16 +240,23 @@ bool Socket::Poll(long timeout_ms)
     //if (items[0].revents & ZMQ_POLLIN)
     //	return true;
 
-    if (poller) {
-        zsock_t* polled_socket = (zsock_t*)zpoller_wait(poller, timeout_ms);
-        if (polled_socket == nullptr) {
-            if (zpoller_terminated(poller)) {
+    if (poller)
+    {
+        zsock_t *polled_socket = (zsock_t *)zpoller_wait(poller, timeout_ms);
+        if (polled_socket == nullptr)
+        {
+            if (zpoller_terminated(poller))
+            {
                 Delete();
                 return false;
-            } else if (zpoller_expired(poller)) {
+            }
+            else if (zpoller_expired(poller))
+            {
                 return false;
             }
-        } else {
+        }
+        else
+        {
             return true;
         }
     };
@@ -256,7 +264,7 @@ bool Socket::Poll(long timeout_ms)
     return false;
 }
 
-bool Socket::Send(const char* picture, ...)
+bool Socket::Send(const char *picture, ...)
 {
     va_list args;
     va_start(args, picture);
@@ -267,7 +275,7 @@ bool Socket::Send(const char* picture, ...)
     return false;
 }
 
-bool Socket::Recv(const char* picture, ...)
+bool Socket::Recv(const char *picture, ...)
 {
     va_list args;
     va_start(args, picture);
@@ -278,9 +286,9 @@ bool Socket::Recv(const char* picture, ...)
     return false;
 }
 
-bool Socket::SendMessage(Message& msg)
+bool Socket::SendMessage(Message &msg)
 {
-    zmsg_t* send_msg = msg.GetZmsg();
+    zmsg_t *send_msg = msg.GetZmsg();
 
     if (socket == nullptr || send_msg == nullptr)
         return false;
@@ -291,17 +299,18 @@ bool Socket::SendMessage(Message& msg)
     return false;
 }
 
-bool Socket::RecvMessage(Message& msg)
+bool Socket::RecvMessage(Message &msg)
 {
     if (socket == nullptr)
         return false;
 
-    zmsg_t* recv_msg;
-    if (zsock_recv(socket, "m", &recv_msg) == 0) {
+    zmsg_t *recv_msg;
+    if (zsock_recv(socket, "m", &recv_msg) == 0)
+    {
         msg.Move(&recv_msg);
         return true;
     }
 
     return false;
 }
-}
+} // namespace Uf

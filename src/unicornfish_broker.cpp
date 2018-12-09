@@ -20,11 +20,13 @@
 #include <unicornfish_broker.hpp>
 #include <unicornfish_majordomo.hpp>
 
+// template struct std::pair<string, Uf::BrokerWorker>;
+// template struct std::pair<string, Uf::BrokerServiceInfo>;
+// template class std::map<string, Uf::BrokerWorker>;
+// template class std::map<string, Uf::BrokerServiceInfo>;
+
 namespace Uf
 {
-
-template struct std::pair<string, BrokerWorker>;
-template struct std::pair<string, BrokerServiceInfo>;
 
 Broker::Broker()
 {
@@ -68,7 +70,7 @@ bool Broker::ProcessWorkerMessage(Frame &sender, Message &msg)
     string workerName = sender.GetHexData();
     bool workerIsReady = WorkerExists(workerName);
     BrokerWorker *worker = FindWorker(workerName);
-    worker->identityFrame.Copy(sender);
+    worker->identityFrame->Copy(sender);
 
     Majordomo::Command command = msg.PopCommand();
     if (command == Majordomo::Command::Ready)
@@ -287,7 +289,7 @@ bool Broker::RunLoop()
 
 bool Broker::WorkerExists(const string &workerName) const
 {
-    auto it = workers.find(workerName);
+    const map<string, BrokerWorker>::const_iterator it = workers.find(workerName);
 
     return (it != workers.cend());
 }

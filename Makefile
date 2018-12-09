@@ -8,7 +8,7 @@
 # FLUXIONS_GCH = $(FLUXIONS_SRCDIR)/stdafx.h.gch
 
 # requires the following packages
-# libczmq-dev libzmq3-dev libcurl4-gnutls-dev libsodium-dev zlib1g-dev python3-dev freeglut3-dev
+# libczmq-dev libzmq3-dev libcurl4-gnutls-dev libsodium-dev zlib1g-dev python3-dev freeglut3-dev libglew-dev
 # development packages
 # global
 
@@ -27,7 +27,7 @@ SOURCES = $(CXXSOURCES) $(CSOURCES)
 HEADERS = $(CXXHEADERS) $(CHEADERS)
 SRCOBJECTS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(CXXSOURCES)) $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(CSOURCES))
 DEPOBJECTS = $(patsubst $(DEP_SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(DEPCXXSOURCES)) $(patsubst $(DEP_SRCDIR)/%.c,$(OBJDIR)/%.o,$(DEPCSOURCES))
-DEPCOBJECTS= $(patsubst $(DEP_SRCDIR)/%.c,$(OBJDIR)/%.o,$(DEPCSOURCES))
+# DEPCOBJECTS= $(patsubst $(DEP_SRCDIR)/%.c,$(OBJDIR)/%.o,$(DEPCSOURCES))
 OBJECTS = $(SRCOBJECTS) $(DEPOBJECTS)
 TARGET = build/libfluxions.a
 GCH = $(SRCDIR)/stdafx.h.gch
@@ -58,7 +58,7 @@ cobjects: $(DEPCOBJECTS)
 	echo $(DEPOBJECTS)
 
 $(TARGET): $(OBJECTS)
-	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) 
+	$(AR) cr $@ $(OBJECTS) 
 
 $(GCH): $(SRCDIR)/stdafx.h $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@

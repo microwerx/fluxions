@@ -24,7 +24,8 @@
 #include <iostream>
 #include <sstream>
 
-namespace Fluxions {
+namespace Fluxions
+{
 
 CoronaDatabase::CoronaDatabase()
 {
@@ -34,7 +35,7 @@ CoronaDatabase::~CoronaDatabase()
 {
 }
 
-void CoronaDatabase::LoadOBJ(const string& objname, const string& filename)
+void CoronaDatabase::LoadOBJ(const string &objname, const string &filename)
 {
     models[objname].LoadOBJ(filename);
 }
@@ -43,7 +44,8 @@ void CoronaDatabase::BuildBuffers()
 {
     renderer.Reset();
     map<string, OBJStaticModel>::iterator modelIt;
-    for (modelIt = models.begin(); modelIt != models.end(); modelIt++) {
+    for (modelIt = models.begin(); modelIt != models.end(); modelIt++)
+    {
         modelIt->second.Render(renderer);
     }
     renderer.BuildBuffers();
@@ -67,7 +69,7 @@ OBJStaticModel::~OBJStaticModel()
 {
 }
 
-bool OBJStaticModel::LoadOBJ(const string& filename)
+bool OBJStaticModel::LoadOBJ(const string &filename)
 {
     using namespace std;
 
@@ -77,19 +79,26 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
     FilePathInfo fpi_orig(filename);
     FilePathInfo fpi(cache_filename);
 
-    if (fpi.DoesNotExist()) {
+    if (fpi.DoesNotExist())
+    {
         cacheDoesNotExist = true;
-    } else {
+    }
+    else
+    {
         // Is the original file newer than the cache?
-        if (fpi_orig.ctime > fpi.ctime) {
+        if (fpi_orig.ctime > fpi.ctime)
+        {
             cacheDoesNotExist = true;
-        } else {
+        }
+        else
+        {
             cacheDoesNotExist = false;
             hflog.info("%s(): loading cached OBJ %s", __FUNCTION__, fpi.fname.c_str());
         }
     }
 
-    if (cacheDoesNotExist) {
+    if (cacheDoesNotExist)
+    {
         hflog.info("%s(): loading OBJ %s", __FUNCTION__, fpi_orig.fname.c_str());
         int curSurface = 0;
         string surfaceName;
@@ -106,7 +115,7 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
         long lastIndex = 0;
         int newIndex = 0;
         int first = 0;
-        int count = 0;
+        // int count = 0;
         int firstVertex = 0;
         const double size = 1.0;
 
@@ -124,19 +133,23 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
         CreateSimpleModel(0, 0, 1);
         int linecount = 0;
         int totallinecount = 0;
-        while (1) {
+        while (1)
+        {
             getline(fin, str);
             linecount++;
             totallinecount++;
-            if (!fin) {
+            if (!fin)
+            {
                 // flush remaining polygons to last surface (if any)
-                if (Surfaces.size() != 0) {
+                if (Surfaces.size() != 0)
+                {
                     Surfaces[curSurface].count = (int)faceList.size() * 3;
 
                     hflog.info("%s(): %s ... adding %d new faces starting at %d to %s", __FUNCTION__, fpi.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
 
                     // 2. add indices (triangles)
-                    for (auto it = faceList.begin(); it != faceList.end(); it++) {
+                    for (auto it = faceList.begin(); it != faceList.end(); it++)
+                    {
                         Indices.push_back(it->x + firstVertex);
                         Indices.push_back(it->y + firstVertex);
                         Indices.push_back(it->z + firstVertex);
@@ -150,26 +163,33 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
             istr.str(str);
 
             istr >> str;
-            if (str == "o") {
+            if (str == "o")
+            {
                 linecount = 0;
                 istr >> objectName;
                 hflog.info("%s(): %s ... adding new object %s", __FUNCTION__, fpi_orig.fname.c_str(), objectName.c_str());
-            } else if (str == "g") {
+            }
+            else if (str == "g")
+            {
                 linecount = 0;
                 istr >> surfaceName;
                 hflog.info("%s(): %s ... changing surface name to %s", __FUNCTION__, fpi_orig.fname.c_str(), surfaceName.c_str());
                 Surfaces[curSurface].surfaceName = surfaceName;
-            } else if (str == "usemtl") {
+            }
+            else if (str == "usemtl")
+            {
                 bool createSurface = false;
 
                 // flush old polygons to last surface (if any)
-                if (Surfaces.size() != 0 && !faceList.empty()) {
+                if (Surfaces.size() != 0 && !faceList.empty())
+                {
                     Surfaces[curSurface].count = (int)faceList.size() * 3;
 
                     hflog.info("%s(): %s ... adding %d new faces startnig at %d to %s", __FUNCTION__, fpi_orig.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
 
                     // 2. add indices (triangles)
-                    for (auto it = faceList.begin(); it != faceList.end(); it++) {
+                    for (auto it = faceList.begin(); it != faceList.end(); it++)
+                    {
                         Indices.push_back(it->x + firstVertex);
                         Indices.push_back(it->y + firstVertex);
                         Indices.push_back(it->z + firstVertex);
@@ -179,7 +199,8 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
                     createSurface = true;
                 }
 
-                if (createSurface) {
+                if (createSurface)
+                {
                     // create new surface
                     Surface surface;
                     surface.first = first;
@@ -191,43 +212,63 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
                 istr >> str;
                 Surfaces[curSurface].materialName = str;
                 hflog.info("%s(): %s ... using material %s", __FUNCTION__, fpi_orig.fname.c_str(), str.c_str());
-            } else if (str == "mtllib") {
+            }
+            else if (str == "mtllib")
+            {
                 istr >> materialLibrary;
                 hflog.info("%s(): %s ... ignoring mtllib %s", __FUNCTION__, fpi_orig.fname.c_str(), materialLibrary.c_str());
-            } else if (str == "v") {
+            }
+            else if (str == "v")
+            {
                 istr >> v[0] >> v[1] >> v[2];
                 vList.push_back(Vector3f(v));
-            } else if (str == "vn") {
+            }
+            else if (str == "vn")
+            {
                 istr >> v[0] >> v[1] >> v[2];
                 vnList.push_back(Vector3f(v));
-            } else if (str == "vt") {
+            }
+            else if (str == "vt")
+            {
                 istr >> v[0] >> v[1];
                 vtList.push_back(Vector2f(v));
-            } else if (str == "f") {
+            }
+            else if (str == "f")
+            {
                 int i1 = 0, i2 = 0, i3 = 0;
                 long long longIndex;
                 char trashChar;
-                for (int k = 0; k < 3; k++) {
+                for (int k = 0; k < 3; k++)
+                {
                     istr >> i1;
                     istr >> trashChar;
-                    if (trashChar != '/') {
+                    if (trashChar != '/')
+                    {
                         // single position (ptr only)
                         istr.putback(trashChar);
                         i2 = i3 = -1;
-                    } else {
+                    }
+                    else
+                    {
                         istr >> trashChar;
-                        if (trashChar == '/') {
+                        if (trashChar == '/')
+                        {
                             // ptr//vn case
                             i2 = -1;
                             istr >> i3;
-                        } else {
+                        }
+                        else
+                        {
                             istr.putback(trashChar);
                             istr >> i2 >> trashChar;
-                            if (trashChar != '/') {
+                            if (trashChar != '/')
+                            {
                                 istr.putback(trashChar);
                                 i3 = i2;
                                 i2 = -1;
-                            } else {
+                            }
+                            else
+                            {
                                 istr >> i3;
                             }
                         }
@@ -239,7 +280,8 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
                     if (i3 < 0)
                         i3 = (int)vnList.size() + i3;
 
-                    if (!optimizeIndexing) {
+                    if (!optimizeIndexing)
+                    {
                         // BEGIN NOT TRYING TO INDEX THESE THINGS
                         iv[k] = lastIndex + k;
                         Vertex vtx;
@@ -251,13 +293,16 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
                         vertexMap[iv[k]] = vtx;
                         BoundingBox += vtx.position;
                         // END NOT TRYING TO INDEX THESE THINGS
-                    } else {
+                    }
+                    else
+                    {
                         longIndex = i1;
                         if (i2 >= 0)
                             longIndex |= (long long)(i2) << 48;
                         if (i3 >= 0)
                             longIndex |= (long long)(i3) << 24;
-                        if (indexMap.find(longIndex) == indexMap.end()) {
+                        if (indexMap.find(longIndex) == indexMap.end())
+                        {
                             indexMap[longIndex] = newIndex;
                             newIndex++;
                         }
@@ -265,7 +310,8 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
 
                         // create vertex if needed
                         Vertex vtx;
-                        if (vertexMap.find(iv[k]) == vertexMap.end()) {
+                        if (vertexMap.find(iv[k]) == vertexMap.end())
+                        {
                             vtx.position = vList[i1 - 1];
                             if (i3 >= 0)
                                 vtx.normal = vnList[i3 - 1];
@@ -276,10 +322,13 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
                         }
                     }
                 }
-                if (optimizeIndexing) {
+                if (optimizeIndexing)
+                {
                     // create face
                     faceList.push_back(TVector3<int>(iv));
-                } else {
+                }
+                else
+                {
                     faceList.push_back(TVector3<int>(lastIndex, lastIndex + 1, lastIndex + 2));
                     lastIndex += 3;
                 }
@@ -292,7 +341,8 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
             scale = (float)(-2 * size / BoundingBox.MaxSize());
 
         hflog.info("%s(): %s ... scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), scale);
-        for (auto it = vertexMap.begin(); it != vertexMap.end(); it++) {
+        for (auto it = vertexMap.begin(); it != vertexMap.end(); it++)
+        {
             if (size < 0)
                 it->second.position -= BoundingBox.Center();
 
@@ -321,26 +371,29 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
         hflog.info("%s(): %s ... max uniform scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), BoundingBox.MaxSize());
 
         ComputeTangentVectors();
-    } else {
+    }
+    else
+    {
         // Load Cache instead
         ifstream fin(cache_filename, ios::binary);
         long vertexCount = 0;
         long indexCount = 0;
         long surfaceCount = 0;
 
-        fin.read(reinterpret_cast<char*>(&vertexCount), sizeof(long));
-        fin.read(reinterpret_cast<char*>(&indexCount), sizeof(long));
-        fin.read(reinterpret_cast<char*>(&surfaceCount), sizeof(long));
+        fin.read(reinterpret_cast<char *>(&vertexCount), sizeof(long));
+        fin.read(reinterpret_cast<char *>(&indexCount), sizeof(long));
+        fin.read(reinterpret_cast<char *>(&surfaceCount), sizeof(long));
 
         Vertices.resize(vertexCount);
         Indices.resize(indexCount);
         Surfaces.resize(surfaceCount);
         BoundingBox.Reset();
 
-        fin.read(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex) * vertexCount);
-        fin.read(reinterpret_cast<char*>(&Indices[0]), sizeof(GLuint) * indexCount);
+        fin.read(reinterpret_cast<char *>(&Vertices[0]), sizeof(Vertex) * vertexCount);
+        fin.read(reinterpret_cast<char *>(&Indices[0]), sizeof(GLuint) * indexCount);
 
-        for (int i = 0; i < surfaceCount; i++) {
+        for (int i = 0; i < surfaceCount; i++)
+        {
             long mode = 0;
             long first = 0;
             long count = 0;
@@ -349,15 +402,15 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
             long mtlNameSize = 0;
             long surfaceNameSize = 0;
 
-            fin.read(reinterpret_cast<char*>(&mode), sizeof(long));
-            fin.read(reinterpret_cast<char*>(&first), sizeof(long));
-            fin.read(reinterpret_cast<char*>(&count), sizeof(long));
-            fin.read(reinterpret_cast<char*>(&mtlNameSize), sizeof(long));
+            fin.read(reinterpret_cast<char *>(&mode), sizeof(long));
+            fin.read(reinterpret_cast<char *>(&first), sizeof(long));
+            fin.read(reinterpret_cast<char *>(&count), sizeof(long));
+            fin.read(reinterpret_cast<char *>(&mtlNameSize), sizeof(long));
             mtlName.resize(mtlNameSize);
-            fin.read(reinterpret_cast<char*>(&mtlName[0]), mtlNameSize);
-            fin.read(reinterpret_cast<char*>(&surfaceNameSize), sizeof(long));
+            fin.read(reinterpret_cast<char *>(&mtlName[0]), mtlNameSize);
+            fin.read(reinterpret_cast<char *>(&surfaceNameSize), sizeof(long));
             surfaceName.resize(surfaceNameSize);
-            fin.read(reinterpret_cast<char*>(&surfaceName[0]), surfaceNameSize);
+            fin.read(reinterpret_cast<char *>(&surfaceName[0]), surfaceNameSize);
 
             Surfaces[i].mode = mode;
             Surfaces[i].first = first;
@@ -366,14 +419,16 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
             Surfaces[i].surfaceName = surfaceName;
         }
 
-        for (auto& v : Vertices) {
+        for (auto &v : Vertices)
+        {
             BoundingBox += v.position;
         }
 
         fin.close();
     }
 
-    if (cacheDoesNotExist) {
+    if (cacheDoesNotExist)
+    {
         // save a cache
         ofstream fout(cache_filename, ios::binary);
 
@@ -381,28 +436,29 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
         long indexCount = (long)Indices.size();
         long surfaceCount = (long)Surfaces.size();
 
-        fout.write(reinterpret_cast<char*>(&vertexCount), sizeof(long));
-        fout.write(reinterpret_cast<char*>(&indexCount), sizeof(long));
-        fout.write(reinterpret_cast<char*>(&surfaceCount), sizeof(long));
+        fout.write(reinterpret_cast<char *>(&vertexCount), sizeof(long));
+        fout.write(reinterpret_cast<char *>(&indexCount), sizeof(long));
+        fout.write(reinterpret_cast<char *>(&surfaceCount), sizeof(long));
 
-        fout.write(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex) * vertexCount);
-        fout.write(reinterpret_cast<char*>(&Indices[0]), sizeof(GLuint) * indexCount);
+        fout.write(reinterpret_cast<char *>(&Vertices[0]), sizeof(Vertex) * vertexCount);
+        fout.write(reinterpret_cast<char *>(&Indices[0]), sizeof(GLuint) * indexCount);
 
-        for (int i = 0; i < surfaceCount; i++) {
+        for (int i = 0; i < surfaceCount; i++)
+        {
             long mode = Surfaces[i].mode;
             long first = Surfaces[i].first;
             long count = Surfaces[i].count;
             size_t mtlNameSize = Surfaces[i].materialName.size();
-            const char* mtlName = Surfaces[i].materialName.c_str();
+            const char *mtlName = Surfaces[i].materialName.c_str();
             size_t surfaceNameSize = Surfaces[i].surfaceName.size();
-            const char* surfaceName = Surfaces[i].surfaceName.c_str();
+            const char *surfaceName = Surfaces[i].surfaceName.c_str();
 
-            fout.write(reinterpret_cast<char*>(&mode), sizeof(long));
-            fout.write(reinterpret_cast<char*>(&first), sizeof(long));
-            fout.write(reinterpret_cast<char*>(&count), sizeof(long));
-            fout.write(reinterpret_cast<char*>(&mtlNameSize), sizeof(long));
+            fout.write(reinterpret_cast<char *>(&mode), sizeof(long));
+            fout.write(reinterpret_cast<char *>(&first), sizeof(long));
+            fout.write(reinterpret_cast<char *>(&count), sizeof(long));
+            fout.write(reinterpret_cast<char *>(&mtlNameSize), sizeof(long));
             fout.write(mtlName, mtlNameSize);
-            fout.write(reinterpret_cast<char*>(&surfaceNameSize), sizeof(long));
+            fout.write(reinterpret_cast<char *>(&surfaceNameSize), sizeof(long));
             fout.write(surfaceName, surfaceNameSize);
         }
 
@@ -413,11 +469,12 @@ bool OBJStaticModel::LoadOBJ(const string& filename)
     return true;
 }
 
-bool OBJStaticModel::SaveOBJ(const string& filename)
+bool OBJStaticModel::SaveOBJ(const string &filename)
 {
     ofstream fout(filename.c_str());
     // 1. Output Vertices
-    for (auto it = Vertices.begin(); it != Vertices.end(); it++) {
+    for (auto it = Vertices.begin(); it != Vertices.end(); it++)
+    {
         fout << "v ";
         WriteVector3f(fout, it->position);
         fout << endl;
@@ -430,11 +487,14 @@ bool OBJStaticModel::SaveOBJ(const string& filename)
     }
 
     // 2. Output Surfaces
-    for (auto it = Surfaces.begin(); it != Surfaces.end(); it++) {
+    for (auto it = Surfaces.begin(); it != Surfaces.end(); it++)
+    {
         fout << "usemtl " << it->materialName << endl;
         int triangle = 2;
-        for (int i = 0; i < it->count; i++) {
-            if (++triangle == 3) {
+        for (int i = 0; i < it->count; i++)
+        {
+            if (++triangle == 3)
+            {
                 fout << endl;
                 if (it->count - i >= 3)
                     fout << "f ";
@@ -451,7 +511,7 @@ bool OBJStaticModel::SaveOBJ(const string& filename)
     return true;
 }
 
-void OBJStaticModel::SavePrecompiled(const string& filename, const string objname)
+void OBJStaticModel::SavePrecompiled(const string &filename, const string objname)
 {
     string outFilename = filename + ".cpp";
     ofstream fout(outFilename.c_str());
@@ -474,18 +534,20 @@ void OBJStaticModel::SavePrecompiled(const string& filename, const string objnam
     fout << "const int " << prefix << "VerticesSize = " << Vertices.size() << ";\n";
     fout << "const int " << prefix << "SurfacesSize = " << Surfaces.size() << ";\n\n";
 
-    int IndicesSize = (int)Indices.size();
-    int VerticesSize = (int)Vertices.size();
-    int SurfacesSize = (int)Surfaces.size();
+    // size_t IndicesSize = Indices.size();
+    // size_t VerticesSize = Vertices.size();
+    // size_t SurfacesSize = Surfaces.size();
 
-    int totalCount = (int)Indices.size();
-    int newLineCount = 0;
+    size_t totalCount = Indices.size();
+    size_t newLineCount = 0;
     fout << "const int " << prefix << "Indices[] = {\n\t";
-    for (auto it = Indices.begin(); it != Indices.end(); it++) {
+    for (auto it = Indices.begin(); it != Indices.end(); it++)
+    {
         fout << *it;
         if (--totalCount != 0)
             fout << ", ";
-        if (newLineCount++ > 10) {
+        if (newLineCount++ > 10)
+        {
             fout << "\n\t";
             newLineCount = 0;
         }
@@ -495,7 +557,8 @@ void OBJStaticModel::SavePrecompiled(const string& filename, const string objnam
     newLineCount = 0;
     totalCount = (int)Vertices.size();
     fout << "const float " << prefix << "Vertices[] = {\n";
-    for (auto it = Vertices.begin(); it != Vertices.end(); it++) {
+    for (auto it = Vertices.begin(); it != Vertices.end(); it++)
+    {
         fout << "\t";
         fout << fixed << setprecision(9) << it->position.x << "f, ";
         fout << fixed << setprecision(9) << it->position.y << "f, ";
@@ -521,7 +584,8 @@ void OBJStaticModel::SavePrecompiled(const string& filename, const string objnam
 
     totalCount = (int)Surfaces.size();
     fout << "const OBJSurface " << prefix << "Surfaces[] = {\n";
-    for (auto it = Surfaces.begin(); it != Surfaces.end(); it++) {
+    for (auto it = Surfaces.begin(); it != Surfaces.end(); it++)
+    {
         fout << "\t{ ";
         fout << "GL_TRIANGLES, ";
         fout << it->first << ", ";
@@ -538,15 +602,17 @@ void OBJStaticModel::SavePrecompiled(const string& filename, const string objnam
     fout.close();
 }
 
-void OBJStaticModel::LoadPrecompiled(const int numIndices, const int* indices, const int numVertices, const float* vertices, const int numSurfaces, const OBJSurface* surfaces)
+void OBJStaticModel::LoadPrecompiled(const int numIndices, const int *indices, const int numVertices, const float *vertices, const int numSurfaces, const OBJSurface *surfaces)
 {
     Clear();
     Resize(numVertices, numIndices, numSurfaces);
-    for (int i = 0; i < numIndices; i++) {
+    for (int i = 0; i < numIndices; i++)
+    {
         Indices[i] = indices[i];
     }
 
-    for (int i = 0; i < numVertices; i++) {
+    for (int i = 0; i < numVertices; i++)
+    {
         Vertices[i].position.x = vertices[i * 14 + 0];
         Vertices[i].position.y = vertices[i * 14 + 1];
         Vertices[i].position.z = vertices[i * 14 + 2];
@@ -563,7 +629,8 @@ void OBJStaticModel::LoadPrecompiled(const int numIndices, const int* indices, c
         Vertices[i].tangent.z = vertices[i * 14 + 13];
     }
 
-    for (int i = 0; i < numSurfaces; i++) {
+    for (int i = 0; i < numSurfaces; i++)
+    {
         Surfaces[i].mode = surfaces[i].mode;
         Surfaces[i].first = surfaces[i].first;
         Surfaces[i].count = surfaces[i].count;
@@ -595,10 +662,11 @@ void OBJStaticModel::Clear()
     Surfaces.clear();
 }
 
-void OBJStaticModel::Transform(const Matrix4d& mat)
+void OBJStaticModel::Transform(const Matrix4d &mat)
 {
     std::vector<Vertex>::iterator it;
-    for (it = Vertices.begin(); it != Vertices.end(); it++) {
+    for (it = Vertices.begin(); it != Vertices.end(); it++)
+    {
         Vector3d vtx = it->position;
         it->position = (mat * Vector4d(vtx, 1.0)).xyz();
     }
@@ -606,12 +674,14 @@ void OBJStaticModel::Transform(const Matrix4d& mat)
 
 void OBJStaticModel::ComputeTangentVectors()
 {
-    for (size_t i = 0; i < Vertices.size(); i++) {
+    for (size_t i = 0; i < Vertices.size(); i++)
+    {
         Vertices[i].tangent = Vector3f(0, 0, 0);
         Vertices[i].binormal = Vector3f(0, 0, 0);
     }
 
-    for (size_t i = 0; i < Indices.size(); i += 3) {
+    for (size_t i = 0; i < Indices.size(); i += 3)
+    {
         int indices[3];
         indices[0] = Indices[i];
         indices[1] = Indices[i + 1];
@@ -636,13 +706,15 @@ void OBJStaticModel::ComputeTangentVectors()
         Ty.y = coef * (v2.y * s1 - v1.y * s2);
         Ty.z = coef * (v2.z * s1 - v1.z * s2);
 
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; j++)
+        {
             Vertices[indices[j]].tangent += Tx;
             Vertices[indices[j]].binormal += Ty;
         }
     }
 
-    for (size_t i = 0; i < Vertices.size(); i++) {
+    for (size_t i = 0; i < Vertices.size(); i++)
+    {
         Vertices[i].normal.normalize();
         Vertices[i].tangent.normalize();
         Vertices[i].binormal.normalize();
@@ -680,7 +752,7 @@ void OBJStaticModel::ComputeTangentVectors()
     }
 }
 
-void OBJStaticModel::Render(SimpleRenderer_GLuint& renderer)
+void OBJStaticModel::Render(SimpleRenderer_GLuint &renderer)
 {
     int curIndex;
 
@@ -688,7 +760,8 @@ void OBJStaticModel::Render(SimpleRenderer_GLuint& renderer)
 
     renderer.Begin(GL_TRIANGLES, true);
     curIndex = 0;
-    for (auto vIt = Vertices.begin(); vIt != Vertices.end(); vIt++, curIndex++) {
+    for (auto vIt = Vertices.begin(); vIt != Vertices.end(); vIt++, curIndex++)
+    {
         renderer.VertexAttrib4f(1, Vertices[curIndex].normal.x, Vertices[curIndex].normal.y, Vertices[curIndex].normal.z, 1.0f);
         renderer.VertexAttrib4f(2, Vertices[curIndex].texcoord.x, Vertices[curIndex].texcoord.y, 0.0f, 1.0f);
         renderer.VertexAttrib4f(6, Vertices[curIndex].tangent.x, Vertices[curIndex].tangent.y, Vertices[curIndex].tangent.z, 1.0f);
@@ -698,11 +771,13 @@ void OBJStaticModel::Render(SimpleRenderer_GLuint& renderer)
     renderer.End();
 
     vector<Surface>::iterator surfIt;
-    for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++) {
+    for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++)
+    {
         renderer.triangleCount += surfIt->count / 3;
         renderer.SetCurrentMtlName(surfIt->materialName);
         renderer.Begin(GL_TRIANGLES, true);
-        for (int i = surfIt->first; i < surfIt->first + surfIt->count; i++) {
+        for (int i = surfIt->first; i < surfIt->first + surfIt->count; i++)
+        {
             renderer.Index(Indices[i]);
         }
         renderer.End();
@@ -713,10 +788,12 @@ void OBJStaticModel::Render(SimpleRenderer_GLuint& renderer)
 void OBJStaticModel::RenderGL11()
 {
     vector<Surface>::iterator surfIt;
-    for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++) {
+    for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++)
+    {
         //renderer.SetCurrentMtlName(surfIt->materialName);
         glBegin(GL_TRIANGLES);
-        for (int i = surfIt->first; i < surfIt->first + surfIt->count; i++) {
+        for (int i = surfIt->first; i < surfIt->first + surfIt->count; i++)
+        {
             int curIndex = Indices[i];
             glTexCoord2f(Vertices[curIndex].texcoord.x, Vertices[curIndex].texcoord.y);
             glNormal3f(Vertices[curIndex].normal.x, Vertices[curIndex].normal.y, Vertices[curIndex].normal.z);

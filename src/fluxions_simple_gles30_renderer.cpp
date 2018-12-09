@@ -19,13 +19,14 @@
 #include "stdafx.h"
 #include <fluxions_simple_gles30_renderer.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 
 SimpleGLES30Renderer::SimpleGLES30Renderer()
 {
 }
 
-SimpleGLES30Renderer::SimpleGLES30Renderer(const SimpleRenderConfiguration& rc)
+SimpleGLES30Renderer::SimpleGLES30Renderer(const SimpleRenderConfiguration &rc)
 {
     SetRenderConfig(rc);
 }
@@ -38,7 +39,7 @@ SimpleGLES30Renderer::~SimpleGLES30Renderer()
         glDeleteBuffers(1, &eabo);
 }
 
-void SimpleGLES30Renderer::SetSceneGraph(SimpleSceneGraph& ssg_)
+void SimpleGLES30Renderer::SetSceneGraph(SimpleSceneGraph &ssg_)
 {
     ssg = ssg_;
     areBuffersBuilt = false;
@@ -53,7 +54,8 @@ bool SimpleGLES30Renderer::ApplyRenderConfig()
 
     program = renderConfig.shaderProgram;
 
-    if (renderConfig.useZOnly) {
+    if (renderConfig.useZOnly)
+    {
         program = renderConfig.zShaderProgram;
     }
 
@@ -68,12 +70,14 @@ bool SimpleGLES30Renderer::ApplyRenderConfig()
     ApplyGlobalSettingsToCurrentProgram();
     ApplySpheresToCurrentProgram();
 
-    if (renderConfig.enableDepthTest) {
+    if (renderConfig.enableDepthTest)
+    {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(renderConfig.depthComparisonTest);
     }
 
-    if (renderConfig.clearColorBuffer) {
+    if (renderConfig.clearColorBuffer)
+    {
         glClearColor(renderConfig.clearColor.r, renderConfig.clearColor.g, renderConfig.clearColor.b, renderConfig.clearColor.a);
     }
 
@@ -83,11 +87,14 @@ bool SimpleGLES30Renderer::ApplyRenderConfig()
     Matrix4f projectionMatrix_;
     Matrix4f cameraMatrix_;
 
-    if (renderConfig.useSceneCamera) {
+    if (renderConfig.useSceneCamera)
+    {
         projectionMatrix_.LoadIdentity();
         projectionMatrix_.PerspectiveY((float)ssg.camera.fov, renderConfig.viewportRect.aspectRatiof(), (float)ssg.camera.imageNearZ, (float)ssg.camera.imageFarZ);
         cameraMatrix_ = renderConfig.preCameraMatrix * ssg.camera.viewMatrix * renderConfig.postCameraMatrix;
-    } else {
+    }
+    else
+    {
         projectionMatrix_.LoadIdentity();
         projectionMatrix_.PerspectiveY((float)renderConfig.fov, renderConfig.viewportRect.aspectRatiof(), (float)renderConfig.znear, (float)renderConfig.zfar);
         cameraMatrix_ = renderConfig.preCameraMatrix * renderConfig.postCameraMatrix;
@@ -96,7 +103,8 @@ bool SimpleGLES30Renderer::ApplyRenderConfig()
 
     glViewport(renderConfig.viewportRect.x, renderConfig.viewportRect.y, renderConfig.viewportRect.w, renderConfig.viewportRect.h);
 
-    if (renderConfig.recomputeProjectionMatrix) {
+    if (renderConfig.recomputeProjectionMatrix)
+    {
         renderConfig.projectionMatrix.LoadIdentity();
         renderConfig.projectionMatrix.PerspectiveY(renderConfig.fov, (float)renderConfig.viewportRect.aspectRatio(), renderConfig.znear, renderConfig.zfar);
     }
@@ -146,7 +154,7 @@ bool SimpleGLES30Renderer::RestoreGLState()
     return true;
 }
 
-void SimpleGLES30Renderer::SetRenderConfig(const SimpleRenderConfiguration& rc)
+void SimpleGLES30Renderer::SetRenderConfig(const SimpleRenderConfiguration &rc)
 {
     renderConfig = rc;
 }
@@ -159,16 +167,18 @@ void SimpleGLES30Renderer::Render()
         RenderSingleImage();
 }
 
-class BufferObject {
-public:
+class BufferObject
+{
+  public:
     GLuint buffer = 0;
     GLenum target = 0;
 
-public:
-    BufferObject(GLenum target, GLsizei size, const void* data, GLenum usage)
+  public:
+    BufferObject(GLenum target, GLsizei size, const void *data, GLenum usage)
     {
         glGenBuffers(1, &buffer);
-        if (buffer > 0) {
+        if (buffer > 0)
+        {
             this->target = target;
             glBindBuffer(target, buffer);
             glBufferData(target, size, data, usage);
@@ -194,50 +204,57 @@ public:
     }
 };
 
-class VertexArrayObject {
-private:
+class VertexArrayObject
+{
+  private:
     GLuint vao = 0;
     GLuint abo = 0;
     GLuint eabo = 0;
 
-    struct Surface {
+    struct Surface
+    {
         GLenum mode;
         GLsizei count;
-        void* offset;
+        void *offset;
         GLenum type;
     };
 
     vector<Surface> surfaces;
 
-public:
-    VertexArrayObject(const SimpleGeometryMesh& mesh, GLuint program, GLuint abo, GLuint eabo)
+  public:
+    VertexArrayObject(const SimpleGeometryMesh &mesh, GLuint program, GLuint abo, GLuint eabo)
     {
         this->abo = abo;
         this->eabo = eabo;
 
         glGenVertexArrays(1, &vao);
-        if (vao > 0) {
+        if (vao > 0)
+        {
             glBindVertexArray(vao);
             glBindBuffer(GL_ARRAY_BUFFER, abo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
             int count = 0;
-            for (int i = 0; i < 8; i++) {
-                if (mesh.IsAttribEnabled(i)) {
-                    const char* name = mesh.GetAttribName(i);
+            for (int i = 0; i < 8; i++)
+            {
+                if (mesh.IsAttribEnabled(i))
+                {
+                    const char *name = mesh.GetAttribName(i);
                     if (name == nullptr)
                         continue;
                     GLint loc = glGetAttribLocation(program, name);
-                    if (loc < 0) {
+                    if (loc < 0)
+                    {
                         //hflog.warning("%s(): Program %i does not have attrib %s", __FUNCTION__, program_, name);
                         continue;
                     }
-                    glVertexAttribPointer(loc, 4, GL_FLOAT, mesh.IsAttribNormalized(i), sizeof SimpleGeometryMesh::Vertex, cast_to_pointer(mesh.GetVertexOffset(i)));
+                    glVertexAttribPointer(loc, 4, GL_FLOAT, mesh.IsAttribNormalized(i), sizeof(SimpleGeometryMesh::Vertex), cast_to_pointer(mesh.GetVertexOffset(i)));
                     glEnableVertexAttribArray(loc);
                     count++;
                 }
             }
 
-            if (count == 0) {
+            if (count == 0)
+            {
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
                 glBindVertexArray(0);
@@ -247,7 +264,8 @@ public:
             }
 
             GLenum type = 0;
-            switch (sizeof(SimpleGeometryMesh::Index)) {
+            switch (sizeof(SimpleGeometryMesh::Index))
+            {
             case 1:
                 type = GL_UNSIGNED_BYTE;
                 break;
@@ -259,7 +277,8 @@ public:
                 break;
             }
             surfaces.resize(mesh.GetSurfaces().size());
-            for (int i = 0, count = (int)mesh.GetSurfaces().size(); i < count; i++) {
+            for (int i = 0, count = (int)mesh.GetSurfaces().size(); i < count; i++)
+            {
                 auto meshSurface = mesh.GetSurface(i);
                 surfaces[i].mode = meshSurface.type;
                 surfaces[i].count = meshSurface.count;
@@ -276,7 +295,8 @@ public:
 
     ~VertexArrayObject()
     {
-        if (vao > 0) {
+        if (vao > 0)
+        {
             glDeleteVertexArrays(1, &vao);
         }
     }
@@ -287,20 +307,21 @@ public:
             return;
 
         glBindVertexArray(vao);
-        for (auto& surface : surfaces) {
+        for (auto &surface : surfaces)
+        {
             glDrawElements(surface.mode, surface.count, surface.type, surface.offset);
         }
         glBindVertexArray(0);
     }
 
-    inline void* cast_to_pointer(int i)
+    constexpr void *cast_to_pointer(size_t i) const noexcept
     {
-        __int64 t = i;
-        return (void*)t;
+        size_t t = i;
+        return (void *)t;
     }
 };
 
-void SimpleGLES30Renderer::RenderMesh(SimpleGeometryMesh& mesh, const Matrix4f& modelViewMatrix)
+void SimpleGLES30Renderer::RenderMesh(SimpleGeometryMesh &mesh, const Matrix4f &modelViewMatrix)
 {
     if (renderConfig.shaderProgram == nullptr)
         return;
@@ -369,31 +390,39 @@ void SimpleGLES30Renderer::RenderSingleImage()
     if (!ApplyRenderConfig())
         return;
 
-    if (renderConfig.isCubeMap) {
+    if (renderConfig.isCubeMap)
+    {
         projectionMatrix.LoadIdentity();
         projectionMatrix.Perspective(90.0f, 1.0f, renderConfig.znear, renderConfig.zfar);
         Vector4f cameraPosition(0, 0, 0, 1);
         cameraPosition = cameraMatrix * cameraPosition;
-        if (renderConfig.defaultCubeFace >= 0 && renderConfig.defaultCubeFace < 6) {
+        if (renderConfig.defaultCubeFace >= 0 && renderConfig.defaultCubeFace < 6)
+        {
             cameraMatrix.LoadIdentity();
             cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderConfig.defaultCubeFace);
             cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
             Render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
-        } else {
-            for (int i = 0; i < 6; i++) {
+        }
+        else
+        {
+            for (int i = 0; i < 6; i++)
+            {
                 cameraMatrix.LoadIdentity();
                 cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
                 cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
                 Render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
             }
         }
-    } else {
+    }
+    else
+    {
         Render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
     }
 
     glUseProgram(0);
 
-    if (renderConfig.renderSkyBox) {
+    if (renderConfig.renderSkyBox)
+    {
         glEnable(GL_DEPTH_TEST);
         RenderSkyBox();
         glDisable(GL_DEPTH_TEST);
@@ -427,7 +456,8 @@ void SimpleGLES30Renderer::ApplySpheresToCurrentProgram()
     vector<float> spherePositions;
     vector<float> sphereKe;
     int numSpheres = 0;
-    for (auto sphIt = ssg.spheres.begin(); sphIt != ssg.spheres.end(); sphIt++) {
+    for (auto sphIt = ssg.spheres.begin(); sphIt != ssg.spheres.end(); sphIt++)
+    {
         if (spherePositions.size() > 8)
             break;
         Vector4f pos(0, 0, 0, 1);
@@ -437,9 +467,10 @@ void SimpleGLES30Renderer::ApplySpheresToCurrentProgram()
         radius = radius - pos;
         float length = radius.length();
         pos.w = length;
-        SimpleMaterial* mtl = ssg.materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
+        SimpleMaterial *mtl = ssg.materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
         // only push spheres that are emissive...
-        if (mtl) {
+        if (mtl)
+        {
             spherePositions.push_back(pos.x);
             spherePositions.push_back(pos.y);
             spherePositions.push_back(pos.z);
@@ -453,7 +484,8 @@ void SimpleGLES30Renderer::ApplySpheresToCurrentProgram()
             numSpheres++;
         }
     }
-    if (numSpheres > 0) {
+    if (numSpheres > 0)
+    {
         if (locs.sphere_array >= 0)
             glUniform4fv(locs.sphere_array, numSpheres, &spherePositions[0]);
         if (locs.sphere_Ke >= 0)
@@ -463,7 +495,7 @@ void SimpleGLES30Renderer::ApplySpheresToCurrentProgram()
         glUniform1i(locs.sphere_count, numSpheres);
 }
 
-void SimpleGLES30Renderer::Render(SimpleProgram& program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix_, Matrix4f& cameraMatrix_)
+void SimpleGLES30Renderer::Render(SimpleProgram &program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix_, Matrix4f &cameraMatrix_)
 {
     Matrix4f inverseCameraMatrix = cameraMatrix_.AsInverse();
     Vector4f cameraPosition(0, 0, 0, 1);
@@ -480,25 +512,28 @@ void SimpleGLES30Renderer::Render(SimpleProgram& program_, bool useMaterials, bo
     program_.ApplyUniform("CameraPosition", CameraPosition);
 
     // apply each material separately (use the idea that material state changes are worse than geometry ones
-    for (auto libIt = ssg.materials.begin(); libIt != ssg.materials.end(); libIt++) {
-        SimpleMaterialLibrary& mtllib = libIt->second;
+    for (auto libIt = ssg.materials.begin(); libIt != ssg.materials.end(); libIt++)
+    {
+        SimpleMaterialLibrary &mtllib = libIt->second;
         string mtllibName = mtllib.name;
         GLuint mtllibId = ssg.materials.GetLibraryId(mtllib.name);
         ssg.materials.SetLibrary(mtllib.name);
 
         // loop through each material
-        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++) {
+        for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++)
+        {
             GLuint mtlId = mtlIt->first;
             string mtlName = ssg.materials.GetMaterialName(mtlId);
-            SimpleMaterial& mtl = mtlIt->second;
+            SimpleMaterial &mtl = mtlIt->second;
             ssg.materials.SetMaterial(mtlName);
 
             if (useMaterials)
                 ApplyMaterialToCurrentProgram(mtl, useMaps);
 
             // loop through each geometry object
-            for (auto geoIt = ssg.geometry.begin(); geoIt != ssg.geometry.end(); geoIt++) {
-                SimpleGeometryGroup& geo = geoIt->second;
+            for (auto geoIt = ssg.geometry.begin(); geoIt != ssg.geometry.end(); geoIt++)
+            {
+                SimpleGeometryGroup &geo = geoIt->second;
                 GLuint objectId = geo.objectId;
                 GLuint groupId = 0;
                 renderer.ApplyIdToMtlNames(mtlName, mtlIt->first);
@@ -535,11 +570,12 @@ void SimpleGLES30Renderer::Render(SimpleProgram& program_, bool useMaterials, bo
     }
 }
 
-void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps)
+void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial &mtl, bool useMaps)
 {
     GLuint unit = 1;
 
-    if (useMaps) {
+    if (useMaps)
+    {
         if (!mtl.map_Ka.empty())
             currentTextures["map_Ka"] = ssg.materials.GetTextureMap(mtl.map_Ka);
         if (!mtl.map_Kd.empty())
@@ -563,9 +599,11 @@ void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bo
         if (!mtl.PBmap.empty())
             currentTextures["PBmap"] = ssg.materials.GetTextureMap(mtl.PBmap);
 
-        for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
-            SimpleMap* pMap = tmapIt->second;
-            if (pMap) {
+        for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++)
+        {
+            SimpleMap *pMap = tmapIt->second;
+            if (pMap)
+            {
                 if (pMap->unitId <= 0)
                     pMap->unitId = GetTexUnit();
                 pMap->samplerId = pMap->textureObject.samplerObject.GetId();
@@ -573,7 +611,8 @@ void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bo
                 pMap->textureObject.Bind(pMap->unitId, false);
                 glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0);
 
-                if (pMap->samplerId == 0) {
+                if (pMap->samplerId == 0)
+                {
                     glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);
                     glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);
                     glTexParameterf(pMap->textureObject.GetTarget(), GL_TEXTURE_WRAP_R, GL_REPEAT);
@@ -583,44 +622,68 @@ void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bo
 
                 pMap->map_loc = -1;
                 pMap->map_mix_loc = -1;
-                if (tmapIt->first == "map_Ka") {
+                if (tmapIt->first == "map_Ka")
+                {
                     pMap->map_loc = locs.map_Ka;
                     pMap->map_mix_loc = locs.map_Ka_mix;
-                } else if (tmapIt->first == "map_Kd") {
+                }
+                else if (tmapIt->first == "map_Kd")
+                {
                     pMap->map_loc = locs.map_Kd;
                     pMap->map_mix_loc = locs.map_Kd_mix;
-                } else if (tmapIt->first == "map_Ks") {
+                }
+                else if (tmapIt->first == "map_Ks")
+                {
                     pMap->map_loc = locs.map_Ks;
                     pMap->map_mix_loc = locs.map_Ks_mix;
-                } else if (tmapIt->first == "map_Ke") {
+                }
+                else if (tmapIt->first == "map_Ke")
+                {
                     pMap->map_loc = locs.map_Ke;
                     pMap->map_mix_loc = locs.map_Ke_mix;
-                } else if (tmapIt->first == "map_Ni") {
+                }
+                else if (tmapIt->first == "map_Ni")
+                {
                     pMap->map_loc = locs.map_Ni;
                     pMap->map_mix_loc = locs.map_Ni_mix;
-                } else if (tmapIt->first == "map_Ns") {
+                }
+                else if (tmapIt->first == "map_Ns")
+                {
                     pMap->map_loc = locs.map_Ns;
                     pMap->map_mix_loc = locs.map_Ns_mix;
-                } else if (tmapIt->first == "map_Tf") {
+                }
+                else if (tmapIt->first == "map_Tf")
+                {
                     pMap->map_loc = locs.map_Tf;
                     pMap->map_mix_loc = locs.map_Tf_mix;
-                } else if (tmapIt->first == "map_Tr") {
+                }
+                else if (tmapIt->first == "map_Tr")
+                {
                     pMap->map_loc = locs.map_Tr;
                     pMap->map_mix_loc = locs.map_Tr_mix;
-                } else if (tmapIt->first == "map_bump") {
+                }
+                else if (tmapIt->first == "map_bump")
+                {
                     pMap->map_loc = locs.map_bump;
                     pMap->map_mix_loc = locs.map_bump_mix;
-                } else if (tmapIt->first == "map_normal") {
+                }
+                else if (tmapIt->first == "map_normal")
+                {
                     pMap->map_loc = locs.map_normal;
                     pMap->map_mix_loc = locs.map_normal_mix;
-                } else if (tmapIt->first == "PBmap") {
+                }
+                else if (tmapIt->first == "PBmap")
+                {
                     pMap->map_loc = locs.PBmap;
                     pMap->map_mix_loc = locs.PBmap_mix;
                 }
 
-                if (pMap->unitId < 0 || pMap->unitId >= g_MaxCombinedTextureUnits) {
+                if (pMap->unitId < 0 || pMap->unitId >= g_MaxCombinedTextureUnits)
+                {
                     hflog.error("%s(): pMap->unitId (%d) is out of range.", __FUNCTION__, pMap->unitId);
-                } else {
+                }
+                else
+                {
                     if (pMap->map_loc >= 0)
                         glUniform1i(pMap->map_loc, pMap->unitId);
                     if (pMap->map_mix_loc >= 0)
@@ -663,7 +726,8 @@ void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bo
         glUniform1fv(locs.PBk, 1, &mtl.PBk);
 
     // The better way to do this is to first find all the locations for the material, then apply them...
-    for (auto uniform : locs.newLocationList) {
+    for (auto uniform : locs.newLocationList)
+    {
         // uniform.first = name
         // uniform.second = details
     }
@@ -672,15 +736,18 @@ void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bo
 void SimpleGLES30Renderer::DisableCurrentTextures()
 {
     // Turn off textures and reset program_ unit bindings to 0
-    for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
-        SimpleMap* pMap = tmapIt->second;
-        if (pMap) {
+    for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++)
+    {
+        SimpleMap *pMap = tmapIt->second;
+        if (pMap)
+        {
             glutBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
 
             glUniform1i(pMap->map_loc, 0);
             glUniform1f(pMap->map_mix_loc, 0.0f);
 
-            if (pMap->unitId != 0) {
+            if (pMap->unitId != 0)
+            {
                 FreeTexUnit(pMap->unitId);
                 pMap->unitId = 0;
             }
@@ -694,27 +761,25 @@ void SimpleGLES30Renderer::DisableCurrentTextures()
 void SimpleGLES30Renderer::InitSkyBox()
 {
     GLfloat size = 50.0f;
-    GLfloat v[] = {
-        -size, size, -size,
-        size, size, -size,
-        size, -size, -size,
-        -size, -size, -size,
-        size, size, size,
-        -size, size, size,
-        -size, -size, size,
-        size, -size, size
-    };
+    // GLfloat v[] = {
+    //     -size, size, -size,
+    //     size, size, -size,
+    //     size, -size, -size,
+    //     -size, -size, -size,
+    //     size, size, size,
+    //     -size, size, size,
+    //     -size, -size, size,
+    //     size, -size, size};
 
-    GLfloat texcoords[] = {
-        -1.0f, 1.0f, -1.0f,
-        1.0f, 1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f
-    };
+    // GLfloat texcoords[] = {
+    //     -1.0f, 1.0f, -1.0f,
+    //     1.0f, 1.0f, -1.0f,
+    //     1.0f, -1.0f, -1.0f,
+    //     -1.0f, -1.0f, -1.0f,
+    //     1.0f, 1.0f, 1.0f,
+    //     -1.0f, 1.0f, 1.0f,
+    //     -1.0f, -1.0f, 1.0f,
+    //     1.0f, -1.0f, 1.0f};
 
     GLfloat buffer[] = {
         -size, size, -size, -1.0f, 1.0f, -1.0f,
@@ -724,8 +789,7 @@ void SimpleGLES30Renderer::InitSkyBox()
         size, size, size, 1.0f, 1.0f, 1.0f,
         -size, size, size, -1.0f, 1.0f, 1.0f,
         -size, -size, size, -1.0f, -1.0f, 1.0f,
-        size, -size, size, 1.0f, -1.0f, 1.0f
-    };
+        size, -size, size, 1.0f, -1.0f, 1.0f};
 
     GLushort indices[] = {
         // FACE 0
@@ -745,10 +809,10 @@ void SimpleGLES30Renderer::InitSkyBox()
         4, 7, 6,
         // FACE 4
         2, 1, 0,
-        0, 3, 2
-    };
+        0, 3, 2};
 
-    if (abo == 0) {
+    if (abo == 0)
+    {
         glGenBuffers(1, &abo);
         glGenBuffers(1, &eabo);
         glBindBuffer(GL_ARRAY_BUFFER, abo);
@@ -760,7 +824,7 @@ void SimpleGLES30Renderer::InitSkyBox()
 
 void SimpleGLES30Renderer::RenderSkyBox()
 {
-    GLuint vbo = 0;
+    // GLuint vbo = 0;
     GLint vloc = -1;
     GLint tloc = -1;
     GLuint programId = 0;
@@ -773,7 +837,8 @@ void SimpleGLES30Renderer::RenderSkyBox()
     GLint uGroundE0 = -1;
 
     auto it = renderer.programs.find("skybox");
-    if (it != renderer.programs.end()) {
+    if (it != renderer.programs.end())
+    {
         programId = it->second->GetProgram();
         uCubeTexture = it->second->GetUniformLocation("uCubeTexture");
         uWorldMatrix = it->second->GetUniformLocation("WorldMatrix");
@@ -791,25 +856,30 @@ void SimpleGLES30Renderer::RenderSkyBox()
     tloc = glGetAttribLocation(programId, "aTexCoord");
 
     glUseProgram(programId);
-    if (uCubeTexture >= 0) {
+    if (uCubeTexture >= 0)
+    {
         glutBindTextureAndSampler(ssg.environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, ssg.environment.pbskyColorMapId, ssg.environment.pbskyColorMapSamplerId);
         glUniform1i(uCubeTexture, ssg.environment.pbskyColorMapUnit);
     }
-    if (uProjectionMatrix >= 0) {
+    if (uProjectionMatrix >= 0)
+    {
         Matrix4f projectionMatrix_ = ssg.camera.projectionMatrix;
         //projectionMatrix_.MakePerspective(ssg.camera.fov, aspectRatio, ssg.camera.imageNearZ, ssg.camera.imageFarZ);
         glUniformMatrix4fv(uProjectionMatrix, 1, GL_FALSE, projectionMatrix_.ptr());
     }
-    if (uCameraMatrix >= 0) {
+    if (uCameraMatrix >= 0)
+    {
         Matrix4f viewMatrix = renderConfig.preCameraMatrix * ssg.camera.viewMatrix;
         viewMatrix.m14 = viewMatrix.m24 = viewMatrix.m34 = viewMatrix.m41 = viewMatrix.m42 = viewMatrix.m43 = 0.0f;
         glUniformMatrix4fv(uCameraMatrix, 1, GL_FALSE, viewMatrix.const_ptr());
     }
-    if (uWorldMatrix >= 0) {
+    if (uWorldMatrix >= 0)
+    {
         Matrix4f worldMatrix;
         glUniformMatrix4fv(uWorldMatrix, 1, GL_FALSE, worldMatrix.const_ptr());
     }
-    if (uSunDirTo >= 0 && uSunE0 >= 0 && uGroundE0 >= 0) {
+    if (uSunDirTo >= 0 && uSunE0 >= 0 && uGroundE0 >= 0)
+    {
         glUniform3fv(uSunDirTo, 1, ssg.environment.curSunDirTo.const_ptr());
         glUniform4fv(uSunE0, 1, ssg.environment.curSunDiskRadiance.const_ptr());
         glUniform4fv(uGroundE0, 1, ssg.environment.curGroundRadiance.const_ptr());
@@ -817,8 +887,8 @@ void SimpleGLES30Renderer::RenderSkyBox()
 
     glBindBuffer(GL_ARRAY_BUFFER, abo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-    glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
-    glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
+    glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)0);
+    glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)12);
     if (vloc >= 0)
         glEnableVertexAttribArray(vloc);
     if (tloc >= 0)
@@ -837,8 +907,9 @@ void SimpleGLES30Renderer::RenderSkyBox()
 void SimpleGLES30Renderer::BuildBuffers()
 {
     renderer.Reset();
-    for (auto it = ssg.geometry.begin(); it != ssg.geometry.end(); it++) {
-        SimpleGeometryGroup& geo = it->second;
+    for (auto it = ssg.geometry.begin(); it != ssg.geometry.end(); it++)
+    {
+        SimpleGeometryGroup &geo = it->second;
         renderer.SetCurrentObjectId(geo.objectId);
         renderer.SetCurrentMtlLibId(geo.mtllibId);
         renderer.SetCurrentObjectName(geo.objectName);
@@ -852,4 +923,4 @@ void SimpleGLES30Renderer::BuildBuffers()
     InitSkyBox();
     areBuffersBuilt = true;
 }
-}
+} // namespace Fluxions

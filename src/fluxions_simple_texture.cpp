@@ -686,7 +686,6 @@ bool SimpleTexture::LoadTextureCoronaCubeMap(const string &filename, bool genMip
 {
 	target = GL_TEXTURE_CUBE_MAP;
 
-	SDL_Surface *imageSurface;
 	int width;
 	int height;
 	int format;
@@ -700,9 +699,9 @@ bool SimpleTexture::LoadTextureCoronaCubeMap(const string &filename, bool genMip
 		1, // POSITIVE X
 		0, // NEGATIVE X
 	};
-	void *data[6];
+	unsigned char *data[6];
 	bool badData = false;
-	imageSurface = IMG_Load(filename.c_str());
+	SDL_Surface *imageSurface = IMG_Load(filename.c_str());
 
 	if (!imageSurface)
 		return false;
@@ -768,7 +767,7 @@ bool SimpleTexture::LoadTextureCoronaCubeMap(const string &filename, bool genMip
 
 		Create();
 		Bind(0);
-		SetTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, data, genMipMap);
+		SetTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, (void **)data, genMipMap);
 		glutBindDefaultTextureAndSampler(target);
 		vector<unsigned char> _data;
 		_data.resize(width * height * bytesPerPixel * 6);

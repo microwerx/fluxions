@@ -19,7 +19,8 @@
 #include "stdafx.h"
 #include <unicornfish_curl.hpp>
 
-namespace Uf {
+namespace Uf
+{
 using namespace std;
 
 Curl::Curl()
@@ -30,36 +31,40 @@ Curl::~Curl()
 {
 }
 
-string Curl::Get(const string& url)
+string Curl::Get(const string &url)
 {
     string result;
     curl = curl_easy_init();
-    if (curl) {
+    if (curl)
+    {
         CURLcode res;
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Curl::write_callback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&result);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&result);
         res = curl_easy_perform(curl);
-        if (res != NULL) {
+        if (res != CURLE_OK)
+        {
         }
         curl_easy_cleanup(curl);
     }
     return result;
 }
 
-Curl::StringTimePairFuture Curl::AsyncGet(const string& url)
+Curl::StringTimePairFuture Curl::AsyncGet(const string &url)
 {
     StringTimePairFuture future_result = async(launch::async, [url]() {
         StringTimePair result;
         result.second = hflog.getSecondsElapsed();
-        CURL* curl = curl_easy_init();
-        if (curl) {
+        CURL *curl = curl_easy_init();
+        if (curl)
+        {
             CURLcode res;
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Curl::write_callback);
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&result);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&result);
             res = curl_easy_perform(curl);
-            if (res != CURLE_OK) {
+            if (res != CURLE_OK)
+            {
                 result.first = "<Curl::AsyncGet ERROR [" + string(curl_easy_strerror(res)) + "]> " + url;
             }
             curl_easy_cleanup(curl);
@@ -70,14 +75,14 @@ Curl::StringTimePairFuture Curl::AsyncGet(const string& url)
     return future_result;
 }
 
-size_t Curl::write_callback(char* buffer, size_t size, size_t nitems, void* instream)
+size_t Curl::write_callback(char *buffer, size_t size, size_t nitems, void *instream)
 {
     if (!instream)
         return 0;
-    StringTimePair* data = (Curl::StringTimePair*)instream;
+    StringTimePair *data = (Curl::StringTimePair *)instream;
 
     data->first.append(buffer, size);
 
     return size;
 }
-}
+} // namespace Uf
