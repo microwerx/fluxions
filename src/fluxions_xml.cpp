@@ -20,89 +20,90 @@
 #include <fluxions_fileio.hpp>
 #include <fluxions_xml.hpp>
 
-namespace Fluxions {
-//bool XmlReadBool(istream &istr, const string &tagName)
+namespace Fluxions
+{
+//bool XmlReadBool(std::istream &istr, const std::string &tagName)
 //{
 
 //}
 
-//int XmlReadInt(istream &istr, const string &tagName)
+//int XmlReadInt(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//long long XmlReadInt64(istream &istr, const string &tagName)
+//long long XmlReadInt64(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//float XmlReadFloat(istream &istr, const string &tagName)
+//float XmlReadFloat(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//double XmlReadDouble(istream &istr, const string &tagName)
+//double XmlReadDouble(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//string XmlReadString(istream &istr, const string &tagName)
+//string XmlReadString(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Vector2f XmlReadVector2f(istream &istr, const string &tagName)
+//Vector2f XmlReadVector2f(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Vector2d XmlReadVector2d(istream &istr, const string &tagName)
+//Vector2d XmlReadVector2d(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Vector3f XmlReadVector3f(istream &istr, const string &tagName)
+//Vector3f XmlReadVector3f(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Vector3d XmlReadVector3d(istream &istr, const string &tagName)
+//Vector3d XmlReadVector3d(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Vector4f XmlReadVector4f(istream &istr, const string &tagName)
+//Vector4f XmlReadVector4f(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Vector4d XmlReadVector4d(istream &istr, const string &tagName)
+//Vector4d XmlReadVector4d(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Quaternionf XmlReadQuaternionf(istream &istr, const string &tagName)
+//Quaternionf XmlReadQuaternionf(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Quaterniond XmlReadQuaterniond(istream &istr, const string &tagName)
+//Quaterniond XmlReadQuaterniond(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Matrix4f XmlReadMatrix4f(istream &istr, const string &tagName)
+//Matrix4f XmlReadMatrix4f(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Matrix4d XmlReadMatrix4d(istream &istr, const string &tagName)
+//Matrix4d XmlReadMatrix4d(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Matrix4f XmlReadAffineMatrix4f(istream &istr, const string &tagName)
+//Matrix4f XmlReadAffineMatrix4f(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//Matrix4d XmlReadAffineMatrix4d(istream &istr, const string &tagName)
+//Matrix4d XmlReadAffineMatrix4d(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//SphericalHarmonicf XmlReadSphericalHarmonicf(istream &istr, const string &tagName)
+//SphericalHarmonicf XmlReadSphericalHarmonicf(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-//SphericalHarmonicd XmlReadSphericalHarmonicd(istream &istr, const string &tagName)
+//SphericalHarmonicd XmlReadSphericalHarmonicd(std::istream &istr, const std::string &tagName)
 //{
 //}
 
-ostream& XmlBool(ostream& ostr, const string& tagName, bool val, int numtabs)
+std::ostream &XmlBool(std::ostream &ostr, const std::string &tagName, bool val, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -115,7 +116,7 @@ ostream& XmlBool(ostream& ostr, const string& tagName, bool val, int numtabs)
     return ostr;
 }
 
-ostream& XmlInt(ostream& ostr, const string& tagName, int val, int numtabs)
+std::ostream &XmlInt(std::ostream &ostr, const std::string &tagName, int val, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -125,7 +126,7 @@ ostream& XmlInt(ostream& ostr, const string& tagName, int val, int numtabs)
     return ostr;
 }
 
-ostream& XmlInt64(ostream& ostr, const string& tagName, long long val, int numtabs)
+std::ostream &XmlInt64(std::ostream &ostr, const std::string &tagName, long long val, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -135,7 +136,7 @@ ostream& XmlInt64(ostream& ostr, const string& tagName, long long val, int numta
     return ostr;
 }
 
-ostream& XmlSize(ostream& ostr, const string& tagName, size_t val, int numtabs)
+std::ostream &XmlSize(std::ostream &ostr, const std::string &tagName, size_t val, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -145,7 +146,7 @@ ostream& XmlSize(ostream& ostr, const string& tagName, size_t val, int numtabs)
     return ostr;
 }
 
-ostream& XmlFloat(ostream& ostr, const string& tagName, float val, int numtabs)
+std::ostream &XmlFloat(std::ostream &ostr, const std::string &tagName, float val, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -155,7 +156,7 @@ ostream& XmlFloat(ostream& ostr, const string& tagName, float val, int numtabs)
     return ostr;
 }
 
-ostream& XmlDouble(ostream& ostr, const string& tagName, double val, int numtabs)
+std::ostream &XmlDouble(std::ostream &ostr, const std::string &tagName, double val, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -165,7 +166,7 @@ ostream& XmlDouble(ostream& ostr, const string& tagName, double val, int numtabs
     return ostr;
 }
 
-ostream& XmlString(ostream& ostr, const string& tagName, const string& str, int numtabs)
+std::ostream &XmlString(std::ostream &ostr, const std::string &tagName, const std::string &str, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -173,7 +174,7 @@ ostream& XmlString(ostream& ostr, const string& tagName, const string& str, int 
     return ostr;
 }
 
-ostream& XmlVector2f(ostream& ostr, const string& tagName, const Vector2f& v, int numtabs)
+std::ostream &XmlVector2f(std::ostream &ostr, const std::string &tagName, const Vector2f &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -183,7 +184,7 @@ ostream& XmlVector2f(ostream& ostr, const string& tagName, const Vector2f& v, in
     return ostr;
 }
 
-ostream& XmlVector2d(ostream& ostr, const string& tagName, const Vector2d& v, int numtabs)
+std::ostream &XmlVector2d(std::ostream &ostr, const std::string &tagName, const Vector2d &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -193,7 +194,7 @@ ostream& XmlVector2d(ostream& ostr, const string& tagName, const Vector2d& v, in
     return ostr;
 }
 
-ostream& XmlVector3f(ostream& ostr, const string& tagName, const Vector3f& v, int numtabs)
+std::ostream &XmlVector3f(std::ostream &ostr, const std::string &tagName, const Vector3f &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -203,7 +204,7 @@ ostream& XmlVector3f(ostream& ostr, const string& tagName, const Vector3f& v, in
     return ostr;
 }
 
-ostream& XmlVector3d(ostream& ostr, const string& tagName, const Vector3d& v, int numtabs)
+std::ostream &XmlVector3d(std::ostream &ostr, const std::string &tagName, const Vector3d &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -213,7 +214,7 @@ ostream& XmlVector3d(ostream& ostr, const string& tagName, const Vector3d& v, in
     return ostr;
 }
 
-ostream& XmlVector4f(ostream& ostr, const string& tagName, const Vector4f& v, int numtabs)
+std::ostream &XmlVector4f(std::ostream &ostr, const std::string &tagName, const Vector4f &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -223,7 +224,7 @@ ostream& XmlVector4f(ostream& ostr, const string& tagName, const Vector4f& v, in
     return ostr;
 }
 
-ostream& XmlVector4d(ostream& ostr, const string& tagName, const Vector4d& v, int numtabs)
+std::ostream &XmlVector4d(std::ostream &ostr, const std::string &tagName, const Vector4d &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -233,7 +234,7 @@ ostream& XmlVector4d(ostream& ostr, const string& tagName, const Vector4d& v, in
     return ostr;
 }
 
-ostream& XmlColor3f(ostream& ostr, const string& tagName, const Color3f& v, int numtabs)
+std::ostream &XmlColor3f(std::ostream &ostr, const std::string &tagName, const Color3f &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -243,7 +244,7 @@ ostream& XmlColor3f(ostream& ostr, const string& tagName, const Color3f& v, int 
     return ostr;
 }
 
-ostream& XmlColor3d(ostream& ostr, const string& tagName, const Color3d& v, int numtabs)
+std::ostream &XmlColor3d(std::ostream &ostr, const std::string &tagName, const Color3d &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -253,7 +254,7 @@ ostream& XmlColor3d(ostream& ostr, const string& tagName, const Color3d& v, int 
     return ostr;
 }
 
-ostream& XmlColor4f(ostream& ostr, const string& tagName, const Color4f& v, int numtabs)
+std::ostream &XmlColor4f(std::ostream &ostr, const std::string &tagName, const Color4f &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -263,7 +264,7 @@ ostream& XmlColor4f(ostream& ostr, const string& tagName, const Color4f& v, int 
     return ostr;
 }
 
-ostream& XmlColor4d(ostream& ostr, const string& tagName, const Color4d& v, int numtabs)
+std::ostream &XmlColor4d(std::ostream &ostr, const std::string &tagName, const Color4d &v, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -273,7 +274,7 @@ ostream& XmlColor4d(ostream& ostr, const string& tagName, const Color4d& v, int 
     return ostr;
 }
 
-ostream& XmlQuaternionf(ostream& ostr, const string& tagName, const Quaternionf& q, int numtabs)
+std::ostream &XmlQuaternionf(std::ostream &ostr, const std::string &tagName, const Quaternionf &q, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -283,7 +284,7 @@ ostream& XmlQuaternionf(ostream& ostr, const string& tagName, const Quaternionf&
     return ostr;
 }
 
-ostream& XmlQuaterniond(ostream& ostr, const string& tagName, const Quaterniond& q, int numtabs)
+std::ostream &XmlQuaterniond(std::ostream &ostr, const std::string &tagName, const Quaterniond &q, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -293,7 +294,7 @@ ostream& XmlQuaterniond(ostream& ostr, const string& tagName, const Quaterniond&
     return ostr;
 }
 
-ostream& XmlMatrix4f(ostream& ostr, const string& tagName, const Matrix4f& m, int numtabs)
+std::ostream &XmlMatrix4f(std::ostream &ostr, const std::string &tagName, const Matrix4f &m, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -306,7 +307,7 @@ ostream& XmlMatrix4f(ostream& ostr, const string& tagName, const Matrix4f& m, in
     return ostr;
 }
 
-ostream& XmlMatrix4d(ostream& ostr, const string& tagName, const Matrix4d& m, int numtabs)
+std::ostream &XmlMatrix4d(std::ostream &ostr, const std::string &tagName, const Matrix4d &m, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -319,7 +320,7 @@ ostream& XmlMatrix4d(ostream& ostr, const string& tagName, const Matrix4d& m, in
     return ostr;
 }
 
-ostream& XmlAffineMatrix4f(ostream& ostr, const string& tagName, const Matrix4f& m, int numtabs)
+std::ostream &XmlAffineMatrix4f(std::ostream &ostr, const std::string &tagName, const Matrix4f &m, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -331,7 +332,7 @@ ostream& XmlAffineMatrix4f(ostream& ostr, const string& tagName, const Matrix4f&
     return ostr;
 }
 
-ostream& XmlAffineMatrix4d(ostream& ostr, const string& tagName, const Matrix4d& m, int numtabs)
+std::ostream &XmlAffineMatrix4d(std::ostream &ostr, const std::string &tagName, const Matrix4d &m, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -343,41 +344,43 @@ ostream& XmlAffineMatrix4d(ostream& ostr, const string& tagName, const Matrix4d&
     return ostr;
 }
 
-ostream& XmlSphericalHarmonicf(ostream& ostr, const string& tagName, const SphericalHarmonicf& sph, int numtabs)
+std::ostream &XmlSphericalHarmonicf(std::ostream &ostr, const std::string &tagName, const SphericalHarmonicf &sph, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
     ostr << "<" << tagName << ">";
     ostr << sph.GetMaxDegree();
-    for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+    for (size_t i = 0; i < sph.getMaxCoefficients(); i++)
+    {
         ostr << " " << sph[i];
     }
     ostr << "</" << tagName << ">";
     return ostr;
 }
 
-ostream& XmlSphericalHarmonicd(ostream& ostr, const string& tagName, const SphericalHarmonicd& sph, int numtabs)
+std::ostream &XmlSphericalHarmonicd(std::ostream &ostr, const std::string &tagName, const SphericalHarmonicd &sph, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
     ostr << "<" << tagName << ">";
     ostr << sph.GetMaxDegree();
-    for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+    for (size_t i = 0; i < sph.getMaxCoefficients(); i++)
+    {
         ostr << " " << sph[i];
     }
     ostr << "</" << tagName << ">";
     return ostr;
 }
 
-ostream& XmlComment(ostream& ostr, const string& comment, int numtabs)
+std::ostream &XmlComment(std::ostream &ostr, const std::string &comment, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
-    ostr << "<!-- " << comment << " -->" << endl;
+    ostr << "<!-- " << comment << " -->" << std::endl;
     return ostr;
 }
 
-ostream& XmlBeginTag(ostream& ostr, const string& tagName, int numtabs)
+std::ostream &XmlBeginTag(std::ostream &ostr, const std::string &tagName, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -385,7 +388,7 @@ ostream& XmlBeginTag(ostream& ostr, const string& tagName, int numtabs)
     return ostr;
 }
 
-ostream& XmlBeginTag(ostream& ostr, const string& tagName, const string& className, int numtabs)
+std::ostream &XmlBeginTag(std::ostream &ostr, const std::string &tagName, const std::string &className, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -393,7 +396,7 @@ ostream& XmlBeginTag(ostream& ostr, const string& tagName, const string& classNa
     return ostr;
 }
 
-ostream& XmlBeginTag(ostream& ostr, const string& tagName, const string& attributeName, const string& value, int numtabs)
+std::ostream &XmlBeginTag(std::ostream &ostr, const std::string &tagName, const std::string &attributeName, const std::string &value, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -401,7 +404,7 @@ ostream& XmlBeginTag(ostream& ostr, const string& tagName, const string& attribu
     return ostr;
 }
 
-ostream& XmlEndTag(ostream& ostr, const string& tagName, int numtabs)
+std::ostream &XmlEndTag(std::ostream &ostr, const std::string &tagName, int numtabs)
 {
     for (int i = 0; i < numtabs; i++)
         ostr << "\t";
@@ -409,14 +412,14 @@ ostream& XmlEndTag(ostream& ostr, const string& tagName, int numtabs)
     return ostr;
 }
 
-ostream& XmlCoronaMapTexture(ostream& ostr, const string& tagName, const string& mapName, const string& imagePath, int numtabs, const float gamma)
+std::ostream &XmlCoronaMapTexture(std::ostream &ostr, const std::string &tagName, const std::string &mapName, const std::string &imagePath, int numtabs, const float gamma)
 {
-    XmlBeginTag(ostr, tagName, "name", mapName, numtabs) << endl;
-    XmlBeginTag(ostr, "map", "Texture", numtabs + 1) << endl;
-    XmlString(ostr, "image", imagePath, numtabs + 2) << endl;
-    XmlFloat(ostr, "gamma", gamma, numtabs + 2) << endl;
-    XmlEndTag(ostr, "map", numtabs + 1) << endl;
+    XmlBeginTag(ostr, tagName, "name", mapName, numtabs) << std::endl;
+    XmlBeginTag(ostr, "map", "Texture", numtabs + 1) << std::endl;
+    XmlString(ostr, "image", imagePath, numtabs + 2) << std::endl;
+    XmlFloat(ostr, "gamma", gamma, numtabs + 2) << std::endl;
+    XmlEndTag(ostr, "map", numtabs + 1) << std::endl;
     XmlEndTag(ostr, tagName, numtabs);
     return ostr;
 }
-}
+} // namespace Fluxions

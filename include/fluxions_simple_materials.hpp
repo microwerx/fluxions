@@ -48,7 +48,7 @@ struct SimpleMaterial
     float PBKsm = 0.0f;       // for specular roughness (Cook-Torrance)
     float PBior = 0.0f;       // for Fresnel reflection (Cook-Torrance)
     float PBGGXgamma = 0.11f; // for GGX BRDF (0.0 - 1.0 maps to 1.0 to 10.0 in the shader)
-    string PBmap;
+    std::string PBmap;
 
     float EmissionGlossiness;
     float ReflectFresnel;
@@ -60,42 +60,42 @@ struct SimpleMaterial
     float AttenuationDistance;
     Color3f ScatteringAlbedo;
     float MeanCosine;
-    vector<string> RefractMode;
+    std::vector<std::string> RefractMode;
     bool HasRoundedCorners = false;
     float RoundedCorners;
     bool IsPortal = false;
     bool HasIesProfile = false;
-    string IesProfileFilename;
+    std::string IesProfileFilename;
     Matrix4f IesProfileMatrix;
     bool IesProfileKeepSharp;
-    vector<string> Invisible;
-    string map_Ka;
-    string map_Kd;
-    string map_Ks;
-    string map_Ke;
-    string map_d;
-    string map_opacity;
-    string map_Ns;
-    string map_Ni;
-    string map_Tr; // translucency;
-    string map_Tf; //Tf translucencyLevel;
-    string map_refract;
-    string map_anisotropy;
-    string map_anisorotation;
-    string map_scatteringAlbedo;
-    string map_attenuation;
-    string map_normal;
-    string map_bump;
+    std::vector<std::string> Invisible;
+    std::string map_Ka;
+    std::string map_Kd;
+    std::string map_Ks;
+    std::string map_Ke;
+    std::string map_d;
+    std::string map_opacity;
+    std::string map_Ns;
+    std::string map_Ni;
+    std::string map_Tr; // translucency;
+    std::string map_Tf; //Tf translucencyLevel;
+    std::string map_refract;
+    std::string map_anisotropy;
+    std::string map_anisorotation;
+    std::string map_scatteringAlbedo;
+    std::string map_attenuation;
+    std::string map_normal;
+    std::string map_bump;
 
     SimpleAssociativePropertyList Properties;
 };
 
 struct SimpleMap
 {
-    string mapName;
+    std::string mapName;
     GLuint mapId;
-    string pathname;
-    string shader;
+    std::string pathname;
+    std::string shader;
     GLuint textureId;
     GLuint samplerId;
     GLint unitId; // we're not using GLenum here because unitId can be < 0 and no overflow is expected.
@@ -104,8 +104,8 @@ struct SimpleMap
     SimpleTexture textureObject;
 };
 
-ostream &WriteMaterial(ostream &ostr, const SimpleMaterial &mtl);
-istream &ReadMaterial(istream &istr, SimpleMaterial &mtl);
+std::ostream &WriteMaterial(std::ostream &ostr, const SimpleMaterial &mtl);
+std::istream &ReadMaterial(std::istream &istr, SimpleMaterial &mtl);
 void SetMaterialDefaults(SimpleMaterial &mtl);
 
 struct SimpleMaterialLibrary
@@ -113,7 +113,7 @@ struct SimpleMaterialLibrary
     TResourceManager<SimpleMap> maps;
     TResourceManager<SimpleMaterial> mtls;
     FilePathInfo fpi;
-    string name;
+    std::string name;
 
     SimpleMaterialLibrary() {}
     ~SimpleMaterialLibrary() {}
@@ -122,20 +122,20 @@ struct SimpleMaterialLibrary
 class SimpleMaterialSystem
 {
   private:
-    string defaultName = "<INVALIDMATERIAL>";
-    string currentMtlLibName;
+    std::string defaultName = "<INVALIDMATERIAL>";
+    std::string currentMtlLibName;
     GLuint currentMtlLibId = 0;
-    string currentMtlName;
+    std::string currentMtlName;
     GLuint currentMtlId = 0;
 
     SimpleMaterialLibrary *currentMtlLibPtr = nullptr;
     SimpleMaterial *currentMtlPtr = nullptr;
 
     TResourceManager<SimpleMaterialLibrary> mtllibs;
-    TResourceManager<string> shaderMaps;
+    TResourceManager<std::string> shaderMaps;
 
-    map<string, string> maps_paths;
-    string defaultMapPath = "<UNKNOWN>";
+    std::map<std::string, std::string> maps_paths;
+    std::string defaultMapPath = "<UNKNOWN>";
 
     void SynchronizeIds();
 
@@ -149,40 +149,40 @@ class SimpleMaterialSystem
     auto end() -> decltype(mtllibs.end()) { return mtllibs.end(); }
     auto size() -> decltype(mtllibs.size()) { return mtllibs.size(); }
 
-    bool Save(const string &path);
-    bool Load(const string &mtllibName, const string &filename);
-    bool Save(const string &mtllibName, const string &filename);
+    bool Save(const std::string &path);
+    bool Load(const std::string &mtllibName, const std::string &filename);
+    bool Save(const std::string &mtllibName, const std::string &filename);
 
-    SimpleMaterialLibrary *CreateLibrary(const string &name);
-    SimpleMaterial *CreateMaterial(const string &name);
+    SimpleMaterialLibrary *CreateLibrary(const std::string &name);
+    SimpleMaterial *CreateMaterial(const std::string &name);
 
-    void DeleteLibrary(const string &name);
-    void DeleteMaterial(const string &name);
-    void DeleteLibraryMaterial(const string &mtllibName, const string &mtlName);
+    void DeleteLibrary(const std::string &name);
+    void DeleteMaterial(const std::string &name);
+    void DeleteLibraryMaterial(const std::string &mtllibName, const std::string &mtlName);
 
-    SimpleMaterialLibrary *SetLibrary(const string &name);
-    SimpleMaterial *SetMaterial(const string &name);
-    SimpleMaterial *SetLibraryMaterial(const string &mtllibName, const string &mtlName);
-    const SimpleMaterial *GetLibraryMaterial(const string &mtllibName, const string &mtlName) const;
+    SimpleMaterialLibrary *SetLibrary(const std::string &name);
+    SimpleMaterial *SetMaterial(const std::string &name);
+    SimpleMaterial *SetLibraryMaterial(const std::string &mtllibName, const std::string &mtlName);
+    const SimpleMaterial *GetLibraryMaterial(const std::string &mtllibName, const std::string &mtlName) const;
     SimpleMaterial *GetCurrentMaterial() { return currentMtlPtr; }
 
-    const string &GetLibraryName();
-    const string &GetMaterialName();
-    const string &GetMaterialName(GLuint id);
+    const std::string &GetLibraryName();
+    const std::string &GetMaterialName();
+    const std::string &GetMaterialName(GLuint id);
 
     GLuint GetLibraryId();
     GLuint GetMaterialId();
-    GLuint GetLibraryId(const string &name);
-    GLuint GetMaterialId(const string &name);
-    GLuint GetLibraryMaterialId(const string &mtllibName, const string &mtlName);
+    GLuint GetLibraryId(const std::string &name);
+    GLuint GetMaterialId(const std::string &name);
+    GLuint GetLibraryMaterialId(const std::string &mtllibName, const std::string &mtlName);
 
-    bool AddMap(const string &path, const string &filename);
-    bool AddMapShader(const string &name, const string &shader);
+    bool AddMap(const std::string &path, const std::string &filename);
+    bool AddMapShader(const std::string &name, const std::string &shader);
     void LoadMaps();
-    SimpleMap *GetTextureMap(const string &name);
-    const SimpleMap *GetTextureMap(const string &name) const;
+    SimpleMap *GetTextureMap(const std::string &name);
+    const SimpleMap *GetTextureMap(const std::string &name) const;
 
-    const string &GetMapPath(const string &mapName) const;
+    const std::string &GetMapPath(const std::string &mapName) const;
 };
 } // namespace Fluxions
 

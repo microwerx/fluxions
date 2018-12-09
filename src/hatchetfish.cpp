@@ -37,7 +37,7 @@ Hatchetfish::~Hatchetfish()
     setOutputFile();
 }
 
-string Hatchetfish::makeDTG()
+std::string Hatchetfish::makeDTG()
 {
     char msg[50];
 #ifdef __STDC_SECURE_LIB__
@@ -61,7 +61,7 @@ string Hatchetfish::makeDTG()
     return dtg;
 }
 
-string Hatchetfish::makeTimeStamp()
+std::string Hatchetfish::makeTimeStamp()
 {
     char msg[50];
 #ifdef __STDC_SECURE_LIB__
@@ -87,7 +87,7 @@ string Hatchetfish::makeTimeStamp()
 
 const std::string &Hatchetfish::makeMessage(const char *category, const char *msg, va_list args)
 {
-    ostringstream ostr;
+    std::ostringstream ostr;
     makeTimeStamp();
 
     char buffer[1024];
@@ -110,7 +110,7 @@ const std::string &Hatchetfish::makeMessage(const char *category, const char *ms
 
 const std::string &Hatchetfish::makeMessagefn(const char *category, const char *fn, const char *msg, va_list args)
 {
-    ostringstream ostr;
+    std::ostringstream ostr;
     makeTimeStamp();
 
     char buffer[1024];
@@ -284,15 +284,15 @@ void Hatchetfish::resetClock()
     t0 = t1 = chrono::high_resolution_clock::now();
 }
 
-void Hatchetfish::saveStats(const string &filenameprefix)
+void Hatchetfish::saveStats(const std::string &filenameprefix)
 {
     for (auto &stat : stats)
     {
         computeStat(stat.first);
-        ofstream fout_(filenameprefix + stat.first + ".csv", ios::app);
+        std::ofstream fout_(filenameprefix + stat.first + ".csv", ios::app);
 
-        fout_ << "scene,i,time,x,mr,xbar,mrbar,lcl,ucl" << endl;
-        fout_ << fixed << setprecision(6);
+        fout_ << "scene,i,time,x,mr,xbar,mrbar,lcl,ucl" << std::endl;
+        fout_ << std::fixed << std::setprecision(6);
 
         int i = 0;
         for (auto &datapoint : stat.second.X)
@@ -300,14 +300,14 @@ void Hatchetfish::saveStats(const string &filenameprefix)
             if (i > 300)
                 break;
             fout_ << filenameprefix << "," << i++ << "," << datapoint.timeMeasured << ",";
-            fout_ << setprecision(4) << datapoint.x << "," << datapoint.r << "," << stat.second.xbar << "," << stat.second.rbar << "," << stat.second.lcl << "," << stat.second.ucl << endl;
+            fout_ << std::setprecision(4) << datapoint.x << "," << datapoint.r << "," << stat.second.xbar << "," << stat.second.rbar << "," << stat.second.lcl << "," << stat.second.ucl << std::endl;
         }
 
         fout_.close();
     }
 }
 
-void Hatchetfish::takeStat(const string &name)
+void Hatchetfish::takeStat(const std::string &name)
 {
     double elapsedTime = getSecondsElapsed();
     auto &X = stats[name].X;
@@ -322,7 +322,7 @@ void Hatchetfish::takeStat(const string &name)
     X.push_back({elapsedTime, deltaTime, r});
 }
 
-void Hatchetfish::takeStat(const string &name, double xval)
+void Hatchetfish::takeStat(const std::string &name, double xval)
 {
     double elapsedTime = getSecondsElapsed();
     auto &X = stats[name].X;
@@ -335,7 +335,7 @@ void Hatchetfish::takeStat(const string &name, double xval)
     X.push_back({elapsedTime, xval, r});
 }
 
-void Hatchetfish::resetStat(const string &name)
+void Hatchetfish::resetStat(const std::string &name)
 {
     auto &stat = stats[name];
     stat.lcl = 0.0;
@@ -345,7 +345,7 @@ void Hatchetfish::resetStat(const string &name)
     stat.X.clear();
 }
 
-void Hatchetfish::computeStat(const string &name, bool filter)
+void Hatchetfish::computeStat(const std::string &name, bool filter)
 {
     TimeDataPoints &stat = stats[name];
     stat.lcl = 0.0;

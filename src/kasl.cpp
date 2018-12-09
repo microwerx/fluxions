@@ -59,8 +59,8 @@ namespace KASL
 //	int ival;
 //	double fval;
 //	bool bval;
-//	vector<Object> aval;
-//	map<StringType, Object> oval;
+//	std::vector<Object> aval;
+//	std::map<StringType, Object> oval;
 
 //	Object operator=(const Object &other);
 //};
@@ -138,7 +138,7 @@ enum CharClass
     CC_DEL = 127
 };
 
-ostream &operator<<(ostream &ostr, const TokenType &type)
+std::ostream &operator<<(std::ostream &ostr, const TokenType &type)
 {
     switch (type)
     {
@@ -483,7 +483,7 @@ size_t lex_init(LexerState &ls)
     return 1;
 }
 
-size_t lex_quick_parse(const StringType &inputStr, int level, const vector<LexReplacementType> &replacements, TokenVector &tokens)
+size_t lex_quick_parse(const StringType &inputStr, int level, const std::vector<LexReplacementType> &replacements, TokenVector &tokens)
 {
     LexerState ls, ls2;
     lex_init(ls);
@@ -497,7 +497,7 @@ size_t lex_quick_parse(const StringType &inputStr, int level, const vector<LexRe
 
 size_t lex_quick_parse(const StringType &inputStr, TokenVector &tokens)
 {
-    vector<LexReplacementType> replacements;
+    std::vector<LexReplacementType> replacements;
     return lex_quick_parse(inputStr, 2, replacements, tokens);
 }
 
@@ -505,7 +505,7 @@ size_t lex_quick_l3_parse(const StringType &inputStr, TokenVector &tokens)
 {
     // L3, ignore # ... and // ... and group contiguous regions unless
     // they are integers, doubles, or strings
-    vector<LexReplacementType> replacements;
+    std::vector<LexReplacementType> replacements;
     TokenVector tk;
     size_t count = lex_quick_parse(inputStr, 2, replacements, tk);
 
@@ -572,7 +572,7 @@ size_t lex_quick_l3_parse(const StringType &inputStr, TokenVector &tokens)
 
 size_t lex_quick_l2_parse(const StringType &inputStr, TokenVector &tokens)
 {
-    vector<LexReplacementType> replacements;
+    std::vector<LexReplacementType> replacements;
     replacements.push_back(KASL::LexReplacementType(KASL::TokenType::TT0_SPACE, KASL::TokenType::TT0_NOTHING, '\0'));
     return lex_quick_parse(inputStr, 2, replacements, tokens);
 }
@@ -725,7 +725,7 @@ size_t lex(LexerState &ls, const StringType &inputStr, int level)
             continue;
 
 #ifdef KASL_EXTRA_DEBUGGING
-        cout << i << " " << c << " " << ls.tmptoken.type << endl;
+        std::cout << i << " " << c << " " << ls.tmptoken.type << std::endl;
 #endif
 
         // finally, add token to list
@@ -753,7 +753,7 @@ size_t lex(LexerState &ls, const StringType &inputStr, int level)
 
     ls.tokens.shrink_to_fit();
 
-    // vector<T>::back() doesn't check if element exists.
+    // std::vector<T>::back() doesn't check if element exists.
     if (ls.tokens.empty())
     {
         ls.lasttoken = nullptr;
@@ -770,7 +770,7 @@ void lex_print(LexerState &ls)
 {
     for (auto it = ls.tokens.begin(); it != ls.tokens.end(); it++)
     {
-        cout << "type: " << it->type << ", start: " << it->start << ", length: " << it->length << endl;
+        std::cout << "type: " << it->type << ", start: " << it->start << ", length: " << it->length << std::endl;
     }
 }
 
@@ -778,12 +778,12 @@ void lex_tokens_print(vector<Token> &tokens)
 {
     for (auto it = tokens.begin(); it != tokens.end(); it++)
     {
-        cout << "type: " << it->type << ", " << it->sval << endl;
+        std::cout << "type: " << it->type << ", " << it->sval << std::endl;
     }
 }
 
 void lex_replace(LexerState &ls, LexerState &output,
-                 const vector<LexReplacementType> &replacements)
+                 const std::vector<LexReplacementType> &replacements)
 {
     lex_init(output);
     output.buffer = ls.buffer;
@@ -796,9 +796,9 @@ void lex_replace(LexerState &ls, LexerState &output,
         bool pushed = false;
         for (auto r = replacements.begin(); r != replacements.end(); r++)
         {
-            TokenType fmType = get<0>(*r);
-            TokenType toType = get<1>(*r);
-            StringType::value_type c = get<2>(*r);
+            TokenType fmType = std::get<0>(*r);
+            TokenType toType = std::get<1>(*r);
+            StringType::value_type c = std::get<2>(*r);
 
             if (it->type == fmType)
             {
@@ -1104,7 +1104,7 @@ size_t lex_scan_number(StringType::value_type *cptr, LexerToken &token)
     return length;
 }
 
-size_t lex_tokens(LexerState &ls, vector<Token> &tokens)
+size_t lex_tokens(LexerState &ls, std::vector<Token> &tokens)
 {
     tokens.clear();
     tokens.resize(ls.tokens.size());
@@ -1140,10 +1140,10 @@ size_t lex_tokens(LexerState &ls, vector<Token> &tokens)
     return tokens.size();
 }
 
-string TokenVectorJoin(const TokenVector tokens, const string &separator)
+std::string TokenVectorJoin(const TokenVector tokens, const std::string &separator)
 {
-    ostringstream ostr;
-    string result;
+    std::ostringstream ostr;
+    std::string result;
     size_t i = 0;
     for (auto t : tokens)
     {
@@ -1196,7 +1196,7 @@ string TokenVectorJoin(const TokenVector tokens, const string &separator)
 #ifdef KASL_INTERPRETER
 int main(int argc, char **argv)
 {
-    ifstream fin;
+    std::ifstream fin;
     bool openedfile = false;
 
     if (argc >= 2)
@@ -1212,15 +1212,15 @@ int main(int argc, char **argv)
     istream &is = !fin ? cin : fin;
 
     KASL::LexerState ls, newls;
-    vector<KASL::LexReplacementType> replacements;
+    std::vector<KASL::LexReplacementType> replacements;
     replacements.push_back(KASL::LexReplacementType(KASL::TokenType::TT0_SPACE, KASL::TokenType::TT0_NOTHING, '\0'));
 
-    string newline = "\r\n";
+    std::string newline = "\r\n";
     int level = 0;
     lex_init(ls);
     while (cin)
     {
-        string inputstr;
+        std::string inputstr;
         getline(cin, inputstr);
         if (inputstr == "quit")
             break;

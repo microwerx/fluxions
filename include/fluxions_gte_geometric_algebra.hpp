@@ -19,12 +19,12 @@
 #ifndef FLUXIONS_GTE_GEOMETRIC_ALGEBRA_HPP
 #define FLUXIONS_GTE_GEOMETRIC_ALGEBRA_HPP
 
-#include <fluxions_config.hpp>
-
-namespace Fluxions {
+namespace Fluxions
+{
 using ScalarType = float;
 
-struct G40vec {
+struct G40vec
+{
     G40vec(ScalarType xVal = 0)
         : x(xVal)
     {
@@ -33,12 +33,10 @@ struct G40vec {
     ScalarType x;
 };
 
-struct G41vec {
+struct G41vec
+{
     G41vec(ScalarType e1Val = 0, ScalarType e2Val = 0, ScalarType e3Val = 0, ScalarType e4Val = 0)
-        : e1(e1Val)
-        , e2(e2Val)
-        , e3(e3Val)
-        , e4(e4Val)
+        : e1(e1Val), e2(e2Val), e3(e3Val), e4(e4Val)
     {
     }
 
@@ -48,14 +46,10 @@ struct G41vec {
     ScalarType e4;
 };
 
-struct G42vec {
+struct G42vec
+{
     G42vec(ScalarType e1e2Val = 0, ScalarType e1e3Val = 0, ScalarType e1e4Val = 0, ScalarType e2e3Val = 0, ScalarType e2e4Val = 0, ScalarType e3e4Val = 0)
-        : e1e2(e1e2Val)
-        , e1e3(e1e3Val)
-        , e1e4(e1e4Val)
-        , e2e3(e2e3Val)
-        , e2e4(e2e4Val)
-        , e3e4(e3e4Val)
+        : e1e2(e1e2Val), e1e3(e1e3Val), e1e4(e1e4Val), e2e3(e2e3Val), e2e4(e2e4Val), e3e4(e3e4Val)
     {
     }
 
@@ -67,12 +61,10 @@ struct G42vec {
     ScalarType e3e4;
 };
 
-struct G43vec {
+struct G43vec
+{
     G43vec(ScalarType e1e2e3Val = 0, ScalarType e1e2e4Val = 0, ScalarType e1e3e4Val = 0, ScalarType e2e3e4Val = 0)
-        : e1e2e3(e1e2e3Val)
-        , e1e2e4(e1e2e4Val)
-        , e1e3e4(e1e3e4Val)
-        , e2e3e4(e2e3e4Val)
+        : e1e2e3(e1e2e3Val), e1e2e4(e1e2e4Val), e1e3e4(e1e3e4Val), e2e3e4(e2e3e4Val)
     {
     }
 
@@ -82,7 +74,8 @@ struct G43vec {
     ScalarType e2e3e4;
 };
 
-struct G44vec {
+struct G44vec
+{
     G44vec(ScalarType val = 0)
         : e1e2e3e4(val)
     {
@@ -91,7 +84,8 @@ struct G44vec {
     ScalarType e1e2e3e4;
 };
 
-struct G4multivector {
+struct G4multivector
+{
     G40vec k0;
     G41vec k1;
     G42vec k2;
@@ -111,13 +105,13 @@ struct G4multivector {
 //  TYPE operator/(const TYPE &lhs, ScalarType rhs) { ... }
 //
 
-G40vec operator+(const G40vec& lhs, const G40vec& rhs)
+G40vec operator+(const G40vec &lhs, const G40vec &rhs)
 {
     return G40vec(
         lhs.x + rhs.x);
 }
 
-G41vec operator+(const G41vec& lhs, const G41vec& rhs)
+G41vec operator+(const G41vec &lhs, const G41vec &rhs)
 {
     return G41vec(
         lhs.e1 + rhs.e1,
@@ -126,7 +120,7 @@ G41vec operator+(const G41vec& lhs, const G41vec& rhs)
         lhs.e4 + rhs.e4);
 }
 
-G42vec operator+(const G42vec& lhs, const G42vec& rhs)
+G42vec operator+(const G42vec &lhs, const G42vec &rhs)
 {
     return G42vec(
         lhs.e1e2 + rhs.e1e2,
@@ -137,7 +131,7 @@ G42vec operator+(const G42vec& lhs, const G42vec& rhs)
         lhs.e3e4 + rhs.e3e4);
 }
 
-G43vec operator+(const G43vec& lhs, const G43vec& rhs)
+G43vec operator+(const G43vec &lhs, const G43vec &rhs)
 {
     return G43vec(
         lhs.e1e2e3 + rhs.e1e2e3,
@@ -146,19 +140,19 @@ G43vec operator+(const G43vec& lhs, const G43vec& rhs)
         lhs.e2e3e4 + rhs.e2e3e4);
 }
 
-G44vec operator+(const G44vec& lhs, const G44vec& rhs)
+G44vec operator+(const G44vec &lhs, const G44vec &rhs)
 {
     return G44vec(
         lhs.e1e2e3e4 + rhs.e1e2e3e4);
 }
 
-G40vec operator-(const G40vec& lhs, const G40vec& rhs)
+G40vec operator-(const G40vec &lhs, const G40vec &rhs)
 {
     return G40vec(
         lhs.x - rhs.x);
 }
 
-G41vec operator-(const G41vec& lhs, const G41vec& rhs)
+G41vec operator-(const G41vec &lhs, const G41vec &rhs)
 {
     return G41vec(
         lhs.e1 - rhs.e1,
@@ -167,7 +161,7 @@ G41vec operator-(const G41vec& lhs, const G41vec& rhs)
         lhs.e4 - rhs.e4);
 }
 
-G42vec operator-(const G42vec& lhs, const G42vec& rhs)
+G42vec operator-(const G42vec &lhs, const G42vec &rhs)
 {
     return G42vec(
         lhs.e1e2 - rhs.e1e2,
@@ -178,7 +172,7 @@ G42vec operator-(const G42vec& lhs, const G42vec& rhs)
         lhs.e3e4 - rhs.e3e4);
 }
 
-G43vec operator-(const G43vec& lhs, const G43vec& rhs)
+G43vec operator-(const G43vec &lhs, const G43vec &rhs)
 {
     return G43vec(
         lhs.e1e2e3 - rhs.e1e2e3,
@@ -187,17 +181,17 @@ G43vec operator-(const G43vec& lhs, const G43vec& rhs)
         lhs.e2e3e4 - rhs.e2e3e4);
 }
 
-G44vec operator-(const G44vec& lhs, const G44vec& rhs)
+G44vec operator-(const G44vec &lhs, const G44vec &rhs)
 {
     return G44vec(
         lhs.e1e2e3e4 - rhs.e1e2e3e4);
 }
 
-G40vec add_G40_G40(const G40vec& u, const G40vec& v);
-G41vec add_G41_G41(const G41vec& u, const G41vec& v);
-G42vec add_G42_G42(const G42vec& u, const G42vec& v);
-G43vec add_G43_G43(const G43vec& u, const G43vec& v);
-G44vec add_G44_G44(const G44vec& u, const G44vec& v);
+G40vec add_G40_G40(const G40vec &u, const G40vec &v);
+G41vec add_G41_G41(const G41vec &u, const G41vec &v);
+G42vec add_G42_G42(const G42vec &u, const G42vec &v);
+G43vec add_G43_G43(const G43vec &u, const G43vec &v);
+G44vec add_G44_G44(const G44vec &u, const G44vec &v);
 //G33vec add_G3_G3(const G33vec &u, const G33vec &ptr);
 } // namespace Fluxions
 

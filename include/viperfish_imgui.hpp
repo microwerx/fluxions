@@ -36,15 +36,15 @@ class ImGuiWidget : public Widget
 	ImGuiWidget(SharedPtr &decorateeWidget) { decorate(decorateeWidget); }
 	virtual ~ImGuiWidget() {}
 
-	using SharedPtr = shared_ptr<ImGuiWidget>;
-	using UniquePtr = unique_ptr<ImGuiWidget>;
+	using SharedPtr = std::shared_ptr<ImGuiWidget>;
+	using UniquePtr = std::unique_ptr<ImGuiWidget>;
 
 	template <class... _Types>
-	static SharedPtr MakeShared(_Types &&... _Args) { return SharedPtr(new ImGuiWidget(forward<_Types>(_Args)...)); }
+	static SharedPtr MakeShared(_Types &&... _Args) { return SharedPtr(new ImGuiWidget(std::forward<_Types>(_Args)...)); }
 	template <class... _Types>
-	static UniquePtr MakeUnique(_Types &&... _Args) { return UniquePtr(new ImGuiWidget(forward<_Types>(_Args)...)); }
+	static UniquePtr MakeUnique(_Types &&... _Args) { return UniquePtr(new ImGuiWidget(std::forward<_Types>(_Args)...)); }
 
-	virtual void OnInit(const vector<string> &args) override;
+	virtual void OnInit(const std::vector<std::string> &args) override;
 	virtual void OnKill() override;
 	virtual void OnUpdate(double timeStamp) override;
 
@@ -52,8 +52,8 @@ class ImGuiWidget : public Widget
 	virtual void OnMouseButtonUp(int button) override;
 	virtual void OnMouseMove(int x, int y) override;
 
-	virtual void OnKeyDown(const string &key, int keymod) override;
-	virtual void OnKeyUp(const string &key, int keymod) override;
+	virtual void OnKeyDown(const std::string &key, int keymod) override;
+	virtual void OnKeyUp(const std::string &key, int keymod) override;
 
 	virtual void OnRender() override;
 	virtual void OnRenderOverlay() override;

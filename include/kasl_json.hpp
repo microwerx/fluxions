@@ -77,7 +77,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		}
 	}
 
-	explicit JSON(const vector<int> &numberList)
+	explicit JSON(const std::vector<int> &numberList)
 	{
 		type_ = Type::Array;
 		for (auto it = numberList.begin(); it != numberList.end(); it++)
@@ -95,7 +95,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		}
 	}
 
-	explicit JSON(const vector<float> &numberList)
+	explicit JSON(const std::vector<float> &numberList)
 	{
 		type_ = Type::Array;
 		for (auto it = numberList.begin(); it != numberList.end(); it++)
@@ -113,7 +113,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		}
 	}
 
-	explicit JSON(const vector<double> &numberList)
+	explicit JSON(const std::vector<double> &numberList)
 	{
 		type_ = Type::Array;
 		for (auto it = numberList.begin(); it != numberList.end(); it++)
@@ -170,9 +170,9 @@ class JSON : public std::enable_shared_from_this<JSON>
 	static JSONPtr MakeArray() { return std::make_shared<JSON>(Type::Array); }
 	static JSONPtr MakeArray(const std::vector<int> &numberList) { return std::make_shared<JSON>(numberList); }
 	static JSONPtr MakeArray(std::initializer_list<int> numberList) { return std::make_shared<JSON>(numberList); }
-	static JSONPtr MakeArray(const vector<float> &numberList) { return std::make_shared<JSON>(numberList); }
+	static JSONPtr MakeArray(const std::vector<float> &numberList) { return std::make_shared<JSON>(numberList); }
 	static JSONPtr MakeArray(std::initializer_list<float> numberList) { return std::make_shared<JSON>(numberList); }
-	static JSONPtr MakeArray(const vector<double> &numberList) { return std::make_shared<JSON>(numberList); }
+	static JSONPtr MakeArray(const std::vector<double> &numberList) { return std::make_shared<JSON>(numberList); }
 	static JSONPtr MakeArray(std::initializer_list<double> numberList) { return std::make_shared<JSON>(numberList); }
 	static JSONPtr MakeArray(const std::vector<std::string> &stringList) { return std::make_shared<JSON>(stringList); }
 	static JSONPtr MakeArray(std::initializer_list<std::string> stringList) { return std::make_shared<JSON>(stringList); }
@@ -447,7 +447,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	inline JSONPtr set(const vector<float> &numberList)
+	inline JSONPtr set(const std::vector<float> &numberList)
 	{
 		Clear();
 		type_ = Type::Array;

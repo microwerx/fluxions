@@ -219,7 +219,7 @@ class VertexArrayObject
         GLenum type;
     };
 
-    vector<Surface> surfaces;
+    std::vector<Surface> surfaces;
 
   public:
     VertexArrayObject(const SimpleGeometryMesh &mesh, GLuint program, GLuint abo, GLuint eabo)
@@ -453,8 +453,8 @@ void SimpleGLES30Renderer::ApplyGlobalSettingsToCurrentProgram()
 
 void SimpleGLES30Renderer::ApplySpheresToCurrentProgram()
 {
-    vector<float> spherePositions;
-    vector<float> sphereKe;
+    std::vector<float> spherePositions;
+    std::vector<float> sphereKe;
     int numSpheres = 0;
     for (auto sphIt = ssg.spheres.begin(); sphIt != ssg.spheres.end(); sphIt++)
     {
@@ -515,7 +515,7 @@ void SimpleGLES30Renderer::Render(SimpleProgram &program_, bool useMaterials, bo
     for (auto libIt = ssg.materials.begin(); libIt != ssg.materials.end(); libIt++)
     {
         SimpleMaterialLibrary &mtllib = libIt->second;
-        string mtllibName = mtllib.name;
+        std::string mtllibName = mtllib.name;
         GLuint mtllibId = ssg.materials.GetLibraryId(mtllib.name);
         ssg.materials.SetLibrary(mtllib.name);
 
@@ -523,7 +523,7 @@ void SimpleGLES30Renderer::Render(SimpleProgram &program_, bool useMaterials, bo
         for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++)
         {
             GLuint mtlId = mtlIt->first;
-            string mtlName = ssg.materials.GetMaterialName(mtlId);
+            std::string mtlName = ssg.materials.GetMaterialName(mtlId);
             SimpleMaterial &mtl = mtlIt->second;
             ssg.materials.SetMaterial(mtlName);
 

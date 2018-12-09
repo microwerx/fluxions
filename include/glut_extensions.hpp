@@ -35,7 +35,7 @@ GLsizei glutGetSizeOfBaseType(GLenum type);
 extern GLint g_MaxCombinedTextureUnits;
 extern std::string g_CurrentDebugMessage;
 
-void glutSetErrorMessage(const char* filename, int line, const char* format, ...);
+void glutSetErrorMessage(const char *filename, int line, const char *format, ...);
 void glutSetDefaultErrorMessage();
 GLint glutSetActiveTexture(GLint unit);
 bool glutBindDefaultTextureAndSampler(GLenum target);
@@ -44,28 +44,29 @@ bool glutBindTexture(GLint unit, GLenum target, GLuint texture);
 bool glutBindSampler(GLint unit, GLuint sampler);
 bool glutDebugBindTexture(GLenum target, GLuint texture);
 
-void glutBitmapString(void* font, const char* string);
-void glutStrokeString(void* font, const char* string);
+void glutBitmapString(void *font, const char *str);
+void glutStrokeString(void *font, const char *str);
 
-enum GLUT_JUSTIFICATION {
+enum GLUT_JUSTIFICATION
+{
     LEFT,
     RIGHT,
     CENTER
 };
 
 // justification: LEFT = 0, RIGHT = 1, CENTER = 2
-void glutPrintString9x15(double x, double y, double screenWidth, int justification, const char* format, ...);
+void glutPrintString9x15(double x, double y, double screenWidth, int justification, const char *format, ...);
 
 // justification: LEFT = 0, RIGHT = 1, CENTER = 2
-void glutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...);
+void glutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void *font, const char *format, ...);
 // justification: LEFT = 0, RIGHT = 1, CENTER = 2
-void glutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...);
+void glutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void *font, const char *format, ...);
 
 void glutThreeAxis(float length);
 void glutSixAxis(float length);
-void glutWireFrustumf(const float* m, float scale = 0.1f);
-void glutWireFrustumd(const double* m);
-void glutCamera(double fov, float r, float g, float b, float zfar, const float* inverseCameraMatrix, const float* projectionMatrix);
+void glutWireFrustumf(const float *m, float scale = 0.1f);
+void glutWireFrustumd(const double *m);
+void glutCamera(double fov, float r, float g, float b, float zfar, const float *inverseCameraMatrix, const float *projectionMatrix);
 
 void glutTestLitSolidTeapotScene(double fovy, double aspect);
 

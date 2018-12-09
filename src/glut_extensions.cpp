@@ -143,7 +143,7 @@ GLTypeInfo glutTypeInfo[] = {
 void glutSetErrorMessage(const char *filename, int line, const char *format, ...)
 {
     using namespace std;
-    ostringstream ostr;
+    std::ostringstream ostr;
     char buffer[4096];
     va_list args;
     va_start(args, format);
@@ -312,25 +312,25 @@ void glutTestLitSolidTeapotScene(double fovy, double aspect)
     glDisable(GL_DEPTH_TEST);
 }
 
-void glutBitmapString(void *font, const char *string)
+void glutBitmapString(void *font, const char *str)
 {
-    int len = (int)strlen(string);
+    int len = (int)strlen(str);
     int i = 0;
 
     for (i = 0; i < len; i++)
     {
-        glutBitmapCharacter(font, string[i]);
+        glutBitmapCharacter(font, str[i]);
     }
 }
 
-void glutStrokeString(void *font, const char *string)
+void glutStrokeString(void *font, const char *str)
 {
-    int len = (int)strlen(string);
+    int len = (int)strlen(str);
     int i = 0;
 
     for (i = 0; i < len; i++)
     {
-        glutStrokeCharacter(font, string[i]);
+        glutStrokeCharacter(font, str[i]);
     }
 }
 

@@ -42,7 +42,7 @@
 namespace Fluxions
 {
 
-// const string BlankString;
+// const std::string BlankString;
 
 #ifdef __unix__
 #ifndef _MAX_DRIVE
@@ -59,7 +59,7 @@ namespace Fluxions
 #endif
 #endif
 
-int stat_with_errno(const string &path, void *Stat)
+int stat_with_errno(const std::string &path, void *Stat)
 {
 #ifdef WIN32
     _set_errno(0);
@@ -78,7 +78,7 @@ FilePathInfo::FilePathInfo()
 {
 }
 
-FilePathInfo::FilePathInfo(const string &filename)
+FilePathInfo::FilePathInfo(const std::string &filename)
 {
     Set(filename);
 }
@@ -96,12 +96,12 @@ void FilePathInfo::Clear()
     ext.clear();
 }
 
-void FilePathInfo::Set(const string &_path)
+void FilePathInfo::Set(const std::string &_path)
 {
     Clear();
 
     regex path_replace("[/\\]+", regex::awk);
-    string p = regex_replace(_path, path_replace, "/");
+    std::string p = regex_replace(_path, path_replace, "/");
     origpath = p;
 
     // updated to use realpath on POSIX
@@ -142,8 +142,8 @@ void FilePathInfo::Set(const string &_path)
 
     dir = path;
 
-    string::size_type idx = fullfname.find_last_of(".");
-    if (idx != string::npos)
+    std::string::size_type idx = fullfname.find_last_of(".");
+    if (idx != std::string::npos)
     {
         ext = fullfname.substr(idx + 1);
         fname = fullfname.substr(0, idx);
@@ -163,9 +163,9 @@ void FilePathInfo::Set(const string &_path)
 
     _splitpath_s(path.c_str(), driveStr, _MAX_DRIVE, dirStr, _MAX_DIR, fnameStr, _MAX_FNAME, extStr, _MAX_EXT);
 
-    string drive = driveStr;
+    std::string drive = driveStr;
     dir = dirStr;
-    string testpath = drive + dir;
+    std::string testpath = drive + dir;
     dir = regex_replace(testpath, path_replace, "/");
     fname = fnameStr;
     ext = extStr;
@@ -193,9 +193,9 @@ void FilePathInfo::Set(const string &_path)
     fill_stat_info();
 }
 
-string FilePathInfo::getFullPathName(const string &filename)
+std::string FilePathInfo::getFullPathName(const std::string &filename)
 {
-    string outputStr;
+    std::string outputStr;
 #ifdef __unix__
     errno = 0;
     char *pathstr = realpath(filename.c_str(), NULL);
@@ -219,14 +219,14 @@ string FilePathInfo::getFullPathName(const string &filename)
     outputStr = pathStr;
 #endif
     regex path_replace("[/\\]+", regex::awk);
-    string p = regex_replace(outputStr, path_replace, "/");
+    std::string p = regex_replace(outputStr, path_replace, "/");
 
     return p;
 }
 
-string FilePathInfo::getCurrentDirectory()
+std::string FilePathInfo::getCurrentDirectory()
 {
-    string output;
+    std::string output;
 #ifdef __unix__
     char *buffer;
     buffer = getcwd(NULL, 0);
@@ -252,12 +252,12 @@ string FilePathInfo::getCurrentDirectory()
     }
 #endif
     regex path_replace("[/\\]+", regex::awk);
-    string p = regex_replace(output, path_replace, "/");
+    std::string p = regex_replace(output, path_replace, "/");
 
     return p;
 }
 
-bool FilePathInfo::TestIfFileExists(const string &filename)
+bool FilePathInfo::TestIfFileExists(const std::string &filename)
 {
 #ifdef WIN32
     struct _stat Stat;
@@ -271,9 +271,9 @@ bool FilePathInfo::TestIfFileExists(const string &filename)
         return false;
 }
 
-string FilePathInfo::FindFileIfExists(const vector<string> &pathsToTry)
+std::string FilePathInfo::FindFileIfExists(const std::vector<std::string> &pathsToTry)
 {
-    string output;
+    std::string output;
 
     // Is there a file name to test?
     if (path.empty())
@@ -288,9 +288,9 @@ string FilePathInfo::FindFileIfExists(const vector<string> &pathsToTry)
         for (auto testPathIt : pathsToTry)
         {
             char backChar = testPathIt.back();
-            string testPath = testPathIt;
+            std::string testPath = testPathIt;
             if (backChar != '/' && backChar != '\\')
-                testPath = testPath + string("/") + fullfname;
+                testPath = testPath + std::string("/") + fullfname;
             else
                 testPath = testPath + fullfname;
 
@@ -318,7 +318,7 @@ void FilePathInfo::fill_stat_info()
         ctime = 0;
         return;
     }
-    string testpath;
+    std::string testpath;
     if (path.back() == '/' || path.back() == '\\')
         testpath = path.substr(0, path.size() - 1);
     else
@@ -351,14 +351,14 @@ void FilePathInfo::fill_stat_info()
     }
 }
 
-string ReadTextFile(const string &filename)
+std::string ReadTextFile(const std::string &filename)
 {
-    ifstream fin(filename.c_str());
+    std::ifstream fin(filename.c_str());
 
     if (!fin)
         return "";
 
-    string str;
+    std::string str;
     fin.seekg(0, ios::end);
     size_t size = (size_t)fin.tellg();
     str.resize(size);
@@ -369,15 +369,15 @@ string ReadTextFile(const string &filename)
     return str;
 }
 
-vector<FXubyte> ReadBinaryFile(const string &filename)
+std::vector<FXubyte> ReadBinaryFile(const std::string &filename)
 {
-    vector<FXubyte> buffer;
-    ifstream fin(filename.c_str(), ios::binary);
+    std::vector<FXubyte> buffer;
+    std::ifstream fin(filename.c_str(), ios::binary);
 
     if (!fin)
         return buffer;
 
-    string str;
+    std::string str;
     fin.seekg(0, ios::end);
     size_t size = (size_t)fin.tellg();
     buffer.resize(size);
@@ -388,9 +388,9 @@ vector<FXubyte> ReadBinaryFile(const string &filename)
     return buffer;
 }
 
-string FindPathIfExists(const string &path, const vector<string> pathsToTry)
+std::string FindPathIfExists(const std::string &path, const std::vector<std::string> pathsToTry)
 {
-    string output;
+    std::string output;
 
     // Is there a file name to test?
     FilePathInfo fpi(path);
@@ -405,7 +405,7 @@ string FindPathIfExists(const string &path, const vector<string> pathsToTry)
     {
         for (auto testPathIt : pathsToTry)
         {
-            string testPath = testPathIt + fpi.fullfname;
+            std::string testPath = testPathIt + fpi.fullfname;
             if (TestIfFileExists(testPath))
             {
                 output = testPath;
@@ -417,7 +417,7 @@ string FindPathIfExists(const string &path, const vector<string> pathsToTry)
     return output;
 }
 
-string NormalizePathName(const string &basepath, const string &path)
+std::string NormalizePathName(const std::string &basepath, const std::string &path)
 {
     FilePathInfo p1(basepath + "/" + path);
     FilePathInfo p2(path);
@@ -439,7 +439,7 @@ string NormalizePathName(const string &basepath, const string &path)
     }
 }
 
-PathType GetPathType(const string &path)
+PathType GetPathType(const std::string &path)
 {
 #ifdef WIN32
     struct _stat Stat;
@@ -461,7 +461,7 @@ PathType GetPathType(const string &path)
     return PathType::Other;
 }
 
-TimeValue GetPathCreationTime(const string &path)
+TimeValue GetPathCreationTime(const std::string &path)
 {
 #ifdef WIN32
     struct _stat Stat;
@@ -476,13 +476,13 @@ TimeValue GetPathCreationTime(const string &path)
         switch (errno)
         {
         case ENOENT:
-            cerr << __func__ << ": file not found" << endl;
+            cerr << __func__ << ": file not found" << std::endl;
             break;
         case EINVAL:
-            cerr << __func__ << ": invalid parameter to _stat()" << endl;
+            cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
             break;
         default:
-            cerr << __func__ << ": unknown error in _stat()" << endl;
+            cerr << __func__ << ": unknown error in _stat()" << std::endl;
         }
     }
     else
@@ -492,7 +492,7 @@ TimeValue GetPathCreationTime(const string &path)
     return 0;
 }
 
-TimeValue GetPathAccessTime(const string &path)
+TimeValue GetPathAccessTime(const std::string &path)
 {
 #ifdef WIN32
     struct _stat Stat;
@@ -506,13 +506,13 @@ TimeValue GetPathAccessTime(const string &path)
         switch (errno)
         {
         case ENOENT:
-            cerr << __func__ << ": file not found" << endl;
+            cerr << __func__ << ": file not found" << std::endl;
             break;
         case EINVAL:
-            cerr << __func__ << ": invalid parameter to _stat()" << endl;
+            cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
             break;
         default:
-            cerr << __func__ << ": unknown error in _stat()" << endl;
+            cerr << __func__ << ": unknown error in _stat()" << std::endl;
         }
     }
     else
@@ -523,46 +523,46 @@ TimeValue GetPathAccessTime(const string &path)
 }
 
 // Data type IOSTREAM Utilities
-bool ReadBool(istream &istr)
+bool ReadBool(std::istream &istr)
 {
-    string str;
+    std::string str;
     istr >> str;
     if (str == "true")
         return true;
     return false;
 }
 
-int ReadInt(istream &istr)
+int ReadInt(std::istream &istr)
 {
     int ival;
     istr >> ival;
     return ival;
 }
 
-long long ReadInt64(istream &istr)
+long long ReadInt64(std::istream &istr)
 {
     long long ival;
     istr >> ival;
     return ival;
 }
 
-float ReadFloat(istream &istr)
+float ReadFloat(std::istream &istr)
 {
     double fval;
     istr >> fval;
     return (float)fval;
 }
 
-double ReadDouble(istream &istr)
+double ReadDouble(std::istream &istr)
 {
     double fval;
     istr >> fval;
     return fval;
 }
 
-string ReadString(istream &istr)
+std::string ReadString(std::istream &istr)
 {
-    string str;
+    std::string str;
     char c;
     char lastC = 0;
     bool isQuotes = false;
@@ -603,7 +603,7 @@ string ReadString(istream &istr)
     return str;
 }
 
-Vector2f ReadVector2f(istream &istr)
+Vector2f ReadVector2f(std::istream &istr)
 {
     double x, y;
     istr >> x;
@@ -611,7 +611,7 @@ Vector2f ReadVector2f(istream &istr)
     return Vector2f((float)x, (float)y);
 }
 
-Vector2d ReadVector2d(istream &istr)
+Vector2d ReadVector2d(std::istream &istr)
 {
     double x, y;
     istr >> x;
@@ -619,7 +619,7 @@ Vector2d ReadVector2d(istream &istr)
     return Vector2d(x, y);
 }
 
-Vector3f ReadVector3f(istream &istr)
+Vector3f ReadVector3f(std::istream &istr)
 {
     double x, y, z;
     istr >> x;
@@ -628,7 +628,7 @@ Vector3f ReadVector3f(istream &istr)
     return Vector3f((float)x, (float)y, (float)z);
 }
 
-Vector3d ReadVector3d(istream &istr)
+Vector3d ReadVector3d(std::istream &istr)
 {
     double x, y, z;
     istr >> x;
@@ -637,7 +637,7 @@ Vector3d ReadVector3d(istream &istr)
     return Vector3d(x, y, z);
 }
 
-Vector4f ReadVector4f(istream &istr)
+Vector4f ReadVector4f(std::istream &istr)
 {
     double x, y, z, w;
     istr >> x;
@@ -647,7 +647,7 @@ Vector4f ReadVector4f(istream &istr)
     return Vector4f((float)x, (float)y, (float)z, (float)w);
 }
 
-Vector4d ReadVector4d(istream &istr)
+Vector4d ReadVector4d(std::istream &istr)
 {
     double x, y, z, w;
     istr >> x;
@@ -657,7 +657,7 @@ Vector4d ReadVector4d(istream &istr)
     return Vector4d(x, y, z, w);
 }
 
-Color3f ReadColor3f(istream &istr)
+Color3f ReadColor3f(std::istream &istr)
 {
     double r, g, b;
     istr >> r;
@@ -666,7 +666,7 @@ Color3f ReadColor3f(istream &istr)
     return Color3f((float)r, (float)g, (float)b);
 }
 
-Color3d ReadColor3d(istream &istr)
+Color3d ReadColor3d(std::istream &istr)
 {
     double r, g, b;
     istr >> r;
@@ -675,7 +675,7 @@ Color3d ReadColor3d(istream &istr)
     return Color3d(r, g, b);
 }
 
-Color4f ReadColor4f(istream &istr)
+Color4f ReadColor4f(std::istream &istr)
 {
     double r, g, b, a;
     istr >> r;
@@ -685,7 +685,7 @@ Color4f ReadColor4f(istream &istr)
     return Color4f((float)r, (float)g, (float)b, (float)a);
 }
 
-Color4d ReadColor4d(istream &istr)
+Color4d ReadColor4d(std::istream &istr)
 {
     double r, g, b, a;
     istr >> r;
@@ -695,7 +695,7 @@ Color4d ReadColor4d(istream &istr)
     return Color4d(r, g, b, a);
 }
 
-Quaternionf ReadQuaternionf(istream &istr)
+Quaternionf ReadQuaternionf(std::istream &istr)
 {
     double a, b, c, d;
     istr >> a;
@@ -705,7 +705,7 @@ Quaternionf ReadQuaternionf(istream &istr)
     return Quaternionf((float)a, (float)b, (float)c, (float)d);
 }
 
-Quaterniond ReadQuaterniond(istream &istr)
+Quaterniond ReadQuaterniond(std::istream &istr)
 {
     double a, b, c, d;
     istr >> a;
@@ -715,7 +715,7 @@ Quaterniond ReadQuaterniond(istream &istr)
     return Quaterniond(a, b, c, d);
 }
 
-Matrix4f ReadMatrix4f(istream &istr)
+Matrix4f ReadMatrix4f(std::istream &istr)
 {
     Matrix4f m;
     m.LoadIdentity();
@@ -738,7 +738,7 @@ Matrix4f ReadMatrix4f(istream &istr)
     return m;
 }
 
-Matrix4d ReadMatrix4d(istream &istr)
+Matrix4d ReadMatrix4d(std::istream &istr)
 {
     Matrix4d m;
     m.LoadIdentity();
@@ -761,7 +761,7 @@ Matrix4d ReadMatrix4d(istream &istr)
     return m;
 }
 
-Matrix4f ReadAffineMatrix4f(istream &istr)
+Matrix4f ReadAffineMatrix4f(std::istream &istr)
 {
     Matrix4f m;
     m.LoadIdentity();
@@ -784,7 +784,7 @@ Matrix4f ReadAffineMatrix4f(istream &istr)
     return m;
 }
 
-Matrix4d ReadAffineMatrix4d(istream &istr)
+Matrix4d ReadAffineMatrix4d(std::istream &istr)
 {
     Matrix4d m;
     m.LoadIdentity();
@@ -807,7 +807,7 @@ Matrix4d ReadAffineMatrix4d(istream &istr)
     return m;
 }
 
-SphericalHarmonicf ReadSphericalHarmonicf(istream &istr)
+SphericalHarmonicf ReadSphericalHarmonicf(std::istream &istr)
 {
     SphericalHarmonicf sph;
     int maxDegree = ReadInt(istr);
@@ -821,12 +821,12 @@ SphericalHarmonicf ReadSphericalHarmonicf(istream &istr)
     }
     else
     {
-        cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << endl;
+        cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
     }
     return sph;
 }
 
-SphericalHarmonicd ReadSphericalHarmonicd(istream &istr)
+SphericalHarmonicd ReadSphericalHarmonicd(std::istream &istr)
 {
     SphericalHarmonicd sph;
     int maxDegree = ReadInt(istr);
@@ -840,14 +840,14 @@ SphericalHarmonicd ReadSphericalHarmonicd(istream &istr)
     }
     else
     {
-        cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << endl;
+        cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
     }
     return sph;
 }
 
 // WRITING ROUTINES
 
-ostream &WriteBool(ostream &ostr, bool val)
+std::ostream &WriteBool(std::ostream &ostr, bool val)
 {
     if (val == true)
         ostr << "true ";
@@ -856,27 +856,27 @@ ostream &WriteBool(ostream &ostr, bool val)
     return ostr;
 }
 
-ostream &WriteInt(ostream &ostr, int val)
+std::ostream &WriteInt(std::ostream &ostr, int val)
 {
     return ostr << val << " ";
 }
 
-ostream &WriteInt64(ostream &ostr, long long val)
+std::ostream &WriteInt64(std::ostream &ostr, long long val)
 {
     return ostr << val << " ";
 }
 
-ostream &WriteFloat(ostream &ostr, float val)
+std::ostream &WriteFloat(std::ostream &ostr, float val)
 {
     return ostr << val << " ";
 }
 
-ostream &WriteDouble(ostream &ostr, double val)
+std::ostream &WriteDouble(std::ostream &ostr, double val)
 {
     return ostr << val << " ";
 }
 
-ostream &WriteString(ostream &ostr, const string &str)
+std::ostream &WriteString(std::ostream &ostr, const std::string &str)
 {
     ostr << "\"";
     for (auto it = str.begin(); it != str.end(); it++)
@@ -891,67 +891,67 @@ ostream &WriteString(ostream &ostr, const string &str)
     return ostr;
 }
 
-ostream &WriteVector2f(ostream &ostr, const Vector2f &v)
+std::ostream &WriteVector2f(std::ostream &ostr, const Vector2f &v)
 {
     return ostr << v.x << " " << v.y << " ";
 }
 
-ostream &WriteVector2d(ostream &ostr, const Vector2d &v)
+std::ostream &WriteVector2d(std::ostream &ostr, const Vector2d &v)
 {
     return ostr << v.x << " " << v.y << " ";
 }
 
-ostream &WriteVector3f(ostream &ostr, const Vector3f &v)
+std::ostream &WriteVector3f(std::ostream &ostr, const Vector3f &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " ";
 }
 
-ostream &WriteVector3d(ostream &ostr, const Vector3d &v)
+std::ostream &WriteVector3d(std::ostream &ostr, const Vector3d &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " ";
 }
 
-ostream &WriteVector4f(ostream &ostr, const Vector4f &v)
+std::ostream &WriteVector4f(std::ostream &ostr, const Vector4f &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " " << v.w << " ";
 }
 
-ostream &WriteVector4d(ostream &ostr, const Vector4d &v)
+std::ostream &WriteVector4d(std::ostream &ostr, const Vector4d &v)
 {
     return ostr << v.x << " " << v.y << " " << v.z << " " << v.w << " ";
 }
 
-ostream &WriteColor3f(ostream &ostr, const Color3f &v)
+std::ostream &WriteColor3f(std::ostream &ostr, const Color3f &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " ";
 }
 
-ostream &WriteColor3d(ostream &ostr, const Color3d &v)
+std::ostream &WriteColor3d(std::ostream &ostr, const Color3d &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " ";
 }
 
-ostream &WriteColor4f(ostream &ostr, const Color4f &v)
+std::ostream &WriteColor4f(std::ostream &ostr, const Color4f &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " " << v.a << " ";
 }
 
-ostream &WriteColor4d(ostream &ostr, const Color4d &v)
+std::ostream &WriteColor4d(std::ostream &ostr, const Color4d &v)
 {
     return ostr << v.r << " " << v.g << " " << v.b << " " << v.a << " ";
 }
 
-ostream &WriteQuaternionf(ostream &ostr, const Quaternionf &q)
+std::ostream &WriteQuaternionf(std::ostream &ostr, const Quaternionf &q)
 {
     return ostr << q.a << " " << q.b << " " << q.c << " " << q.d << " ";
 }
 
-ostream &WriteQuaterniond(ostream &ostr, const Quaterniond &q)
+std::ostream &WriteQuaterniond(std::ostream &ostr, const Quaterniond &q)
 {
     return ostr << q.a << " " << q.b << " " << q.c << " " << q.d << " ";
 }
 
-ostream &WriteMatrix4f(ostream &ostr, const Matrix4f &m)
+std::ostream &WriteMatrix4f(std::ostream &ostr, const Matrix4f &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -960,7 +960,7 @@ ostream &WriteMatrix4f(ostream &ostr, const Matrix4f &m)
     return ostr;
 }
 
-ostream &WriteMatrix4d(ostream &ostr, const Matrix4d &m)
+std::ostream &WriteMatrix4d(std::ostream &ostr, const Matrix4d &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -969,7 +969,7 @@ ostream &WriteMatrix4d(ostream &ostr, const Matrix4d &m)
     return ostr;
 }
 
-ostream &WriteAffineMatrix4f(ostream &ostr, const Matrix4f &m)
+std::ostream &WriteAffineMatrix4f(std::ostream &ostr, const Matrix4f &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -977,7 +977,7 @@ ostream &WriteAffineMatrix4f(ostream &ostr, const Matrix4f &m)
     return ostr;
 }
 
-ostream &WriteAffineMatrix4d(ostream &ostr, const Matrix4d &m)
+std::ostream &WriteAffineMatrix4d(std::ostream &ostr, const Matrix4d &m)
 {
     ostr << m.m11 << " " << m.m12 << " " << m.m13 << " " << m.m14 << " ";
     ostr << m.m21 << " " << m.m22 << " " << m.m23 << " " << m.m24 << " ";
@@ -985,7 +985,7 @@ ostream &WriteAffineMatrix4d(ostream &ostr, const Matrix4d &m)
     return ostr;
 }
 
-ostream &WriteSphericalHarmonicf(ostream &ostr, const SphericalHarmonicf &sph)
+std::ostream &WriteSphericalHarmonicf(std::ostream &ostr, const SphericalHarmonicf &sph)
 {
     ostr << sph.GetMaxDegree() << " ";
     for (size_t i = 0; i < sph.getMaxCoefficients(); i++)
@@ -995,7 +995,7 @@ ostream &WriteSphericalHarmonicf(ostream &ostr, const SphericalHarmonicf &sph)
     return ostr;
 }
 
-ostream &WriteSphericalHarmonicd(ostream &ostr, const SphericalHarmonicd &sph)
+std::ostream &WriteSphericalHarmonicd(std::ostream &ostr, const SphericalHarmonicd &sph)
 {
     ostr << sph.GetMaxDegree() << " ";
     for (size_t i = 0; i < sph.getMaxCoefficients(); i++)

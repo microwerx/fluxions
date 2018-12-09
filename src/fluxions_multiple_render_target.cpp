@@ -21,18 +21,18 @@
 
 #define IFTOSTRING(thing, value) \
 	if ((thing) == (value))      \
-		return string(#value);
+		return std::string(#value);
 
 namespace Fluxions
 {
-string GetFramebufferStatusAsString(GLenum status)
+std::string GetFramebufferStatusAsString(GLenum status)
 {
 	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT);
 	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER);
 	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER);
 	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT);
 	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE);
-	return string();
+	return std::string();
 }
 
 FramebufferObject::FramebufferObject()
@@ -175,7 +175,7 @@ bool FramebufferObject::Make()
 	}
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	string msg = GetFramebufferStatusAsString(status);
+	std::string msg = GetFramebufferStatusAsString(status);
 
 	if (status != GL_FRAMEBUFFER_COMPLETE)
 		result = false;

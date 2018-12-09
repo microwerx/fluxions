@@ -98,7 +98,7 @@ void SimpleRenderer<IndexType, GLIndexType>::NewObject()
 }
 
 template <typename IndexType, GLenum GLIndexType>
-void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToObjectNames(const string &objectName, GLuint id)
+void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToObjectNames(const std::string &objectName, GLuint id)
 {
 	for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++)
 	{
@@ -110,7 +110,7 @@ void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToObjectNames(const string &
 }
 
 template <typename IndexType, GLenum GLIndexType>
-void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToGroupNames(const string &groupName, GLuint id)
+void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToGroupNames(const std::string &groupName, GLuint id)
 {
 	for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++)
 	{
@@ -122,7 +122,7 @@ void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToGroupNames(const string &g
 }
 
 template <typename IndexType, GLenum GLIndexType>
-void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToMtlLibNames(const string &mtllibName, GLuint id)
+void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToMtlLibNames(const std::string &mtllibName, GLuint id)
 {
 	for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++)
 	{
@@ -134,7 +134,7 @@ void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToMtlLibNames(const string &
 }
 
 template <typename IndexType, GLenum GLIndexType>
-void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToMtlNames(const string &mtlName, GLuint id)
+void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToMtlNames(const std::string &mtlName, GLuint id)
 {
 	for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++)
 	{
@@ -149,10 +149,10 @@ template <typename IndexType, GLenum GLIndexType>
 void SimpleRenderer<IndexType, GLIndexType>::AssignUniqueGroupIds()
 {
 	GLuint groupId = 0;
-	map<string, GLuint> groups;
+	std::map<std::string, GLuint> groups;
 	for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++)
 	{
-		string autoGenName = surface->objectName + " " + surface->mtllibName + " " + surface->mtlName;
+		std::string autoGenName = surface->objectName + " " + surface->mtllibName + " " + surface->mtlName;
 		auto it = groups.find(autoGenName);
 		if (it == groups.end())
 		{
@@ -609,10 +609,10 @@ void SimpleRenderer<IndexType, GLIndexType>::Render()
 }
 
 //template <typename IndexType, GLenum GLIndexType>
-//void SimpleRenderer<IndexType, GLIndexType>::RenderIf(const string &objname, const string &mtllib, const string &mtl, bool onlyRenderZ)
+//void SimpleRenderer<IndexType, GLIndexType>::RenderIf(const std::string &objname, const std::string &mtllib, const std::string &mtl, bool onlyRenderZ)
 //{
 //	// Render all surfaces as slow/fast vertex types with appropriate programs.
-//	if (debugging) cout << "SimpleRenderer::RenderIf() -- obj: " << objname << " mtllib: " << mtllib << " mtl: " << mtl << endl;
+//	if (debugging) std::cout << "SimpleRenderer::RenderIf() -- obj: " << objname << " mtllib: " << mtllib << " mtl: " << mtl << std::endl;
 //	if (!arrayBuffer || !elementArrayBuffer)
 //	{
 //		BuildBuffers();
@@ -631,8 +631,8 @@ void SimpleRenderer<IndexType, GLIndexType>::Render()
 //		if (!mtl.empty() && surface->mtl != mtl)
 //			continue;
 
-//		if (debugging) cout << "SimpleRenderer::RenderIf() -- FAST: obj: " << objname << " mtllib: " << mtllib << " mtl: " << mtl << " -- rendering" << endl;
-//		if (debugging) cout << "SimpleRenderer::RenderIf() -- FAST: first: " << surface->first << " , count: " << surface->count << ", baseIndexOffset: " << surface->baseIndexBufferOffset << endl;
+//		if (debugging) std::cout << "SimpleRenderer::RenderIf() -- FAST: obj: " << objname << " mtllib: " << mtllib << " mtl: " << mtl << " -- rendering" << std::endl;
+//		if (debugging) std::cout << "SimpleRenderer::RenderIf() -- FAST: first: " << surface->first << " , count: " << surface->count << ", baseIndexOffset: " << surface->baseIndexBufferOffset << std::endl;
 
 //		if (surface->isIndexed)
 //		{
@@ -657,8 +657,8 @@ void SimpleRenderer<IndexType, GLIndexType>::Render()
 //		if (!mtl.empty() && surface->mtl != mtl)
 //			continue;
 //
-//		if (debugging) cout << "SimpleRenderer::RenderIf() -- SLOW: obj: " << objname << " mtllib: " << mtllib << " mtl: " << mtl << " -- rendering" << endl;
-//		if (debugging) cout << "SimpleRenderer::RenderIf() -- SLOW: first: " << surface->first << " , count: " << surface->count << ", baseIndexOffset: " << surface->baseIndexBufferOffset << endl;
+//		if (debugging) std::cout << "SimpleRenderer::RenderIf() -- SLOW: obj: " << objname << " mtllib: " << mtllib << " mtl: " << mtl << " -- rendering" << std::endl;
+//		if (debugging) std::cout << "SimpleRenderer::RenderIf() -- SLOW: first: " << surface->first << " , count: " << surface->count << ", baseIndexOffset: " << surface->baseIndexBufferOffset << std::endl;
 
 //		if (surface->isIndexed)
 //		{
@@ -704,7 +704,7 @@ void SimpleRenderer<IndexType, GLIndexType>::RenderZOnly()
 }
 
 template <typename IndexType, GLenum GLIndexType>
-void SimpleRenderer<IndexType, GLIndexType>::RenderIf(const string &objectName, const string &groupName, const string &mtllibName, const string &mtlName, bool onlyRenderZ)
+void SimpleRenderer<IndexType, GLIndexType>::RenderIf(const std::string &objectName, const std::string &groupName, const std::string &mtllibName, const std::string &mtlName, bool onlyRenderZ)
 {
 	BuildBuffers();
 

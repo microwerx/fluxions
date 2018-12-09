@@ -66,14 +66,14 @@ struct MouseDoubleClickState
 
 struct MouseState
 {
-    map<int, bool> buttons;
+    std::map<int, bool> buttons;
     Vector2i position;
     Vector2i previousPosition;
     Vector2i dposition;
-    map<int, MouseDragState> dragStates;
-    map<int, MouseClickState> clickStates;
-    map<int, MouseClickState> lastClickStates;
-    map<int, MouseDoubleClickState> doubleClickStates;
+    std::map<int, MouseDragState> dragStates;
+    std::map<int, MouseClickState> clickStates;
+    std::map<int, MouseClickState> lastClickStates;
+    std::map<int, MouseDoubleClickState> doubleClickStates;
 
     double lastPollTime;
     void UpdateTime();

@@ -19,7 +19,7 @@
 #ifndef FLUXIONS_GTE_HPP
 #define FLUXIONS_GTE_HPP
 
-#include <fluxions_stdcxx.hpp>
+// #include <fluxions_stdcxx.hpp>
 #include <fluxions_gte_math.hpp>
 #include <fluxions_gte_rect.hpp>
 #include <fluxions_gte_vector2.hpp>

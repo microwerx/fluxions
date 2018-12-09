@@ -20,7 +20,8 @@
 #include "kasl.hpp"
 #include "stdafx.h"
 
-namespace KASL {
+namespace KASL
+{
 VariableList::VariableList()
 {
 }
@@ -30,7 +31,7 @@ VariableList::~VariableList()
     variables.clear();
 }
 
-bool VariableList::is_var(const string& name) const
+bool VariableList::is_var(const std::string &name) const
 {
     auto it = variables.find(name);
     if (it == variables.end())
@@ -38,7 +39,7 @@ bool VariableList::is_var(const string& name) const
     return true;
 }
 
-void VariableList::set_var(const string& name, double dval)
+void VariableList::set_var(const std::string &name, double dval)
 {
     KASL::Token token;
     token.type = KASL::TokenType::TT2_DOUBLE;
@@ -47,7 +48,7 @@ void VariableList::set_var(const string& name, double dval)
     variables[name] = token;
 }
 
-void VariableList::set_var(const string& name, int ival)
+void VariableList::set_var(const std::string &name, int ival)
 {
     KASL::Token token;
     token.type = KASL::TokenType::TT2_INTEGER;
@@ -56,7 +57,7 @@ void VariableList::set_var(const string& name, int ival)
     variables[name] = token;
 }
 
-void VariableList::set_var(const string& name, const string& sval)
+void VariableList::set_var(const std::string &name, const std::string &sval)
 {
     KASL::Token token;
     token.type = KASL::TokenType::TT2_STRING;
@@ -64,7 +65,7 @@ void VariableList::set_var(const string& name, const string& sval)
     variables[name] = token;
 }
 
-int VariableList::get_var_integer(const string& name) const
+int VariableList::get_var_integer(const std::string &name) const
 {
     auto it = get_var(name);
     if (it == get_var_end() || it->second.IsIntegerOrDouble() == false)
@@ -72,7 +73,7 @@ int VariableList::get_var_integer(const string& name) const
     return it->second.ival;
 }
 
-double VariableList::get_var_double(const string& name) const
+double VariableList::get_var_double(const std::string &name) const
 {
     auto it = get_var(name);
     if (it == get_var_end() || it->second.IsIntegerOrDouble() == false)
@@ -80,7 +81,7 @@ double VariableList::get_var_double(const string& name) const
     return it->second.dval;
 }
 
-const string& VariableList::get_var_string(const string& name) const
+const std::string &VariableList::get_var_string(const std::string &name) const
 {
     auto it = get_var(name);
     if (it == get_var_end() || it->second.IsStringOrIdentifier() == false)
@@ -88,13 +89,13 @@ const string& VariableList::get_var_string(const string& name) const
     return it->second.sval;
 }
 
-map<string, KASL::Token>::const_iterator VariableList::get_var(const string& name) const
+std::map<std::string, KASL::Token>::const_iterator VariableList::get_var(const std::string &name) const
 {
     return variables.find(name);
 }
 
-map<string, KASL::Token>::const_iterator VariableList::get_var_end() const
+std::map<std::string, KASL::Token>::const_iterator VariableList::get_var_end() const
 {
     return variables.cend();
 }
-}
+} // namespace KASL

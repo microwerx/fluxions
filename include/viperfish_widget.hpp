@@ -35,12 +35,12 @@ namespace Viperfish
 class IWidget
 {
   public:
-	virtual void OnInit(const vector<string> &args) = 0;
+	virtual void OnInit(const std::vector<std::string> &args) = 0;
 	virtual void OnKill() = 0;
 	virtual void OnUpdate(double elapsedTimeInSeconds) = 0;
 
-	virtual void OnKeyDown(const string &key, int keymod) = 0;
-	virtual void OnKeyUp(const string &key, int keymod) = 0;
+	virtual void OnKeyDown(const std::string &key, int keymod) = 0;
+	virtual void OnKeyUp(const std::string &key, int keymod) = 0;
 
 	virtual void OnMouseButtonDown(int button) = 0;
 	virtual void OnMouseButtonUp(int button) = 0;
@@ -82,7 +82,7 @@ class IWidget
 };
 
 // Use the decorator pattern
-class Widget : public enable_shared_from_this<Widget>, public IWidget
+class Widget : public std::enable_shared_from_this<Widget>, public IWidget
 {
   protected:
 	// this is required to enable shared_from_this() to work properly
@@ -90,26 +90,26 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 	Widget(const Widget &) = default;
 
   public:
-	using SharedPtr = shared_ptr<Widget>;
-	using UniquePtr = unique_ptr<Widget>;
+	using SharedPtr = std::shared_ptr<Widget>;
+	using UniquePtr = std::unique_ptr<Widget>;
 
 	Widget(SharedPtr &decorateeWidget) { decorate(decorateeWidget); }
 
 	template <class... _Types>
-	static SharedPtr MakeShared(_Types &&... _Args) { return SharedPtr(new Widget(forward<_Types>(_Args)...)); }
+	static SharedPtr MakeShared(_Types &&... _Args) { return SharedPtr(new Widget(std::forward<_Types>(_Args)...)); }
 	template <class... _Types>
-	static UniquePtr MakeUnique(_Types &&... _Args) { return UniquePtr(new Widget(forward<_Types>(_Args)...)); }
+	static UniquePtr MakeUnique(_Types &&... _Args) { return UniquePtr(new Widget(std::forward<_Types>(_Args)...)); }
 
 	//Widget(SharedPtr && decorateeWidget) { decorateeWidget_ = decorateeWidget; }
 
-	//Widget(int X, int y, int width, int height, const string & caption, const string & jsonStyle)
+	//Widget(int X, int y, int width, int height, const std::string & caption, const std::string & jsonStyle)
 	//{
 	//	windowRect_.SetFromPoints(Vector2i(X, y), Vector2i(X + width, y + height));
 	//	caption_ = caption;
 	//	this->setStyle(jsonStyle);
 	//}
 
-	explicit Widget(initializer_list<SharedPtr> childWidgets)
+	explicit Widget(std::initializer_list<SharedPtr> childWidgets)
 	{
 		for (auto child = childWidgets.begin(); child != childWidgets.end(); child++)
 		{
@@ -130,7 +130,7 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 
 	inline SharedPtr GetWidgetPtr() { return shared_from_this(); }
 
-	virtual void OnInit(const vector<string> &args) override
+	virtual void OnInit(const std::vector<std::string> &args) override
 	{
 		if (decorateeWidget_)
 			decorateeWidget_->OnInit(args);
@@ -151,7 +151,7 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 	}
 	virtual void OnUpdate(double timeStamp) override;
 
-	virtual void OnKeyDown(const string &key, int keymod) override
+	virtual void OnKeyDown(const std::string &key, int keymod) override
 	{
 		HandleKey(key, keymod, true);
 		if (decorateeWidget_)
@@ -161,7 +161,7 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 			w->OnKeyDown(key, keymod);
 		}
 	}
-	virtual void OnKeyUp(const string &key, int keymod) override
+	virtual void OnKeyUp(const std::string &key, int keymod) override
 	{
 		HandleKey(key, keymod, false);
 		if (decorateeWidget_)
@@ -457,7 +457,7 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 	// Imperative functions
 
 	void Init(int argc, char **argv);
-	void Init(vector<string> args);
+	void Init(std::vector<std::string> args);
 	void Kill();
 	void MainLoop();
 	void LeaveMainLoop();
@@ -465,8 +465,8 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 	// Child container stuff (adapted from Stroustrup's book)
 
 	using value_type = SharedPtr;
-	using iterator = vector<SharedPtr>::iterator;
-	using const_iterator = vector<SharedPtr>::const_iterator;
+	using iterator = std::vector<SharedPtr>::iterator;
+	using const_iterator = std::vector<SharedPtr>::const_iterator;
 
 	inline bool is_leaf() const { return leaf_; }
 	inline void clear()
@@ -604,13 +604,13 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 		t0 = t1;
 	}
 
-	inline const string &caption() const noexcept { return caption_; }
-	inline string &caption() noexcept { return caption_; }
-	inline const string &style() const noexcept { return style_; }
+	inline const std::string &caption() const noexcept { return caption_; }
+	inline std::string &caption() noexcept { return caption_; }
+	inline const std::string &style() const noexcept { return style_; }
 	inline const KASL::JSONPtr &jsonStyle() const noexcept { return jsonStyle_; }
 	inline KASL::JSONPtr &jsonStyle() noexcept { return jsonStyle_; }
 
-	inline KASL::JSONPtr &setStyle(const string &style) noexcept
+	inline KASL::JSONPtr &setStyle(const std::string &style) noexcept
 	{
 		processStyle(style);
 		return jsonStyle_;
@@ -620,7 +620,7 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 	SharedPtr decorateeWidget_;
 	SharedPtr decoraterWidget_;
 	SharedPtr parent_;
-	vector<SharedPtr> children_;
+	std::vector<SharedPtr> children_;
 
 	Recti windowRect_;
 	bool visible_ = true;
@@ -641,14 +641,14 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 	double t1 = 0.0;
 
 	void PollGamepads();
-	void HandleKey(const string &key, int keymod, bool pressed);
+	void HandleKey(const std::string &key, int keymod, bool pressed);
 	void HandleMouseButton(int button, bool pressed);
 	void HandleMouseMove(int x, int y);
 	void HandleMouseClick(const MouseClickState &mcs);
 	void HandleMouseDoubleClick(const MouseDoubleClickState &mdcs);
 	void HandleMouseDrag(const MouseDragState &mds);
 
-	virtual bool processStyle(const string &style);
+	virtual bool processStyle(const std::string &style);
 
   protected:
 	GamepadState gamepads[4];
@@ -656,8 +656,8 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 	KeyboardState keyboard;
 	MouseState mouse;
 	KASL::JSONPtr jsonStyle_;
-	string style_;
-	string caption_;
+	std::string style_;
+	std::string caption_;
 	void makeLeaf(bool state) { leaf_ = state; }
 
 	const double getT0() const { return t0; }
@@ -665,13 +665,13 @@ class Widget : public enable_shared_from_this<Widget>, public IWidget
 };
 
 //template <typename T, typename T2>
-//shared_ptr<T> Make(shared_ptr<T2> & decoratee) {
-//	if (decoratee) return make_shared<T>((shared_ptr<Widget>)(decoratee));
+//std::shared_ptr<T> Make(std::shared_ptr<T2> & decoratee) {
+//	if (decoratee) return make_shared<T>((std::shared_ptr<Widget>)(decoratee));
 //	return make_shared<T>();
 //}
 
 //template <typename T>
-//shared_ptr<T> Make() {
+//std::shared_ptr<T> Make() {
 //	return make_shared<T>();
 //}
 } // namespace Viperfish

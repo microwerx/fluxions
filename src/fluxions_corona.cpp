@@ -40,7 +40,7 @@ CoronaDatabase::~CoronaDatabase()
 {
 }
 
-void CoronaDatabase::LoadOBJ(const string &objname, const string &filename)
+void CoronaDatabase::LoadOBJ(const std::string &objname, const std::string &filename)
 {
     models[objname].LoadOBJ(filename);
 }
@@ -48,7 +48,7 @@ void CoronaDatabase::LoadOBJ(const string &objname, const string &filename)
 void CoronaDatabase::BuildBuffers()
 {
     renderer.Reset();
-    map<string, OBJStaticModel>::iterator modelIt;
+    std::map<std::string, OBJStaticModel>::iterator modelIt;
     for (modelIt = models.begin(); modelIt != models.end(); modelIt++)
     {
         modelIt->second.Render(renderer);
@@ -74,10 +74,10 @@ OBJStaticModel::~OBJStaticModel()
 {
 }
 
-bool OBJStaticModel::LoadOBJ(const string &filename)
+bool OBJStaticModel::LoadOBJ(const std::string &filename)
 {
     bool cacheDoesNotExist = true;
-    string cache_filename = filename + ".cache";
+    std::string cache_filename = filename + ".cache";
 
     FilePathInfo fpi_orig(filename);
     FilePathInfo fpi(cache_filename);
@@ -104,17 +104,17 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
     {
         hflog.info("%s(): loading OBJ %s", __FUNCTION__, fpi_orig.fname.c_str());
         int curSurface = 0;
-        string surfaceName;
-        string objectName;
-        string materialLibrary;
+        std::string surfaceName;
+        std::string objectName;
+        std::string materialLibrary;
         float v[3];
         int iv[3];
-        vector<Vector3f> vList;
-        vector<Vector3f> vnList;
-        vector<Vector2f> vtList;
-        vector<TVector3<int>> faceList;
-        map<long long, int> indexMap; // this maps the unique combo of of vertices
-        map<int, Vertex> vertexMap;
+        std::vector<Vector3f> vList;
+        std::vector<Vector3f> vnList;
+        std::vector<Vector2f> vtList;
+        std::vector<TVector3<int>> faceList;
+        std::map<long long, int> indexMap; // this maps the unique combo of of vertices
+        std::map<int, Vertex> vertexMap;
         long lastIndex = 0;
         int newIndex = 0;
         int first = 0;
@@ -126,9 +126,9 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
 
         BoundingBox.Reset();
 
-        ifstream fin(filename.c_str());
-        string str;
-        istringstream istr;
+        std::ifstream fin(filename.c_str());
+        std::string str;
+        std::istringstream istr;
 
         if (!fin)
             return false;
@@ -378,7 +378,7 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
     else
     {
         // Load Cache instead
-        ifstream fin(cache_filename, ios::binary);
+        std::ifstream fin(cache_filename, std::ios::binary);
         long vertexCount = 0;
         long indexCount = 0;
         long surfaceCount = 0;
@@ -400,8 +400,8 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
             long mode = 0;
             long first = 0;
             long count = 0;
-            string mtlName;
-            string surfaceName;
+            std::string mtlName;
+            std::string surfaceName;
             long mtlNameSize = 0;
             long surfaceNameSize = 0;
 
@@ -433,7 +433,7 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
     if (cacheDoesNotExist)
     {
         // save a cache
-        ofstream fout(cache_filename, ios::binary);
+        std::ofstream fout(cache_filename, std::ios::binary);
 
         long vertexCount = (long)Vertices.size();
         long indexCount = (long)Indices.size();
@@ -472,33 +472,33 @@ bool OBJStaticModel::LoadOBJ(const string &filename)
     return true;
 }
 
-bool OBJStaticModel::SaveOBJ(const string &filename)
+bool OBJStaticModel::SaveOBJ(const std::string &filename)
 {
-    ofstream fout(filename.c_str());
+    std::ofstream fout(filename.c_str());
     // 1. Output Vertices
     for (auto it = Vertices.begin(); it != Vertices.end(); it++)
     {
         fout << "v ";
         WriteVector3f(fout, it->position);
-        fout << endl;
+        fout << std::endl;
         fout << "vn ";
         WriteVector3f(fout, it->normal);
-        fout << endl;
+        fout << std::endl;
         fout << "vt ";
         WriteVector2f(fout, it->texcoord);
-        fout << endl;
+        fout << std::endl;
     }
 
     // 2. Output Surfaces
     for (auto it = Surfaces.begin(); it != Surfaces.end(); it++)
     {
-        fout << "usemtl " << it->materialName << endl;
+        fout << "usemtl " << it->materialName << std::endl;
         int triangle = 2;
         for (int i = 0; i < it->count; i++)
         {
             if (++triangle == 3)
             {
-                fout << endl;
+                fout << std::endl;
                 if (it->count - i >= 3)
                     fout << "f ";
                 triangle = 0;
@@ -507,19 +507,19 @@ bool OBJStaticModel::SaveOBJ(const string &filename)
             fout << Indices[it->first + i] << "/";
             fout << Indices[it->first + i] << " ";
         }
-        fout << endl;
+        fout << std::endl;
     }
 
     fout.close();
     return true;
 }
 
-void OBJStaticModel::SavePrecompiled(const string &filename, const string objname)
+void OBJStaticModel::SavePrecompiled(const std::string &filename, const std::string objname)
 {
-    string outFilename = filename + ".cpp";
-    ofstream fout(outFilename.c_str());
+    std::string outFilename = filename + ".cpp";
+    std::ofstream fout(outFilename.c_str());
 
-    string prefix = "OBJ_" + objname + "_";
+    std::string prefix = "OBJ_" + objname + "_";
 
     fout << "extern const int " << prefix << "IndicesSize;\n";
     fout << "extern const int " << prefix << "VerticesSize;\n";
@@ -563,20 +563,20 @@ void OBJStaticModel::SavePrecompiled(const string &filename, const string objnam
     for (auto it = Vertices.begin(); it != Vertices.end(); it++)
     {
         fout << "\t";
-        fout << fixed << setprecision(9) << it->position.x << "f, ";
-        fout << fixed << setprecision(9) << it->position.y << "f, ";
-        fout << fixed << setprecision(9) << it->position.z << "f, ";
-        fout << fixed << setprecision(9) << it->normal.x << "f, ";
-        fout << fixed << setprecision(9) << it->normal.y << "f, ";
-        fout << fixed << setprecision(9) << it->normal.z << "f, ";
-        fout << fixed << setprecision(9) << it->texcoord.x << "f, ";
-        fout << fixed << setprecision(9) << it->texcoord.y << "f, ";
-        fout << fixed << setprecision(9) << it->tangent.x << "f, ";
-        fout << fixed << setprecision(9) << it->tangent.y << "f, ";
-        fout << fixed << setprecision(9) << it->tangent.z << "f, ";
-        fout << fixed << setprecision(9) << it->binormal.x << "f, ";
-        fout << fixed << setprecision(9) << it->binormal.y << "f, ";
-        fout << fixed << setprecision(9) << it->binormal.z << "f";
+        fout << std::fixed << std::setprecision(9) << it->position.x << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->position.y << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->position.z << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->normal.x << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->normal.y << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->normal.z << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->texcoord.x << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->texcoord.y << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->tangent.x << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->tangent.y << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->tangent.z << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->binormal.x << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->binormal.y << "f, ";
+        fout << std::fixed << std::setprecision(9) << it->binormal.z << "f";
         totalCount--;
         if (totalCount != 0)
             fout << ",\n";
@@ -773,7 +773,7 @@ void OBJStaticModel::Render(SimpleRenderer_GLuint &renderer)
     }
     renderer.End();
 
-    vector<Surface>::iterator surfIt;
+    std::vector<Surface>::iterator surfIt;
     for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++)
     {
         renderer.triangleCount += surfIt->count / 3;
@@ -790,7 +790,7 @@ void OBJStaticModel::Render(SimpleRenderer_GLuint &renderer)
 
 void OBJStaticModel::RenderGL11()
 {
-    vector<Surface>::iterator surfIt;
+    std::vector<Surface>::iterator surfIt;
     for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++)
     {
         //renderer.SetCurrentMtlName(surfIt->materialName);

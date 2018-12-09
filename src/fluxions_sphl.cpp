@@ -24,7 +24,7 @@ namespace Fluxions
 
 void FxModel::load(const char *path)
 {
-	ifstream fin(path);
+	std::ifstream fin(path);
 	if (fin)
 	{
 		fin >> vertexCount;

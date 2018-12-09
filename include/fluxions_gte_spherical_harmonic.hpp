@@ -67,8 +67,8 @@ class TSphericalHarmonic
 	void reset(size_t maxDegree_, const VectorType &value) { resize(maxDegree_, value); }
 	void resize(size_t maxDegree_);
 	void resize(size_t maxDegree_, const VectorType &value);
-	void readFromString(const string &data);
-	void readFromFile(const string &filename);
+	void readFromString(const std::string &data);
+	void readFromFile(const std::string &filename);
 
 	// VectorType sum() const { VectorType a = 0; for (auto x : coefficients) a += x; return a; }
 	VectorType sum() const { return accumulate(coefficients.begin(), coefficients.end(), VectorType(0)); }
@@ -320,10 +320,10 @@ void TSphericalHarmonic<VectorType, ScalarType>::resize(size_t maxDegree_, const
 }
 
 template <typename VectorType, typename ScalarType>
-void TSphericalHarmonic<VectorType, ScalarType>::readFromString(const string &data)
+void TSphericalHarmonic<VectorType, ScalarType>::readFromString(const std::string &data)
 {
-	istringstream iss(data);
-	string fileId;
+	std::istringstream iss(data);
+	std::string fileId;
 	int numberOfBands;
 	bool calcNegativeBands = false;
 	double value;
@@ -375,14 +375,14 @@ void TSphericalHarmonic<VectorType, ScalarType>::readFromString(const string &da
 }
 
 template <typename VectorType, typename ScalarType>
-void TSphericalHarmonic<VectorType, ScalarType>::readFromFile(const string &filename)
+void TSphericalHarmonic<VectorType, ScalarType>::readFromFile(const std::string &filename)
 {
-	ifstream fin(filename.c_str());
+	std::ifstream fin(filename.c_str());
 
 	if (!fin)
 		return;
 
-	string str;
+	std::string str;
 	fin.seekg(0, ios::end);
 	size_t size = (size_t)fin.tellg();
 	str.resize(size);
@@ -481,7 +481,7 @@ struct Sph4f
 			msph[i].Accumulate(b[i], c[i], maxDegrees);
 	}
 
-	void SaveJSON(const string &path);
+	void SaveJSON(const std::string &path);
 };
 } // namespace Fluxions
 

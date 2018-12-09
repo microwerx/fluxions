@@ -66,7 +66,7 @@ PythonInterpreter::~PythonInterpreter()
 {
 }
 
-bool PythonInterpreter::init(const string &programName)
+bool PythonInterpreter::init(const std::string &programName)
 {
     if (myThread.joinable())
     {
@@ -134,10 +134,10 @@ void PythonInterpreter::unlock()
     myMutex.unlock();
 }
 
-void PythonInterpreter::addCommand(Command cmd, const string &str)
+void PythonInterpreter::addCommand(Command cmd, const std::string &str)
 {
     lock();
-    commandDeque.push_back(pair<Command, string>(cmd, str));
+    commandDeque.push_back(pair<Command, std::string>(cmd, str));
     unlock();
 }
 
@@ -151,7 +151,7 @@ bool PythonInterpreter::processSingleCommand()
     lock();
     if (!commandDeque.empty())
     {
-        pair<Command, string> curCmd = commandDeque.front();
+        pair<Command, std::string> curCmd = commandDeque.front();
         commandDeque.pop_front();
         unlock();
         switch (curCmd.first)
@@ -214,7 +214,7 @@ bool PythonInterpreter::doThreadLoop()
     return true;
 }
 
-void PythonInterpreter::thread_func(const string &programName, PythonInterpreter *pPyInterpreter)
+void PythonInterpreter::thread_func(const std::string &programName, PythonInterpreter *pPyInterpreter)
 {
     if (pPyInterpreter == nullptr)
         return;
@@ -222,7 +222,7 @@ void PythonInterpreter::thread_func(const string &programName, PythonInterpreter
     BOOL result = AllocConsole();
     hflog.info("%(): Opening Console: result = %d", __FUNCTION__, result);
 #endif
-    cout << "PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: starting[" << programName << "]..." << endl;
+    std::cout << "PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: starting[" << programName << "]..." << std::endl;
     try
     {
         if (pPyInterpreter->currentState == PythonInterpreter::State::InitialState)
@@ -239,20 +239,20 @@ void PythonInterpreter::thread_func(const string &programName, PythonInterpreter
     }
     catch (const exception &e)
     {
-        cerr << "EXCEPTION! PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: " << endl;
-        cerr << e.what() << endl;
+        cerr << "EXCEPTION! PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: " << std::endl;
+        cerr << e.what() << std::endl;
     }
     catch (...)
     {
-        cerr << "EXCEPTION! PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]" << endl;
+        cerr << "EXCEPTION! PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]" << std::endl;
     }
 
-    cout << "PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: stopping..." << endl;
+    std::cout << "PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: stopping..." << std::endl;
 }
 
 void PythonInterpreter::onInit()
 {
-    //cout << "OnInit" << endl;
+    //cout << "OnInit" << std::endl;
     wstring wstr = string_to_wstring(myProgramName);
     wchar_t *wstrPtr = &wstr[0];
     Py_SetProgramName(wstrPtr);
@@ -264,7 +264,7 @@ void PythonInterpreter::onInit()
 
 void PythonInterpreter::onKill()
 {
-    //cout << "OnKill" << endl;
+    //cout << "OnKill" << std::endl;
     Py_Finalize();
     currentState = State::InitialState;
     commandDeque.clear();
@@ -275,18 +275,18 @@ void PythonInterpreter::onStart()
     if (currentState == State::InitialState)
         return;
     currentState = State::Started;
-    //cout << "OnStart" << endl;
+    //cout << "OnStart" << std::endl;
 }
 
 void PythonInterpreter::onStop()
 {
     if (currentState == State::InitialState)
         return;
-    //cout << "OnStop" << endl;
+    //cout << "OnStop" << std::endl;
     currentState = State::Ready;
 }
 
-void PythonInterpreter::onImportModule(const string &param)
+void PythonInterpreter::onImportModule(const std::string &param)
 {
     PyObject *pName = Py_BuildValue("s", param.c_str());
     if (pName == nullptr)
@@ -299,37 +299,37 @@ void PythonInterpreter::onImportModule(const string &param)
         Py_DECREF(pName);
 }
 
-void PythonInterpreter::onCallFunction(const string &param)
+void PythonInterpreter::onCallFunction(const std::string &param)
 {
 }
 
-void PythonInterpreter::onPyRun_SimpleString(const string &param)
+void PythonInterpreter::onPyRun_SimpleString(const std::string &param)
 {
     if (currentState != State::Started)
         return;
-    //cout << "OnPyRun_SimpleString: " << param << endl;
+    //cout << "OnPyRun_SimpleString: " << param << std::endl;
     PyRun_SimpleString(param.c_str());
 }
 
-void PythonInterpreter::onPyRun_AnyFile(const string &param)
+void PythonInterpreter::onPyRun_AnyFile(const std::string &param)
 {
     if (currentState != State::Started)
         return;
-    //cout << "OnPyRun_AnyFile: " << param << endl;
+    //cout << "OnPyRun_AnyFile: " << param << std::endl;
 }
 
-void PythonInterpreter::onPyRun_SimpleFile(const string &param)
+void PythonInterpreter::onPyRun_SimpleFile(const std::string &param)
 {
     if (currentState != State::Started)
         return;
-    //cout << "OnPyRun_SimpleFile: " << param << endl;
+    //cout << "OnPyRun_SimpleFile: " << param << std::endl;
     FILE *fin = _Py_fopen(param.c_str(), "r+");
     if (fin)
     {
         try
         {
             int retval = PyRun_SimpleFileExFlags(fin, param.c_str(), 1, nullptr);
-            cout << "retval: " << retval << endl;
+            std::cout << "retval: " << retval << std::endl;
         }
         catch (...)
         {
@@ -338,30 +338,30 @@ void PythonInterpreter::onPyRun_SimpleFile(const string &param)
     }
 }
 
-void PythonInterpreter::onPyRun_InteractiveOne(const string &param)
+void PythonInterpreter::onPyRun_InteractiveOne(const std::string &param)
 {
     if (currentState != State::Started)
         return;
-    //cout << "OnPyRun_InteractiveOne: " << param << endl;
+    //cout << "OnPyRun_InteractiveOne: " << param << std::endl;
 }
 
-void PythonInterpreter::onPyRun_InteractiveLoop(const string &param)
+void PythonInterpreter::onPyRun_InteractiveLoop(const std::string &param)
 {
     if (currentState != State::Started)
         return;
-    //cout << "OnPyRun_InteractiveLoop: " << param << endl;
+    //cout << "OnPyRun_InteractiveLoop: " << param << std::endl;
 }
 
-void PythonInterpreter::onPyRun_File(const string &param)
+void PythonInterpreter::onPyRun_File(const std::string &param)
 {
     if (currentState != State::Started)
         return;
-    //cout << "OnPyRun_File: " << param << endl;
+    //cout << "OnPyRun_File: " << param << std::endl;
 }
 
 int test_PythonInterpreter(int argc, char **argv)
 {
-    cout << "PythonInterpreter TEST" << endl;
+    std::cout << "PythonInterpreter TEST" << std::endl;
 
     PythonInterpreter python;
 
@@ -374,8 +374,8 @@ int test_PythonInterpreter(int argc, char **argv)
     {
         while (cmdcount == python.getCommandCount())
             this_thread::yield();
-        cout << "Enter a command: " << flush;
-        string cmdline = "";
+        std::cout << "Enter a command: " << flush;
+        std::string cmdline = "";
         //cin.clear();
         //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         getline(cin, cmdline);

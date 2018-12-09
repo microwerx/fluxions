@@ -45,15 +45,15 @@ class Client
 
 	bool SendWaitReply(const char *service, const Message &request);
 	Message &GetReply() { return replyMessage; }
-	const string &GetReplyService() { return replyService; }
-	const string &GetReplyHeader() { return replyHeader; }
+	const std::string &GetReplyService() { return replyService; }
+	const std::string &GetReplyHeader() { return replyHeader; }
 
   private:
-	string brokerEndpoint;
+	std::string brokerEndpoint;
 	Socket clientSocket;
 	Message replyMessage;
-	string replyHeader;
-	string replyService;
+	std::string replyHeader;
+	std::string replyService;
 	const int requestTimeoutMsec = 2500;
 	const int requestRetries = 3;
 	bool verbose = false;

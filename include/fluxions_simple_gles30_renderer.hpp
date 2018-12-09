@@ -22,9 +22,11 @@
 #include <fluxions_simple_geometry_mesh.hpp>
 #include <fluxions_simple_scene_graph.hpp>
 
-namespace Fluxions {
-class GLES30StateSnapshot {
-public:
+namespace Fluxions
+{
+class GLES30StateSnapshot
+{
+  public:
     GLint framebuffer = 0;
     GLint renderbuffer = 0;
     GLint activeTexture = 0;
@@ -163,29 +165,30 @@ public:
     }
 };
 
-class SimpleGLES30Renderer {
-public:
+class SimpleGLES30Renderer
+{
+  public:
     SimpleGLES30Renderer();
-    SimpleGLES30Renderer(const SimpleRenderConfiguration& rc);
+    SimpleGLES30Renderer(const SimpleRenderConfiguration &rc);
     ~SimpleGLES30Renderer();
 
-    void SetSceneGraph(SimpleSceneGraph& ssg_);
+    void SetSceneGraph(SimpleSceneGraph &ssg_);
     void BuildBuffers();
     void Render();
-    void RenderMesh(SimpleGeometryMesh& mesh, const Matrix4f& worldMatrix);
+    void RenderMesh(SimpleGeometryMesh &mesh, const Matrix4f &worldMatrix);
 
     // ApplyRenderConfig() returns false if there was a unrecoverable error
     bool ApplyRenderConfig();
     bool SaveGLState();
     bool RestoreGLState();
-    void SetRenderConfig(const SimpleRenderConfiguration& newRenderConfig);
-    SimpleRenderConfiguration& GetRenderConfig() { return renderConfig; }
+    void SetRenderConfig(const SimpleRenderConfiguration &newRenderConfig);
+    SimpleRenderConfiguration &GetRenderConfig() { return renderConfig; }
 
-private:
+  private:
     GLES30StateSnapshot gles30StateSnapshot;
 
     SimpleSceneGraph emptySSG;
-    SimpleSceneGraph& ssg = emptySSG;
+    SimpleSceneGraph &ssg = emptySSG;
     SimpleRenderConfiguration renderConfig;
 
     Matrix4f projectionMatrix;
@@ -193,7 +196,7 @@ private:
     SimpleProgramPtr program = nullptr;
 
     __ShaderProgramLocations locs;
-    map<string, SimpleMap*> currentTextures;
+    std::map<std::string, SimpleMap *> currentTextures;
     TSimpleResourceManager<GLuint> textureUnits;
     SimpleRenderer_GLuint renderer;
     bool areBuffersBuilt = false;
@@ -205,8 +208,8 @@ private:
     void RenderCubeImages();
     void ApplyGlobalSettingsToCurrentProgram();
     void ApplySpheresToCurrentProgram();
-    void Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
-    void ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
+    void Render(SimpleProgram &program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix, Matrix4f &cameraMatrix);
+    void ApplyMaterialToCurrentProgram(SimpleMaterial &mtl, bool useMaps);
     void DisableCurrentTextures();
     GLuint GetTexUnit() { return textureUnits.Create(); }
     void FreeTexUnit(GLuint id) { textureUnits.Delete(id); }

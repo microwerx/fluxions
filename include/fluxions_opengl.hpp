@@ -26,7 +26,7 @@
 #include <GL/wglew.h>
 #endif
 #include <GL/freeglut.h>
-#include "glut_extensions.hpp"
+#include <glut_extensions.hpp>
 #include <map>
 #include <string>
 #include <hatchetfish.hpp>
@@ -36,18 +36,18 @@ namespace Fluxions
 
 class OpenGLNameTranslator
 {
-	map<string, int> enums;
-	map<int, string> enum_strings;
-	const string empty_string;
+	std::map<std::string, int> enums;
+	std::map<int, std::string> enum_strings;
+	const std::string empty_string;
 
   public:
 	OpenGLNameTranslator();
 
-	inline int GetEnum(const string &name) const
+	inline int GetEnum(const std::string &name) const
 	{
 		auto it = enums.find(name);
 		if (it == enums.end())
-			it = enums.find(string("GL_") + name);
+			it = enums.find(std::string("GL_") + name);
 		if (it == enums.end())
 			return 0;
 		return it->second;

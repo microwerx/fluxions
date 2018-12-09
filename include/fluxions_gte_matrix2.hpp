@@ -19,8 +19,8 @@
 #ifndef FLUXIONS_MATRIX2_HPP
 #define FLUXIONS_MATRIX2_HPP
 
+// #include <type_traits>
 #include <fluxions_gte_math.hpp>
-#include <type_traits>
 
 namespace Fluxions
 {
@@ -277,7 +277,7 @@ class TMatrix2
     template <typename U>
     static constexpr auto multiply(const TMatrix2<T> &m1, const TMatrix2<U> m2) noexcept
     {
-        return TMatrix2<common_type_t<T, U>>(
+        return TMatrix2<std::common_type_t<T, U>>(
             m1.m11 * m2.m11 + m1.m12 * m2.m21,
             m1.m11 * m2.m12 + m1.m12 * m2.m22,
             m1.m21 * m2.m11 + m1.m22 * m2.m21,

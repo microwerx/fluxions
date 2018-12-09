@@ -99,7 +99,7 @@ struct LexerToken
 struct LexerState
 {
 	StringType buffer;
-	vector<LexerToken> tokens;
+	std::vector<LexerToken> tokens;
 
 	LexerToken tmptoken;
 	LexerToken *lasttoken;
@@ -109,7 +109,7 @@ struct LexerState
 struct Token
 {
 	TokenType type;
-	string sval;
+	std::string sval;
 	int ival;
 	double dval;
 
@@ -122,43 +122,43 @@ struct Token
 	bool IsType(TokenType which) const { return type == which; }
 };
 
-using LexReplacementType = tuple<TokenType, TokenType, StringType::value_type>;
-using TokenVector = vector<Token>;
+using LexReplacementType = std::tuple<TokenType, TokenType, StringType::value_type>;
+using TokenVector = std::vector<Token>;
 
-ostream &operator<<(ostream &ostr, const TokenType &type);
+std::ostream &operator<<(std::ostream &ostr, const TokenType &type);
 size_t lex_init(LexerState &ls);
 size_t lex(LexerState &ls, const StringType &inputStr, int level = 0);
 void lex_print(LexerState &ls);
-void lex_replace(LexerState &ls, LexerState &output, const vector<LexReplacementType> &replacements);
+void lex_replace(LexerState &ls, LexerState &output, const std::vector<LexReplacementType> &replacements);
 size_t lex_scan_number(StringType::value_type *cptr, LexerToken &token);
 size_t lex_scan_string(StringType::value_type *cptr, LexerToken &token);
-size_t lex_tokens(LexerState &ls, vector<Token> &symbols);
-void lex_tokens_print(vector<Token> &tokens);
-size_t lex_quick_parse(const StringType &inputStr, int level, const vector<LexReplacementType> &replacements, TokenVector &tokens);
+size_t lex_tokens(LexerState &ls, std::vector<Token> &symbols);
+void lex_tokens_print(std::vector<Token> &tokens);
+size_t lex_quick_parse(const StringType &inputStr, int level, const std::vector<LexReplacementType> &replacements, TokenVector &tokens);
 size_t lex_quick_parse(const StringType &inputStr, TokenVector &tokens);
 size_t lex_quick_l2_parse(const StringType &inputStr, TokenVector &tokens);
 size_t lex_quick_l3_parse(const StringType &inputStr, TokenVector &tokens);
-string TokenVectorJoin(const TokenVector tokens, const string &separator);
+std::string TokenVectorJoin(const TokenVector tokens, const std::string &separator);
 
 class VariableList
 {
   private:
-	string blankString;
+	std::string blankString;
 
   public:
 	VariableList();
 	~VariableList();
 
-	map<string, KASL::Token> variables;
-	double get_var_double(const string &name) const;
-	int get_var_integer(const string &name) const;
-	const string &get_var_string(const string &name) const;
-	void set_var(const string &name, double dval);
-	void set_var(const string &name, int ival);
-	void set_var(const string &name, const string &sval);
-	bool is_var(const string &name) const;
-	map<string, KASL::Token>::const_iterator get_var(const string &name) const;
-	map<string, KASL::Token>::const_iterator get_var_end() const;
+	std::map<std::string, KASL::Token> variables;
+	double get_var_double(const std::string &name) const;
+	int get_var_integer(const std::string &name) const;
+	const std::string &get_var_string(const std::string &name) const;
+	void set_var(const std::string &name, double dval);
+	void set_var(const std::string &name, int ival);
+	void set_var(const std::string &name, const std::string &sval);
+	bool is_var(const std::string &name) const;
+	std::map<std::string, KASL::Token>::const_iterator get_var(const std::string &name) const;
+	std::map<std::string, KASL::Token>::const_iterator get_var_end() const;
 };
 } // namespace KASL
 

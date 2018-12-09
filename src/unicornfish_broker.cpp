@@ -22,8 +22,8 @@
 
 // template struct std::pair<string, Uf::BrokerWorker>;
 // template struct std::pair<string, Uf::BrokerServiceInfo>;
-// template class std::map<string, Uf::BrokerWorker>;
-// template class std::map<string, Uf::BrokerServiceInfo>;
+// template class std::map<std::string, Uf::BrokerWorker>;
+// template class std::map<std::string, Uf::BrokerServiceInfo>;
 
 namespace Uf
 {
@@ -67,7 +67,7 @@ void Broker::Delete()
 
 bool Broker::ProcessWorkerMessage(Frame &sender, Message &msg)
 {
-    string workerName = sender.GetHexData();
+    std::string workerName = sender.GetHexData();
     bool workerIsReady = WorkerExists(workerName);
     BrokerWorker *worker = FindWorker(workerName);
     worker->identityFrame->Copy(sender);
@@ -109,7 +109,7 @@ bool Broker::ProcessWorkerMessage(Frame &sender, Message &msg)
             // Frame 4 is Empty
             // Frame 5+ is Request body
             Frame clientReturnEnvelope = msg.Unwrap();
-            string clientHexAddress = clientReturnEnvelope.GetHexData();
+            std::string clientHexAddress = clientReturnEnvelope.GetHexData();
             msg.Push(worker->service->name);
             msg.Push(Majordomo::ClientId);
             msg.Push(clientReturnEnvelope);
@@ -161,7 +161,7 @@ bool Broker::ProcessClientMessage(Frame &sender, Message &msg)
         return false;
 
     Frame serviceFrame = msg.PopFrame();
-    string requestedServiceName = serviceFrame.GetStrData();
+    std::string requestedServiceName = serviceFrame.GetStrData();
     BrokerServiceInfo *service = FindService(requestedServiceName);
 
     // this tells the client who the worker is
@@ -170,7 +170,7 @@ bool Broker::ProcessClientMessage(Frame &sender, Message &msg)
     // process MMI requests internally
     if (serviceFrame.strncmp("mmi.", 4))
     {
-        string returnCode;
+        std::string returnCode;
         if (requestedServiceName == "mmi.service")
         {
             auto service_iterator = services.find(requestedServiceName);
@@ -187,7 +187,7 @@ bool Broker::ProcessClientMessage(Frame &sender, Message &msg)
         }
 
         Frame clientReturnEnvelope = msg.Unwrap();
-        string clientAddress = clientReturnEnvelope.GetHexData();
+        std::string clientAddress = clientReturnEnvelope.GetHexData();
         clientReturnEnvelope.ReplaceData(returnCode);
         msg.Push(serviceFrame);
         msg.Push(Majordomo::ClientId);
@@ -287,14 +287,14 @@ bool Broker::RunLoop()
     return true;
 }
 
-bool Broker::WorkerExists(const string &workerName) const
+bool Broker::WorkerExists(const std::string &workerName) const
 {
-    const map<string, BrokerWorker>::const_iterator it = workers.find(workerName);
+    const std::map<std::string, BrokerWorker>::const_iterator it = workers.find(workerName);
 
     return (it != workers.cend());
 }
 
-BrokerWorker *Broker::FindWorker(const string &workerName)
+BrokerWorker *Broker::FindWorker(const std::string &workerName)
 {
     auto worker_iterator = workers.find(workerName);
 
@@ -316,7 +316,7 @@ void Broker::DisconnectWorker(BrokerWorker *worker)
     DeleteWorker(worker->name);
 }
 
-void Broker::DeleteWorker(const string &workerName)
+void Broker::DeleteWorker(const std::string &workerName)
 {
     auto worker_iterator = workers.find(workerName);
     if (worker_iterator == workers.end())
@@ -343,13 +343,13 @@ void Broker::WaitWorker(BrokerWorker *worker)
     DispatchService(worker->service);
 }
 
-bool Broker::ServiceExists(const string &serviceName) const
+bool Broker::ServiceExists(const std::string &serviceName) const
 {
     auto it = services.find(serviceName);
     return (it != services.end());
 }
 
-BrokerServiceInfo *Broker::FindService(const string &serviceName)
+BrokerServiceInfo *Broker::FindService(const std::string &serviceName)
 {
     auto service_iterator = services.find(serviceName);
     if (service_iterator == services.end())

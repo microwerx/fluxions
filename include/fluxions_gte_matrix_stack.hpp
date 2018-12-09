@@ -21,9 +21,11 @@
 
 #include <fluxions_gte_matrix4.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 template <typename T, int stackDepth = 32>
-class Matrix4Stack {
+class Matrix4Stack
+{
     void Reset()
     {
         curlevel = 0;
@@ -35,12 +37,12 @@ class Matrix4Stack {
         matrices_[curlevel].LoadIdentity();
     }
 
-    void LoadMatrix(const TMatrix4<T>&& m)
+    void LoadMatrix(const TMatrix4<T> &&m)
     {
         matrices_[curlevel] = m;
     }
 
-    void MultMatrix(const TMatrix4<T>&& m)
+    void MultMatrix(const TMatrix4<T> &&m)
     {
         matrices_[curlevel].MultMatrix(m);
     }
@@ -102,7 +104,7 @@ class Matrix4Stack {
         matrices_[curlevel].Ortho2D(left, right, bottom, top);
     }
 
-private:
+  private:
     TMatrix4<T> matrices_[stackDepth];
     mutable int curlevel = 0;
 };

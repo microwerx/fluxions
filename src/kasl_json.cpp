@@ -169,7 +169,7 @@ void JSON::copyMap(const std::map<std::string, JSONPtr> &m)
 
 std::string JSON::Serialize() const
 {
-    ostringstream ostr;
+    std::ostringstream ostr;
 
     if (IsNull())
         return "null";
@@ -216,7 +216,7 @@ std::string JSON::Serialize() const
     {
         ostr << "{";
         int i = 0;
-        for (const pair<string, JSONPtr> &j : map_)
+        for (const std::pair<std::string, JSONPtr> &j : map_)
         {
             const JSON *json = j.second.get();
             if (!json)
@@ -286,7 +286,7 @@ long JSON::DeserializeParseTokens(const TokenVector &tokens, long startIndex)
                 if (i + 3 > len)
                     break;
 
-                string key;
+                std::string key;
                 if (tokens[i].IsString())
                 {
                     key = tokens[i].sval;

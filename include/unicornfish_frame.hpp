@@ -48,9 +48,9 @@ class Frame
 	size_t SizeInBytes() const;
 	bool strncmp(const char *str, size_t n) const;
 
-	void ReplaceData(const string &data);
-	const string &GetStrData() const;
-	const string &GetHexData() const;
+	void ReplaceData(const std::string &data);
+	const std::string &GetStrData() const;
+	const std::string &GetHexData() const;
 	const void *GetData() const;
 	const char *c_str() const { return GetStrData().c_str(); }
 	const zframe_t *GetZFrame() const { return frame; }
@@ -58,8 +58,8 @@ class Frame
 
   private:
 	zframe_t *frame = nullptr;
-	mutable string data;
-	mutable string hex;
+	mutable std::string data;
+	mutable std::string hex;
 };
 } // namespace Uf
 

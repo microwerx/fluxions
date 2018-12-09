@@ -19,8 +19,9 @@
 #include "stdafx.h"
 #include <viperfish_imgui.hpp>
 
-namespace Viperfish {
-void ImGuiWidget::OnInit(const vector<string>& args)
+namespace Viperfish
+{
+void ImGuiWidget::OnInit(const std::vector<std::string> &args)
 {
     pIO = &ImGui::GetIO();
     pIO->DisplaySize.x = 640.0f;
@@ -79,13 +80,14 @@ void ImGuiWidget::OnMouseButtonUp(int button)
 void ImGuiWidget::OnMouseMove(int x, int y)
 {
     Widget::OnMouseMove(x, y);
-    if (pIO != nullptr) {
+    if (pIO != nullptr)
+    {
         pIO->MousePos.x = (float)x;
         pIO->MousePos.y = (float)y;
     }
 }
 
-void ImGuiWidget::OnKeyDown(const string& key, int keymod)
+void ImGuiWidget::OnKeyDown(const std::string &key, int keymod)
 {
     Widget::OnKeyDown(key, keymod);
     if (pIO == nullptr || key.empty())
@@ -95,12 +97,13 @@ void ImGuiWidget::OnKeyDown(const string& key, int keymod)
     pIO->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
     pIO->KeyShift = keymod & KeyboardState::ShiftKeyBit;
 
-    if (within(HTML5NameToKey(key), 0, 511)) {
+    if (within(HTML5NameToKey(key), 0, 511))
+    {
         pIO->KeysDown[HTML5NameToKey(key)] = true;
     }
 }
 
-void ImGuiWidget::OnKeyUp(const string& key, int keymod)
+void ImGuiWidget::OnKeyUp(const std::string &key, int keymod)
 {
     Widget::OnKeyUp(key, keymod);
     if (pIO == nullptr || key.empty())
@@ -110,14 +113,16 @@ void ImGuiWidget::OnKeyUp(const string& key, int keymod)
     pIO->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
     pIO->KeyShift = keymod & KeyboardState::ShiftKeyBit;
 
-    if (within(HTML5NameToKey(key), 0, 511)) {
+    if (within(HTML5NameToKey(key), 0, 511))
+    {
         pIO->KeysDown[HTML5NameToKey(key)] = false;
     }
 }
 
 void ImGuiWidget::OnUpdate(double timeStamp)
 {
-    if (pIO != nullptr) {
+    if (pIO != nullptr)
+    {
         pIO->DisplaySize.x = (float)windowRect().w;
         pIO->DisplaySize.y = (float)windowRect().h;
         pIO->DeltaTime = fabsf((float)(timeStamp - getT1()));
@@ -147,7 +152,7 @@ bool ImGuiWidget::CreateDeviceObjects()
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
-    unsigned char* pixels;
+    unsigned char *pixels;
     int w;
     int h;
     pIO->Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
@@ -162,7 +167,7 @@ bool ImGuiWidget::CreateDeviceObjects()
     long long id = fontTextureId;
     pIO->Fonts->TexID = (ImTextureID)id;
 
-    const GLchar* vertex_shader = "#version 330\n"
+    const GLchar *vertex_shader = "#version 330\n"
                                   "uniform mat4 ProjMtx;\n"
                                   "in vec2 Position;\n"
                                   "in vec2 UV;\n"
@@ -176,7 +181,7 @@ bool ImGuiWidget::CreateDeviceObjects()
                                   "	gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
                                   "}\n";
 
-    const GLchar* fragment_shader = "#version 330\n"
+    const GLchar *fragment_shader = "#version 330\n"
                                     "uniform sampler2D Texture;\n"
                                     "in vec2 Frag_UV;\n"
                                     "in vec4 Frag_Color;\n"
@@ -197,8 +202,9 @@ bool ImGuiWidget::CreateDeviceObjects()
     int infoLogLength;
     glGetShaderiv(vshader, GL_COMPILE_STATUS, &shaderCompileStatus);
     glGetShaderiv(vshader, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (!shaderCompileStatus) {
-        char* infoLog = new char[infoLogLength + 1];
+    if (!shaderCompileStatus)
+    {
+        char *infoLog = new char[infoLogLength + 1];
         infoLog[infoLogLength] = '\0';
         glGetShaderInfoLog(vshader, infoLogLength, NULL, infoLog);
         hflog.error("%s(): failed to compile ImGui vertex shader\n%s\n", infoLog);
@@ -209,8 +215,9 @@ bool ImGuiWidget::CreateDeviceObjects()
     // check if compiled...
     glGetShaderiv(fshader, GL_COMPILE_STATUS, &shaderCompileStatus);
     glGetShaderiv(fshader, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if (!shaderCompileStatus) {
-        char* infoLog = new char[infoLogLength + 1];
+    if (!shaderCompileStatus)
+    {
+        char *infoLog = new char[infoLogLength + 1];
         infoLog[infoLogLength] = '\0';
         glGetShaderInfoLog(fshader, infoLogLength, NULL, infoLog);
         hflog.error("%s(): failed to compile ImGui fragment shader\n%s\n", infoLog);
@@ -223,8 +230,9 @@ bool ImGuiWidget::CreateDeviceObjects()
     // check if linked...
     GLint programLinkStatus;
     glGetProgramiv(program, GL_LINK_STATUS, &programLinkStatus);
-    if (!programLinkStatus) {
-        char* infoLog = new char[infoLogLength + 1];
+    if (!programLinkStatus)
+    {
+        char *infoLog = new char[infoLogLength + 1];
         infoLog[infoLogLength] = '\0';
         glGetProgramInfoLog(program, infoLogLength, NULL, infoLog);
         hflog.error("%s(): failed to link ImGui program\n%s\n", infoLog);
@@ -247,10 +255,10 @@ bool ImGuiWidget::CreateDeviceObjects()
     glEnableVertexAttribArray(aUVLoc);
     glEnableVertexAttribArray(aColorLoc);
 
-#define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE*)0)->ELEMENT))
-    glVertexAttribPointer(aPositionLoc, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, pos));
-    glVertexAttribPointer(aUVLoc, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, uv));
-    glVertexAttribPointer(aColorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, col));
+#define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE *)0)->ELEMENT))
+    glVertexAttribPointer(aPositionLoc, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid *)OFFSETOF(ImDrawVert, pos));
+    glVertexAttribPointer(aUVLoc, 2, GL_FLOAT, GL_FALSE, sizeof(ImDrawVert), (GLvoid *)OFFSETOF(ImDrawVert, uv));
+    glVertexAttribPointer(aColorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid *)OFFSETOF(ImDrawVert, col));
 #undef OFFSETOF
 
     // Restore modified GL state
@@ -287,7 +295,8 @@ void ImGuiWidget::InvalidateDeviceObjects()
         glDeleteProgram(program);
     program = 0;
 
-    if (fontTextureId) {
+    if (fontTextureId)
+    {
         glDeleteTextures(1, &fontTextureId);
         ImGui::GetIO().Fonts->TexID = 0;
         fontTextureId = 0;
@@ -296,9 +305,9 @@ void ImGuiWidget::InvalidateDeviceObjects()
 
 void ImGuiWidget::RenderDrawLists()
 {
-    ImDrawData* draw_data = ImGui::GetDrawData();
+    ImDrawData *draw_data = ImGui::GetDrawData();
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
     int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
     if (fb_width == 0 || fb_height == 0)
@@ -351,31 +360,36 @@ void ImGuiWidget::RenderDrawLists()
     // Setup viewport, orthographic projection matrix
     glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
     const float ortho_projection[4][4] = {
-        { 2.0f / io.DisplaySize.x, 0.0f, 0.0f, 0.0f },
-        { 0.0f, 2.0f / -io.DisplaySize.y, 0.0f, 0.0f },
-        { 0.0f, 0.0f, -1.0f, 0.0f },
-        { -1.0f, 1.0f, 0.0f, 1.0f },
+        {2.0f / io.DisplaySize.x, 0.0f, 0.0f, 0.0f},
+        {0.0f, 2.0f / -io.DisplaySize.y, 0.0f, 0.0f},
+        {0.0f, 0.0f, -1.0f, 0.0f},
+        {-1.0f, 1.0f, 0.0f, 1.0f},
     };
     glUseProgram(program);
     glUniform1i(uTextureLoc, 0);
     glUniformMatrix4fv(uProjMtxLoc, 1, GL_FALSE, &ortho_projection[0][0]);
     glBindVertexArray(vao);
 
-    for (int n = 0; n < draw_data->CmdListsCount; n++) {
-        const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        const ImDrawIdx* idx_buffer_offset = 0;
+    for (int n = 0; n < draw_data->CmdListsCount; n++)
+    {
+        const ImDrawList *cmd_list = draw_data->CmdLists[n];
+        const ImDrawIdx *idx_buffer_offset = 0;
 
         glBindBuffer(GL_ARRAY_BUFFER, abo);
-        glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid *)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid *)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
 
-        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
-            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-            if (pcmd->UserCallback) {
+        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        {
+            const ImDrawCmd *pcmd = &cmd_list->CmdBuffer[cmd_i];
+            if (pcmd->UserCallback)
+            {
                 pcmd->UserCallback(cmd_list, pcmd);
-            } else {
+            }
+            else
+            {
                 glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
                 glScissor((int)pcmd->ClipRect.x, (int)(fb_height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y));
                 glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, idx_buffer_offset);
@@ -412,4 +426,4 @@ void ImGuiWidget::RenderDrawLists()
     glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
-}
+} // namespace Viperfish

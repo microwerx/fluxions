@@ -19,7 +19,8 @@
 #include "stdafx.h"
 #include <unicornfish_frame.hpp>
 
-namespace Uf {
+namespace Uf
+{
 Frame::Frame()
 {
 }
@@ -32,7 +33,7 @@ Frame::Frame()
 //	return *this;
 //}
 
-const Frame& Frame::operator=(Frame& frameToMove)
+const Frame &Frame::operator=(Frame &frameToMove)
 {
     Delete();
     Move(&frameToMove.frame);
@@ -40,7 +41,7 @@ const Frame& Frame::operator=(Frame& frameToMove)
     return *this;
 }
 
-void Frame::Move(zframe_t** frameToMove)
+void Frame::Move(zframe_t **frameToMove)
 {
     if (frameToMove == nullptr)
         return;
@@ -49,7 +50,7 @@ void Frame::Move(zframe_t** frameToMove)
     *frameToMove = nullptr;
 }
 
-void Frame::Move(Frame& frameToMove)
+void Frame::Move(Frame &frameToMove)
 {
     Delete();
 
@@ -60,23 +61,23 @@ void Frame::Move(Frame& frameToMove)
     frameToMove.data.clear();
 }
 
-void Frame::Copy(const zframe_t* frameToCopy)
+void Frame::Copy(const zframe_t *frameToCopy)
 {
     if (frameToCopy == nullptr)
         return;
     Delete();
-    frame = zframe_dup(const_cast<zframe_t*>(frameToCopy));
+    frame = zframe_dup(const_cast<zframe_t *>(frameToCopy));
 }
 
-void Frame::Copy(const Frame& frameToCopy)
+void Frame::Copy(const Frame &frameToCopy)
 {
     if (frameToCopy.frame == nullptr)
         return;
     Delete();
-    frame = zframe_dup(const_cast<zframe_t*>(frameToCopy.frame));
+    frame = zframe_dup(const_cast<zframe_t *>(frameToCopy.frame));
 }
 
-zframe_t* Frame::CopyZFrame() const
+zframe_t *Frame::CopyZFrame() const
 {
     return zframe_dup(frame);
 }
@@ -98,7 +99,7 @@ size_t Frame::SizeInBytes() const
     return zframe_size(frame);
 }
 
-bool Frame::strncmp(const char* str, size_t count) const
+bool Frame::strncmp(const char *str, size_t count) const
 {
     if (!frame || SizeInBytes() < count)
         return false;
@@ -107,7 +108,7 @@ bool Frame::strncmp(const char* str, size_t count) const
     return false;
 }
 
-void Frame::ReplaceData(const string& replacement)
+void Frame::ReplaceData(const std::string &replacement)
 {
     if (!frame)
         return;
@@ -115,43 +116,45 @@ void Frame::ReplaceData(const string& replacement)
     data = replacement;
 }
 
-const string& Frame::GetStrData() const
+const std::string &Frame::GetStrData() const
 {
     if (!frame)
         return data;
-    if (data.empty()) {
-        char* str = zframe_strdup(frame);
+    if (data.empty())
+    {
+        char *str = zframe_strdup(frame);
         data = str;
         zstr_free(&str);
     }
     return data;
 }
 
-const string& Frame::GetHexData() const
+const std::string &Frame::GetHexData() const
 {
     if (!frame)
         return hex;
-    if (hex.empty()) {
-        char* str = zframe_strhex(frame);
+    if (hex.empty())
+    {
+        char *str = zframe_strhex(frame);
         hex = str;
         zstr_free(&str);
     }
     return hex;
 }
 
-const void* Frame::GetData() const
+const void *Frame::GetData() const
 {
     if (!frame)
         return nullptr;
-    void* pdata = zframe_data(frame);
+    void *pdata = zframe_data(frame);
     return pdata;
 }
 
-zframe_t* Frame::MoveZFrame()
+zframe_t *Frame::MoveZFrame()
 {
-    zframe_t* tmp = frame;
+    zframe_t *tmp = frame;
     frame = nullptr;
     Delete();
     return tmp;
 }
-}
+} // namespace Uf

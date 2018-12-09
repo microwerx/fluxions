@@ -22,19 +22,21 @@
 
 #include <fluxions_gte_vector2.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 template <typename T>
-class TRect {
-public:
+class TRect
+{
+  public:
     T x, y, w, h;
 
-    constexpr T* ptr() noexcept { return &x; }
-    constexpr const T* const_ptr() const noexcept { return &x; }
+    constexpr T *ptr() noexcept { return &x; }
+    constexpr const T *const_ptr() const noexcept { return &x; }
 
     using type = T;
 
-    constexpr T* v() noexcept { return &x; }
-    constexpr const T* v() const noexcept { return &x; }
+    constexpr T *v() noexcept { return &x; }
+    constexpr const T *v() const noexcept { return &x; }
 
     constexpr TRect() noexcept
     {
@@ -45,27 +47,18 @@ public:
     }
 
     constexpr TRect(T _x, T _y, T _w, T _h) noexcept
-        : x(_x)
-        , y(_y)
-        , w(_w)
-        , h(_h)
+        : x(_x), y(_y), w(_w), h(_h)
     {
     }
 
-    constexpr TRect(const TRect<T>& rect) noexcept
-        : x(rect.x)
-        , y(rect.y)
-        , w(rect.w)
-        , h(rect.h)
+    constexpr TRect(const TRect<T> &rect) noexcept
+        : x(rect.x), y(rect.y), w(rect.w), h(rect.h)
     {
     }
 
     // initialize like OpenGL viewport
     constexpr TRect(const T V[4]) noexcept
-        : x(V[0])
-        , y(V[1])
-        , w(V[2])
-        , h(V[3])
+        : x(V[0]), y(V[1]), w(V[2]), h(V[3])
     {
     }
 
@@ -81,7 +74,7 @@ public:
     }
 
     template <typename T2>
-    constexpr const TVector2<T>& operator=(const TRect<T2>& rect) noexcept
+    constexpr const TVector2<T> &operator=(const TRect<T2> &rect) noexcept
     {
         x = (T)rect.x;
         y = (T)rect.y;
@@ -129,7 +122,8 @@ public:
     constexpr TRect<T> GetLowerLeftRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), lowerLeft()); }
     constexpr TRect<T> GetLowerRightRect(const TVector2<T> splitPoint) const noexcept { return TRect<T>(Clamp(splitPoint), lowerRight()); }
 
-    enum Quadrant {
+    enum Quadrant
+    {
         UpperLeft = 0,
         UpperRight = 1,
         LowerLeft = 2,
@@ -149,7 +143,7 @@ public:
         return TRect<T>();
     }
 
-    constexpr TRect<T>& SetFromPoints(const TVector2<T> v1, const TVector2<T> v2) noexcept
+    constexpr TRect<T> &SetFromPoints(const TVector2<T> v1, const TVector2<T> v2) noexcept
     {
         x = std::min(v1.x, v2.x);
         y = std::min(v1.y, v2.y);

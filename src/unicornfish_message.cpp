@@ -19,19 +19,20 @@
 #include "stdafx.h"
 #include <unicornfish_message.hpp>
 
-namespace Uf {
+namespace Uf
+{
 Message::Message()
 {
     // Create();
 }
 
-Message::Message(const string& message)
+Message::Message(const std::string &message)
 {
     if (Create())
         Push(message);
 }
 
-Message::Message(const char* message)
+Message::Message(const char *message)
 {
     if (Create())
         Push(message);
@@ -43,13 +44,13 @@ Message::Message(const Majordomo::Command command)
         Push(command);
 }
 
-Message::Message(void* data, size_t size)
+Message::Message(void *data, size_t size)
 {
     if (Create())
         Push(data, size);
 }
 
-Message::Message(const Message& msgToCopy)
+Message::Message(const Message &msgToCopy)
 {
     msg = zmsg_dup(msgToCopy.msg);
 }
@@ -59,7 +60,7 @@ Message::~Message()
     Delete();
 }
 
-const Message& Message::operator=(const Message& msgToCopy)
+const Message &Message::operator=(const Message &msgToCopy)
 {
     Delete();
     msg = zmsg_dup(msgToCopy.msg);
@@ -75,17 +76,17 @@ bool Message::Create()
     return false;
 }
 
-void Message::Move(zmsg_t** msgToMove)
+void Message::Move(zmsg_t **msgToMove)
 {
     Delete();
     msg = *msgToMove;
     *msgToMove = nullptr;
 }
 
-void Message::Copy(const zmsg_t* msgToCopy)
+void Message::Copy(const zmsg_t *msgToCopy)
 {
     Delete();
-    msg = zmsg_dup(const_cast<zmsg_t*>(msgToCopy));
+    msg = zmsg_dup(const_cast<zmsg_t *>(msgToCopy));
 }
 
 void Message::Clear()
@@ -94,14 +95,14 @@ void Message::Clear()
     Create();
 }
 
-bool Message::Push(const string& message)
+bool Message::Push(const std::string &message)
 {
     if (zmsg_pushstr(msg, message.c_str()) == 0)
         return true;
     return false;
 }
 
-bool Message::Push(const char* message)
+bool Message::Push(const char *message)
 {
     if (!msg || !message)
         return false;
@@ -114,13 +115,13 @@ bool Message::Push(const Majordomo::Command command)
 {
     if (!msg)
         return false;
-    char message[2] = { static_cast<char>(command), '\0' };
+    char message[2] = {static_cast<char>(command), '\0'};
     if (zmsg_pushstr(msg, message) == 0)
         return true;
     return false;
 }
 
-bool Message::Push(const Frame& frame)
+bool Message::Push(const Frame &frame)
 {
     if (!frame || !msg)
         return false;
@@ -131,7 +132,7 @@ bool Message::Push(const Frame& frame)
     return false;
 }
 
-bool Message::Push(void* data, size_t size)
+bool Message::Push(void *data, size_t size)
 {
     if (!msg)
         return false;
@@ -144,8 +145,9 @@ bool Message::PopEmpty()
 {
     if (!msg)
         return false;
-    zframe_t* empty = zmsg_pop(msg);
-    if (empty != nullptr && zframe_streq(empty, "")) {
+    zframe_t *empty = zmsg_pop(msg);
+    if (empty != nullptr && zframe_streq(empty, ""))
+    {
     }
     zframe_destroy(&empty);
     return true;
@@ -155,7 +157,7 @@ int Message::PopInt8()
 {
     if (!msg)
         return 0;
-    char* str = zmsg_popstr(msg);
+    char *str = zmsg_popstr(msg);
     int returnValue = str[0];
     lastPoppedString = str;
     zstr_free(&str);
@@ -167,7 +169,7 @@ Majordomo::Command Message::PopCommand()
     using namespace Majordomo;
     if (!msg)
         return Command::None;
-    char* str = zmsg_popstr(msg);
+    char *str = zmsg_popstr(msg);
     int value = str[0];
     lastPoppedString = str;
     zstr_free(&str);
@@ -186,56 +188,62 @@ Majordomo::Command Message::PopCommand()
     return Command::None;
 }
 
-Frame& Message::PopFrame()
+Frame &Message::PopFrame()
 {
     lastPoppedFrame.Delete();
     if (!msg)
         return lastPoppedFrame;
-    zframe_t* frame = zmsg_pop(msg);
+    zframe_t *frame = zmsg_pop(msg);
     lastPoppedFrame.Move(&frame);
     return lastPoppedFrame;
 }
 
-const string& Message::PopString()
+const std::string &Message::PopString()
 {
     lastPoppedString.clear();
     if (!msg)
         return lastPoppedString;
-    char* str = zmsg_popstr(msg);
-    if (str != nullptr) {
+    char *str = zmsg_popstr(msg);
+    if (str != nullptr)
+    {
         lastPoppedString = str;
         zstr_free(&str);
-    } else {
+    }
+    else
+    {
         lastPoppedString.clear();
     }
     return lastPoppedString;
 }
 
-void Message::PopMem(void* data, size_t size)
+void Message::PopMem(void *data, size_t size)
 {
     if (!msg)
         return;
-    Frame& frame = PopFrame();
+    Frame &frame = PopFrame();
     memcpy(data, frame.GetData(), min(size, frame.SizeInBytes()));
 }
 
-const string& Message::GetLastFrameString()
+const std::string &Message::GetLastFrameString()
 {
     lastFrameString.clear();
     if (!msg)
         return lastFrameString;
-    zframe_t* last = zmsg_last(msg);
-    char* str = last ? zframe_strdup(last) : nullptr;
-    if (str != nullptr) {
+    zframe_t *last = zmsg_last(msg);
+    char *str = last ? zframe_strdup(last) : nullptr;
+    if (str != nullptr)
+    {
         lastFrameString = str;
         zstr_free(&str);
-    } else {
+    }
+    else
+    {
         lastFrameString.clear();
     }
     return lastFrameString;
 }
 
-bool Message::Wrap(const Frame& frame)
+bool Message::Wrap(const Frame &frame)
 {
     if (!msg || !frame)
         return false;
@@ -246,15 +254,16 @@ bool Message::Wrap(const Frame& frame)
     return true;
 }
 
-Frame& Message::Unwrap()
+Frame &Message::Unwrap()
 {
     lastUnwrappedFrame.Delete();
     if (!msg)
         return lastUnwrappedFrame;
 
-    zframe_t* frame = zmsg_pop(msg);
-    zframe_t* empty = zmsg_first(msg);
-    if (empty && zframe_size(empty) == 0) {
+    zframe_t *frame = zmsg_pop(msg);
+    zframe_t *empty = zmsg_first(msg);
+    if (empty && zframe_size(empty) == 0)
+    {
         empty = zmsg_pop(msg);
         zframe_destroy(&empty);
     }
@@ -264,7 +273,7 @@ Frame& Message::Unwrap()
     return lastUnwrappedFrame;
 }
 
-bool Message::Send(Socket& socket)
+bool Message::Send(Socket &socket)
 {
     //printf("Message::Send() -- sending %d frames\n", Size());
     //zmsg_dump(msg);
@@ -273,7 +282,7 @@ bool Message::Send(Socket& socket)
     return socket.SendMessage(*this);
 }
 
-bool Message::Recv(Socket& socket)
+bool Message::Recv(Socket &socket)
 {
     bool result = socket.RecvMessage(*this);
     //printf("Message::Recv() -- got %d frames\n", Size());
@@ -283,7 +292,7 @@ bool Message::Recv(Socket& socket)
     return result;
 }
 
-bool Message::SetLastFrameData(const string& data)
+bool Message::SetLastFrameData(const std::string &data)
 {
     if (!msg)
         return false;
@@ -291,7 +300,7 @@ bool Message::SetLastFrameData(const string& data)
     return true;
 }
 
-bool Message::SetLastFrameData(const char* data)
+bool Message::SetLastFrameData(const char *data)
 {
     zframe_reset(zmsg_last(msg), data, strlen(data));
     return true;
@@ -306,9 +315,10 @@ size_t Message::Size() const
 
 void Message::Delete()
 {
-    if (msg != nullptr) {
+    if (msg != nullptr)
+    {
         zmsg_destroy(&msg);
         msg = nullptr;
     }
 }
-}
+} // namespace Uf

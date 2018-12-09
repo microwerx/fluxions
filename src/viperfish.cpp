@@ -19,9 +19,10 @@
 #include "viperfish.hpp"
 #include "stdafx.h"
 
-namespace Viperfish {
+namespace Viperfish
+{
 
-//ObjectPtr CreateObjectFromType(const string &className, const string &instanceName)
+//ObjectPtr CreateObjectFromType(const std::string &className, const std::string &instanceName)
 //{
 //	ObjectPtr newObj;
 
@@ -176,4 +177,4 @@ namespace Viperfish {
 //{
 
 //}
-}
+} // namespace Viperfish

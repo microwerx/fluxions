@@ -25,11 +25,13 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-namespace Fluxions {
+namespace Fluxions
+{
 using f32_t = float;
 using f64_t = double;
 
-enum IndexType {
+enum IndexType
+{
     X = 0,
     Y = 1,
     Z = 2,
@@ -89,20 +91,20 @@ const double FX_ARCSECS_TO_DEGREES = 2.7777777777777777777777777777778e-4;
 const double FX_ARCSECS_TO_RADIANS = 4.8481368110953599358991410235795e-6;
 const double FX_ARCSECS_TO_HOURS = 2.7777777777777777777777777777778e-4;
 const double FX_ARCSECS_TO_ARCMINS = 0.01666666666666666666666666666667;
-const double FX_C = 299792458.0; // speed of light
-const double FX_G = 6.6740831e-11; // Newton's constant of gravitation
-const double FX_H = 6.62607004081e-34; // Planck's h constant
-const double FX_HBAR = 1.05457180013e-34; // Planck's h bar constant
+const double FX_C = 299792458.0;            // speed of light
+const double FX_G = 6.6740831e-11;          // Newton's constant of gravitation
+const double FX_H = 6.62607004081e-34;      // Planck's h constant
+const double FX_HBAR = 1.05457180013e-34;   // Planck's h bar constant
 const double FX_EPSILON0 = 8.854187817e-12; // electric constant
 
-const double FX_LOG2E = 1.44269504088896340736; // log2(e)
-const double FX_LOG10E = 0.434294481903251827651; // log10(e)
-const double FX_LN2 = 0.693147180559945309417; // ln(2)
-const double FX_LN10 = 2.30258509299404568402; // ln(10)
-const double FX_PI_2 = 1.57079632679489661923; // pi/2
-const double FX_PI_4 = 0.785398163397448309616; // pi/4
-const double FX_1_PI = 0.318309886183790671538; // 1/pi
-const double FX_2_PI = 0.636619772367581343076; // 2/pi
+const double FX_LOG2E = 1.44269504088896340736;    // log2(e)
+const double FX_LOG10E = 0.434294481903251827651;  // log10(e)
+const double FX_LN2 = 0.693147180559945309417;     // ln(2)
+const double FX_LN10 = 2.30258509299404568402;     // ln(10)
+const double FX_PI_2 = 1.57079632679489661923;     // pi/2
+const double FX_PI_4 = 0.785398163397448309616;    // pi/4
+const double FX_1_PI = 0.318309886183790671538;    // 1/pi
+const double FX_2_PI = 0.636619772367581343076;    // 2/pi
 const double FX_2_SQRTPI = 1.12837916709551257390; // 2/sqrt(pi)
 const double FX_SQRT1_2 = 0.707106781186547524401; // 1/sqrt(2)
 
@@ -139,22 +141,22 @@ const float FX_F32_ARCSECS_TO_DEGREES = 2.77777777e-4f;
 const float FX_F32_ARCSECS_TO_RADIANS = 4.84813681e-6f;
 const float FX_F32_ARCSECS_TO_HOURS = 2.77777777e-4f;
 const float FX_F32_ARCSECS_TO_ARCMINS = 0.01666666f;
-const float FX_F32_C = 299792458.0f; // speed of light
-const float FX_F32_G = 6.6740831e-11f; // Newton's constant of gravitation
-const float FX_F32_H = 6.62607004e-34f; // Planck's h constant
-const float FX_F32_HBAR = 1.05457180e-34f; // Planck's h bar constant
+const float FX_F32_C = 299792458.0f;           // speed of light
+const float FX_F32_G = 6.6740831e-11f;         // Newton's constant of gravitation
+const float FX_F32_H = 6.62607004e-34f;        // Planck's h constant
+const float FX_F32_HBAR = 1.05457180e-34f;     // Planck's h bar constant
 const float FX_F32_EPSILON0 = 8.85418781e-12f; // electric constant
 
-const float FX_F32_LOG2E = 1.44269504f; // log2(e)
-const float FX_F32_LOG10E = 0.43429448f; // log10(e)
-const float FX_F32_LN2 = 0.69314718f; // ln(2)
-const float FX_F32_LN10 = 2.30258509f; // ln(10)
-const float FX_F32_PI_2 = 1.57079632f; // pi/2
-const float FX_F32_PI_4 = 0.78539816f; // pi/4
-const float FX_F32_1_PI = 0.31830988f; // 1/pi
-const float FX_F32_2_PI = 0.63661977f; // 2/pi
+const float FX_F32_LOG2E = 1.44269504f;    // log2(e)
+const float FX_F32_LOG10E = 0.43429448f;   // log10(e)
+const float FX_F32_LN2 = 0.69314718f;      // ln(2)
+const float FX_F32_LN10 = 2.30258509f;     // ln(10)
+const float FX_F32_PI_2 = 1.57079632f;     // pi/2
+const float FX_F32_PI_4 = 0.78539816f;     // pi/4
+const float FX_F32_1_PI = 0.31830988f;     // 1/pi
+const float FX_F32_2_PI = 0.63661977f;     // 2/pi
 const float FX_F32_2_SQRTPI = 1.12837916f; // 2/sqrt(pi)
-const float FX_F32_SQRT1_2 = 0.70710678f; // 1/sqrt(2)
+const float FX_F32_SQRT1_2 = 0.70710678f;  // 1/sqrt(2)
 
 template <typename T>
 inline T DegToRad(T x)
@@ -263,7 +265,7 @@ constexpr T multiply_add(T a, T b, T c) noexcept
 
 float randomSampler(float _min0, float _max0);
 
-inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float* t, int* whichFace)
+inline void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float *t, int *whichFace)
 {
     // ma is absolute value
     float absX = fabs(x);
@@ -284,7 +286,8 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float*
     float sc = 0.0f;
     float tc = 0.0f;
     // GL_TEXTURE_CUBE_MAP_POSITIVE_X
-    if (isXPositive && absX >= absY && absX >= absZ) {
+    if (isXPositive && absX >= absY && absX >= absZ)
+    {
         // s (0 to 1) goes from -z to +z
         // t (0 to 1) goes from -y to +y
         maxAxis = absX;
@@ -293,7 +296,8 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float*
         *whichFace = 0;
     }
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_X
-    if (!isXPositive && absX >= absY && absX >= absZ) {
+    if (!isXPositive && absX >= absY && absX >= absZ)
+    {
         // s (0 to 1) goes from +z to -z
         // t (0 to 1) goes from -y to +y
         maxAxis = absX;
@@ -302,7 +306,8 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float*
         *whichFace = 1;
     }
     // GL_TEXTURE_CUBE_MAP_POSITIVE_Y
-    if (isYPositive && absY >= absX && absY >= absZ) {
+    if (isYPositive && absY >= absX && absY >= absZ)
+    {
         // s (0 to 1) goes from -X to +X
         // t (0 to 1) goes from -z to +z
         maxAxis = absY;
@@ -311,7 +316,8 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float*
         *whichFace = 2;
     }
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
-    if (!isYPositive && absY >= absX && absY >= absZ) {
+    if (!isYPositive && absY >= absX && absY >= absZ)
+    {
         // s (0 to 1) goes from -X to +X
         // t (0 to 1) goes from +z to -z
         maxAxis = absY;
@@ -320,7 +326,8 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float*
         *whichFace = 3;
     }
     // GL_TEXTURE_CUBE_MAP_POSITIVE_Z
-    if (isZPositive && absZ >= absX && absZ >= absY) {
+    if (isZPositive && absZ >= absX && absZ >= absY)
+    {
         // s (0 to 1) goes from +X to -X
         // t (0 to 1) goes from -y to +y
         maxAxis = absZ;
@@ -329,7 +336,8 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float*
         *whichFace = 4;
     }
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
-    if (!isZPositive && absZ >= absX && absZ >= absY) {
+    if (!isZPositive && absZ >= absX && absZ >= absY)
+    {
         // s (0 to 1) goes from -X to +X
         // t (0 to 1) goes from -y to +y
         maxAxis = absZ;
@@ -343,7 +351,7 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float* s, float*
     *t = 0.5f * (tc / maxAxis + 1.0f);
 }
 
-inline void MakeCubeVectorFromFaceST(int face, float s, float t, float* x, float* y, float* z)
+inline void MakeCubeVectorFromFaceST(int face, float s, float t, float *x, float *y, float *z)
 {
     // 0 GL_TEXTURE_CUBE_MAP_POSITIVE_X
     // 1 GL_TEXTURE_CUBE_MAP_NEGATIVE_X
@@ -371,7 +379,8 @@ inline void MakeCubeVectorFromFaceST(int face, float s, float t, float* x, float
     float sc = 2.0f * s - 1;
     float tc = 2.0f * t - 1;
 
-    switch (face) {
+    switch (face)
+    {
     //case 0: *X = 1.0; *y = tc; *z = sc; break;
     //case 1: *X = -1.0; *y = tc; *z = -sc; break;
     //case 2: *X = sc; *y = 1.0; *z = tc; break;
@@ -447,12 +456,14 @@ inline T1 max2(T1 x1, T2 x2)
 template <typename T>
 inline T min3(T x1, T x2, T x3)
 {
-    if (x1 < x2) {
+    if (x1 < x2)
+    {
         if (x1 < x3)
             return x1;
         else
             return x3;
-    } else if (x2 < x3)
+    }
+    else if (x2 < x3)
         return x2;
     else
         return x3;

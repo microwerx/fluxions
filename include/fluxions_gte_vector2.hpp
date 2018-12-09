@@ -20,7 +20,7 @@
 #ifndef FLUXIONS_VECTOR2_HPP
 #define FLUXIONS_VECTOR2_HPP
 
-#include <type_traits>
+//#include <type_traits>
 #include <fluxions_gte_math.hpp>
 
 namespace Fluxions

@@ -294,11 +294,11 @@ Color3i RGBFloatToInt32(const Color3f &c)
 // }
 
 // template <>
-// void TImage<Color3i>::loadPPM(const string &filename)
+// void TImage<Color3i>::loadPPM(const std::string &filename)
 // {
-//     ifstream fin(filename.c_str());
+//     std::ifstream fin(filename.c_str());
 
-//     string magicNumber;
+//     std::string magicNumber;
 //     int width;
 //     int height;
 //     int maxInt;
@@ -325,11 +325,11 @@ Color3i RGBFloatToInt32(const Color3f &c)
 // }
 
 // template <>
-// void TImage<Color4i>::loadPPM(const string &filename)
+// void TImage<Color4i>::loadPPM(const std::string &filename)
 // {
-//     ifstream fin(filename.c_str());
+//     std::ifstream fin(filename.c_str());
 
-//     string magicNumber;
+//     std::string magicNumber;
 //     int width;
 //     int height;
 //     int maxInt;
@@ -356,11 +356,11 @@ Color3i RGBFloatToInt32(const Color3f &c)
 // }
 
 // template <>
-// void TImage<Color3ub>::loadPPM(const string &filename)
+// void TImage<Color3ub>::loadPPM(const std::string &filename)
 // {
-//     ifstream fin(filename.c_str());
+//     std::ifstream fin(filename.c_str());
 
-//     string magicNumber;
+//     std::string magicNumber;
 //     int width;
 //     int height;
 //     int maxInt;
@@ -387,11 +387,11 @@ Color3i RGBFloatToInt32(const Color3f &c)
 // }
 
 // template <>
-// void TImage<Color4ub>::loadPPM(const string &filename)
+// void TImage<Color4ub>::loadPPM(const std::string &filename)
 // {
-//     ifstream fin(filename.c_str());
+//     std::ifstream fin(filename.c_str());
 
-//     string magicNumber;
+//     std::string magicNumber;
 //     int width;
 //     int height;
 //     int maxInt;
@@ -418,11 +418,11 @@ Color3i RGBFloatToInt32(const Color3f &c)
 // }
 
 // template <>
-// void TImage<Color3f>::loadPPM(const string &filename)
+// void TImage<Color3f>::loadPPM(const std::string &filename)
 // {
-//     ifstream fin(filename.c_str());
+//     std::ifstream fin(filename.c_str());
 
-//     string magicNumber;
+//     std::string magicNumber;
 //     int width;
 //     int height;
 //     int maxInt;
@@ -451,11 +451,11 @@ Color3i RGBFloatToInt32(const Color3f &c)
 // }
 
 // template <>
-// void TImage<Color4f>::loadPPM(const string &filename)
+// void TImage<Color4f>::loadPPM(const std::string &filename)
 // {
-//     ifstream fin(filename.c_str());
+//     std::ifstream fin(filename.c_str());
 
-//     string magicNumber;
+//     std::string magicNumber;
 //     int width;
 //     int height;
 //     int maxInt;
@@ -578,18 +578,18 @@ TImage<ColorType> TImage<ColorType>::ScaleImage(int newWidth, int newHeight, boo
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMRaw(const string &filename, int z)
+void TImage<ColorType>::savePPMRaw(const std::string &filename, int z)
 {
     const float scale = ColorType::to_float_factor * 255.0f;
     float maxColorFound = maxrgb() * scale;
     if (maxColorFound < 255.0f)
         maxColorFound = 255.0f;
 
-    ofstream fout(filename.c_str());
-    fout << "P3" << endl;
+    std::ofstream fout(filename.c_str());
+    fout << "P3" << std::endl;
     fout << imageWidth << " ";
     fout << imageHeight << " ";
-    fout << maxColorFound << endl;
+    fout << maxColorFound << std::endl;
 
     for (int y = 0; y < imageHeight; y++)
     {
@@ -599,7 +599,7 @@ void TImage<ColorType>::savePPMRaw(const string &filename, int z)
             int ir = (int)color.r;
             int ig = (int)color.g;
             int ib = (int)color.b;
-            fout << ir << " " << ig << " " << ib << endl;
+            fout << ir << " " << ig << " " << ib << std::endl;
         }
     }
 
@@ -607,11 +607,11 @@ void TImage<ColorType>::savePPMRaw(const string &filename, int z)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::loadPPM(const string &filename)
+void TImage<ColorType>::loadPPM(const std::string &filename)
 {
-    ifstream fin(filename.c_str());
+    std::ifstream fin(filename.c_str());
 
-    string magicNumber;
+    std::string magicNumber;
     int width;
     int height;
     int maxInt;
@@ -651,18 +651,18 @@ void TImage<ColorType>::loadPPM(const string &filename)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPM(const string &filename, int z, bool flipy)
+void TImage<ColorType>::savePPM(const std::string &filename, int z, bool flipy)
 {
     const float scale = ColorType::to_float_factor * 255.99f;
     float maxColorFound = maxrgb() * scale;
     if (maxColorFound < 255.0f)
         maxColorFound = 255.0f;
 
-    ofstream fout(filename.c_str());
-    fout << "P3" << endl;
+    std::ofstream fout(filename.c_str());
+    fout << "P3" << std::endl;
     fout << imageWidth << " ";
     fout << imageHeight << " ";
-    fout << maxColorFound << endl;
+    fout << maxColorFound << std::endl;
 
     int y1 = 0;
     int y2 = imageHeight;
@@ -682,7 +682,7 @@ void TImage<ColorType>::savePPM(const string &filename, int z, bool flipy)
                 clamp((int)(c.r * scale), 0, 255),
                 clamp((int)(c.g * scale), 0, 255),
                 clamp((int)(c.b * scale), 0, 255));
-            fout << color.r << " " << color.g << " " << color.b << endl;
+            fout << color.r << " " << color.g << " " << color.b << std::endl;
         }
     }
 
@@ -690,19 +690,19 @@ void TImage<ColorType>::savePPM(const string &filename, int z, bool flipy)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMi(const string &filename, float scale, int minValue, int maxValue, int z, bool flipy)
+void TImage<ColorType>::savePPMi(const std::string &filename, float scale, int minValue, int maxValue, int z, bool flipy)
 {
     if (maxValue <= 0)
     {
         maxValue = (int)(scale * maxrgb());
     }
 
-    ofstream fout(filename.c_str());
+    std::ofstream fout(filename.c_str());
 
-    fout << "P3" << endl;
+    fout << "P3" << std::endl;
     fout << imageWidth << " ";
     fout << imageHeight << " ";
-    fout << maxValue << endl;
+    fout << maxValue << std::endl;
 
     int y1 = 0;
     int y2 = imageHeight;
@@ -718,7 +718,7 @@ void TImage<ColorType>::savePPMi(const string &filename, float scale, int minVal
         for (int x = 0; x < imageWidth; x++)
         {
             Color4i color = ToColor4i(getPixel(x, y, z), scale, minValue, maxValue);
-            fout << color.r << " " << color.g << " " << color.b << endl;
+            fout << color.r << " " << color.g << " " << color.b << std::endl;
         }
     }
 
@@ -726,14 +726,14 @@ void TImage<ColorType>::savePPMi(const string &filename, float scale, int minVal
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMHDRI(const string &filename, int z)
+void TImage<ColorType>::savePPMHDRI(const std::string &filename, int z)
 {
-    ofstream fout(filename.c_str());
+    std::ofstream fout(filename.c_str());
 
-    fout << "P3" << endl;
+    fout << "P3" << std::endl;
     fout << imageWidth << " ";
     fout << imageHeight << " ";
-    fout << "1.0" << endl;
+    fout << "1.0" << std::endl;
 
     for (int y = 0; y < imageHeight; y++)
     {
@@ -741,7 +741,7 @@ void TImage<ColorType>::savePPMHDRI(const string &filename, int z)
         {
             ColorType c = getPixel(x, y, z);
             Color3f color = ToColor3f(c);
-            fout << color.r << " " << color.g << " " << color.b << endl;
+            fout << color.r << " " << color.g << " " << color.b << std::endl;
         }
     }
 
@@ -853,7 +853,7 @@ bool TImage<ColorType>::flipX(int z)
     if (empty() || imageWidth != imageHeight)
         return false;
 
-    vector<ColorType> tmp(imageWidth * imageHeight);
+    std::vector<ColorType> tmp(imageWidth * imageHeight);
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
@@ -879,7 +879,7 @@ bool TImage<ColorType>::flipY(int z)
     if (empty() || imageWidth != imageHeight)
         return false;
 
-    vector<ColorType> tmp(imageWidth * imageHeight);
+    std::vector<ColorType> tmp(imageWidth * imageHeight);
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
@@ -905,7 +905,7 @@ bool TImage<ColorType>::rotateLeft90(int z)
     if (empty() || (imageWidth != imageHeight))
         return false;
 
-    vector<ColorType> tmp(imageWidth * imageHeight);
+    std::vector<ColorType> tmp(imageWidth * imageHeight);
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
@@ -936,7 +936,7 @@ bool TImage<ColorType>::rotateRight90(int z)
     if (empty() || imageWidth != imageHeight)
         return false;
 
-    vector<ColorType> tmp(imageWidth * imageHeight);
+    std::vector<ColorType> tmp(imageWidth * imageHeight);
     size_t size = imageWidth;
     //size_t zstride = imageWidth * imageHeight;
     size_t zoffset = zstride * z;
@@ -978,7 +978,7 @@ bool TImage<ColorType>::convertRectToCubeMap()
         0, // NEGATIVE X
     };
     int size = imageHeight;
-    vector<ColorType> src = pixels;
+    std::vector<ColorType> src = pixels;
     resize(size, size, 6);
 
     for (int i = 0; i < 6; i++)
@@ -1014,7 +1014,7 @@ bool TImage<ColorType>::convertCubeMapToRect()
     rotateRight90(3);
 
     int size = imageWidth;
-    vector<ColorType> tmp = pixels;
+    std::vector<ColorType> tmp = pixels;
     resize(size * 6, size, 1);
 
     int swizzle[6] = {

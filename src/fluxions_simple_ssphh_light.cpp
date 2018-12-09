@@ -21,7 +21,7 @@
 
 namespace Fluxions
 {
-bool SphlImageTexture::LoadLightProbe(const string &path)
+bool SphlImageTexture::LoadLightProbe(const std::string &path)
 {
     FilePathInfo fpi(path);
     if (fpi.DoesNotExist())
@@ -148,7 +148,7 @@ void SimpleSSPHHLight::Randomize(float size)
 }
 
 // Reads from a Corona Light Probe (a cube map stored images from left to right in a single image).
-bool SimpleSSPHHLight::ReadCoronaLightProbe(const string &path)
+bool SimpleSSPHHLight::ReadCoronaLightProbe(const std::string &path)
 {
     FilePathInfo fpi(path);
     if (fpi.DoesNotExist())
@@ -174,7 +174,7 @@ bool SimpleSSPHHLight::ReadCoronaLightProbe(const string &path)
 }
 
 // Saves to a Corona Light Probe (a cube map with cube faces stored from left to right in a single image).
-bool SimpleSSPHHLight::SaveCoronaLightProbe(const string &path)
+bool SimpleSSPHHLight::SaveCoronaLightProbe(const std::string &path)
 {
     FilePathInfo fpi(path);
 
@@ -186,7 +186,7 @@ bool SimpleSSPHHLight::SaveCoronaLightProbe(const string &path)
 }
 
 // Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-bool SimpleSSPHHLight::SaveJsonSph(const string &path)
+bool SimpleSSPHHLight::SaveJsonSph(const std::string &path)
 {
     FilePathInfo fpi(path);
     KASL::JSONPtr json = KASL::JSON::MakeObject({{"maxDegree", KASL::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
@@ -195,12 +195,12 @@ bool SimpleSSPHHLight::SaveJsonSph(const string &path)
     auto coefs = json->getMember("coefs");
     for (int j = 0; j < 4; j++)
     {
-        vector<float> coef_f = msph[j].getCoefficients();
+        std::vector<float> coef_f = msph[j].getCoefficients();
         KASL::JSONPtr jsonArray = KASL::JSON::MakeArray(coef_f);
         coefs->PushBack(jsonArray);
     }
 
-    ofstream fout(fpi.path);
+    std::ofstream fout(fpi.path);
     fout << json->Serialize();
     fout.close();
 
@@ -208,16 +208,16 @@ bool SimpleSSPHHLight::SaveJsonSph(const string &path)
 }
 
 // Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-bool SimpleSSPHHLight::ReadJsonSph(const string &path)
+bool SimpleSSPHHLight::ReadJsonSph(const std::string &path)
 {
     FilePathInfo fpi(path);
     if (fpi.DoesNotExist())
         return false;
-    ifstream fin(fpi.path);
-    string buffer;
+    std::ifstream fin(fpi.path);
+    std::string buffer;
     while (!fin)
     {
-        string line;
+        std::string line;
         getline(fin, line);
         buffer += "\n";
         buffer += line;
@@ -240,7 +240,7 @@ bool SimpleSSPHHLight::ReadJsonSph(const string &path)
             KASL::JSONPtr e = coefs->getElement(j);
             if (e->IsArray())
             {
-                vector<float> coefJ;
+                std::vector<float> coefJ;
                 coefJ = e->AsFloatArray();
             }
         }
@@ -305,7 +305,7 @@ bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f &sph, Image4f &l
 {
     float v_coefs[4][121];
 
-    maxDegree_ = min(maxDegree_, this->maxDegree);
+    maxDegree_ = std::min(maxDegree_, this->maxDegree);
 
     for (int j = 0; j < 4; j++)
     {
@@ -580,7 +580,7 @@ void SimpleSSPHHLight::CopySphlToHierarchies()
 
 void SimpleSSPHHLight::SetHierarchyDescriptionToIndex()
 {
-    //ostringstream ostr;
+    //std::ostringstream ostr;
     //int i = 0;
     //ostr << "(" << hierarchies.size() << ") => [ ";
     //for (auto & hier : hierarchies)
@@ -596,14 +596,14 @@ void SimpleSSPHHLight::SetHierarchyDescriptionToIndex()
 
 void SimpleSSPHHLight::SetHierarchyDescriptionToPercent()
 {
-    //ostringstream ostr;
+    //std::ostringstream ostr;
     //int i = 0;
     //ostr << "(" << hierarchies.size() << ") => [ ";
     //for (auto & hier : hierarchies)
     //{
     //	if (i != 0)
     //		ostr << ", ";
-    //	ostr << fixed << setprecision(2) << (hier.percentVisible * 100.0) << "%";
+    //	ostr << std::fixed << std::setprecision(2) << (hier.percentVisible * 100.0) << "%";
     //	i++;
     //}
     //ostr << " ]";
@@ -612,7 +612,7 @@ void SimpleSSPHHLight::SetHierarchyDescriptionToPercent()
 
 void SimpleSSPHHLight::SetHierarchyDescription()
 {
-    //ostringstream ostr;
+    //std::ostringstream ostr;
     //int i = 0;
     //ostr << "(" << index << "," << hierarchies.size() << ") => [ ";
     //for (auto & hier : hierarchies)
@@ -623,7 +623,7 @@ void SimpleSSPHHLight::SetHierarchyDescription()
 
     //	if (i != 0)
     //		ostr << ", ";
-    //	ostr << "(" << hier.index << ", " << fixed << setprecision(2) << (hier.percentVisible * 100.0) << "%, " << weight << ")";
+    //	ostr << "(" << hier.index << ", " << std::fixed << std::setprecision(2) << (hier.percentVisible * 100.0) << "%, " << weight << ")";
     //	i++;
     //}
     //ostr << " ]";
@@ -793,7 +793,7 @@ void SimpleSSPHH::VIZ()
             H[i][j].resize(sphl.maxDegree);
             sphl.LightProbeToSph(sphl.vizgenLightProbes[j], H[i][j].msph);
 
-            string basename = CoronaJob::MakeVIZName(sceneName, i, j);
+            std::string basename = CoronaJob::MakeVIZName(sceneName, i, j);
             if (savePPMs)
             {
                 Image4f lightProbe(32, 32, 6);
@@ -892,7 +892,7 @@ void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees)
         sphls[i].SphToLightProbe(Sprime[i].msph, sphls[i].lightProbe_hier);
         sphls[i].UploadLightProbe(sphls[i].lightProbe_hier, sphls[i].hierLightProbeTexture);
 
-        string base = CoronaJob::MakeHIERName(sceneName, i, MaxDegrees);
+        std::string base = CoronaJob::MakeHIERName(sceneName, i, MaxDegrees);
 
         if (savePPMs)
         {

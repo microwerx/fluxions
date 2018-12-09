@@ -181,14 +181,14 @@ class ElementArrayBuffer : public BufferResource
 
 struct ES2Renderer::Impl
 {
-	vector<shared_ptr<ES2::Resource>> resources; // i.e. used to store memory buffers and images
-	//	vector<shared_ptr<Shader>> shaders;				// i.e. used to store the shaders
-	//	vector<shared_ptr<StateSet>> stateSets;			// i.e. what's the depth test, etc. set to?
-	//	vector<shared_ptr<UniformSet>> uniformSets;		// i.e. what are the uniforms set to for the shader?
-	//	vector<shared_ptr<DescriptorSet>> descriptorSets;	// i.e. where are the textures bound?, parameters set to?
-	//	vector<shared_ptr<Pipeline>> pipelines;			// i.e. what's the currently bound program? default states? default descriptors? default uniforms?
-	//	vector<shared_ptr<CommandBuffer>> commandBuffers;	// i.e. a list of commands to execute
-	//	vector<shared_ptr<RenderPass>> renderPasses;		// i.e. framebuffer objects and a list of commands to execute
+	std::vector<std::shared_ptr<ES2::Resource>> resources; // i.e. used to store memory buffers and images
+	//	std::vector<std::shared_ptr<Shader>> shaders;				// i.e. used to store the shaders
+	//	std::vector<std::shared_ptr<StateSet>> stateSets;			// i.e. what's the depth test, etc. set to?
+	//	std::vector<std::shared_ptr<UniformSet>> uniformSets;		// i.e. what are the uniforms set to for the shader?
+	//	std::vector<std::shared_ptr<DescriptorSet>> descriptorSets;	// i.e. where are the textures bound?, parameters set to?
+	//	std::vector<std::shared_ptr<Pipeline>> pipelines;			// i.e. what's the currently bound program? default states? default descriptors? default uniforms?
+	//	std::vector<std::shared_ptr<CommandBuffer>> commandBuffers;	// i.e. a list of commands to execute
+	//	std::vector<std::shared_ptr<RenderPass>> renderPasses;		// i.e. framebuffer objects and a list of commands to execute
 
 	void Clear()
 	{
@@ -210,14 +210,14 @@ ES2Renderer::ES2Renderer() : pImpl(std::make_unique<Impl>())
 ES2Renderer::~ES2Renderer()
 {
 	// Delete these in reverse order...
-	//	vector<shared_ptr<Resource>> resources;			// i.e. used to store memory buffers and images
-	//	vector<shared_ptr<Shader>> shaders;				// i.e. used to store the shaders
-	//	vector<shared_ptr<StateSet>> stateSets;			// i.e. what's the depth test, etc. set to?
-	//	vector<shared_ptr<UniformSet>> uniformSets;		// i.e. what are the uniforms set to for the shader?
-	//	vector<shared_ptr<DescriptorSet>> descriptorSets;	// i.e. where are the textures bound?, parameters set to?
-	//	vector<shared_ptr<Pipeline>> pipelines;			// i.e. what's the currently bound program? default states? default descriptors? default uniforms?
-	//	vector<shared_ptr<CommandBuffer>> commandBuffers;	// i.e. a list of commands to execute
-	//	vector<shared_ptr<RenderPass>> renderPasses;		// i.e. framebuffer objects and a list of commands to execute
+	//	std::vector<std::shared_ptr<Resource>> resources;			// i.e. used to store memory buffers and images
+	//	std::vector<std::shared_ptr<Shader>> shaders;				// i.e. used to store the shaders
+	//	std::vector<std::shared_ptr<StateSet>> stateSets;			// i.e. what's the depth test, etc. set to?
+	//	std::vector<std::shared_ptr<UniformSet>> uniformSets;		// i.e. what are the uniforms set to for the shader?
+	//	std::vector<std::shared_ptr<DescriptorSet>> descriptorSets;	// i.e. where are the textures bound?, parameters set to?
+	//	std::vector<std::shared_ptr<Pipeline>> pipelines;			// i.e. what's the currently bound program? default states? default descriptors? default uniforms?
+	//	std::vector<std::shared_ptr<CommandBuffer>> commandBuffers;	// i.e. a list of commands to execute
+	//	std::vector<std::shared_ptr<RenderPass>> renderPasses;		// i.e. framebuffer objects and a list of commands to execute
 
 	pImpl->Clear();
 }

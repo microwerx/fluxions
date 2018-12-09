@@ -29,19 +29,19 @@ namespace Uf
 class Curl
 {
   public:
-	using StringTimePair = pair<string, double>;
-	using StringTimePairFuture = future<pair<string, double>>;
+	using StringTimePair = std::pair<std::string, double>;
+	using StringTimePairFuture = std::future<std::pair<std::string, double>>;
 
 	Curl();
 	~Curl();
 
-	string Get(const string &url);
-	StringTimePairFuture AsyncGet(const string &url);
+	std::string Get(const std::string &url);
+	StringTimePairFuture AsyncGet(const std::string &url);
 
   private:
 	CURL *curl;
-	string get_data;
-	string post_data;
+	std::string get_data;
+	std::string post_data;
 
 	static size_t write_callback(char *buffer, size_t size, size_t nitems, void *instream);
 };

@@ -20,25 +20,28 @@
 #include <viperfish.hpp>
 #include <viperfish_gamepad.hpp>
 
-namespace Viperfish {
+namespace Viperfish
+{
 Widget::Widget()
 {
     kbgamepad.Init(0);
 }
 
-void Widget::Init(int argc, char** argv)
+void Widget::Init(int argc, char **argv)
 {
-    vector<string> args;
-    for (int i = 0; i < argc; i++) {
+    std::vector<std::string> args;
+    for (int i = 0; i < argc; i++)
+    {
         args.push_back(argv[i]);
     }
 
     Init(args);
 }
 
-void Widget::Init(vector<string> args)
+void Widget::Init(std::vector<std::string> args)
 {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++)
+    {
         gamepads[i].Init(i);
     }
 
@@ -52,7 +55,8 @@ void Widget::Kill()
     // free the child, then the parent
     decorateeWidget_.reset();
     decoraterWidget_.reset();
-    for (auto& w : children_) {
+    for (auto &w : children_)
+    {
         w.reset();
     }
     parent_.reset();
@@ -76,7 +80,8 @@ void Widget::OnUpdate(double timeStamp)
     PollGamepads();
     if (decorateeWidget_)
         decorateeWidget_->OnUpdate(timeStamp);
-    for (auto& w : children_) {
+    for (auto &w : children_)
+    {
         w->OnUpdate(timeStamp);
     }
 }
@@ -89,18 +94,19 @@ void Widget::PollGamepads()
         gamepads[i].Poll();
 }
 
-void Widget::HandleKey(const string& key, int keymod, bool pressed)
+void Widget::HandleKey(const std::string &key, int keymod, bool pressed)
 {
     keyboard.SetKey(key, keymod, pressed);
 
-    if (keymod == 0) {
-        kbgamepad.SetButton(GamePadBitNum::UP, keyboard.CheckKeyPressed({ "w", "W", "z", "Z", "Up", "ArrowUp" }));
-        kbgamepad.SetButton(GamePadBitNum::DOWN, keyboard.CheckKeyPressed({ "s", "S", "Down", "ArrowDown" }));
-        kbgamepad.SetButton(GamePadBitNum::LEFT, keyboard.CheckKeyPressed({ "a", "A", "Q", "q", "Left", "ArrowLeft" }));
-        kbgamepad.SetButton(GamePadBitNum::RIGHT, keyboard.CheckKeyPressed({ "d", "D", "Right", "ArrowRight" }));
-        kbgamepad.SetButton(GamePadBitNum::A, keyboard.CheckKeyPressed({ " ", "Space", "Spacebar" }));
-        kbgamepad.SetButton(GamePadBitNum::B, keyboard.CheckKeyPressed({ "Esc", "Escape" }));
-        kbgamepad.SetButton(GamePadBitNum::START, keyboard.CheckKeyPressed({ "Enter", "Return" }));
+    if (keymod == 0)
+    {
+        kbgamepad.SetButton(GamePadBitNum::UP, keyboard.CheckKeyPressed({"w", "W", "z", "Z", "Up", "ArrowUp"}));
+        kbgamepad.SetButton(GamePadBitNum::DOWN, keyboard.CheckKeyPressed({"s", "S", "Down", "ArrowDown"}));
+        kbgamepad.SetButton(GamePadBitNum::LEFT, keyboard.CheckKeyPressed({"a", "A", "Q", "q", "Left", "ArrowLeft"}));
+        kbgamepad.SetButton(GamePadBitNum::RIGHT, keyboard.CheckKeyPressed({"d", "D", "Right", "ArrowRight"}));
+        kbgamepad.SetButton(GamePadBitNum::A, keyboard.CheckKeyPressed({" ", "Space", "Spacebar"}));
+        kbgamepad.SetButton(GamePadBitNum::B, keyboard.CheckKeyPressed({"Esc", "Escape"}));
+        kbgamepad.SetButton(GamePadBitNum::START, keyboard.CheckKeyPressed({"Enter", "Return"}));
 
         float lthumbX = 0.0f;
         float lthumbY = 0.0f;
@@ -109,33 +115,33 @@ void Widget::HandleKey(const string& key, int keymod, bool pressed)
         float ltrigger = 0.0f;
         float rtrigger = 0.0f;
 
-        if (keyboard.CheckKeyPressed({ "Left", "ArrowLeft" }))
+        if (keyboard.CheckKeyPressed({"Left", "ArrowLeft"}))
             rthumbX -= 1.0f;
-        if (keyboard.CheckKeyPressed({ "Right", "ArrowRight" }))
+        if (keyboard.CheckKeyPressed({"Right", "ArrowRight"}))
             rthumbX += 1.0f;
-        if (keyboard.CheckKeyPressed({ "Up", "ArrowUp" }))
+        if (keyboard.CheckKeyPressed({"Up", "ArrowUp"}))
             rthumbY += 1.0f;
-        if (keyboard.CheckKeyPressed({ "Down", "ArrowDown" }))
+        if (keyboard.CheckKeyPressed({"Down", "ArrowDown"}))
             rthumbY -= 1.0f;
-        if (keyboard.CheckKeyPressed({ "q", "Q" }))
+        if (keyboard.CheckKeyPressed({"q", "Q"}))
             ltrigger += 1.0f;
-        if (keyboard.CheckKeyPressed({ "e", "E" }))
+        if (keyboard.CheckKeyPressed({"e", "E"}))
             rtrigger += 1.0f;
-        if (keyboard.CheckKeyPressed({ "a", "A" }))
+        if (keyboard.CheckKeyPressed({"a", "A"}))
             lthumbX -= 1.0f;
-        if (keyboard.CheckKeyPressed({ "d", "D" }))
+        if (keyboard.CheckKeyPressed({"d", "D"}))
             lthumbX += 1.0f;
-        if (keyboard.CheckKeyPressed({ "w", "W" }))
+        if (keyboard.CheckKeyPressed({"w", "W"}))
             lthumbY += 1.0f;
-        if (keyboard.CheckKeyPressed({ "s", "S" }))
+        if (keyboard.CheckKeyPressed({"s", "S"}))
             lthumbY -= 1.0f;
-        if (keyboard.CheckKeyPressed({ "z", "Z" }))
+        if (keyboard.CheckKeyPressed({"z", "Z"}))
             kbgamepad.SetButton(GamePadBitNum::A, 1.0f);
-        if (keyboard.CheckKeyPressed({ "c", "C" }))
+        if (keyboard.CheckKeyPressed({"c", "C"}))
             kbgamepad.SetButton(GamePadBitNum::B, 1.0f);
-        if (keyboard.CheckKeyPressed({ "r", "R" }))
+        if (keyboard.CheckKeyPressed({"r", "R"}))
             kbgamepad.SetButton(GamePadBitNum::Y, 1.0f);
-        if (keyboard.CheckKeyPressed({ "1" }))
+        if (keyboard.CheckKeyPressed({"1"}))
             kbgamepad.SetButton(GamePadBitNum::X, 1.0f);
 
         kbgamepad.SetButton(GamePadBitNum::LTHUMB_X, lthumbX);
@@ -158,59 +164,64 @@ void Widget::HandleMouseButton(int button, bool pressed)
 void Widget::HandleMouseMove(int x, int y)
 {
     mouse.OnMove(x, y);
-    for (auto& button : mouse.buttons) {
-        if (button.second) {
+    for (auto &button : mouse.buttons)
+    {
+        if (button.second)
+        {
             OnMouseDrag(button.first, mouse.dragStates[button.first]);
         }
     }
 }
 
-void Widget::HandleMouseClick(const MouseClickState& mcs)
+void Widget::HandleMouseClick(const MouseClickState &mcs)
 {
     mouse.OnClick(mcs);
 }
 
-void Widget::HandleMouseDoubleClick(const MouseDoubleClickState& mdcs)
+void Widget::HandleMouseDoubleClick(const MouseDoubleClickState &mdcs)
 {
     mouse.OnDoubleClick(mdcs);
 }
 
-void Widget::HandleMouseDrag(const MouseDragState& mds)
+void Widget::HandleMouseDrag(const MouseDragState &mds)
 {
     mouse.OnDrag(mds);
 }
 
-bool Widget::processStyle(const string& style)
+bool Widget::processStyle(const std::string &style)
 {
     using namespace KASL;
     JSONPtr json = JSON::MakeNull();
     if (!json->Deserialize(style))
         return false;
 
-    if (!json->IsObject()) {
+    if (!json->IsObject())
+    {
         hflog.error("%s(): style is not an JSON object", __FUNCTION__);
         return false;
     }
 
-    if (!jsonStyle_->IsObject()) {
+    if (!jsonStyle_->IsObject())
+    {
         jsonStyle_ = JSON::MakeObject(
-            { { "marginLeft", 0 },
-                { "marginRight", 0 },
-                { "marginTop", 0 },
-                { "marginBottom", 0 },
-                { "paddingLeft", 0 },
-                { "paddingRight", 0 },
-                { "paddingTop", 0 },
-                { "paddingBottom", 0 },
-                { "borderLeft", 0 },
-                { "borderRight", 0 },
-                { "borderTop", 0 },
-                { "borderBottom", 0 },
-                { "width", 0 },
-                { "height", 0 } });
+            {{"marginLeft", 0},
+             {"marginRight", 0},
+             {"marginTop", 0},
+             {"marginBottom", 0},
+             {"paddingLeft", 0},
+             {"paddingRight", 0},
+             {"paddingTop", 0},
+             {"paddingBottom", 0},
+             {"borderLeft", 0},
+             {"borderRight", 0},
+             {"borderTop", 0},
+             {"borderBottom", 0},
+             {"width", 0},
+             {"height", 0}});
     }
 
-    if (json->HasKeyOfType("marginLeft", JSON::Type::Number)) {
+    if (json->HasKeyOfType("marginLeft", JSON::Type::Number))
+    {
         jsonStyle_->getMember("marginLeft")->set(json->getMember("marginLeft"));
     }
 
@@ -218,7 +229,7 @@ bool Widget::processStyle(const string& style)
     return true;
 }
 
-bool Widget::decorate(SharedPtr& w)
+bool Widget::decorate(SharedPtr &w)
 {
     if (!w)
         return false;
@@ -233,4 +244,4 @@ void Widget::undecorate()
         return;
     decoraterWidget_->decorateeWidget_.reset();
 }
-}
+} // namespace Viperfish

@@ -20,7 +20,6 @@
 #ifndef FLUXIONS_VECTOR3_HPP
 #define FLUXIONS_VECTOR3_HPP
 
-#include <fluxions_config.hpp>
 #include <fluxions_gte_math.hpp>
 
 namespace Fluxions

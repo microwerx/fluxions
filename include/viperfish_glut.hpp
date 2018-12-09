@@ -28,9 +28,9 @@ class GLUTWidget : public Widget
 {
   public:
 	GLUTWidget() {}
-	GLUTWidget(shared_ptr<Widget> &decoratee) : Widget(decoratee) {}
+	GLUTWidget(std::shared_ptr<Widget> &decoratee) : Widget(decoratee) {}
 
-	void OnInit(const vector<string> &args);
+	void OnInit(const std::vector<std::string> &args);
 
 	void OnMainLoop();
 	void OnLeaveMainLoop();
@@ -39,10 +39,10 @@ class GLUTWidget : public Widget
 	int createdWindowId = 0;
 };
 
-void SetGLUTWidget(shared_ptr<Widget> &widget);
+void SetGLUTWidget(std::shared_ptr<Widget> &widget);
 const char *KeyToHTML5Name(char c);
 const char *SpecialKeyToHTML5Name(int key);
-int HTML5NameToKey(const string &key);
+int HTML5NameToKey(const std::string &key);
 } // namespace Viperfish
 
 #endif

@@ -185,10 +185,10 @@ struct SimpleRendererUniforms
 
 struct SimpleUniformBuffer
 {
-    string uniformBufferName;
+    std::string uniformBufferName;
     GLuint blockBinding;
 
-    SimpleUniformBuffer(const string &name, GLuint blockBinding)
+    SimpleUniformBuffer(const std::string &name, GLuint blockBinding)
         : uniformBufferName(name), blockBinding(blockBinding)
     {
     }
@@ -226,7 +226,7 @@ void SimpleSceneGraph::Reset()
     //geometry.Clear();
 }
 
-bool SimpleSceneGraph::Load(const string &filename)
+bool SimpleSceneGraph::Load(const std::string &filename)
 {
     // Use this as a template
     //ifstream fin(filename.c_str());
@@ -234,7 +234,7 @@ bool SimpleSceneGraph::Load(const string &filename)
     //int linecount = 0;
     //int totallinecount = 0;
     //string str;
-    //istringstream istr;
+    //std::istringstream istr;
     //while (1)
     //{
     //	getline(fin, str);
@@ -253,7 +253,7 @@ bool SimpleSceneGraph::Load(const string &filename)
     // Try loading file. If we fail, return false
     FilePathInfo scenefpi(filename);
     name = scenefpi.fname;
-    ifstream fin(filename.c_str());
+    std::ifstream fin(filename.c_str());
 
     if (!fin)
     {
@@ -271,8 +271,8 @@ bool SimpleSceneGraph::Load(const string &filename)
     // proceed to parse the file and read each line.
     int linecount = 0;
     int totallinecount = 0;
-    string str;
-    istringstream istr;
+    std::string str;
+    std::istringstream istr;
     while (1)
     {
         // read a line from the file and set up a string stream.
@@ -298,9 +298,9 @@ bool SimpleSceneGraph::Load(const string &filename)
         }
         else if (str == "mtllib")
         {
-            string mtllibFilename = ReadString(istr);
+            std::string mtllibFilename = ReadString(istr);
             FilePathInfo fpi(mtllibFilename);
-            string filenameToTry = fpi.FindFileIfExists(pathsToTry);
+            std::string filenameToTry = fpi.FindFileIfExists(pathsToTry);
             if (filenameToTry.empty())
             {
                 hflog.error("%s(): MTLLIB %s was not found.", __FUNCTION__, mtllibFilename.c_str());
@@ -319,9 +319,9 @@ bool SimpleSceneGraph::Load(const string &filename)
         }
         else if (str == "conffile")
         {
-            string confFilename = ReadString(istr);
+            std::string confFilename = ReadString(istr);
             FilePathInfo fpi(confFilename);
-            string filenameToTry = fpi.FindFileIfExists(pathsToTry);
+            std::string filenameToTry = fpi.FindFileIfExists(pathsToTry);
             if (filenameToTry.empty())
             {
                 hflog.error("%s(): CONF file %s was not found.", __FUNCTION__, confFilename.c_str());
@@ -336,9 +336,9 @@ bool SimpleSceneGraph::Load(const string &filename)
         }
         else if (str == "geometryGroup")
         {
-            string geoFilename = ReadString(istr);
+            std::string geoFilename = ReadString(istr);
             FilePathInfo fpi(geoFilename);
-            string filenametoTry = fpi.FindFileIfExists(pathsToTry);
+            std::string filenametoTry = fpi.FindFileIfExists(pathsToTry);
             if (filenametoTry.empty())
             {
                 hflog.error("%s(): OBJ file %s was not found.", __FUNCTION__, geoFilename.c_str());
@@ -432,7 +432,7 @@ bool SimpleSceneGraph::Load(const string &filename)
         }
         else if (str == "camera")
         {
-            string type = ReadString(istr);
+            std::string type = ReadString(istr);
             bool isBadCamera = true;
             camera.projectionMatrix.LoadIdentity();
             camera.viewMatrix.LoadIdentity();
@@ -506,7 +506,7 @@ bool SimpleSceneGraph::Load(const string &filename)
                 float regionStartY = 0.0f;
                 float regionEndX = 1.0f;
                 float regionEndY = 1.0f;
-                string bokehImg;
+                std::string bokehImg;
 
                 // read optional components
                 while (istr)
@@ -594,13 +594,13 @@ bool SimpleSceneGraph::Load(const string &filename)
         }
         else if (str == "newmap")
         {
-            string mapname = ReadString(istr);
-            string texmap = ReadString(istr);
+            std::string mapname = ReadString(istr);
+            std::string texmap = ReadString(istr);
             bool result = ReadTexmap(mapname, texmap);
         }
         else if (str == "sphere")
         {
-            string mtlName = ReadString(istr);
+            std::string mtlName = ReadString(istr);
 
             GLuint id = spheres.Create();
             SimpleSphere sphere;
@@ -660,11 +660,11 @@ bool SimpleSceneGraph::Load(const string &filename)
     return false;
 }
 
-bool SimpleSceneGraph::Save(const string &filename)
+bool SimpleSceneGraph::Save(const std::string &filename)
 {
     FilePathInfo fpi(filename);
 
-    ofstream fout(filename.c_str());
+    std::ofstream fout(filename.c_str());
     if (!fout)
         return false;
 
@@ -684,20 +684,20 @@ bool SimpleSceneGraph::Save(const string &filename)
         WriteAffineMatrix4f(fout, camera.viewMatrix);
         fout << camera.fov;
     }
-    fout << endl;
+    fout << std::endl;
 
     // 2. Environment
     if (environment.hasColor)
     {
         fout << "enviro color ";
         WriteColor3f(fout, environment.color);
-        fout << endl;
+        fout << std::endl;
     }
     if (environment.hasTexmap)
     {
         fout << "enviro texmap ";
         WriteString(fout, environment.texmap);
-        fout << endl;
+        fout << std::endl;
     }
     if (environment.hasSun)
     {
@@ -707,7 +707,7 @@ bool SimpleSceneGraph::Save(const string &filename)
         WriteColor3f(fout, environment.sunColor);
         fout << "sizeMult ";
         WriteDouble(fout, environment.sunSize);
-        fout << endl;
+        fout << std::endl;
     }
 
     // 3. Newmaps
@@ -715,7 +715,7 @@ bool SimpleSceneGraph::Save(const string &filename)
     {
         fout << "newmap " << it->first << " ";
         WriteString(fout, it->second);
-        fout << endl;
+        fout << std::endl;
     }
 
     // 4. Spheres
@@ -726,14 +726,14 @@ bool SimpleSceneGraph::Save(const string &filename)
         {
             materials.SetLibrary(sphere.mtllibName);
 
-            fout << "mtllib " << sphere.mtllibName << endl;
+            fout << "mtllib " << sphere.mtllibName << std::endl;
         }
         fout << "transform ";
         WriteAffineMatrix4f(fout, sphere.transform);
-        fout << endl;
+        fout << std::endl;
         fout << "sphere ";
         WriteString(fout, sphere.mtlName);
-        fout << endl;
+        fout << std::endl;
     }
 
     // 5. Geometry Groups
@@ -744,12 +744,12 @@ bool SimpleSceneGraph::Save(const string &filename)
         {
             materials.SetLibrary(geo.mtllibName);
 
-            fout << "mtllib " << geo.mtllibName << endl;
+            fout << "mtllib " << geo.mtllibName << std::endl;
         }
         fout << "transform ";
         WriteAffineMatrix4f(fout, geo.transform);
-        fout << endl;
-        fout << "geometryGroup " << geo.objectName << endl;
+        fout << std::endl;
+        fout << "geometryGroup " << geo.objectName << std::endl;
     }
     fout.close();
 
@@ -771,16 +771,16 @@ const BoundingBoxf &SimpleSceneGraph::GetBoundingBox()
     return boundingBox;
 }
 
-bool SimpleSceneGraph::ReadMtlLibFile(const string &filename)
+bool SimpleSceneGraph::ReadMtlLibFile(const std::string &filename)
 {
     // Use this as a template
     //ifstream fin(filename.c_str());
     //if (!fin)
     //	return false;
 
-    //vector<string> lines;
+    //std::vector<std::string> lines;
     //string str;
-    //istringstream istr;
+    //std::istringstream istr;
     //while (1)
     //{
     //	if (!fin)
@@ -800,12 +800,12 @@ bool SimpleSceneGraph::ReadMtlLibFile(const string &filename)
     return true;
 }
 
-bool SimpleSceneGraph::ReadConfFile(const string &filename)
+bool SimpleSceneGraph::ReadConfFile(const std::string &filename)
 {
     return false;
 }
 
-bool SimpleSceneGraph::ReadObjFile(const string &filename, const string &geometryName)
+bool SimpleSceneGraph::ReadObjFile(const std::string &filename, const std::string &geometryName)
 {
     if (geometryObjects.IsAHandle(filename))
         return true;
@@ -821,7 +821,7 @@ bool SimpleSceneGraph::ReadObjFile(const string &filename, const string &geometr
     return true;
 }
 
-bool SimpleSceneGraph::ReadTexmap(const string &texmapName, const string &texmap)
+bool SimpleSceneGraph::ReadTexmap(const std::string &texmapName, const std::string &texmap)
 {
     return false;
 }
@@ -924,10 +924,10 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
     GLuint groupId = 0;
     GLuint mtlId = 0;
     GLuint mtllibId = 0;
-    string objectName;
-    string groupName;
-    string mtllibName;
-    string mtlName;
+    std::string objectName;
+    std::string groupName;
+    std::string mtllibName;
+    std::string mtlName;
 
     GLint program_loc_Ka = program.GetUniformLocation("Ka");
     GLint program_loc_Kd = program.GetUniformLocation("Kd");
@@ -960,8 +960,8 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
     GLint program_loc_sphere_count = program.GetUniformLocation("SpheresCount");
     GLint program_loc_sphere_Ke = program.GetUniformLocation("SpheresKe");
 
-    vector<float> spherePositions;
-    vector<float> sphereKe;
+    std::vector<float> spherePositions;
+    std::vector<float> sphereKe;
     for (auto sphIt = spheres.begin(); sphIt != spheres.end(); sphIt++)
     {
         if (spherePositions.size() > 8)
@@ -997,7 +997,7 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
         materials.SetLibrary(mtllib.name);
 
         if (debugging)
-            cout << "SimpleSceneGraph::Render() -- using mtllib " << mtllib.name << endl;
+            std::cout << "SimpleSceneGraph::Render() -- using mtllib " << mtllib.name << std::endl;
         for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++)
         {
             mtlId = mtlIt->first;
@@ -1008,9 +1008,9 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
             materials.SetMaterial(mtlName);
 
             if (debugging)
-                cout << "SimpleSceneGraph::Render() -- using mtl " << mtlId << endl;
+                std::cout << "SimpleSceneGraph::Render() -- using mtl " << mtlId << std::endl;
 
-            map<string, SimpleMap *> textures;
+            std::map<std::string, SimpleMap *> textures;
             GLuint unit = 0;
             if (!mtl.map_Ka.empty())
                 textures["map_Ka"] = materials.GetTextureMap(mtl.map_Ka);
@@ -1061,7 +1061,7 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
                     GLint program_loc = program.GetUniformLocation(tmapIt->first.c_str());
                     if (program_loc >= 0)
                         glUniform1i(program_loc, pMap->unitId);
-                    string tmp = tmapIt->first + "_mix";
+                    std::string tmp = tmapIt->first + "_mix";
                     program_loc = program.GetUniformLocation(tmp.c_str());
                     glUniform1f(program_loc, 1.0f);
                 }
@@ -1081,7 +1081,7 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
             {
                 SimpleGeometryGroup &geo = geoIt->second;
                 if (debugging)
-                    cout << "SimpleSceneGraph::Render() -- using OBJ " << geo.objectName << endl;
+                    std::cout << "SimpleSceneGraph::Render() -- using OBJ " << geo.objectName << std::endl;
                 objectId = geo.objectId;
                 groupId = 0;
 
@@ -1108,7 +1108,7 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
                     GLint program_loc = program.GetUniformLocation(tmapIt->first.c_str());
                     if (program_loc >= 0)
                         glUniform1i(program_loc, pMap->unitId);
-                    string tmp = tmapIt->first + "_mix";
+                    std::string tmp = tmapIt->first + "_mix";
                     program_loc = program.GetUniformLocation(tmp.c_str());
                     glUniform1f(program_loc, 0.0f);
                 }
@@ -1118,7 +1118,7 @@ void SimpleSceneGraph::Render(SimpleProgram &program)
     }
 
     if (debugging)
-        cout << "SimpleSceneGraph::Render() -- END\n";
+        std::cout << "SimpleSceneGraph::Render() -- END\n";
 }
 
 void SimpleSceneGraph::RenderZOnly(SimpleProgram &program)
@@ -1144,10 +1144,10 @@ void SimpleSceneGraph::RenderZOnly(SimpleProgram &program)
     GLuint groupId = 0;
     GLuint mtlId = 0;
     GLuint mtllibId = 0;
-    string objectName;
-    string groupName;
-    string mtllibName;
-    string mtlName;
+    std::string objectName;
+    std::string groupName;
+    std::string mtllibName;
+    std::string mtlName;
 
     GLint program_loc_Kd = program.GetUniformLocation("Kd");
 
@@ -1224,7 +1224,7 @@ void SimpleSceneGraph::Render(SimpleProgram &program, bool useMaterials, bool us
     for (auto libIt = materials.begin(); libIt != materials.end(); libIt++)
     {
         SimpleMaterialLibrary &mtllib = libIt->second;
-        string mtllibName = mtllib.name;
+        std::string mtllibName = mtllib.name;
         GLuint mtllibId = materials.GetLibraryId(mtllib.name);
         materials.SetLibrary(mtllib.name);
 
@@ -1232,7 +1232,7 @@ void SimpleSceneGraph::Render(SimpleProgram &program, bool useMaterials, bool us
         for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++)
         {
             GLuint mtlId = mtlIt->first;
-            string mtlName = materials.GetMaterialName(mtlId);
+            std::string mtlName = materials.GetMaterialName(mtlId);
             SimpleMaterial &mtl = mtlIt->second;
             materials.SetMaterial(mtlName);
 
@@ -1757,8 +1757,8 @@ void SimpleSceneGraph::SetUniforms(SimpleProgramPtr &program)
 
 void SimpleSceneGraph::ApplySpheresToCurrentProgram()
 {
-    vector<float> spherePositions;
-    vector<float> sphereKe;
+    std::vector<float> spherePositions;
+    std::vector<float> sphereKe;
     int numSpheres = 0;
     for (auto sphIt = spheres.begin(); sphIt != spheres.end(); sphIt++)
     {
@@ -2218,7 +2218,7 @@ void RenderCubeShadowMap(const SimpleSceneGraph &ssg, SimpleCubeTexture &scs, co
         glReadBuffer(GL_NONE);
     }
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    string msg = GetFramebufferStatusAsString(status);
+    std::string msg = GetFramebufferStatusAsString(status);
     bool fboComplete;
 
     if (status != GL_FRAMEBUFFER_COMPLETE)

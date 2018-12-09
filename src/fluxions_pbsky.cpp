@@ -167,12 +167,12 @@ void HosekWilkiePBSky::addStatisticSample(Real amount)
     if (minValue > amount)
     {
         minValue = amount;
-        //cout << "minValue: " << minValue << endl;
+        //cout << "minValue: " << minValue << std::endl;
     }
     if (maxValue < amount)
     {
         maxValue = amount;
-        //cout << "maxValue: " << maxValue << endl;
+        //cout << "maxValue: " << maxValue << std::endl;
     }
     totalValue += amount;
     nSamples++;
@@ -286,7 +286,7 @@ Real HosekWilkiePBSky::ComputeSunRadiance2(Real theta, Real gamma, int index)
 
         if (isfinite(amount))
             addStatisticSample(amount);
-        //else cout << "BLAH!\n";
+        //else std::cout << "BLAH!\n";
 
         xyz.r += tristimulus[i][0] * amount;
         xyz.g += tristimulus[i][1] * amount;
@@ -348,7 +348,7 @@ void HosekWilkiePBSky::ComputeSunRadiance3(Real theta, Real gamma, Color4f &outp
             amount += (float)arhosekskymodel_sun_direct_radiance(sunRadianceState, theta, gamma, wavelengths[i]);
         //amount = (float)arhosekskymodel_solar_radiance(sunRadianceState[i], theta, gamma, wavelengths[i]);
 
-        //else cout << "BLAH!\n";
+        //else std::cout << "BLAH!\n";
 
         xyz.r += tristimulus[i][0] * amount;
         xyz.g += tristimulus[i][1] * amount;
@@ -427,7 +427,7 @@ Color4f HosekWilkiePBSky::GetSunDiskRadiance() const
 Color4f HosekWilkiePBSky::GetGroundRadiance() const
 {
     Color4f sunRadiance = GetSunDiskRadiance();
-    float f_r = (float)(1.0 / FX_PI * max(0.0f, sun[2]));
+    float f_r = (float)(1.0 / FX_PI * std::max(0.0f, sun[2]));
 
     return Color4f(
         sunRadiance.r * albedo.r * f_r,
@@ -619,15 +619,15 @@ Vector3f makeCubeVector(int face, float s, float t)
     //// check if face maps out. =^)
     ////whichFace = classifyCubeFaceFromVector(X, y, z);
 
-    //cout << setprecision(2) << left;
-    //cout << "S: " << setw(5) << s << " T: " << setw(5) << t << " ";
-    //cout << "S: " << setw(5) << scheck << " T: " << setw(5) << tcheck << " ";
+    //cout << std::setprecision(2) << left;
+    //cout << "S: " << std::setw(5) << s << " T: " << std::setw(5) << t << " ";
+    //cout << "S: " << std::setw(5) << scheck << " T: " << std::setw(5) << tcheck << " ";
     //cout << "Face: " << face << " ";
     //cout << "<--> " << whichFace << " ";
     //cout << showpos << left << showpoint;
-    //cout << "(" << setw(7) << x << ", " << setw(7) << y << ", " << z << ") ";
+    //cout << "(" << std::setw(7) << x << ", " << std::setw(7) << y << ", " << z << ") ";
     //cout << noshowpos;
-    //cout << endl;
+    //cout << std::endl;
 
     //return Vector3f(x, y, z);
 }
@@ -708,18 +708,18 @@ Vector3f makeCubeVector2(int face, float s, float t)
     // check if face maps out. =^)
     whichFace = classifyCubeFaceFromVector(x, y, z);
 
-    cout << setprecision(2) << left;
-    cout << "S: " << setw(5) << s << " T: " << setw(5) << t << " ";
-    cout << "S: " << setw(5) << scheck << " T: " << setw(5) << tcheck << " ";
-    cout << "Face: " << face << " ";
+    std::cout << std::setprecision(2) << std::left;
+    std::cout << "S: " << std::setw(5) << s << " T: " << std::setw(5) << t << " ";
+    std::cout << "S: " << std::setw(5) << scheck << " T: " << std::setw(5) << tcheck << " ";
+    std::cout << "Face: " << face << " ";
     if (whichFace >= 0)
-        cout << "<--> " << whichFace << " ";
+        std::cout << "<--> " << whichFace << " ";
     else
-        cout << "<--> X ";
-    cout << showpos << left << showpoint;
-    cout << "(" << setw(7) << x << ", " << setw(7) << y << ", " << z << ") ";
-    cout << noshowpos;
-    cout << endl;
+        std::cout << "<--> X ";
+    std::cout << std::showpos << std::left << std::showpoint;
+    std::cout << "(" << std::setw(7) << x << ", " << std::setw(7) << y << ", " << z << ") ";
+    std::cout << std::noshowpos;
+    std::cout << std::endl;
 
     return Vector3f(x, y, z);
 }

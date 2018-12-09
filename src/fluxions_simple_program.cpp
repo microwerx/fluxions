@@ -202,7 +202,7 @@ void SimpleProgram::Use()
     glUseProgram(program);
 }
 
-bool SimpleProgram::ApplyUniform(const string &uniformName, SimpleUniform uniform)
+bool SimpleProgram::ApplyUniform(const std::string &uniformName, SimpleUniform uniform)
 {
     if (!linked)
         return false;
@@ -220,7 +220,7 @@ bool SimpleProgram::ApplyUniform(const string &uniformName, SimpleUniform unifor
     }
 }
 
-void SimpleProgram::ApplyUniforms(map<string, SimpleUniform> uniforms)
+void SimpleProgram::ApplyUniforms(std::map<std::string, SimpleUniform> uniforms)
 {
     if (!linked)
         return;
@@ -238,7 +238,7 @@ void SimpleProgram::ApplyUniforms(map<string, SimpleUniform> uniforms)
     }
 }
 
-void SimpleProgram::AttachShaders(shared_ptr<SimpleShader> &shaderPtr)
+void SimpleProgram::AttachShaders(std::shared_ptr<SimpleShader> &shaderPtr)
 {
     if (!shaderPtr)
         return;
@@ -263,7 +263,7 @@ bool SimpleProgram::Link()
     }
 
     auto numAttached = 0;
-    vector<shared_ptr<SimpleShader>>::iterator shaderIt;
+    std::vector<std::shared_ptr<SimpleShader>>::iterator shaderIt;
     for (auto &shaderIt : shaders) // shaderIt = shaders.begin(); shaderIt != shaders.end(); ++shaderIt)
     {
         GLuint shader = shaderIt->shader;
@@ -335,7 +335,7 @@ bool SimpleProgram::Link()
         for (int i = 0; i < numUniforms; i++)
         {
             glGetActiveUniform(program, i, maxUniformLength, &length, &size, &type, buffer);
-            string name = buffer;
+            std::string name = buffer;
             activeUniforms[name].index = glGetUniformLocation(program, buffer);
             ;
             activeUniforms[name].size = size;
@@ -346,7 +346,7 @@ bool SimpleProgram::Link()
         for (int i = 0; i < numAttribs; i++)
         {
             glGetActiveAttrib(program, i, maxAttribLength, &length, &size, &type, buffer);
-            string name = buffer;
+            std::string name = buffer;
             activeAttributes[name].index = glGetAttribLocation(program, buffer);
             activeAttributes[name].size = size;
             activeAttributes[name].type = type;
@@ -362,12 +362,12 @@ bool SimpleProgram::Link()
     return linked;
 }
 
-const string &SimpleProgram::GetInfoLog()
+const std::string &SimpleProgram::GetInfoLog()
 {
     return infoLog;
 }
 
-void SimpleProgram::SetUniformBlock(const string &uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size)
+void SimpleProgram::SetUniformBlock(const std::string &uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size)
 {
     GLuint blockIndex = glGetUniformBlockIndex(program, uniformBlockName.c_str());
     glUniformBlockBinding(program, blockIndex, blockBindingIndex);

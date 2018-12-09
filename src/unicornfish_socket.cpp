@@ -47,7 +47,7 @@ void Socket::Delete()
     m_socketType = SocketType::NONE;
 }
 
-bool Socket::SetupSocket(string endpoint, string subPrefix, SocketType socketType)
+bool Socket::SetupSocket(string endpoint, std::string subPrefix, SocketType socketType)
 {
     if (!socket)
         return false;
@@ -60,7 +60,7 @@ bool Socket::SetupSocket(string endpoint, string subPrefix, SocketType socketTyp
     return true;
 }
 
-bool Socket::NewPub(const string &endpoint)
+bool Socket::NewPub(const std::string &endpoint)
 {
     Delete();
 
@@ -74,7 +74,7 @@ bool Socket::NewPub(const string &endpoint)
     return true;
 }
 
-bool Socket::NewSub(const string &endpoint, const string &subPrefix)
+bool Socket::NewSub(const std::string &endpoint, const std::string &subPrefix)
 {
     Delete();
 
@@ -89,7 +89,7 @@ bool Socket::NewSub(const string &endpoint, const string &subPrefix)
     return true;
 }
 
-bool Socket::NewReq(const string &endpoint)
+bool Socket::NewReq(const std::string &endpoint)
 {
     Delete();
 
@@ -102,7 +102,7 @@ bool Socket::NewReq(const string &endpoint)
     return true;
 }
 
-bool Socket::NewRep(const string &endpoint)
+bool Socket::NewRep(const std::string &endpoint)
 {
     Delete();
 
@@ -115,7 +115,7 @@ bool Socket::NewRep(const string &endpoint)
     return true;
 }
 
-bool Socket::NewDealer(const string &endpoint)
+bool Socket::NewDealer(const std::string &endpoint)
 {
     Delete();
 
@@ -126,7 +126,7 @@ bool Socket::NewDealer(const string &endpoint)
     return SetupSocket(endpoint, "", SocketType::DEALER);
 }
 
-bool Socket::NewRouter(const string &endpoint)
+bool Socket::NewRouter(const std::string &endpoint)
 {
     Delete();
 
@@ -137,7 +137,7 @@ bool Socket::NewRouter(const string &endpoint)
     return SetupSocket(endpoint, "", SocketType::ROUTER);
 }
 
-bool Socket::NewPush(const string &endpoint)
+bool Socket::NewPush(const std::string &endpoint)
 {
     Delete();
 
@@ -148,7 +148,7 @@ bool Socket::NewPush(const string &endpoint)
     return SetupSocket(endpoint, "", SocketType::PUSH);
 }
 
-bool Socket::NewPull(const string &endpoint)
+bool Socket::NewPull(const std::string &endpoint)
 {
     Delete();
 
@@ -159,7 +159,7 @@ bool Socket::NewPull(const string &endpoint)
     return SetupSocket(endpoint, "", SocketType::PULL);
 }
 
-bool Socket::NewXPub(const string &endpoint)
+bool Socket::NewXPub(const std::string &endpoint)
 {
     Delete();
 
@@ -171,7 +171,7 @@ bool Socket::NewXPub(const string &endpoint)
     return SetupSocket(endpoint, "", SocketType::XPUB);
 }
 
-bool Socket::NewXSub(const string &endpoint)
+bool Socket::NewXSub(const std::string &endpoint)
 {
     Delete();
 
@@ -183,7 +183,7 @@ bool Socket::NewXSub(const string &endpoint)
     return SetupSocket(endpoint, "", SocketType::XSUB);
 }
 
-bool Socket::NewPair(const string &endpoint)
+bool Socket::NewPair(const std::string &endpoint)
 {
     Delete();
 
@@ -194,7 +194,7 @@ bool Socket::NewPair(const string &endpoint)
     return SetupSocket(endpoint, "", SocketType::PAIR);
 }
 
-bool Socket::NewStream(const string &endpoint)
+bool Socket::NewStream(const std::string &endpoint)
 {
     Delete();
 

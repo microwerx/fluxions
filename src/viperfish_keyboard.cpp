@@ -19,35 +19,41 @@
 #include "stdafx.h"
 #include <viperfish_keyboard.hpp>
 
-namespace Viperfish {
+namespace Viperfish
+{
 void KeyboardState::SetKey(unsigned char c, int keymod, bool pressed)
 {
-    if (keymod & ShiftKeyBit) {
+    if (keymod & ShiftKeyBit)
+    {
         c = (unsigned char)toupper(c);
-    } else {
+    }
+    else
+    {
         c = (unsigned char)tolower(c);
     }
-    const char s[2] = { (char)c, '\0' };
-    string key = s;
+    const char s[2] = {(char)c, '\0'};
+    std::string key = s;
     SetKey(key, pressed);
 }
 
-bool KeyboardState::CheckKeyPressed(vector<string> keysToCheck)
+bool KeyboardState::CheckKeyPressed(std::vector<std::string> keysToCheck)
 {
-    for (auto& key : keysToCheck) {
+    for (auto &key : keysToCheck)
+    {
         if (IsPressed(key))
             return true;
     }
     return false;
 }
 
-int KeyboardState::CountKeysPressed(vector<string> keysToCheck)
+int KeyboardState::CountKeysPressed(std::vector<std::string> keysToCheck)
 {
     int count = 0;
-    for (auto key : keysToCheck) {
+    for (auto key : keysToCheck)
+    {
         if (IsPressed(key))
             count++;
     }
     return count;
 }
-}
+} // namespace Viperfish

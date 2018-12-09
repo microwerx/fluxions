@@ -32,7 +32,7 @@ class Message
 {
   public:
 	Message();
-	Message(const string &message);
+	Message(const std::string &message);
 	Message(const char *message);
 	Message(const Majordomo::Command command);
 	Message(void *data, size_t size);
@@ -42,7 +42,7 @@ class Message
 	const Message &operator=(const Message &msgToCopy);
 
 	bool Create();
-	bool Create(const string &message)
+	bool Create(const std::string &message)
 	{
 		if (Create())
 			return Push(message);
@@ -61,10 +61,10 @@ class Message
 	bool Send(Socket &socket);
 	bool Recv(Socket &socket);
 
-	bool SetLastFrameData(const string &data);
+	bool SetLastFrameData(const std::string &data);
 	bool SetLastFrameData(const char *data);
 
-	bool Push(const string &message);
+	bool Push(const std::string &message);
 	bool Push(const char *message);
 	bool Push(const Majordomo::Command command);
 	bool Push(const Frame &frame);
@@ -73,18 +73,18 @@ class Message
 	int PopInt8();
 	Majordomo::Command PopCommand();
 	Frame &PopFrame();
-	const string &PopString();
+	const std::string &PopString();
 	void PopMem(void *data, size_t size);
 	size_t Size() const;
 	bool Empty() const { return Size() == 0; }
-	const string &GetLastFrameString();
+	const std::string &GetLastFrameString();
 
 	zmsg_t *GetZmsg() { return msg; }
 
   private:
 	zmsg_t *msg = nullptr;
-	string lastPoppedString;
-	string lastFrameString;
+	std::string lastPoppedString;
+	std::string lastFrameString;
 	Frame lastPoppedFrame;
 	Frame lastUnwrappedFrame;
 };

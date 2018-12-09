@@ -23,11 +23,11 @@ namespace Viperfish
 {
 namespace vfglut
 {
-static shared_ptr<Widget> widget;
+static std::shared_ptr<Widget> widget;
 static MouseState mouseState;
-static map<int, MouseState> multitouchState;
+static std::map<int, MouseState> multitouchState;
 static KeyboardState keyboardState;
-static map<int, GamepadState> gamepadState;
+static std::map<int, GamepadState> gamepadState;
 
 static void reshape(int width, int height)
 {
@@ -63,7 +63,7 @@ static void keyboard(unsigned char key, int x, int y)
     if (!widget)
         return;
 
-    string keyName = Viperfish::KeyToHTML5Name(key);
+    std::string keyName = Viperfish::KeyToHTML5Name(key);
     keyboardState.SetKey(keyName, true);
 
     widget->OnKeyDown(keyName, 0);
@@ -74,7 +74,7 @@ static void keyboardup(unsigned char key, int x, int y)
     if (!widget)
         return;
 
-    string keyName = Viperfish::KeyToHTML5Name(key);
+    std::string keyName = Viperfish::KeyToHTML5Name(key);
     keyboardState.SetKey(keyName, false);
 
     widget->OnKeyUp(keyName, 0);
@@ -85,7 +85,7 @@ static void special(int key, int x, int y)
     if (!widget)
         return;
 
-    string keyName = Viperfish::SpecialKeyToHTML5Name(key);
+    std::string keyName = Viperfish::SpecialKeyToHTML5Name(key);
     keyboardState.SetKey(keyName, false);
 
     widget->OnKeyDown(keyName, 0);
@@ -96,7 +96,7 @@ static void specialup(int key, int x, int y)
     if (!widget)
         return;
 
-    string keyName = Viperfish::SpecialKeyToHTML5Name(key);
+    std::string keyName = Viperfish::SpecialKeyToHTML5Name(key);
     keyboardState.SetKey(keyName, false);
 
     widget->OnKeyUp(keyName, 0);
@@ -260,19 +260,19 @@ static void initcontext()
 }
 } // namespace vfglut
 
-void SetGLUTWidget(shared_ptr<Widget> &widget)
+void SetGLUTWidget(std::shared_ptr<Widget> &widget)
 {
     vfglut::widget = widget;
 }
 
-void GLUTWidget::OnInit(const vector<string> &args)
+void GLUTWidget::OnInit(const std::vector<std::string> &args)
 {
     // Create the GLUT instance
     //vfglut::widget = Widget::shared_from_this();
 
     int argc = (int)args.size();
-    vector<char *> argv;
-    for_each(args.begin(), args.end(), [&argv](const string &s) {
+    std::vector<char *> argv;
+    for_each(args.begin(), args.end(), [&argv](const std::string &s) {
         int len = (int)s.length();
         char *arg = new char[len + 1];
 #ifdef WIN32
@@ -347,9 +347,9 @@ void GLUTWidget::OnInit(const vector<string> &args)
 
     glewInit();
 
-    cerr << __FUNCTION__ << "() -- initialized GLUT" << endl;
-    cerr << "GL_VERSION: " << glGetString(GL_VERSION) << endl;
-    cerr << "GL_VENDOR: " << glGetString(GL_VENDOR) << endl;
+    cerr << __FUNCTION__ << "() -- initialized GLUT" << std::endl;
+    cerr << "GL_VERSION: " << glGetString(GL_VERSION) << std::endl;
+    cerr << "GL_VENDOR: " << glGetString(GL_VENDOR) << std::endl;
     // cerr << "GL_EXTENSIONS: "
 
     Widget::OnInit(args);
@@ -399,7 +399,7 @@ const char *KeyToHTML5Name(char c)
     return s;
 }
 
-int HTML5NameToKey(const string &key)
+int HTML5NameToKey(const std::string &key)
 {
     if (key == "Tab")
         return 0x09;

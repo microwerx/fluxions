@@ -28,21 +28,21 @@
 namespace Fluxions
 {
 
-extern const string BlankString;
+extern const std::string BlankString;
 
 template <typename T>
 class TResourceManager
 {
   private:
-	map<unsigned, T> resources;
+	std::map<unsigned, T> resources;
 	T defaultObject;
 
 	unsigned largestHandle;
-	vector<unsigned> availableResourceHandles;
-	vector<unsigned> allocatedResourceHandles;
+	std::vector<unsigned> availableResourceHandles;
+	std::vector<unsigned> allocatedResourceHandles;
 
-	map<string, unsigned> stringToHandleMap;
-	map<unsigned, vector<string>> handleToStringsMap;
+	std::map<std::string, unsigned> stringToHandleMap;
+	std::map<unsigned, std::vector<std::string>> handleToStringsMap;
 
   public:
 	TResourceManager() { Init(); }
@@ -65,23 +65,23 @@ class TResourceManager
 	void SetDefaultValue(const T &value);
 
 	unsigned Create();
-	unsigned Create(const string &name);
+	unsigned Create(const std::string &name);
 	void Delete(unsigned handle);
-	void Delete(const string &name);
+	void Delete(const std::string &name);
 
 	bool IsAHandle(unsigned handle) const;
-	bool IsAHandle(const string &name) const;
-	const string &GetNameFromHandle(unsigned handle);
-	const vector<string> &GetNamesFromHandle(unsigned handle);
-	unsigned GetHandleFromName(const string &name) const;
-	unsigned MapNameToHandle(const string &name, unsigned handle);
-	void RemoveName(const string &name);
+	bool IsAHandle(const std::string &name) const;
+	const std::string &GetNameFromHandle(unsigned handle);
+	const std::vector<std::string> &GetNamesFromHandle(unsigned handle);
+	unsigned GetHandleFromName(const std::string &name) const;
+	unsigned MapNameToHandle(const std::string &name, unsigned handle);
+	void RemoveName(const std::string &name);
 
 	T &operator[](unsigned handle);
-	T &operator[](const string &name);
+	T &operator[](const std::string &name);
 
 	const T &operator[](unsigned handle) const;
-	const T &operator[](const string &name) const;
+	const T &operator[](const std::string &name) const;
 };
 
 template <typename T>
@@ -108,8 +108,8 @@ class TSimpleResourceManager
 
   private:
 	T defaultObject;
-	vector<T> available;
-	vector<T> allocated;
+	std::vector<T> available;
+	std::vector<T> allocated;
 };
 
 template <typename T>
@@ -144,7 +144,7 @@ void TSimpleResourceManager<T>::Reset()
 template <typename T>
 void TSimpleResourceManager<T>::Add(T &resource)
 {
-	// vector<T>::iterator it;
+	// std::vector<T>::iterator it;
 	auto it = find(allocated.begin(), allocated.end(), resource);
 	if (it != allocated.end())
 	{
@@ -212,7 +212,7 @@ void TResourceManager<T>::Reset()
 template <typename T>
 void TResourceManager<T>::DeleteUnnamedResources()
 {
-	vector<unsigned> resourcesToRemove;
+	std::vector<unsigned> resourcesToRemove;
 	for (auto it = resources.begin(); it != resources.end(); it++)
 	{
 		unsigned handle = it->first;
@@ -245,14 +245,14 @@ bool TResourceManager<T>::IsAHandle(unsigned handle) const
 }
 
 template <typename T>
-bool TResourceManager<T>::IsAHandle(const string &name) const
+bool TResourceManager<T>::IsAHandle(const std::string &name) const
 {
 	unsigned handle = GetHandleFromName(name);
 	return IsAHandle(handle);
 }
 
 template <typename T>
-const string &TResourceManager<T>::GetNameFromHandle(unsigned handle)
+const std::string &TResourceManager<T>::GetNameFromHandle(unsigned handle)
 {
 	auto it = handleToStringsMap.find(handle);
 	if (it == handleToStringsMap.end())
@@ -263,11 +263,11 @@ const string &TResourceManager<T>::GetNameFromHandle(unsigned handle)
 }
 
 template <typename T>
-const vector<string> &TResourceManager<T>::GetNamesFromHandle(unsigned handle)
+const std::vector<std::string> &TResourceManager<T>::GetNamesFromHandle(unsigned handle)
 {
 	auto it = handleToStringsMap.find(handle);
 	if (it == handleToStringsMap.end())
-		return vector<string>();
+		return std::vector<std::string>();
 	return it->second;
 }
 
@@ -291,7 +291,7 @@ unsigned TResourceManager<T>::Create()
 }
 
 template <typename T>
-unsigned TResourceManager<T>::Create(const string &name)
+unsigned TResourceManager<T>::Create(const std::string &name)
 {
 	// Don't create duplicate handles
 	unsigned handle = GetHandleFromName(name);
@@ -315,7 +315,7 @@ void TResourceManager<T>::Delete(unsigned handle)
 	resources.erase(handle);
 
 	// remove string names allocated to refer to this handle
-	vector<string> &strings = handleToStringsMap[handle];
+	std::vector<std::string> &strings = handleToStringsMap[handle];
 	for (auto it = strings.begin(); it != strings.end(); it++)
 	{
 		stringToHandleMap.erase(*it);
@@ -330,14 +330,14 @@ void TResourceManager<T>::Delete(unsigned handle)
 }
 
 template <typename T>
-void TResourceManager<T>::Delete(const string &name)
+void TResourceManager<T>::Delete(const std::string &name)
 {
 	unsigned handle = GetHandleFromName(name);
 	Delete(handle);
 }
 
 template <typename T>
-unsigned TResourceManager<T>::GetHandleFromName(const string &name) const
+unsigned TResourceManager<T>::GetHandleFromName(const std::string &name) const
 {
 	auto it = stringToHandleMap.find(name);
 	if (it == stringToHandleMap.end())
@@ -346,7 +346,7 @@ unsigned TResourceManager<T>::GetHandleFromName(const string &name) const
 }
 
 template <typename T>
-unsigned TResourceManager<T>::MapNameToHandle(const string &name, unsigned handle)
+unsigned TResourceManager<T>::MapNameToHandle(const std::string &name, unsigned handle)
 {
 	// do nothing if this is the default object
 	if (handle == 0)
@@ -364,14 +364,14 @@ unsigned TResourceManager<T>::MapNameToHandle(const string &name, unsigned handl
 }
 
 template <typename T>
-void TResourceManager<T>::RemoveName(const string &name)
+void TResourceManager<T>::RemoveName(const std::string &name)
 {
 	// is this string already mapped to a handle?
 	auto it = stringToHandleMap.find(name);
 	if (it != stringToHandleMap.end())
 	{
 		unsigned handle = it->second;
-		vector<string> &container = handleToStringsMap[handle];
+		std::vector<std::string> &container = handleToStringsMap[handle];
 		// yep! so remove previous reference to it
 		auto pos = find(container.begin(), container.end(), name);
 		if (pos != container.end())
@@ -391,7 +391,7 @@ T &TResourceManager<T>::operator[](unsigned handle)
 }
 
 template <typename T>
-T &TResourceManager<T>::operator[](const string &name)
+T &TResourceManager<T>::operator[](const std::string &name)
 {
 	unsigned handle = GetHandleFromName(name);
 	if (handle == 0)
@@ -413,7 +413,7 @@ const T &TResourceManager<T>::operator[](unsigned handle) const
 }
 
 template <typename T>
-const T &TResourceManager<T>::operator[](const string &name) const
+const T &TResourceManager<T>::operator[](const std::string &name) const
 {
 	unsigned handle = GetHandleFromName(name);
 	if (handle == 0)

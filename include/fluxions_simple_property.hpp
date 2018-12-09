@@ -110,7 +110,7 @@ enum class PropertyType
 	STRING = 3000
 };
 
-const string PropertyTypeToString(PropertyType propertyType);
+const std::string PropertyTypeToString(PropertyType propertyType);
 
 class SimpleProperty
 {
@@ -122,11 +122,11 @@ class SimpleProperty
 	SimpleProperty(PropertyType propertyType) : type(propertyType) {}
 	virtual ~SimpleProperty() {}
 
-	virtual const type_info &GetTypeID() const { return typeid(void); }
+	virtual const std::type_info &GetTypeID() const { return typeid(void); }
 	virtual bool empty() const { return true; }
 
 	const PropertyType GetType() const { return type; }
-	const string GetTypeAsString() const { return PropertyTypeToString(type); }
+	const std::string GetTypeAsString() const { return PropertyTypeToString(type); }
 	virtual const size_t GetSize() const { return 0; }
 	const SimpleProperty *GetAsSimplePropertyPtr() const { return this; }
 };
@@ -373,7 +373,7 @@ DECLARE_PROPERTY_TYPE(int, IMAGE2DARRAY, Image2DArray)
 DECLARE_PROPERTY_TYPE(double, DOUBLE, Double)
 DECLARE_PROPERTY_TYPE(int, UNIFORM_BLOCK, UniformBlock)
 DECLARE_PROPERTY_TYPE(int, BUFFER_BLOCK, BufferBlock)
-DECLARE_PROPERTY_TYPE(string, STRING, String)
+DECLARE_PROPERTY_TYPE(std::string, STRING, String)
 
 #undef DECLARE_PROPERTY_TYPE
 
@@ -381,9 +381,9 @@ class SimpleAssociativePropertyList
 {
   private:
 	SharedSimplePropertyPtr defaultItem;
-	string emptyString;
-	map<string, int> nameIndex;
-	vector<pair<string, SharedSimplePropertyPtr>> properties;
+	std::string emptyString;
+	std::map<std::string, int> nameIndex;
+	std::vector<std::pair<std::string, SharedSimplePropertyPtr>> properties;
 
   public:
 	/// <summary>Constructor for SimpleAssociativePropertyList</summary>
@@ -395,27 +395,27 @@ class SimpleAssociativePropertyList
 	/// <summary>Reset() completely clears all pointers and names from this container.</summary>
 	void Clear();
 
-	/// <summary>Push(name, valuePtr) inserts a shared_ptr to a simple property in the list.</summary>
-	void Add(const string &name, SharedSimplePropertyPtr &valuePtr);
+	/// <summary>Push(name, valuePtr) inserts a std::shared_ptr to a simple property in the list.</summary>
+	void Add(const std::string &name, SharedSimplePropertyPtr &valuePtr);
 
 	/// <summary>Remove(name) deletes the pointer for the property named <code>name</code>.</summary>
-	void Remove(const string &name);
+	void Remove(const std::string &name);
 
 	/// <summary>IsElement(name) returns true if the pointer for the property named <code>name</code> is valid.</summary>
-	bool IsElement(const string &name);
+	bool IsElement(const std::string &name);
 
-	/// <summary>Get(name) returns a shared_ptr for the property named <code>name</code>.
+	/// <summary>Get(name) returns a std::shared_ptr for the property named <code>name</code>.
 	/// It returns an empty pointer if <code>name</code> is not valid.</summary>
-	SharedSimplePropertyPtr &Get(const string &name);
+	SharedSimplePropertyPtr &Get(const std::string &name);
 
-	/// <summary>GetDynamicCastSharedPtr<type, propertyType>(name) returns a shared_ptr for the property
+	/// <summary>GetDynamicCastSharedPtr<type, propertyType>(name) returns a std::shared_ptr for the property
 	/// named <code>name</code>. It returns an empty pointer if <code>name</code> is not valid.</summary>
 	template <typename T>
-	shared_ptr<TSimpleProperty<T>> &GetDynamicCastSharedPtr(const string &name)
+	std::shared_ptr<TSimpleProperty<T>> &GetDynamicCastSharedPtr(const std::string &name)
 	{
 		SharedSimplePropertyPtr ptr = Get(name);
 		if (!ptr)
-			return shared_ptr<TSimpleProperty<T>>();
+			return std::shared_ptr<TSimpleProperty<T>>();
 
 		return DynamicSharedSimplePropertyCast<T>(ptr);
 	}
@@ -423,7 +423,7 @@ class SimpleAssociativePropertyList
 	/// <summary>GetValuePtr<type, propertyType>(name) returns a const pointer to a T* variable or nullptr
 	/// if the property named <code>name</code> is valid or not valid, respectively.</summary>
 	template <typename T>
-	const T *GetValuePtr(const string &name)
+	const T *GetValuePtr(const std::string &name)
 	{
 		SharedSimplePropertyPtr ptr = Get(name);
 		if (!ptr)
@@ -436,7 +436,7 @@ class SimpleAssociativePropertyList
 	/// the property named <code>name</code>. If either the pointer is bad, or the types are
 	/// not matching, this method will throw a bad_cast exception.</summary>
 	template <typename T>
-	T &GetValue(const string &name)
+	T &GetValue(const std::string &name)
 	{
 		SharedSimplePropertyPtr ptr = Get(name);
 		if (!ptr)
@@ -450,32 +450,32 @@ class SimpleAssociativePropertyList
 
 	/// <summary>GetIndexOf(name) returns a non-negative number if the property named <code>name</code>
 	/// is valid and a negative number if it is not valid.</summary>
-	int GetIndexOf(const string &name);
+	int GetIndexOf(const std::string &name);
 
-	/// <summary>GetAtIndex(i) returns a shared_ptr for the property at index <code>i</code>.
+	/// <summary>GetAtIndex(i) returns a std::shared_ptr for the property at index <code>i</code>.
 	/// It returns an empty pointer if <code>i</code> is not in the range of the container.</summary>
 	SharedSimplePropertyPtr &GetAtIndex(int i);
 
 	/// <summary>GetNameAtIndex(i) returns a string for the name of the property at index <code>i</code>.
 	/// It returns an empty string if <code>i</code> is not in the range of the container.</summary>
-	const string &GetNameAtIndex(int i);
+	const std::string &GetNameAtIndex(int i);
 
-	/// <summary>operator[](name) returns a shared_ptr for the property named <code>name</code>.
+	/// <summary>operator[](name) returns a std::shared_ptr for the property named <code>name</code>.
 	/// It is the very pointer stored for that location, so it may be used to add a new property
 	/// to the list and have a reference to the smart pointer associated with that name.</summary>
-	SharedSimplePropertyPtr &operator[](const string &name);
+	SharedSimplePropertyPtr &operator[](const std::string &name);
 
 	/// <summary>begin() returns an iterator for the beginning of the properties list.</summary>
-	vector<pair<string, SharedSimplePropertyPtr>>::iterator begin() { return properties.begin(); }
+	std::vector<std::pair<std::string, SharedSimplePropertyPtr>>::iterator begin() { return properties.begin(); }
 
 	/// <summary>begin() returns an iterator for the end of the properties list.</summary>
-	vector<pair<string, SharedSimplePropertyPtr>>::iterator end() { return properties.end(); }
+	std::vector<std::pair<std::string, SharedSimplePropertyPtr>>::iterator end() { return properties.end(); }
 
 	/// <summary>cbegin() returns a const iterator for the beginning of the properties list.</summary>
-	vector<pair<string, SharedSimplePropertyPtr>>::const_iterator cbegin() { return properties.cbegin(); }
+	std::vector<std::pair<std::string, SharedSimplePropertyPtr>>::const_iterator cbegin() { return properties.cbegin(); }
 
 	/// <summary>cend() returns a const iterator for the end of the properties list.</summary>
-	vector<pair<string, SharedSimplePropertyPtr>>::const_iterator cend() { return properties.cend(); }
+	std::vector<std::pair<std::string, SharedSimplePropertyPtr>>::const_iterator cend() { return properties.cend(); }
 };
 
 /*
@@ -483,7 +483,7 @@ typedef TSimpleProperty<float, PropertyType::FLOAT> FloatProperty;
 typedef TSimpleProperty<Vector2f, PropertyType::VEC2> Vec2Property;
 
 template <typename ... Args>
-unique_ptr<SimpleProperty> MakeVec2Property(Args&& ... args)
+std::unique_ptr<SimpleProperty> MakeVec2Property(Args&& ... args)
 {
 // return std::unique_ptr<SimpleProperty>(new Vec2Property(args));
 return MakeProperty<Vector2f, PropertyType::VEC2>(args);
@@ -501,8 +501,8 @@ return CastAsPropertyType<Vector2f, PropertyType::VEC2>(ptr);
 class SimpleMaterial
 {
 private:
-map<string, int> nameIndex;
-vector<SimpleProperty> properties;
+std::map<std::string, int> nameIndex;
+std::vector<SimpleProperty> properties;
 public:
 SimpleMaterial()
 {

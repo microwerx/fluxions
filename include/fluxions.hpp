@@ -67,12 +67,12 @@
 namespace Fluxions
 {
 extern bool debugging;
-extern const string BlankString;
+extern const std::string BlankString;
 
-string GetPathTracerName(const string &sceneName, bool ks, int mrd, int pl);
-string GetSphlRenderName(const string &sceneName, int md);
-string GetPathTracerSphlRenderName(const string &sceneName, bool ks, int mrd, int pl, int md);
-string GetStatsName(const string &sceneName, bool ks, int mrd, int pl, int md);
+std::string GetPathTracerName(const std::string &sceneName, bool ks, int mrd, int pl);
+std::string GetSphlRenderName(const std::string &sceneName, int md);
+std::string GetPathTracerSphlRenderName(const std::string &sceneName, bool ks, int mrd, int pl, int md);
+std::string GetStatsName(const std::string &sceneName, bool ks, int mrd, int pl, int md);
 
 } // namespace Fluxions
 

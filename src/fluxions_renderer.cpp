@@ -43,21 +43,21 @@ void Renderer::Render(const IScene *pScene)
 {
 }
 
-bool Renderer::LoadConfig(const string &filename)
+bool Renderer::LoadConfig(const std::string &filename)
 {
 	FilePathInfo fpi(filename);
 	basepath = fpi.dir;
 	if (fpi.DoesNotExist())
 		return false;
 
-	ifstream fin(filename);
+	std::ifstream fin(filename);
 	if (!fin)
 		return false;
 
-	string line;
+	std::string line;
 	KASL::TokenVector tokens;
 
-	map<string, int> quickLookup;
+	std::map<std::string, int> quickLookup;
 	quickLookup["renderconfig"] = 1;
 	quickLookup["path"] = 2;
 	quickLookup["program"] = 3;
@@ -75,7 +75,7 @@ bool Renderer::LoadConfig(const string &filename)
 	{
 		line = "";
 		lineno++;
-		getline(fin, line);
+		std::getline(fin, line);
 
 		KASL::lex_quick_l3_parse(line, tokens);
 
@@ -213,16 +213,16 @@ void Renderer::LoadShaders()
 		for (auto &p : rc.programs)
 		{
 			hflog.info("%s(): loading program %s", __FUNCTION__, p.name.c_str());
-			string vspath = FindPathIfExists(p.vertshader, Paths);
-			string fspath = FindPathIfExists(p.fragshader, Paths);
-			string gspath = FindPathIfExists(p.geomshader, Paths);
+			std::string vspath = FindPathIfExists(p.vertshader, Paths);
+			std::string fspath = FindPathIfExists(p.fragshader, Paths);
+			std::string gspath = FindPathIfExists(p.geomshader, Paths);
 			if (vspath.empty())
 				hflog.error("%s(): vertex shader %s does not exist", __FUNCTION__, p.vertshader.c_str());
 			if (fspath.empty())
 				hflog.error("%s(): fragment shader %s does not exist", __FUNCTION__, p.fragshader.c_str());
-			shared_ptr<Fluxions::SimpleShader> spVS = CompileShaderFromFile(GL_VERTEX_SHADER, vspath);
-			shared_ptr<Fluxions::SimpleShader> spFS = CompileShaderFromFile(GL_FRAGMENT_SHADER, fspath);
-			shared_ptr<Fluxions::SimpleShader> spGS = CompileShaderFromFile(GL_GEOMETRY_SHADER, gspath);
+			std::shared_ptr<Fluxions::SimpleShader> spVS = CompileShaderFromFile(GL_VERTEX_SHADER, vspath);
+			std::shared_ptr<Fluxions::SimpleShader> spFS = CompileShaderFromFile(GL_FRAGMENT_SHADER, fspath);
+			std::shared_ptr<Fluxions::SimpleShader> spGS = CompileShaderFromFile(GL_GEOMETRY_SHADER, gspath);
 			if (!spVS->didCompile || !spFS->didCompile)
 			{
 				hflog.info("%s(): failed to load program %s because the vertex/fragment shaders did not compile.", __FUNCTION__, p.name.c_str());
@@ -233,7 +233,7 @@ void Renderer::LoadShaders()
 				hflog.info("%s(): failed to load program %s because the geometry shader did not compile.", __FUNCTION__, p.name.c_str());
 			}
 
-			SimpleProgramPtr program = make_shared<SimpleProgram>();
+			SimpleProgramPtr program = std::make_shared<SimpleProgram>();
 			program->Create();
 			program->AttachShaders(spVS);
 			program->AttachShaders(spFS);
@@ -251,7 +251,7 @@ void Renderer::LoadShaders()
 			}
 			for (auto attrib : p.vertex_attribs)
 			{
-				cout << "    " << attrib.name << ": " << program->GetAttribLocation(attrib.name.c_str()) << endl;
+				std::cout << "    " << attrib.name << ": " << program->GetAttribLocation(attrib.name.c_str()) << std::endl;
 				hflog.info("%s(): attrib (%2d) %s", __FUNCTION__, program->GetAttribLocation(attrib.name.c_str()), attrib.name.c_str());
 			}
 			p.program = program;
@@ -259,7 +259,7 @@ void Renderer::LoadShaders()
 	}
 }
 
-SimpleProgramPtr Renderer::FindProgram(const string &renderConfigName, const string &name)
+SimpleProgramPtr Renderer::FindProgram(const std::string &renderConfigName, const std::string &name)
 {
 	SimpleProgramPtr p = nullptr;
 
@@ -278,13 +278,13 @@ SimpleProgramPtr Renderer::FindProgram(const string &renderConfigName, const str
 	return p;
 }
 
-bool Renderer::new_renderconfig(const string &name)
+bool Renderer::new_renderconfig(const std::string &name)
 {
 	RenderConfigs[name] = RenderConfig(name);
 	return use_renderconfig(name);
 }
 
-bool Renderer::use_renderconfig(const string &name)
+bool Renderer::use_renderconfig(const std::string &name)
 {
 	auto it = RenderConfigs.find(name);
 	pcur_renderconfig = nullptr;
@@ -294,7 +294,7 @@ bool Renderer::use_renderconfig(const string &name)
 	return true;
 }
 
-bool Renderer::new_program(const string &name)
+bool Renderer::new_program(const std::string &name)
 {
 	if (pcur_renderconfig == nullptr)
 		return false;
@@ -302,13 +302,13 @@ bool Renderer::new_program(const string &name)
 	return use_program(name);
 }
 
-bool Renderer::use_program(const string &name)
+bool Renderer::use_program(const std::string &name)
 {
 	if (pcur_renderconfig == nullptr)
 		return false;
-	vector<RenderConfig::Program> &p = pcur_renderconfig->programs;
-	auto it = find_if(p.begin(), p.end(),
-					  [&name](RenderConfig::Program &rc) { return rc.name == name; });
+	std::vector<RenderConfig::Program> &p = pcur_renderconfig->programs;
+	auto it = std::find_if(p.begin(), p.end(),
+						   [&name](RenderConfig::Program &rc) { return rc.name == name; });
 	if (it == p.end())
 		return false;
 	pcur_program = &(*it);
@@ -448,7 +448,7 @@ bool Renderer::k_sampler(const KASL::TokenVector &args)
 			paramValue = args[2].ival;
 		}
 
-		Samplers[cur_sampler].parameters.push_back(make_pair(paramName, paramValue));
+		Samplers[cur_sampler].parameters.push_back(std::make_pair(paramName, paramValue));
 	}
 	return true;
 }
@@ -489,9 +489,9 @@ bool Renderer::k_texture(const KASL::TokenVector &args)
 			if (param == GL_TEXTURE_2D ||
 				(param >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && param <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z))
 			{
-				string path = FindPathIfExists(args[2].sval, Paths);
+				std::string path = FindPathIfExists(args[2].sval, Paths);
 				if (!path.empty())
-					Textures[cur_texture].files.push_back(make_pair(param, path));
+					Textures[cur_texture].files.push_back(std::make_pair(param, path));
 			}
 		}
 		else if (count == 7 && args[1].IsInteger() && args[2].IsString() &&
@@ -517,7 +517,7 @@ bool Renderer::k_fbo(const KASL::TokenVector &args)
 		return false;
 	if (count == 2 && args[1].IsStringOrIdentifier())
 	{
-		string name = args[1].sval;
+		std::string name = args[1].sval;
 		Framebuffers[name].name = name;
 		Framebuffers[name].renderbuffers.clear();
 		Framebuffers[name].textures.clear();
@@ -546,14 +546,14 @@ bool Renderer::k_fbo(const KASL::TokenVector &args)
 		{
 			if (target == GL_RENDERBUFFER)
 			{
-				pcur_fbo->renderbuffers.push_back(make_tuple(attachment, args[4].sval));
+				pcur_fbo->renderbuffers.push_back(std::make_tuple(attachment, args[4].sval));
 			}
 			else
 			{
 				int level = 0;
 				if (count == 6 && args[5].IsInteger())
 					level = args[5].ival;
-				pcur_fbo->textures.push_back(make_tuple(attachment, target, args[4].sval, level));
+				pcur_fbo->textures.push_back(std::make_tuple(attachment, target, args[4].sval, level));
 			}
 		}
 	}

@@ -19,8 +19,8 @@
 #ifndef FLUXIONS_PBSKY_HPP
 #define FLUXIONS_PBSKY_HPP
 
-#include <fluxions_astronomy.hpp>
 #include <ArHosekSkyModel.h>
+#include <fluxions_astronomy.hpp>
 #include <fluxions_gte.hpp>
 
 namespace Fluxions

@@ -1227,7 +1227,7 @@ T calc_spherical_harmonic(int max_degree, const T *a, const T theta, const T phi
 template double calc_spherical_harmonic<double>(int, const double *, double, double);
 template float calc_spherical_harmonic<float>(int, const float *, float, float);
 
-void Sph4f::SaveJSON(const string &path)
+void Sph4f::SaveJSON(const std::string &path)
 {
 	FilePathInfo fpi(path);
 	KASL::JSONPtr json = KASL::JSON::MakeObject({{"maxDegree", KASL::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
@@ -1236,12 +1236,12 @@ void Sph4f::SaveJSON(const string &path)
 	auto coefs = json->getMember("coefs");
 	for (int j = 0; j < 4; j++)
 	{
-		vector<float> coef_f = msph[j].getCoefficients();
+		std::vector<float> coef_f = msph[j].getCoefficients();
 		KASL::JSONPtr jsonArray = KASL::JSON::MakeArray(coef_f);
 		coefs->PushBack(jsonArray);
 	}
 
-	ofstream fout(fpi.path);
+	std::ofstream fout(fpi.path);
 	fout << json->Serialize();
 	fout.close();
 }

@@ -32,7 +32,7 @@ class SphlSampler
 	SphlSampler();
 
 	void resize(int samplesX, int samplesY);
-	void saveSampleMap(const string &path, int pxscale);
+	void saveSampleMap(const std::string &path, int pxscale);
 	void sampleCubeMap(const Image4f &cubeMap, MultispectralSph4f &msph);
 
   private:
@@ -41,11 +41,11 @@ class SphlSampler
 	size_t ix = 128; // 628;
 	size_t iy = 64;  // 314;
 	size_t numSamples = 0;
-	vector<Vector3f> randomVectors;
-	vector<double> theta;
-	vector<double> phi;
-	vector<double> sph;
-	vector<int> debug_sides;
+	std::vector<Vector3f> randomVectors;
+	std::vector<double> theta;
+	std::vector<double> phi;
+	std::vector<double> sph;
+	std::vector<int> debug_sides;
 };
 } // namespace Fluxions
 

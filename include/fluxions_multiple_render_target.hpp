@@ -19,7 +19,7 @@
 #ifndef FLUXIONS_MULTIPLE_RENDER_TARGETS_HPP
 #define FLUXIONS_MULTIPLE_RENDER_TARGETS_HPP
 
-#include <fluxions_stdcxx.hpp>
+// #include <fluxions_stdcxx.hpp>
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
 
@@ -81,11 +81,11 @@ class FramebufferObject
 	GLenum internalformat;
 	GLenum currentCubeFace;
 	Matrix4f projectionViewMatrix;
-	vector<pair<GLenum, RenderTarget>> renderTargets;
-	vector<GLenum> enables;
+	std::vector<std::pair<GLenum, RenderTarget>> renderTargets;
+	std::vector<GLenum> enables;
 };
 
-string GetFramebufferStatusAsString(GLenum status);
+std::string GetFramebufferStatusAsString(GLenum status);
 } // namespace Fluxions
 
 #endif

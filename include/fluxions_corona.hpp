@@ -55,9 +55,9 @@ class OBJStaticModel
 	OBJStaticModel();
 	~OBJStaticModel();
 
-	bool LoadOBJ(const string &filename);
-	bool SaveOBJ(const string &filename);
-	void SavePrecompiled(const string &filename, const string objname);
+	bool LoadOBJ(const std::string &filename);
+	bool SaveOBJ(const std::string &filename);
+	void SavePrecompiled(const std::string &filename, const std::string objname);
 	void LoadPrecompiled(const int numIndices, const int *indices, const int numVertices, const float *vertices, const int numSurfaces, const OBJSurface *surfaces);
 	void ComputeTangentVectors();
 	void Clear();
@@ -79,12 +79,12 @@ class CoronaDatabase
   private:
   public:
 	SimpleRenderer_GLuint renderer;
-	map<string, OBJStaticModel> models;
+	std::map<std::string, OBJStaticModel> models;
 
 	CoronaDatabase();
 	~CoronaDatabase();
 
-	void LoadOBJ(const string &objname, const string &filename);
+	void LoadOBJ(const std::string &objname, const std::string &filename);
 	void BuildBuffers();
 	void Render();
 	void RenderZOnly();

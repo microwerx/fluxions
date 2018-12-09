@@ -31,9 +31,9 @@ Curl::~Curl()
 {
 }
 
-string Curl::Get(const string &url)
+std::string Curl::Get(const std::string &url)
 {
-    string result;
+    std::string result;
     curl = curl_easy_init();
     if (curl)
     {
@@ -50,7 +50,7 @@ string Curl::Get(const string &url)
     return result;
 }
 
-Curl::StringTimePairFuture Curl::AsyncGet(const string &url)
+Curl::StringTimePairFuture Curl::AsyncGet(const std::string &url)
 {
     StringTimePairFuture future_result = async(launch::async, [url]() {
         StringTimePair result;
@@ -65,7 +65,7 @@ Curl::StringTimePairFuture Curl::AsyncGet(const string &url)
             res = curl_easy_perform(curl);
             if (res != CURLE_OK)
             {
-                result.first = "<Curl::AsyncGet ERROR [" + string(curl_easy_strerror(res)) + "]> " + url;
+                result.first = "<Curl::AsyncGet ERROR [" + std::string(curl_easy_strerror(res)) + "]> " + url;
             }
             curl_easy_cleanup(curl);
         }

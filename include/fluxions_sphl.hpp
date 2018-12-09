@@ -29,8 +29,8 @@ namespace Fluxions
 
 struct FxModel
 {
-	vector<Vector3f> vertices;
-	vector<Vector3i> triangles;
+	std::vector<Vector3f> vertices;
+	std::vector<Vector3i> triangles;
 	size_t vertexCount = 0;
 	size_t triangleCount = 0;
 

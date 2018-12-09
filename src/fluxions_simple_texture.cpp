@@ -372,7 +372,7 @@ bool SimpleTexture::LoadTexture2D(const std::string &filename, bool genMipMap)
 	SDL_Surface *imageSurface = IMG_Load(filename.c_str());
 	if (imageSurface == NULL)
 	{
-		cout << "IMG_GetError() reports: " << IMG_GetError() << endl;
+		std::cout << "IMG_GetError() reports: " << IMG_GetError() << std::endl;
 		return false;
 	}
 
@@ -536,7 +536,7 @@ bool Fluxions::SimpleTexture::LoadTextureCubeMap(
 	const std::string &filename_neg_z,
 	bool genMipMap)
 {
-	vector<string> filenames;
+	std::vector<std::string> filenames;
 	filenames.push_back(filename_pos_x);
 	filenames.push_back(filename_pos_y);
 	filenames.push_back(filename_pos_z);
@@ -682,7 +682,7 @@ void FlipY(unsigned char *pixels, size_t bytesPerPixel, size_t size)
 	delete[] dst;
 }
 
-bool SimpleTexture::LoadTextureCoronaCubeMap(const string &filename, bool genMipMap)
+bool SimpleTexture::LoadTextureCoronaCubeMap(const std::string &filename, bool genMipMap)
 {
 	target = GL_TEXTURE_CUBE_MAP;
 
@@ -769,7 +769,7 @@ bool SimpleTexture::LoadTextureCoronaCubeMap(const string &filename, bool genMip
 		Bind(0);
 		SetTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, (void **)data, genMipMap);
 		glutBindDefaultTextureAndSampler(target);
-		vector<unsigned char> _data;
+		std::vector<unsigned char> _data;
 		_data.resize(width * height * bytesPerPixel * 6);
 		for (int i = 0; i < 6; i++)
 		{

@@ -19,12 +19,13 @@
 #include "stdafx.h"
 #include <unicornfish_worker.hpp>
 
-namespace Uf {
+namespace Uf
+{
 Worker::Worker()
 {
 }
 
-Worker::Worker(const char* endpoint, const char* service)
+Worker::Worker(const char *endpoint, const char *service)
 {
     ConnectToBroker(endpoint, service);
 }
@@ -36,24 +37,27 @@ Worker::~Worker()
 void Worker::Run()
 {
     Uf::Message reply;
-    while (true) {
-        if (SendReplyWaitRequest(reply) == false) {
+    while (true)
+    {
+        if (SendReplyWaitRequest(reply) == false)
+        {
             break;
         }
         OnProcessRequest(GetRequest(), reply);
     }
 }
 
-void Worker::OnProcessRequest(const Message& request, Message& reply)
+void Worker::OnProcessRequest(const Message &request, Message &reply)
 {
     reply = request;
 }
 
-bool Worker::ConnectToBroker(const char* endpoint, const char* service)
+bool Worker::ConnectToBroker(const char *endpoint, const char *service)
 {
     Disconnect();
 
-    if (!workerSocket.NewDealer(endpoint)) {
+    if (!workerSocket.NewDealer(endpoint))
+    {
         if (verbose)
             printf("worker: could not create socket\n");
         return false;
@@ -73,7 +77,8 @@ bool Worker::ConnectToBroker(const char* endpoint, const char* service)
 
 void Worker::Disconnect()
 {
-    if (workerSocket) {
+    if (workerSocket)
+    {
         workerSocket.Delete();
     }
     serviceName.clear();
@@ -85,54 +90,70 @@ void Worker::Disconnect()
     expectReply = false;
 }
 
-bool Worker::SendReplyWaitRequest(const Message& replyToSend)
+bool Worker::SendReplyWaitRequest(const Message &replyToSend)
 {
     replyMessage = replyToSend;
-    if (replyMessage) {
+    if (replyMessage)
+    {
         replyToHexAddress = replyTo.GetHexData();
         replyMessage.Wrap(replyTo);
         SendCommandToBroker(Majordomo::Command::Reply, replyMessage);
     }
     expectReply = true;
     auto t0 = zclock_mono();
-    while (true) {
-        if (workerSocket.Poll(Majordomo::DefaultHeartbeatIntervalPollMS)) {
+    while (true)
+    {
+        if (workerSocket.Poll(Majordomo::DefaultHeartbeatIntervalPollMS))
+        {
 
             requestMessage.Recv(workerSocket);
             if (verbose)
                 printf("worker: received message size is %d\n", (int)requestMessage.Size());
             liveness = Majordomo::DefaultHearbeatAliveness;
 
-            if (requestMessage.Size() >= 3) {
+            if (requestMessage.Size() >= 3)
+            {
                 bool poppedEmpty = requestMessage.PopEmpty();
-                string header = requestMessage.PopString();
+                std::string header = requestMessage.PopString();
                 Majordomo::Command command = requestMessage.PopCommand();
 
-                if (poppedEmpty == false || header != Majordomo::WorkerId) {
+                if (poppedEmpty == false || header != Majordomo::WorkerId)
+                {
                     return false;
                 }
-                if (command == Majordomo::Command::Request) {
+                if (command == Majordomo::Command::Request)
+                {
                     replyTo = requestMessage.Unwrap();
                     return requestMessage;
-                } else if (command == Majordomo::Command::Heartbeat) {
+                }
+                else if (command == Majordomo::Command::Heartbeat)
+                {
                     // do nothing for heartbeat
                     if (verbose)
                         printf("worker: received heartbeat\n");
-                } else if (command == Majordomo::Command::Disconnect) {
+                }
+                else if (command == Majordomo::Command::Disconnect)
+                {
                     // we got disconnected, so try to connect again
                     if (verbose)
                         printf("worker: received disconnect, trying to reconnect\n");
                     ConnectToBroker();
-                } else {
+                }
+                else
+                {
                     // invalid message
                 }
             }
-        } else if (!workerSocket) {
+        }
+        else if (!workerSocket)
+        {
             // got interrupted
             if (verbose)
                 printf("worker: socket was interrupted\n");
             return false;
-        } else if (--liveness == 0) {
+        }
+        else if (--liveness == 0)
+        {
             if (verbose)
                 printf("worker: disconnected from broker, retrying to connect...\n");
             //retries--;
@@ -141,7 +162,8 @@ bool Worker::SendReplyWaitRequest(const Message& replyToSend)
             if (!ConnectToBroker())
                 return false;
         }
-        if (zclock_time() > heartbeatTime) {
+        if (zclock_time() > heartbeatTime)
+        {
             SendCommandToBroker(Majordomo::Command::Heartbeat);
             heartbeatTime = zclock_time() + Majordomo::DefaultHeartbeatIntervalMS;
         }
@@ -151,10 +173,11 @@ bool Worker::SendReplyWaitRequest(const Message& replyToSend)
     return true;
 }
 
-bool Worker::SendReply(const Message& replyToSend)
+bool Worker::SendReply(const Message &replyToSend)
 {
     replyMessage = replyToSend;
-    if (replyMessage) {
+    if (replyMessage)
+    {
         replyToHexAddress = replyTo.GetHexData();
         replyMessage.Wrap(replyTo);
         SendCommandToBroker(Majordomo::Command::Reply, replyMessage);
@@ -166,44 +189,59 @@ bool Worker::SendReply(const Message& replyToSend)
 bool Worker::WaitRequest()
 {
     auto t0 = zclock_mono();
-    while (true) {
-        if (workerSocket.Poll(Majordomo::DefaultHeartbeatIntervalPollMS)) {
+    while (true)
+    {
+        if (workerSocket.Poll(Majordomo::DefaultHeartbeatIntervalPollMS))
+        {
             requestMessage.Recv(workerSocket);
             if (verbose)
                 printf("worker: received message size is %d\n", (int)requestMessage.Size());
             liveness = Majordomo::DefaultHearbeatAliveness;
 
-            if (requestMessage.Size() >= 3) {
+            if (requestMessage.Size() >= 3)
+            {
                 bool poppedEmpty = requestMessage.PopEmpty();
-                string header = requestMessage.PopString();
+                std::string header = requestMessage.PopString();
                 Majordomo::Command command = requestMessage.PopCommand();
 
-                if (poppedEmpty == false || header != Majordomo::WorkerId) {
+                if (poppedEmpty == false || header != Majordomo::WorkerId)
+                {
                     return false;
                 }
-                if (command == Majordomo::Command::Request) {
+                if (command == Majordomo::Command::Request)
+                {
                     replyTo = requestMessage.Unwrap();
                     return requestMessage;
                     return true;
-                } else if (command == Majordomo::Command::Heartbeat) {
+                }
+                else if (command == Majordomo::Command::Heartbeat)
+                {
                     // do nothing for heartbeat
                     if (verbose)
                         printf("worker: received heartbeat\n");
-                } else if (command == Majordomo::Command::Disconnect) {
+                }
+                else if (command == Majordomo::Command::Disconnect)
+                {
                     // we got disconnected, so try to connect again
                     if (verbose)
                         printf("worker: received disconnect, trying to reconnect\n");
                     ConnectToBroker();
-                } else {
+                }
+                else
+                {
                     // invalid message
                 }
             }
-        } else if (!workerSocket) {
+        }
+        else if (!workerSocket)
+        {
             // got interrupted
             if (verbose)
                 printf("worker: socket was interrupted\n");
             return false;
-        } else if (--liveness == 0) {
+        }
+        else if (--liveness == 0)
+        {
             if (verbose)
                 printf("worker: disconnected from broker, retrying to connect...\n");
             //retries--;
@@ -212,7 +250,8 @@ bool Worker::WaitRequest()
             if (!ConnectToBroker())
                 return false;
         }
-        if (zclock_time() > heartbeatTime) {
+        if (zclock_time() > heartbeatTime)
+        {
             SendCommandToBroker(Majordomo::Command::Heartbeat);
             heartbeatTime = zclock_time() + Majordomo::DefaultHeartbeatIntervalMS;
         }
@@ -224,8 +263,8 @@ bool Worker::WaitRequest()
 
 bool Worker::ConnectToBroker()
 {
-    string save_endpoint = brokerEndpoint;
-    string save_service = serviceName;
+    std::string save_endpoint = brokerEndpoint;
+    std::string save_service = serviceName;
     Disconnect();
     return ConnectToBroker(save_endpoint.c_str(), save_service.c_str());
 }
@@ -237,7 +276,7 @@ bool Worker::SendCommandToBroker(Majordomo::Command command)
     return SendCommandToBroker(command, msg);
 }
 
-bool Worker::SendCommandToBroker(Majordomo::Command command, Message& msg)
+bool Worker::SendCommandToBroker(Majordomo::Command command, Message &msg)
 {
     if (!msg)
         msg.Create();
@@ -249,7 +288,7 @@ bool Worker::SendCommandToBroker(Majordomo::Command command, Message& msg)
     return msg.Send(workerSocket);
 }
 
-bool Worker::SendCommandToClient(Majordomo::Command command, Message& msg)
+bool Worker::SendCommandToClient(Majordomo::Command command, Message &msg)
 {
     if (!msg)
         msg.Create();
@@ -258,4 +297,4 @@ bool Worker::SendCommandToClient(Majordomo::Command command, Message& msg)
         printf("worker: sending %d frames to client %s \n", (int)msg.Size(), replyToHexAddress.c_str());
     return msg.Send(workerSocket);
 }
-}
+} // namespace Uf

@@ -29,7 +29,7 @@ struct KeyboardState
 {
 	//map<int, bool> keys;
 	//map<int, bool> modkeys;
-	map<string, bool> keys;
+	std::map<std::string, bool> keys;
 	int modifiers;
 
 	static const int ShiftKeyBit = 1;
@@ -60,23 +60,23 @@ struct KeyboardState
 			key.second = false;
 		}
 	}
-	inline void SetKey(const string &key, bool state) { keys[key] = state; }
-	inline void SetKey(const string &key, int keymod, bool state)
+	inline void SetKey(const std::string &key, bool state) { keys[key] = state; }
+	inline void SetKey(const std::string &key, int keymod, bool state)
 	{
 		modifiers = keymod;
 		keys[key] = state;
 	}
 	void SetKey(unsigned char c, int keymod, bool state);
-	inline bool IsPressed(const string &key) const
+	inline bool IsPressed(const std::string &key) const
 	{
 		auto it = keys.find(key);
 		if (it != keys.end())
 			return it->second;
 		return false;
 	}
-	inline bool IsPressed(const string &key, int keymod) const { return keymod == modifiers && IsPressed(key); }
-	bool CheckKeyPressed(vector<string> keys);
-	int CountKeysPressed(vector<string> keys);
+	inline bool IsPressed(const std::string &key, int keymod) const { return keymod == modifiers && IsPressed(key); }
+	bool CheckKeyPressed(std::vector<std::string> keys);
+	int CountKeysPressed(std::vector<std::string> keys);
 };
 } // namespace Viperfish
 

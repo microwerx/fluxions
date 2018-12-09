@@ -290,7 +290,7 @@ class TMatrix4
     template <typename U>
     static constexpr auto compAdd(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
-        return TMatrix4<common_type_t<T, U>>(
+        return TMatrix4<std::common_type_t<T, U>>(
             m1.m11 + m2.m11, m1.m12 + m2.m12, m1.m13 + m2.m13, m1.m14 + m2.m14,
             m1.m21 + m2.m21, m1.m22 + m2.m22, m1.m23 + m2.m23, m1.m24 + m2.m24,
             m1.m31 + m2.m31, m1.m32 + m2.m32, m1.m33 + m2.m33, m1.m34 + m2.m34,
@@ -300,7 +300,7 @@ class TMatrix4
     template <typename U>
     static constexpr auto compSub(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
-        return TMatrix4<common_type_t<T, U>>(
+        return TMatrix4<std::common_type_t<T, U>>(
             m1.m11 - m2.m11, m1.m12 - m2.m12, m1.m13 - m2.m13, m1.m14 - m2.m14,
             m1.m21 - m2.m21, m1.m22 - m2.m22, m1.m23 - m2.m23, m1.m24 - m2.m24,
             m1.m31 - m2.m31, m1.m32 - m2.m32, m1.m33 - m2.m33, m1.m34 - m2.m34,
@@ -310,7 +310,7 @@ class TMatrix4
     template <typename U>
     static constexpr auto compMult(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
-        return TMatrix4<common_type_t<T, U>>(
+        return TMatrix4<std::common_type_t<T, U>>(
             m1.m11 * m2.m11, m1.m12 * m2.m12, m1.m13 * m2.m13, m1.m14 * m2.m14,
             m1.m21 * m2.m21, m1.m22 * m2.m22, m1.m23 * m2.m23, m1.m24 * m2.m24,
             m1.m31 * m2.m31, m1.m32 * m2.m32, m1.m33 * m2.m33, m1.m34 * m2.m34,
@@ -320,7 +320,7 @@ class TMatrix4
     template <typename U>
     static constexpr auto compDiv(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
-        return TMatrix4<common_type_t<T, U>>(
+        return TMatrix4<std::common_type_t<T, U>>(
             m1.m11 / m2.m11, m1.m12 / m2.m12, m1.m13 / m2.m13, m1.m14 / m2.m14,
             m1.m21 / m2.m21, m1.m22 / m2.m22, m1.m23 / m2.m23, m1.m24 / m2.m24,
             m1.m31 / m2.m31, m1.m32 / m2.m32, m1.m33 / m2.m33, m1.m34 / m2.m34,
@@ -330,7 +330,7 @@ class TMatrix4
     template <typename U>
     static constexpr auto multiply(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
     {
-        return TMatrix4<common_type_t<T, U>>(
+        return TMatrix4<std::common_type_t<T, U>>(
             (m1.m14 * m2.m41 + m1.m13 * m2.m31 + m1.m12 * m2.m21 + m1.m11 * m2.m11),
             (m1.m14 * m2.m42 + m1.m13 * m2.m32 + m1.m12 * m2.m22 + m1.m11 * m2.m12),
             (m1.m14 * m2.m43 + m1.m13 * m2.m33 + m1.m12 * m2.m23 + m1.m11 * m2.m13),
@@ -369,7 +369,7 @@ class TMatrix4
     template <typename U>
     constexpr auto operator()(std::function<U(T x)> Func) noexcept
     {
-        return TMatrix4<common_type_t<T, U>>(
+        return TMatrix4<std::common_type_t<T, U>>(
             Func(m11), Func(m12), Func(m13), Func(m14),
             Func(m21), Func(m22), Func(m23), Func(m24),
             Func(m31), Func(m32), Func(m33), Func(m34),
@@ -1662,7 +1662,7 @@ constexpr auto operator*(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept
 template <typename T, typename U>
 constexpr auto operator*(const TMatrix4<T> &M, const TVector2<U> &V) noexcept
 {
-    return TVector2<common_type_t<T, U>>(
+    return TVector2<std::common_type_t<T, U>>(
         M.m11 * V.x + M.m12 * V.y,
         M.m21 * V.x + M.m22 * V.y);
 }
@@ -1670,7 +1670,7 @@ constexpr auto operator*(const TMatrix4<T> &M, const TVector2<U> &V) noexcept
 template <typename T, typename U>
 constexpr auto operator*(const TMatrix4<T> &M, const TVector3<U> &V) noexcept
 {
-    return TVector2<common_type_t<T, U>>(
+    return TVector2<std::common_type_t<T, U>>(
         M.m11 * V.x + M.m12 * V.y + M.m13 * V.z,
         M.m21 * V.x + M.m22 * V.y + M.m23 * V.z,
         M.m31 * V.x + M.m32 * V.y + M.m33 * V.z);
@@ -1679,7 +1679,7 @@ constexpr auto operator*(const TMatrix4<T> &M, const TVector3<U> &V) noexcept
 template <typename T, typename U>
 constexpr auto operator*(const TMatrix4<T> &M, const TVector4<U> &V) noexcept
 {
-    return TVector4<common_type_t<T, U>>(
+    return TVector4<std::common_type_t<T, U>>(
         M.m11 * V.x + M.m12 * V.y + M.m13 * V.z + M.m14 * V.w,
         M.m21 * V.x + M.m22 * V.y + M.m23 * V.z + M.m24 * V.w,
         M.m31 * V.x + M.m32 * V.y + M.m33 * V.z + M.m34 * V.w,

@@ -28,11 +28,11 @@
 namespace Fluxions
 {
 bool debugging = false;
-const string BlankString("");
+const std::string BlankString("");
 
-shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const string &filename)
+std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename)
 {
-	shared_ptr<SimpleShader> shader(new SimpleShader());
+	std::shared_ptr<SimpleShader> shader(new SimpleShader());
 	FilePathInfo fpi(filename);
 	hflog.info("%s(): loading shader `%s'", __FUNCTION__, fpi.fullfname.c_str());
 	if (!fpi.IsFile())
@@ -68,9 +68,9 @@ shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const string &filena
 	return shader;
 }
 
-string FindFileIfExists(const string &filename, const vector<string> &pathsToTry)
+std::string FindFileIfExists(const std::string &filename, const std::vector<std::string> &pathsToTry)
 {
-	string output;
+	std::string output;
 
 	// Is there a file name to test?
 	FilePathInfo fpi(filename);
@@ -85,7 +85,7 @@ string FindFileIfExists(const string &filename, const vector<string> &pathsToTry
 	{
 		for (auto testPathIt : pathsToTry)
 		{
-			string testPath = testPathIt + fpi.fullfname;
+			std::string testPath = testPathIt + fpi.fullfname;
 			if (TestIfFileExists(testPath))
 			{
 				output = testPath;

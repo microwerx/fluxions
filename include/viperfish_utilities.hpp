@@ -29,7 +29,7 @@ namespace Viperfish
 // Time stuff
 inline double SteadyClockNow()
 {
-	chrono::microseconds t = chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now().time_since_epoch());
+	std::chrono::microseconds t = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch());
 	return t.count() * 1e-6;
 }
 

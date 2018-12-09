@@ -21,23 +21,25 @@
 
 #include <fluxions_gte_math.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 template <typename T>
-class TMatrix3 {
-public:
+class TMatrix3
+{
+  public:
     // normal access (column major)
     T m11, m21, m31;
     T m12, m22, m32;
     T m13, m23, m33;
 
-    constexpr T* ptr() noexcept { return &m11; }
-    constexpr const T* const_ptr() const noexcept { return &m11; }
+    constexpr T *ptr() noexcept { return &m11; }
+    constexpr const T *const_ptr() const noexcept { return &m11; }
 
     using type = T;
 
     constexpr T operator()(size_t row, size_t col) const noexcept
     {
-        const T* e = &m11;
+        const T *e = &m11;
         if (row == 1)
             e += 3;
         else if (row == 2)
@@ -52,31 +54,31 @@ public:
         const T a11, const T a12, const T a13,
         const T a21, const T a22, const T a23,
         const T a31, const T a32, const T a33);
-    TMatrix3(const TMatrix3<T>& M);
+    TMatrix3(const TMatrix3<T> &M);
     TMatrix3(const T M[3][3]);
     TMatrix3(const T M[9]);
-    const TMatrix3<T>& operator=(const TMatrix3<T>& M);
+    const TMatrix3<T> &operator=(const TMatrix3<T> &M);
 
     template <typename T2>
     operator TMatrix3<T2>() const;
 
     void LoadIdentity();
-    void MultMatrix(const TMatrix3<T>& M);
+    void MultMatrix(const TMatrix3<T> &M);
     template <typename T2>
-    const TMatrix3<T>& operator*=(const TMatrix3<T2>& M);
-    const TMatrix3<T>& operator+=(const TMatrix3<T>& M);
-    const TMatrix3<T>& operator-=(const TMatrix3<T>& M);
+    const TMatrix3<T> &operator*=(const TMatrix3<T2> &M);
+    const TMatrix3<T> &operator+=(const TMatrix3<T> &M);
+    const TMatrix3<T> &operator-=(const TMatrix3<T> &M);
 
     template <typename T2>
-    const TMatrix3<T> operator*(const TMatrix3<T2>& M) const;
-    const TMatrix3<T> operator+(const TMatrix3<T>& M) const;
-    const TMatrix3<T> operator-(const TMatrix3<T>& M) const;
+    const TMatrix3<T> operator*(const TMatrix3<T2> &M) const;
+    const TMatrix3<T> operator+(const TMatrix3<T> &M) const;
+    const TMatrix3<T> operator-(const TMatrix3<T> &M) const;
 
-    const TMatrix3<T>& scale(double x);
+    const TMatrix3<T> &scale(double x);
 
-    const TMatrix3<T>& Rotate(double angleInDegrees);
-    const TMatrix3<T>& Rotate(double angleInDegrees, double x, double y, double z);
-    const TMatrix3<T>& Scale(double x, double y);
+    const TMatrix3<T> &Rotate(double angleInDegrees);
+    const TMatrix3<T> &Rotate(double angleInDegrees, double x, double y, double z);
+    const TMatrix3<T> &Scale(double x, double y);
 
     const T Determinant() const;
     const T Trace() const;
@@ -122,7 +124,7 @@ TMatrix3<T>::TMatrix3(
 }
 
 template <typename T>
-TMatrix3<T>::TMatrix3(const TMatrix3<T>& M)
+TMatrix3<T>::TMatrix3(const TMatrix3<T> &M)
 {
     m11 = M.m11;
     m12 = M.m12;
@@ -138,9 +140,11 @@ TMatrix3<T>::TMatrix3(const TMatrix3<T>& M)
 template <typename T>
 TMatrix3<T>::TMatrix3(const T M[3][3])
 {
-    T* m = &m11;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    T *m = &m11;
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
             *m++ = M[j][i];
         }
     }
@@ -149,14 +153,15 @@ TMatrix3<T>::TMatrix3(const T M[3][3])
 template <typename T>
 TMatrix3<T>::TMatrix3(const T M[9])
 {
-    T* m = &m11;
-    for (int i = 0; i < 9; i++) {
+    T *m = &m11;
+    for (int i = 0; i < 9; i++)
+    {
         m[i] = M[i];
     }
 }
 
 template <typename T>
-const TMatrix3<T>& TMatrix3<T>::operator=(const TMatrix3<T>& M)
+const TMatrix3<T> &TMatrix3<T>::operator=(const TMatrix3<T> &M)
 {
     m11 = M.m11;
     m12 = M.m12;
@@ -195,7 +200,7 @@ void TMatrix3<T>::LoadIdentity()
 }
 
 template <typename T>
-void TMatrix3<T>::MultMatrix(const TMatrix3<T>& M)
+void TMatrix3<T>::MultMatrix(const TMatrix3<T> &M)
 {
     TMatrix3<T> u;
     u.m11 = m11 * M.m11 + m12 * M.m21 + m13 * M.m31;
@@ -212,7 +217,7 @@ void TMatrix3<T>::MultMatrix(const TMatrix3<T>& M)
 
 template <typename T>
 template <typename T2>
-const TMatrix3<T>& TMatrix3<T>::operator*=(const TMatrix3<T2>& M)
+const TMatrix3<T> &TMatrix3<T>::operator*=(const TMatrix3<T2> &M)
 {
     return *this = TMatrix3<T>(
                (T)(m11 * M.m11 + m12 * M.m21 + m13 * M.m31),
@@ -228,7 +233,7 @@ const TMatrix3<T>& TMatrix3<T>::operator*=(const TMatrix3<T2>& M)
 
 template <typename T>
 template <typename T2>
-const TMatrix3<T> TMatrix3<T>::operator*(const TMatrix3<T2>& M) const
+const TMatrix3<T> TMatrix3<T>::operator*(const TMatrix3<T2> &M) const
 {
     return TMatrix3<T>(
         m11 * M.m11 + m12 * M.m21 + m13 * M.m31,
@@ -243,7 +248,7 @@ const TMatrix3<T> TMatrix3<T>::operator*(const TMatrix3<T2>& M) const
 }
 
 template <typename T>
-const TMatrix3<T>& TMatrix3<T>::operator+=(const TMatrix3<T>& M)
+const TMatrix3<T> &TMatrix3<T>::operator+=(const TMatrix3<T> &M)
 {
     m11 += M.m11;
     m12 += M.m12;
@@ -258,7 +263,7 @@ const TMatrix3<T>& TMatrix3<T>::operator+=(const TMatrix3<T>& M)
 }
 
 template <typename T>
-const TMatrix3<T>& TMatrix3<T>::operator-=(const TMatrix3<T>& M)
+const TMatrix3<T> &TMatrix3<T>::operator-=(const TMatrix3<T> &M)
 {
     m11 -= M.m11;
     m21 -= M.m21;
@@ -273,7 +278,7 @@ const TMatrix3<T>& TMatrix3<T>::operator-=(const TMatrix3<T>& M)
 }
 
 template <typename T>
-const TMatrix3<T> TMatrix3<T>::operator+(const TMatrix3<T>& M) const
+const TMatrix3<T> TMatrix3<T>::operator+(const TMatrix3<T> &M) const
 {
     return TMatrix3<T>(
         m11 + M.m11, m12 + M.m12, m13 + M.m13,
@@ -282,7 +287,7 @@ const TMatrix3<T> TMatrix3<T>::operator+(const TMatrix3<T>& M) const
 }
 
 template <typename T>
-const TMatrix3<T> TMatrix3<T>::operator-(const TMatrix3<T>& M) const
+const TMatrix3<T> TMatrix3<T>::operator-(const TMatrix3<T> &M) const
 {
     return TMatrix3<T>(
         m11 - M.m11, m12 - M.m12, m13 - M.m13,
@@ -291,7 +296,7 @@ const TMatrix3<T> TMatrix3<T>::operator-(const TMatrix3<T>& M) const
 }
 
 template <typename T>
-const TMatrix3<T>& TMatrix3<T>::scale(double x)
+const TMatrix3<T> &TMatrix3<T>::scale(double x)
 {
     m11 *= (T)x;
     m12 *= (T)x;
@@ -306,7 +311,7 @@ const TMatrix3<T>& TMatrix3<T>::scale(double x)
 }
 
 template <typename T>
-const TMatrix3<T>& TMatrix3<T>::Rotate(double angleInDegrees)
+const TMatrix3<T> &TMatrix3<T>::Rotate(double angleInDegrees)
 {
     double c = cos(angleInDegrees * FX_DEGREES_TO_RADIANS);
     double s = sin(angleInDegrees * FX_DEGREES_TO_RADIANS);
@@ -318,7 +323,7 @@ const TMatrix3<T>& TMatrix3<T>::Rotate(double angleInDegrees)
 }
 
 template <typename T>
-const TMatrix3<T>& TMatrix3<T>::Rotate(double angleInDegrees, double x, double y, double z)
+const TMatrix3<T> &TMatrix3<T>::Rotate(double angleInDegrees, double x, double y, double z)
 {
     double c = cos(angleInDegrees * FX_DEGREES_TO_RADIANS);
     double s = sin(angleInDegrees * FX_DEGREES_TO_RADIANS);
@@ -334,7 +339,7 @@ const TMatrix3<T>& TMatrix3<T>::Rotate(double angleInDegrees, double x, double y
 }
 
 template <typename T>
-const TMatrix3<T>& TMatrix3<T>::Scale(double x, double y)
+const TMatrix3<T> &TMatrix3<T>::Scale(double x, double y)
 {
     return *this *= TMatrix3<double>(
                x, 0.0, 0.0,

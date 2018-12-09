@@ -19,12 +19,13 @@
 #ifndef FLUXIONS_GTE_MATRIX_EXTRA_HPP
 #define FLUXIONS_GTE_MATRIX_EXTRA_HPP
 
+#include <vector>
 #include <fluxions_gte_matrix2.hpp>
 #include <fluxions_gte_matrix3.hpp>
 #include <fluxions_gte_matrix4.hpp>
-#include <vector>
 
-namespace Fluxions {
+namespace Fluxions
+{
 // Forward declarations
 template <typename T>
 class TMatrix2x3;
@@ -45,35 +46,21 @@ template <typename T>
 class TColor4;
 
 template <typename T>
-class TMatrixM {
-public:
+class TMatrixM
+{
+  public:
     T m11, m21, m31, m41;
     T m12, m22, m32, m42;
     T m13, m23, m33, m43;
     T m14, m24, m34, m44;
 
-    constexpr T* ptr() noexcept { return &m11; }
-    constexpr const T* const_ptr() const noexcept { return &m11; }
+    constexpr T *ptr() noexcept { return &m11; }
+    constexpr const T *const_ptr() const noexcept { return &m11; }
 
     using type = T;
 
     TMatrixM()
-        : m11(0)
-        , m21(0)
-        , m31(0)
-        , m41(0)
-        , m12(0)
-        , m22(0)
-        , m32(0)
-        , m42(0)
-        , m13(0)
-        , m23(0)
-        , m33(0)
-        , m43(0)
-        , m14(0)
-        , m24(0)
-        , m34(0)
-        , m44(0)
+        : m11(0), m21(0), m31(0), m41(0), m12(0), m22(0), m32(0), m42(0), m13(0), m23(0), m33(0), m43(0), m14(0), m24(0), m34(0), m44(0)
     {
     }
 
@@ -82,67 +69,22 @@ public:
         const T a21, const T a22, const T a23, const T a24,
         const T a31, const T a32, const T a33, const T a34,
         const T a41, const T a42, const T a43, const T a44)
-        : m11(a11)
-        , m21(a21)
-        , m31(a31)
-        , m41(a41)
-        , m12(a12)
-        , m22(a22)
-        , m32(a32)
-        , m42(a42)
-        , m13(a13)
-        , m23(a23)
-        , m33(a33)
-        , m43(a43)
-        , m14(a14)
-        , m24(a24)
-        , m34(a34)
-        , m44(a44)
+        : m11(a11), m21(a21), m31(a31), m41(a41), m12(a12), m22(a22), m32(a32), m42(a42), m13(a13), m23(a23), m33(a33), m43(a43), m14(a14), m24(a24), m34(a34), m44(a44)
     {
     }
 
-    TMatrixM(const TMatrixM<T>& M)
-        : m11(M.m11)
-        , m21(M.m21)
-        , m31(M.m31)
-        , m41(M.m41)
-        , m12(M.m12)
-        , m22(M.m22)
-        , m32(M.m32)
-        , m42(M.m42)
-        , m13(M.m13)
-        , m23(M.m23)
-        , m33(M.m33)
-        , m43(M.m43)
-        , m14(M.m14)
-        , m24(M.m24)
-        , m34(M.m34)
-        , m44(M.m44)
+    TMatrixM(const TMatrixM<T> &M)
+        : m11(M.m11), m21(M.m21), m31(M.m31), m41(M.m41), m12(M.m12), m22(M.m22), m32(M.m32), m42(M.m42), m13(M.m13), m23(M.m23), m33(M.m33), m43(M.m43), m14(M.m14), m24(M.m24), m34(M.m34), m44(M.m44)
     {
     }
 
     TMatrixM(const T M[16])
-        : m11(M[0])
-        , m21(M[1])
-        , m31(M[2])
-        , m41(M[3])
-        , m12(M[4])
-        , m22(M[5])
-        , m32(M[6])
-        , m42(M[7])
-        , m13(M[8])
-        , m23(M[9])
-        , m33(M[10])
-        , m43(M[11])
-        , m14(M[12])
-        , m24(M[13])
-        , m34(M[14])
-        , m44(M[15])
+        : m11(M[0]), m21(M[1]), m31(M[2]), m41(M[3]), m12(M[4]), m22(M[5]), m32(M[6]), m42(M[7]), m13(M[8]), m23(M[9]), m33(M[10]), m43(M[11]), m14(M[12]), m24(M[13]), m34(M[14]), m44(M[15])
     {
     }
 
     template <typename Other>
-    const TMatrixM<T>& operator=(const TMatrixM<Other>& M)
+    const TMatrixM<T> &operator=(const TMatrixM<Other> &M)
     {
         m11 = M.m11;
         m21 = M.m21;
@@ -182,7 +124,7 @@ public:
             m14, m24, m34, m44);
     }
 
-    T* AsColMajorArray()
+    T *AsColMajorArray()
     {
         return &m11;
     }
@@ -900,14 +842,15 @@ public:
 //};
 
 template <typename T>
-class TMatrix {
-public:
+class TMatrix
+{
+  public:
     std::vector<T> m;
     int cols = 0;
     int rows = 0;
 
     TMatrix(int newCols, int newRows) { Resize(newCols, newRows); }
-    TMatrix(const TMatrix<T>& M)
+    TMatrix(const TMatrix<T> &M)
     {
         m.resize(M.m.size());
         std::copy(M.m.begin(), M.m.end(), m.begin());
@@ -915,7 +858,7 @@ public:
         rows = M.rows;
     }
 
-    void LoadMatrix(const TMatrix<T>& M)
+    void LoadMatrix(const TMatrix<T> &M)
     {
         m.resize(M.m.size());
         std::copy(M.m.begin(), M.m.end(), m.begin());
@@ -931,8 +874,10 @@ public:
         int minCols = min2(newCols, cols);
         int minRows = min2(newRows, rows);
 
-        for (int i = 0; i < newCols; i++) {
-            for (int j = 0; j < newRows; j++) {
+        for (int i = 0; i < newCols; i++)
+        {
+            for (int j = 0; j < newRows; j++)
+            {
                 // don't copy anything that doesn't exist in the new matrix
                 if (i >= newCols || j >= newRows)
                     continue;
@@ -959,7 +904,7 @@ public:
         return m[row * cols + col];
     }
 
-    const T& SetElement(int col, int row, const T& value)
+    const T &SetElement(int col, int row, const T &value)
     {
         if (col < 0 || col >= cols || row < 0 || row >= rows)
             throw std::out_of_range("TMatrix<T>::SetElement(col, row, value) indices out of range!");
@@ -972,8 +917,10 @@ public:
     {
         TMatrix<T> newM(rows, cols);
 
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 0; i < cols; i++)
+        {
+            for (int j = 0; j < rows; j++)
+            {
                 newM.SetElement(j, i, GetElement(i, j));
             }
         }
@@ -983,7 +930,7 @@ public:
 };
 
 template <typename T>
-constexpr TVector3<T> operator*(const TMatrix3<T>& lhs, const TVector3<T>& rhs)
+constexpr TVector3<T> operator*(const TMatrix3<T> &lhs, const TVector3<T> &rhs)
 {
     return TVector3<T>(
         lhs.m11 * rhs.x + lhs.m12 * rhs.y + lhs.m13 * rhs.z,
@@ -992,7 +939,7 @@ constexpr TVector3<T> operator*(const TMatrix3<T>& lhs, const TVector3<T>& rhs)
 }
 
 template <typename T>
-constexpr TColor3<T> operator*(const TMatrix3<T>& lhs, const TColor3<T>& rhs)
+constexpr TColor3<T> operator*(const TMatrix3<T> &lhs, const TColor3<T> &rhs)
 {
     return TColor3<T>(
         lhs.m11 * rhs.r + lhs.m12 * rhs.g + lhs.m13 * rhs.b,

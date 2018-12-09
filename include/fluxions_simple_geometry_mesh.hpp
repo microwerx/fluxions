@@ -70,7 +70,7 @@ class SimpleGeometryMesh
 	{
 	  public:
 		int location = -1;
-		string name = "GenericAttribName";
+		std::string name = "GenericAttribName";
 		bool normalized = false;
 		bool enabled = true;
 	};
@@ -96,7 +96,7 @@ class SimpleGeometryMesh
 
 	struct Surface
 	{
-		string materialName;
+		std::string materialName;
 		SurfaceType type = SurfaceType::Triangles;
 		int first;
 		int count;
@@ -147,7 +147,7 @@ class SimpleGeometryMesh
 			surfaces.back().count++;
 		dirty = true;
 	}
-	inline void SetMaterial(const string &materialName) { curMaterialName = materialName; }
+	inline void SetMaterial(const std::string &materialName) { curMaterialName = materialName; }
 	inline Surface &GetSurface(int i)
 	{
 		if (within(i, 0, (int)surfaces.size()))
@@ -165,9 +165,9 @@ class SimpleGeometryMesh
 		return blahSurface;
 	}
 
-	inline const vector<Surface> &GetSurfaces() const { return surfaces; }
-	inline const vector<Vertex> &GetVertices() const { return vertices; }
-	inline const vector<Index> &GetIndices() const { return indices; }
+	inline const std::vector<Surface> &GetSurfaces() const { return surfaces; }
+	inline const std::vector<Vertex> &GetVertices() const { return vertices; }
+	inline const std::vector<Index> &GetIndices() const { return indices; }
 
 	inline Vertex &GetVertex(int i)
 	{
@@ -227,7 +227,7 @@ class SimpleGeometryMesh
 			return attribInfo[i].name.c_str();
 		return nullptr;
 	}
-	inline void SetAttribName(int i, const string &name)
+	inline void SetAttribName(int i, const std::string &name)
 	{
 		if (within(i, 0, 7))
 			attribInfo[i].name = name;
@@ -238,7 +238,7 @@ class SimpleGeometryMesh
 		if (within(i, 0, 7))
 			attribInfo[i].normalized = normalized;
 	}
-	inline int GetAttribLocation(const string &name) const
+	inline int GetAttribLocation(const std::string &name) const
 	{
 		for (int i = 0; i < 8; i++)
 		{
@@ -249,12 +249,12 @@ class SimpleGeometryMesh
 	}
 	inline bool IsDirty() const { return dirty; }
 
-	bool SaveOBJ(const string &path, bool output_normals = true, bool output_texcoords = true);
+	bool SaveOBJ(const std::string &path, bool output_normals = true, bool output_texcoords = true);
 
   protected:
-	string curMaterialName;
+	std::string curMaterialName;
 	Vertex curVertexAttrib;
-	vector<AttribInfo> attribInfo = {
+	std::vector<AttribInfo> attribInfo = {
 		{0, "aPosition", false, true},
 		{1, "aNormal", false, true},
 		{2, "aColor", false, true},
@@ -264,9 +264,9 @@ class SimpleGeometryMesh
 		{6, "aGenericAttribute3", false, false},
 		{7, "aGenericAttribute4", false, false}};
 	bool dirty = false;
-	vector<Vertex> vertices;
-	vector<Index> indices;
-	vector<Surface> surfaces;
+	std::vector<Vertex> vertices;
+	std::vector<Index> indices;
+	std::vector<Surface> surfaces;
 
 	// these are for returning references that are out of range
 	Surface blahSurface;

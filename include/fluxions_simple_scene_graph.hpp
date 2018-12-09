@@ -104,8 +104,8 @@ struct SimpleGeometryGroup
 
     FilePathInfo fpi;
 
-    string objectName;
-    string mtllibName;
+    std::string objectName;
+    std::string mtllibName;
 
     GLuint objectId = 0;
     GLuint mtllibId = 0;
@@ -129,7 +129,7 @@ struct SimpleCamera
     float regionStartY = 0.0;
     float regionEndX = 1.0;
     float regionEndY = 1.0;
-    string bokehImg;
+    std::string bokehImg;
     float imageAspect = 1.0;
     float imageWidth = 1024.0;
     float imageHeight = 1024.0;
@@ -154,7 +154,7 @@ struct SimpleEnvironment
     bool hasTexmap = false;
     bool hasSun = false;
     Color3f color;
-    string texmap;
+    std::string texmap;
     Vector3f sunDirTo;
     Vector3f curSunDirTo;
     Color4f curSunDiskRadiance;
@@ -218,8 +218,8 @@ struct SimpleEnvironment
 struct SimpleSphere
 {
     Matrix4f transform;
-    string mtllibName;
-    string mtlName;
+    std::string mtllibName;
+    std::string mtlName;
     GLuint mtllibId = 0;
     GLuint mtlId = 0;
     GLuint objectId = 0;
@@ -253,7 +253,7 @@ struct SimpleGpuTexture
         target_ = target;
         try
         {
-            texture_ = make_shared<GLuint>(0);
+            texture_ = std::make_shared<GLuint>(0);
             GLuint texture;
             glGenTextures(1, &texture);
             *texture_ = texture;
@@ -379,7 +379,7 @@ struct SimpleGpuTexture
     int lastUnitBound_ = -1;
     //GLuint texture_ = 0;
     bool created_ = false;
-    shared_ptr<GLuint> texture_;
+    std::shared_ptr<GLuint> texture_;
 };
 
 static const int MaxSphlLights = 16;
@@ -392,7 +392,7 @@ struct SphlImageTexture
     Image4f lightProbe;
     SimpleGpuTexture texture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
 
-    bool LoadLightProbe(const string &path);
+    bool LoadLightProbe(const std::string &path);
     bool SphToLightProbe(const MultispectralSph4f &sph);
     bool UploadLightProbe();
 };
@@ -403,7 +403,7 @@ struct SphlImageTexture
 //	float percentVisible = 0.0;
 //	SphericalHarmonicf sph;
 //	MultispectralSph4f msph;
-//	string description;
+//	std::string description;
 
 //	SphlImageTexture debugLightProbe;
 //	SphlImageTexture debugSphLightProbe;
@@ -471,16 +471,16 @@ class SimpleSSPHHLight
 
     //vector<SSPHHLightHierarchy> hierarchies;
 
-    vector<Image4f> vizgenLightProbes;
+    std::vector<Image4f> vizgenLightProbes;
     Sph4f self;
     Sph4f neighbor;
 
-    string hier_description;
+    std::string hier_description;
 
     bool dirty = true;
     bool randomize = false;
     bool randomizePosition = false;
-    string name;
+    std::string name;
     int index = -1;
     int maxDegree = DefaultSphlDegree;
 
@@ -509,14 +509,14 @@ class SimpleSSPHHLight
     ~SimpleSSPHHLight();
 
     // Reads from a Corona Light Probe (a cube map stored images from left to right in a single image).
-    bool ReadCoronaLightProbe(const string &path);
+    bool ReadCoronaLightProbe(const std::string &path);
     // Saves to a Corona Light Probe (a cube map with cube faces stored from left to right in a single image).
-    bool SaveCoronaLightProbe(const string &path);
+    bool SaveCoronaLightProbe(const std::string &path);
 
     // Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-    bool SaveJsonSph(const string &path);
+    bool SaveJsonSph(const std::string &path);
     // Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-    bool ReadJsonSph(const string &path);
+    bool ReadJsonSph(const std::string &path);
 
     bool LightProbeToSph(const Image4f &lightProbe, MultispectralSph4f &sph);
     bool SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe);
@@ -581,30 +581,30 @@ class SimpleSSPHH
         float p = 0.0f;
     };
 
-    string sceneName;
-    vector<SimpleSSPHHLight> *sphls_ = nullptr;
+    std::string sceneName;
+    std::vector<SimpleSSPHHLight> *sphls_ = nullptr;
     size_t size_ = 0;
 
     // GEN creates this light probe
-    vector<Sph4f> S;
+    std::vector<Sph4f> S;
     // VIZ generates these visibility spherical harmonics. Index i is S
-    vector<vector<Sph4f>> H;
+    std::vector<std::vector<Sph4f>> H;
     // VIZ generates visibility probability for each H.
-    vector<vector<float>> P;
+    std::vector<std::vector<float>> P;
     // HIER creates Q from index and P;
-    vector<Qpair> Q;
+    std::vector<Qpair> Q;
     // HIER sorts Q
-    vector<Qpair> Qsorted;
+    std::vector<Qpair> Qsorted;
     // HIER generates this finalized light probe
-    vector<Sph4f> Sprime;
+    std::vector<Sph4f> Sprime;
 
-    vector<Sph4f> self;
-    vector<Sph4f> neighbor;
+    std::vector<Sph4f> self;
+    std::vector<Sph4f> neighbor;
 };
 
 struct SimplePointLight
 {
-    string name;
+    std::string name;
     size_t index;
     float E0;
     float falloffRadius;
@@ -687,7 +687,7 @@ struct __ShaderProgramLocations
     GLint shaderDebugLight = -1;
     GLint shaderDebugSphl = -1;
 
-    map<string, GLint> locations;
+    std::map<std::string, GLint> locations;
 
     SimpleAssociativePropertyList newLocationList;
 
@@ -697,12 +697,12 @@ struct __ShaderProgramLocations
 class SimpleSceneGraph
 {
   public:
-    string name;
-    vector<string> sceneFileLines;
-    vector<string> pathsToTry;
+    std::string name;
+    std::vector<std::string> sceneFileLines;
+    std::vector<std::string> pathsToTry;
     Matrix4f currentTransform;
 
-    vector<string> confFiles;
+    std::vector<std::string> confFiles;
     SimpleCamera camera;
     SimpleEnvironment environment;
 
@@ -710,19 +710,19 @@ class SimpleSceneGraph
     TResourceManager<SimpleSphere> spheres;
     TResourceManager<SimpleGeometryGroup> geometry;
     TResourceManager<OBJStaticModel> geometryObjects;
-    vector<SimpleSSPHHLight> ssphhLights;
-    vector<SimplePointLight> pointLights;
+    std::vector<SimpleSSPHHLight> ssphhLights;
+    std::vector<SimplePointLight> pointLights;
 
     SimpleMaterialSystem materials;
     mutable SimpleRenderer_GLuint renderer;
     __ShaderProgramLocations locs;
-    map<string, SimpleMap *> currentTextures;
+    std::map<std::string, SimpleMap *> currentTextures;
     SimpleSSPHH ssphh;
 
-    bool ReadMtlLibFile(const string &filename);
-    bool ReadConfFile(const string &filename);
-    bool ReadObjFile(const string &filename, const string &name);
-    bool ReadTexmap(const string &name, const string &texmap);
+    bool ReadMtlLibFile(const std::string &filename);
+    bool ReadConfFile(const std::string &filename);
+    bool ReadObjFile(const std::string &filename, const std::string &name);
+    bool ReadTexmap(const std::string &name, const std::string &texmap);
     bool ReadCamera(const istream &istr);
 
     // Rendering tools
@@ -763,8 +763,8 @@ class SimpleSceneGraph
     /// <para>Resets scene graph to initial conditions. It's completely empty with default values.</para></summary>
     void Reset();
 
-    bool Load(const string &filename);
-    bool Save(const string &filename);
+    bool Load(const std::string &filename);
+    bool Save(const std::string &filename);
 
     const BoundingBoxf &GetBoundingBox();
 

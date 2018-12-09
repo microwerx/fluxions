@@ -19,14 +19,14 @@
 #ifndef FLUXIONS_GTE_IMAGE_HPP
 #define FLUXIONS_GTE_IMAGE_HPP
 
-#include <algorithm>
+// #include <algorithm>
+#include <string>
+#include <vector>
 #include <fluxions_gte_color3.hpp>
 #include <fluxions_gte_color4.hpp>
 #include <fluxions_gte_math.hpp>
 #include <fluxions_gte_vector3.hpp>
 #include <fluxions_gte_vector4.hpp>
-#include <string>
-#include <vector>
 
 namespace Fluxions
 {
@@ -190,7 +190,7 @@ class TImage
 
     void savePPMRaw(const std::string &filename, int z = 0);
     void savePPM(const std::string &filename, int z = 0, bool flipy = false);
-    void savePPMi(const string &filename, float scale, int minValue, int maxValue, int z = 0, bool flipy = false);
+    void savePPMi(const std::string &filename, float scale, int minValue, int maxValue, int z = 0, bool flipy = false);
     void savePPMHDRI(const std::string &filename, int z = 0);
     void loadPPM(const std::string &filename);
 

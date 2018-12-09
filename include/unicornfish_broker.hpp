@@ -36,9 +36,9 @@ class BrokerServiceInfo;
 class BrokerWorker
 {
   public:
-	string name;
-	string key;
-	string serviceName;
+	std::string name;
+	std::string key;
+	std::string serviceName;
 	Frame *identityFrame;
 	int64_t expiry = 0;
 	BrokerServiceInfo *service = nullptr;
@@ -85,7 +85,7 @@ class BrokerWorker
 
 	void SendCommand(Majordomo::Command command, Message &msg, Socket &socket)
 	{
-		string workerHexAddress = identityFrame->GetHexData();
+		std::string workerHexAddress = identityFrame->GetHexData();
 		if (!msg)
 			msg.Create();
 		msg.Push(command);
@@ -104,9 +104,9 @@ class BrokerWorker
 class BrokerServiceInfo
 {
   public:
-	string name;
-	list<Message> requests;
-	list<BrokerWorker *> waitingWorkers;
+	std::string name;
+	std::list<Message> requests;
+	std::list<BrokerWorker *> waitingWorkers;
 	size_t numWorkers = 0;
 
 	void AddWorker(BrokerWorker *worker)
@@ -175,22 +175,22 @@ class Broker
 	}
 
   private:
-	bool WorkerExists(const string &workerName) const;
-	BrokerWorker *FindWorker(const string &workerName);
+	bool WorkerExists(const std::string &workerName) const;
+	BrokerWorker *FindWorker(const std::string &workerName);
 	void DisconnectWorker(BrokerWorker *worker);
-	void DeleteWorker(const string &workerName);
+	void DeleteWorker(const std::string &workerName);
 	void WaitWorker(BrokerWorker *worker);
 
-	bool ServiceExists(const string &serviceName) const;
-	BrokerServiceInfo *FindService(const string &serviceName);
+	bool ServiceExists(const std::string &serviceName) const;
+	BrokerServiceInfo *FindService(const std::string &serviceName);
 	void DispatchService(BrokerServiceInfo *service, Message &msg);
 	void DispatchService(BrokerServiceInfo *service);
 
-	string endpoint;
+	std::string endpoint;
 	Socket brokerSocket;
-	std::map<string, BrokerServiceInfo> services;
-	std::map<string, BrokerWorker> workers;
-	list<BrokerWorker *> waitingWorkers;
+	std::map<std::string, BrokerServiceInfo> services;
+	std::map<std::string, BrokerWorker> workers;
+	std::list<BrokerWorker *> waitingWorkers;
 	int64_t heartbeatTime = 0;
 	bool verbose = false;
 }; // class Broker

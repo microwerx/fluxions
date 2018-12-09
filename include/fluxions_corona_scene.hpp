@@ -32,17 +32,17 @@ class CoronaSceneFile
 
 	/// SetCameraType(newCameraType)
 	/// newCameraType = { "perspective" | "cubemap" }
-	void SetCameraType(const string &newCameraType);
-	string GetCameraType() const { return cameraType; }
+	void SetCameraType(const std::string &newCameraType);
+	std::string GetCameraType() const { return cameraType; }
 
 	void SetPerspectiveCamera(const Vector3f &origin, const Vector3f &target, const Vector3f &roll, const float horizontalFieldOfViewInDegrees);
 	void SetCubeMapCamera(const Vector3f &origin, const Vector3f &target, const Vector3f &roll);
 
-	void WriteSCN(const string &filename, const SimpleSceneGraph &ssg);
-	void WriteCubeMapSCN(const string &filename, const SimpleSceneGraph &ssg);
-	void WriteCubeMapSCN(const string &filename, const SimpleSceneGraph &ssg, const Vector3f &cameraPosition);
-	void WriteSkySCN(const string &filename, const SimpleSceneGraph &ssg);
-	bool WriteSphlVizSCN(const string &filename, const SimpleSceneGraph &ssg, int sourceLightIndex, int receivingLightIndex);
+	void WriteSCN(const std::string &filename, const SimpleSceneGraph &ssg);
+	void WriteCubeMapSCN(const std::string &filename, const SimpleSceneGraph &ssg);
+	void WriteCubeMapSCN(const std::string &filename, const SimpleSceneGraph &ssg, const Vector3f &cameraPosition);
+	void WriteSkySCN(const std::string &filename, const SimpleSceneGraph &ssg);
+	bool WriteSphlVizSCN(const std::string &filename, const SimpleSceneGraph &ssg, int sourceLightIndex, int receivingLightIndex);
 
 	void ClearCache();
 	void WriteCache(const SimpleSceneGraph &ssg);
@@ -52,18 +52,18 @@ class CoronaSceneFile
 
   private:
 	// cache
-	vector<tuple<string, string, Matrix4f>> geometryGroups;
+	std::vector<std::tuple<std::string, std::string, Matrix4f>> geometryGroups;
 
-	string cameraType = "perspective";
+	std::string cameraType = "perspective";
 	Vector3f cameraOrigin;
 	Vector3f cameraTarget;
 	Vector3f cameraRoll;
 	Matrix4f cameraMatrix;
 	float cameraHorizontalFieldOfViewInDegrees;
 
-	void writeCamera(ostream &ostr);
-	void writeSun(ostream &ostr, const SimpleSceneGraph &ssg);
-	void writeGeometryGroups(ostream &ostr, const SimpleSceneGraph &ssg);
+	void writeCamera(std::ostream &ostr);
+	void writeSun(std::ostream &ostr, const SimpleSceneGraph &ssg);
+	void writeGeometryGroups(std::ostream &ostr, const SimpleSceneGraph &ssg);
 };
 
 class CoronaJob
@@ -79,7 +79,7 @@ class CoronaJob
 	};
 
 	CoronaJob() {}
-	CoronaJob(const string &name, Type jobtype, int arg1 = 0, int arg2 = 0);
+	CoronaJob(const std::string &name, Type jobtype, int arg1 = 0, int arg2 = 0);
 	~CoronaJob();
 
 	void EnableHQ() { isHQ = true; }
@@ -113,14 +113,14 @@ class CoronaJob
 
 	inline double GetElapsedTime() const { return elapsedTime; }
 
-	inline const string &GetOutputPath() const
+	inline const std::string &GetOutputPath() const
 	{
 		if (isHQ)
 			return hq_output_path_ppm;
 		else
 			return output_path_ppm;
 	}
-	inline const string &GetName() const { return scene_name; }
+	inline const std::string &GetName() const { return scene_name; }
 
 	inline int GetGENLightIndex() const
 	{
@@ -147,13 +147,13 @@ class CoronaJob
 	const int GetCoronaRetval() const { return lastCoronaRetval; }
 	const int GetConvertRetval() const { return lastConvertRetval; }
 
-	string MakeCoronaCommandLine();
-	string MakeConvertCommandLine();
+	std::string MakeCoronaCommandLine();
+	std::string MakeConvertCommandLine();
 
-	static string MakeREFName(const string &prefix, bool isCubeMap, bool isHDR = false, bool isHQ = false, bool ks = false, int MaxRayDepth = 5, int PassLimit = 1);
-	static string MakeVIZName(const string &prefix, int srcLightIndex, int recvLightIndex, bool isHDR = false, bool isHQ = false, bool ks = false, int MaxRayDepth = 5, int PassLimit = 1);
-	static string MakeGENName(const string &prefix, int recvLightIndex, bool isHDR = false, bool isHQ = false, bool ks = false, int MaxRayDepth = 5, int PassLimit = 1);
-	static string MakeHIERName(const string &prefix, int sendLightIndex, int MaxDegrees);
+	static std::string MakeREFName(const std::string &prefix, bool isCubeMap, bool isHDR = false, bool isHQ = false, bool ks = false, int MaxRayDepth = 5, int PassLimit = 1);
+	static std::string MakeVIZName(const std::string &prefix, int srcLightIndex, int recvLightIndex, bool isHDR = false, bool isHQ = false, bool ks = false, int MaxRayDepth = 5, int PassLimit = 1);
+	static std::string MakeGENName(const std::string &prefix, int recvLightIndex, bool isHDR = false, bool isHQ = false, bool ks = false, int MaxRayDepth = 5, int PassLimit = 1);
+	static std::string MakeHIERName(const std::string &prefix, int sendLightIndex, int MaxDegrees);
 
 	inline bool IsJobFinished() const { return finished; }
 	inline void MarkJobFinished() { finished = true; }
@@ -165,8 +165,8 @@ class CoronaJob
 	inline bool IsJobWorking() const { return working; }
 	inline void MarkJobWorking() { working = true; }
 
-	string ToString() const;
-	void FromString(const string &str);
+	std::string ToString() const;
+	void FromString(const std::string &str);
 
   private:
 	enum class State
@@ -178,15 +178,15 @@ class CoronaJob
 	};
 	State state = State::Ready;
 	Type type = Type::REF;
-	string scene_name;
-	string scene_path;
-	string output_path_exr;
-	string output_path_ppm; // the ppm is created using ImageMagick's convert command
-	string output_path_png;
-	string hq_output_path_exr;
-	string hq_output_path_ppm; // the ppm is created using ImageMagick's convert command
-	string conf_path;
-	string hq_conf_path;
+	std::string scene_name;
+	std::string scene_path;
+	std::string output_path_exr;
+	std::string output_path_ppm; // the ppm is created using ImageMagick's convert command
+	std::string output_path_png;
+	std::string hq_output_path_exr;
+	std::string hq_output_path_ppm; // the ppm is created using ImageMagick's convert command
+	std::string conf_path;
+	std::string hq_conf_path;
 
 	float sph[121 * 4];
 

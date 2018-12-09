@@ -22,47 +22,40 @@
 #include <fluxions_config.hpp>
 #include <fluxions_gte_matrix3.hpp>
 
-namespace Fluxions {
+namespace Fluxions
+{
 using QScalar = float;
 
 // Quaterion operations:
 // q = a + bi + cj + dk
 
 template <typename T = QScalar>
-class TQuaternion {
-public:
+class TQuaternion
+{
+  public:
     T a, b, c, d;
 
-    constexpr T* ptr() noexcept { return &a; }
-    constexpr const T* const_ptr() const noexcept { return &a; }
+    constexpr T *ptr() noexcept { return &a; }
+    constexpr const T *const_ptr() const noexcept { return &a; }
 
     using type = T;
 
     TQuaternion()
-        : a(0)
-        , b(0)
-        , c(0)
-        , d(0)
+        : a(0), b(0), c(0), d(0)
     {
     }
 
     TQuaternion(const T aVal, const T bVal, const T cVal, const T dVal)
-        : a(aVal)
-        , b(bVal)
-        , c(cVal)
-        , d(dVal)
+        : a(aVal), b(bVal), c(cVal), d(dVal)
     {
     }
 
-    TQuaternion(const TQuaternion& q)
-        : a(q.a)
-        , b(q.b)
-        , c(q.c)
-        , d(q.d)
+    TQuaternion(const TQuaternion &q)
+        : a(q.a), b(q.b), c(q.c), d(q.d)
     {
     }
 
-    const TQuaternion<T>& operator=(const TQuaternion<T>& q)
+    const TQuaternion<T> &operator=(const TQuaternion<T> &q)
     {
         b = q.b;
         c = q.c;
@@ -72,9 +65,9 @@ public:
     }
 
     static TQuaternion<T> makeFromAngleAxis(double angleInDegrees, double x, double y, double z);
-    static TQuaternion<T> makeFromMatrix3(const TMatrix3<T>& M);
+    static TQuaternion<T> makeFromMatrix3(const TMatrix3<T> &M);
 
-    void toAngleAxis(double& angleInDegrees, double& x, double& y, double& z);
+    void toAngleAxis(double &angleInDegrees, double &x, double &y, double &z);
     TMatrix3<T> toMatrix3() const;
 
     TQuaternion<T> conjugate() const
@@ -92,12 +85,12 @@ public:
         return TQuaternion(alpha * b, alpha * c, alpha * d, alpha * a);
     }
 
-    T dot(const TQuaternion& q) const
+    T dot(const TQuaternion &q) const
     {
         return (b * q.b + c * q.c + d * q.d);
     }
 
-    TQuaternion<T> cross(const TQuaternion<T>& q) const
+    TQuaternion<T> cross(const TQuaternion<T> &q) const
     {
         return TQuaternion(
             c * q.d - d * q.c,
@@ -116,7 +109,7 @@ TQuaternion<T> TQuaternion<T>::makeFromAngleAxis(double angleInDegrees, double x
 }
 
 template <typename T>
-TQuaternion<T> TQuaternion<T>::makeFromMatrix3(const TMatrix3<T>& M)
+TQuaternion<T> TQuaternion<T>::makeFromMatrix3(const TMatrix3<T> &M)
 {
     T trace = M.Trace();
     T r = (T)sqrt(1 + trace);
@@ -128,15 +121,18 @@ TQuaternion<T> TQuaternion<T>::makeFromMatrix3(const TMatrix3<T>& M)
 }
 
 template <typename T>
-void TQuaternion<T>::toAngleAxis(double& angleInDegrees, double& x, double& y, double& z)
+void TQuaternion<T>::toAngleAxis(double &angleInDegrees, double &x, double &y, double &z)
 {
     angleInDegrees = 2.0 * acos(a) * FX_RADIANS_TO_DEGREES;
     double denominator = sqrt(1 - a * a);
-    if (denominator > 0.0) {
+    if (denominator > 0.0)
+    {
         x = b / denominator;
         y = c / denominator;
         z = d / denominator;
-    } else {
+    }
+    else
+    {
         x = 1.0;
         y = 0.0;
         z = 0.0;

@@ -119,14 +119,14 @@ class GamepadState
 	// These match the HTML5 Gamepad API
 	long index = 0;
 	bool connected = false;
-	map<int, float> axes;
-	map<int, GamepadButton> buttons;
+	std::map<int, float> axes;
+	std::map<int, GamepadButton> buttons;
 	double timestamp; // milliseconds
 
-	map<int, float> lastAxes;
-	map<int, GamepadButton> lastButtons;
-	map<int, float> deltaAxes;
-	map<int, GamepadButton> deltaButtons;
+	std::map<int, float> lastAxes;
+	std::map<int, GamepadButton> lastButtons;
+	std::map<int, float> deltaAxes;
+	std::map<int, GamepadButton> deltaButtons;
 	double lasttimestamp = 0.0;
 	bool isInitialized = false;
 
@@ -187,7 +187,7 @@ class GamepadState
 	inline float rthumb_x() const { return curState.GetBitf((int)GamePadBitNum::RTHUMB_X); }
 	inline float rthumb_y() const { return curState.GetBitf((int)GamePadBitNum::RTHUMB_Y); }
 
-	const string &GetHexRepresentation() const { return hexRepresentation_; }
+	const std::string &GetHexRepresentation() const { return hexRepresentation_; }
 
 	// lthumb() returns the unnormalized direction of the left thumb stick
 	inline Vector2f lthumb() const { return Vector2f(lthumb_x(), lthumb_y()); }
@@ -213,8 +213,8 @@ class GamepadState
 	Vector2f rthumbVector_;
 	float rthumbAmount_;
 
-	string hexRepresentation_;
-	string binRepresentation_;
+	std::string hexRepresentation_;
+	std::string binRepresentation_;
 };
 } // namespace Viperfish
 

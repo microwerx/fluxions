@@ -41,15 +41,15 @@ namespace Viperfish
 {
 
 template <class T, class... _Types>
-static shared_ptr<T> MakeShared(_Types &&... _Args) { return shared_ptr<T>(new T(forward<_Types>(_Args)...)); }
+static std::shared_ptr<T> MakeShared(_Types &&... _Args) { return std::shared_ptr<T>(new T(std::forward<_Types>(_Args)...)); }
 template <class T, class... _Types>
-static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T(forward<_Types>(_Args)...)); }
+static std::unique_ptr<T> MakeUnique(_Types &&... _Args) { return std::unique_ptr<T>(new T(std::forward<_Types>(_Args)...)); }
 
-///// <summary>shared_ptr<T> CreateObject(name) returns a smart pointer to a new Object class with the name set.</summary>
+///// <summary>std::shared_ptr<T> CreateObject(name) returns a smart pointer to a new Object class with the name set.</summary>
 //template<typename T>
-//shared_ptr<T> CreateObject(const string &name)
+//std::shared_ptr<T> CreateObject(const std::string &name)
 //{
-//	shared_ptr<T> newT;
+//	std::shared_ptr<T> newT;
 
 //	newT = make_shared<T>();
 //	newT->SetClassName(typeid(T).name());
@@ -63,24 +63,24 @@ static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T
 //class Object
 //{
 //private:
-//	string className_;
-//	string name_;
+//	std::string className_;
+//	std::string name_;
 //	bool isSealed = false;
 //public:
 //	Object() { }
 //	~Object() { }
-//	const string & GetName() const { return name_; }
-//	void SetName(const string &name) { if (!isSealed) name_ = name; }
-//	const string & GetClassName() const { return className_; }
-//	void SetClassName(const string &className) { if (!isSealed) className_ = className; }
+//	const std::string & GetName() const { return name_; }
+//	void SetName(const std::string &name) { if (!isSealed) name_ = name; }
+//	const std::string & GetClassName() const { return className_; }
+//	void SetClassName(const std::string &className) { if (!isSealed) className_ = className; }
 //	void Seal() { isSealed = true; }
 //};
 
-//using ObjectPtr = shared_ptr<Object>;
-//using WeakObjectPtr = shared_ptr<Object>;
+//using ObjectPtr = std::shared_ptr<Object>;
+//using WeakObjectPtr = std::shared_ptr<Object>;
 
 ///// <summary>class Widget is the base class for all Viperfish widget classes.</summary>
-//class AWidget : public enable_shared_from_this<AWidget>, public Object
+//class AWidget : public std::enable_shared_from_this<AWidget>, public Object
 //{
 //private:
 //	bool isPaused = false;
@@ -93,9 +93,9 @@ static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T
 
 //	bool isEnabled = true;
 
-//	using WidgetPtr = shared_ptr<AWidget>;
+//	using WidgetPtr = std::shared_ptr<AWidget>;
 
-//	vector<WidgetPtr> children_;
+//	std::vector<WidgetPtr> children_;
 //	WidgetPtr parent;
 
 //public:
@@ -104,8 +104,8 @@ static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T
 
 //	WidgetPtr GetParent() { return parent; }
 //	WidgetPtr operator[](int i) { return children_.at(i); }
-//	vector<WidgetPtr>::iterator begin() { return children_.begin(); }
-//	vector<WidgetPtr>::iterator end() { return children_.end(); }
+//	std::vector<WidgetPtr>::iterator begin() { return children_.begin(); }
+//	std::vector<WidgetPtr>::iterator end() { return children_.end(); }
 //	void push_back(WidgetPtr ptr) { children_.push_back(ptr); }
 //	void pop_back() { children_.pop_back(); }
 //	const WidgetPtr & front() { return children_.front(); }
@@ -139,14 +139,14 @@ static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T
 
 //	/* This was the old code. I think it's too complicated.
 //	 *
-//	std::function<void(shared_ptr<Widget> &)> OnInitOverride;
-//	std::function<void(shared_ptr<Widget> &)> OnKillOverride;
-//	std::function<void(shared_ptr<Widget> &)> OnStartOverride;
-//	std::function<void(shared_ptr<Widget> &)> OnStopOverride;
-//	std::function<void(shared_ptr<Widget> &)> OnPauseOverride;
-//	std::function<void(shared_ptr<Widget> &)> OnResumeOverride;
-//	std::function<void(shared_ptr<Widget> &, double)> OnUpdateOverride;
-//	std::function<void(shared_ptr<Widget> &, void *, unsigned, int, int, int, void *)> OnHandleMessageOverride;
+//	std::function<void(std::shared_ptr<Widget> &)> OnInitOverride;
+//	std::function<void(std::shared_ptr<Widget> &)> OnKillOverride;
+//	std::function<void(std::shared_ptr<Widget> &)> OnStartOverride;
+//	std::function<void(std::shared_ptr<Widget> &)> OnStopOverride;
+//	std::function<void(std::shared_ptr<Widget> &)> OnPauseOverride;
+//	std::function<void(std::shared_ptr<Widget> &)> OnResumeOverride;
+//	std::function<void(std::shared_ptr<Widget> &, double)> OnUpdateOverride;
+//	std::function<void(std::shared_ptr<Widget> &, void *, unsigned, int, int, int, void *)> OnHandleMessageOverride;
 
 //	virtual void OnInit() { if (isEnabled && OnInitOverride) OnInitOverride(shared_from_this()); }
 //	virtual void OnKill() { if (isEnabled && OnKillOverride) OnKillOverride(shared_from_this()); }
@@ -171,10 +171,10 @@ static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T
 //	virtual void HandleMessage(void *handle, unsigned msg, int param1, int param2, int param3, void *param4) { }
 //};
 
-//using WidgetPtr = shared_ptr<Widget>;
+//using WidgetPtr = std::shared_ptr<Widget>;
 //using WeakWidgetPtr = weak_ptr<Widget>;
 
-//ObjectPtr CreateObjectFromType(const string &className, const string &instanceName);
+//ObjectPtr CreateObjectFromType(const std::string &className, const std::string &instanceName);
 
 //class ViperfishApplication : public AWidget
 //{
@@ -183,7 +183,7 @@ static unique_ptr<T> MakeUnique(_Types &&... _Args) { return unique_ptr<T>(new T
 //	virtual ~ViperfishApplication();
 //};
 
-//using ViperfishApplicationPtr = shared_ptr<ViperfishApplication>;
+//using ViperfishApplicationPtr = std::shared_ptr<ViperfishApplication>;
 
 //extern ViperfishApplication VfApp;
 } // namespace Viperfish

@@ -94,10 +94,10 @@ void SphlSampler::resize(int samplesX, int samplesY)
 
         //for (size_t i = 0; i < 6; i++)
         //{
-        //	cout << "side " << i << " = " << count(debug_sides.begin(), debug_sides.end(), i) << endl;
+        //	std::cout << "side " << i << " = " << count(debug_sides.begin(), debug_sides.end(), i) << std::endl;
         //}
         avgVector *= 1.0 / numSamples;
-        // cout << "Average vector: (" << avgVector.x << ", " << avgVector.y << ", " << avgVector.z << ")" << endl;
+        // std::cout << "Average vector: (" << avgVector.x << ", " << avgVector.y << ", " << avgVector.z << ")" << std::endl;
         for (int l = 0; l <= 10; l++)
         {
             for (int m = -l; m <= l; m++)
@@ -113,7 +113,7 @@ void SphlSampler::resize(int samplesX, int samplesY)
     }
 }
 
-void SphlSampler::saveSampleMap(const string &path, int pixelScale)
+void SphlSampler::saveSampleMap(const std::string &path, int pixelScale)
 {
     Color3i White(255);
 

@@ -20,15 +20,15 @@
 #define FLUXIONS_SIMPLE_RENDERER_HPP
 
 #include <algorithm>
-#include <fluxions_gte.hpp>
-#include <fluxions_opengl.hpp>
-#include <fluxions_simple_materials.hpp>
-#include <hatchetfish.hpp>
 #include <iterator>
 #include <map>
 #include <memory.h>
 #include <memory>
 #include <vector>
+#include <fluxions_gte.hpp>
+#include <fluxions_opengl.hpp>
+#include <fluxions_simple_materials.hpp>
+#include <hatchetfish.hpp>
 
 namespace Fluxions
 {
@@ -59,7 +59,7 @@ class SimpleUniform
     GLboolean transpose;
     GLint components = 1;
 
-    vector<GLubyte> buffer;
+    std::vector<GLubyte> buffer;
 
     inline const SimpleUniform &operator=(const SimpleUniform &uniform)
     {
@@ -465,8 +465,8 @@ struct SimpleShader
 {
     GLenum type = 0;
     GLuint shader = 0;
-    string source;
-    string infoLog;
+    std::string source;
+    std::string infoLog;
     bool didCompile = false;
     bool hadError = false;
 
@@ -514,7 +514,7 @@ struct SimpleUniformBlockSystem
 {
     GLuint uniformBlockBufferId = 0;
     GLuint blockIndexId = 0;
-    vector<GLbyte> buffer;
+    std::vector<GLbyte> buffer;
 
     SimpleUniformBlockSystem();
     ~SimpleUniformBlockSystem();
@@ -525,18 +525,18 @@ struct SimpleUniformBlockSystem
     void UpdateSubData(GLsizei offset, GLsizei size, GLbyte *data);
 };
 
-shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const string &filename);
+std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename);
 
 class SimpleProgram
 {
   private:
     GLuint program = 0;
     bool linked = false;
-    vector<shared_ptr<SimpleShader>> shaders;
-    string infoLog;
+    std::vector<std::shared_ptr<SimpleShader>> shaders;
+    std::string infoLog;
     GLint linkStatus_ = 0;
     GLint validateStatus_ = 0;
-    string validateLog;
+    std::string validateLog;
     //uniformBlocks;
 
   public:
@@ -548,8 +548,8 @@ class SimpleProgram
 
         const char *GetNameOfType();
     };
-    map<string, AttribUniformInfo> activeAttributes;
-    map<string, AttribUniformInfo> activeUniforms;
+    std::map<std::string, AttribUniformInfo> activeAttributes;
+    std::map<std::string, AttribUniformInfo> activeUniforms;
 
     SimpleProgram();
     ~SimpleProgram();
@@ -559,22 +559,22 @@ class SimpleProgram
     GLint GetAttribLocation(const char *name);
     GLint GetUniformLocation(const char *name);
     GLint GetUniformBlockIndex(const char *name);
-    const string &GetInfoLog();
+    const std::string &GetInfoLog();
     GLuint GetProgram() { return program; }
 
-    void SetUniformBlock(const string &uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size);
+    void SetUniformBlock(const std::string &uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size);
 
     bool IsLinked() { return linked; }
     void Use();
-    void ApplyUniforms(map<string, SimpleUniform> uniforms);
-    bool ApplyUniform(const string &uniformName, SimpleUniform uniform);
+    void ApplyUniforms(std::map<std::string, SimpleUniform> uniforms);
+    bool ApplyUniform(const std::string &uniformName, SimpleUniform uniform);
 
-    void AttachShaders(shared_ptr<SimpleShader> &shaderPtr);
+    void AttachShaders(std::shared_ptr<SimpleShader> &shaderPtr);
     void BindAttribLocation(GLuint index, const char *name);
     bool Link();
 };
 
-using SimpleProgramPtr = shared_ptr<SimpleProgram>;
+using SimpleProgramPtr = std::shared_ptr<SimpleProgram>;
 
 enum class VertexType
 {
@@ -666,10 +666,10 @@ struct SimpleSurface
     GLuint mtlId = 0;
     GLuint mtllibId = 0;
 
-    string mtlName;
-    string mtllibName;
-    string objectName;
-    string groupName;
+    std::string mtlName;
+    std::string mtllibName;
+    std::string objectName;
+    std::string groupName;
 };
 
 /// <summary>SimpleRenderer handles the needs of several different rendering approaches</summary>
@@ -686,15 +686,15 @@ class SimpleRenderer
     GLuint arrayBuffer = 0;        // memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
     GLuint elementArrayBuffer = 0; // memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
 
-    vector<GLubyte> vertexMemoryBuffer;
-    vector<GLubyte> indexMemoryBuffer;
+    std::vector<GLubyte> vertexMemoryBuffer;
+    std::vector<GLubyte> indexMemoryBuffer;
 
-    vector<SimpleZVertex> zVertices;
-    vector<SimpleFastVertex> fastVertices;
-    vector<SimpleSlowVertex> slowVertices;
-    vector<IndexType> Indices;
-    vector<IndexType> zIndices;
-    vector<SimpleSurface> surfaces;
+    std::vector<SimpleZVertex> zVertices;
+    std::vector<SimpleFastVertex> fastVertices;
+    std::vector<SimpleSlowVertex> slowVertices;
+    std::vector<IndexType> Indices;
+    std::vector<IndexType> zIndices;
+    std::vector<SimpleSurface> surfaces;
 
     struct BUFFERINFO
     {
@@ -727,10 +727,10 @@ class SimpleRenderer
     GLuint currentGroupId = 0;
     GLuint currentObjectId = 0;
     GLuint currentProgramId = 0;
-    string currentMtlName;
-    string currentMtlLibName;
-    string currentObjectName;
-    string currentGroupName;
+    std::string currentMtlName;
+    std::string currentMtlLibName;
+    std::string currentObjectName;
+    std::string currentGroupName;
 
     VertexType lastVertexType = VertexType::UNDECIDED;
 
@@ -751,7 +751,7 @@ class SimpleRenderer
     SimpleRenderer();
     ~SimpleRenderer();
 
-    map<string, SimpleProgramPtr> programs;
+    std::map<std::string, SimpleProgramPtr> programs;
 
     void SetCurrentMtlLibId(GLuint value) { currentMtlLibId = value; }
     void SetCurrentMtlId(GLuint value) { currentMtlId = value; }
@@ -765,20 +765,20 @@ class SimpleRenderer
     GLuint GetCurrentGroupId() const { return currentGroupId; }
     GLuint GetCurrentProgramId() const { return currentProgramId; }
 
-    void SetCurrentMtlName(const string &name) { currentMtlName = name; }
-    void SetCurrentMtlLibName(const string &name) { currentMtlLibName = name; }
-    void SetCurrentObjectName(const string &name) { currentObjectName = name; }
-    void SetCurrentGroupName(const string &name) { currentGroupName = name; }
+    void SetCurrentMtlName(const std::string &name) { currentMtlName = name; }
+    void SetCurrentMtlLibName(const std::string &name) { currentMtlLibName = name; }
+    void SetCurrentObjectName(const std::string &name) { currentObjectName = name; }
+    void SetCurrentGroupName(const std::string &name) { currentGroupName = name; }
 
-    const string &GetCurrentObjectName() const { return currentObjectName; }
-    const string &GetCurrentMtlLibName() const { return currentMtlLibName; }
-    const string &GetCurrentMtlName() const { return currentMtlName; }
-    const string &GetCurrentGroupName() const { return currentGroupName; }
+    const std::string &GetCurrentObjectName() const { return currentObjectName; }
+    const std::string &GetCurrentMtlLibName() const { return currentMtlLibName; }
+    const std::string &GetCurrentMtlName() const { return currentMtlName; }
+    const std::string &GetCurrentGroupName() const { return currentGroupName; }
 
-    void ApplyIdToObjectNames(const string &objectName, GLuint id);
-    void ApplyIdToGroupNames(const string &groupName, GLuint id);
-    void ApplyIdToMtlLibNames(const string &mtllibName, GLuint id);
-    void ApplyIdToMtlNames(const string &mtlName, GLuint id);
+    void ApplyIdToObjectNames(const std::string &objectName, GLuint id);
+    void ApplyIdToGroupNames(const std::string &groupName, GLuint id);
+    void ApplyIdToMtlLibNames(const std::string &mtllibName, GLuint id);
+    void ApplyIdToMtlNames(const std::string &mtlName, GLuint id);
     void AssignUniqueGroupIds();
 
     void AssignMaterialIds(SimpleMaterialSystem &materials);
@@ -801,7 +801,7 @@ class SimpleRenderer
     void BindBuffers();
     void Reset();
     void Render();
-    void RenderIf(const string &objectName, const string &groupName, const string &mtllibName, const string &mtlName, bool onlyRenderZ = false);
+    void RenderIf(const std::string &objectName, const std::string &groupName, const std::string &mtllibName, const std::string &mtlName, bool onlyRenderZ = false);
     void RenderIf(GLuint objectId = 0, GLuint groupId = 0, GLuint mtllibId = 0, GLuint mtlId = 0, bool onlyRenderZ = false);
     void RenderZOnly();
 
