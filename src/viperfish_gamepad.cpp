@@ -21,10 +21,9 @@
 #include <viperfish.hpp>
 #include <viperfish_gamepad.hpp>
 
-namespace Viperfish {
+namespace Viperfish
+{
 GamepadState::GamepadState()
-    : isInitialized(false)
-    , index(0)
 {
 }
 
@@ -64,9 +63,11 @@ void GamepadState::Poll()
     XINPUT_STATE state;
     DWORD result = XInputGetState(index, &state);
 
-    if (result == ERROR_SUCCESS) {
+    if (result == ERROR_SUCCESS)
+    {
         connected = true;
-        if (!isInitialized) {
+        if (!isInitialized)
+        {
             reset();
             isInitialized = true;
         }
@@ -107,13 +108,18 @@ void GamepadState::Poll()
         rthumbVector_.reset(thumbRX, thumbRY);
         rthumbAmount_ = rthumbVector_.length();
         rthumbVector_.normalize();
-    } else if (result == ERROR_DEVICE_NOT_CONNECTED) {
-        if (isInitialized) {
+    }
+    else if (result == ERROR_DEVICE_NOT_CONNECTED)
+    {
+        if (isInitialized)
+        {
             reset();
         }
         connected = false;
         isInitialized = false;
-    } else {
+    }
+    else
+    {
         hflog.info("%s(): XInputError: returned %d", __FUNCTION__, result);
     }
 
@@ -149,22 +155,29 @@ void GamepadState::makeHexRepresentation()
     hexRepresentation_.resize((int)GamePadBitNum::NUMBITS + 2);
     hexRepresentation_[0] = '0' + (char)index;
 
-    if (connected) {
+    if (connected)
+    {
         hexRepresentation_[1] = 'Y';
-    } else {
+    }
+    else
+    {
         hexRepresentation_[1] = 'N';
     }
 
-    for (int i = 0; i < (int)GamePadBitNum::NUMBITS; i++) {
+    for (int i = 0; i < (int)GamePadBitNum::NUMBITS; i++)
+    {
         float f = 15.99f * (0.5f * (1.0f + clamp(curState.GetBitf(i), -1.0f, 1.0f)));
         char h = (char)clamp(f, 0, 15);
         char c;
-        if (h < 10) {
+        if (h < 10)
+        {
             c = '0' + h;
-        } else {
+        }
+        else
+        {
             c = 'A' + h - 10;
         }
         hexRepresentation_[i + 2] = c;
     }
 }
-}
+} // namespace Viperfish

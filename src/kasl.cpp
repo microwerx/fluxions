@@ -34,7 +34,8 @@
 
 using namespace std;
 
-namespace KASL {
+namespace KASL
+{
 
 //enum class ObjectType {
 //	OT_NULLPTR,
@@ -64,7 +65,8 @@ namespace KASL {
 //	Object operator=(const Object &other);
 //};
 
-enum CharClass {
+enum CharClass
+{
     CC_NUL = 0,
     CC_SOH = 1,
     CC_STX = 2,
@@ -136,9 +138,12 @@ enum CharClass {
     CC_DEL = 127
 };
 
-ostream& operator<<(ostream& ostr, const TokenType& type)
+ostream &operator<<(ostream &ostr, const TokenType &type)
 {
-    switch (type) {
+    switch (type)
+    {
+    case TokenType::TT0_NOTHING:
+        break;
     case TokenType::TT0_CHAR:
         ostr << "TT0_CHAR";
         break;
@@ -371,8 +376,7 @@ CharClass _charClassLookup[] = {
     CC_RBRACE,
     CC_TILDE,
     // 127
-    CC_DEL
-};
+    CC_DEL};
 
 TokenType _tokenLookup[128] = {
     // 0 - 8 control codes
@@ -467,10 +471,9 @@ TokenType _tokenLookup[128] = {
     TokenType::TT1_RBRACE,
     TokenType::TT1_TILDE,
     // 127
-    TokenType::TT0_NOTHING
-};
+    TokenType::TT0_NOTHING};
 
-size_t lex_init(LexerState& ls)
+size_t lex_init(LexerState &ls)
 {
     ls.buffer.clear();
     ls.tokens.clear();
@@ -480,7 +483,7 @@ size_t lex_init(LexerState& ls)
     return 1;
 }
 
-size_t lex_quick_parse(const StringType& inputStr, int level, const vector<LexReplacementType>& replacements, TokenVector& tokens)
+size_t lex_quick_parse(const StringType &inputStr, int level, const vector<LexReplacementType> &replacements, TokenVector &tokens)
 {
     LexerState ls, ls2;
     lex_init(ls);
@@ -492,13 +495,13 @@ size_t lex_quick_parse(const StringType& inputStr, int level, const vector<LexRe
     return tokens.size();
 }
 
-size_t lex_quick_parse(const StringType& inputStr, TokenVector& tokens)
+size_t lex_quick_parse(const StringType &inputStr, TokenVector &tokens)
 {
     vector<LexReplacementType> replacements;
     return lex_quick_parse(inputStr, 2, replacements, tokens);
 }
 
-size_t lex_quick_l3_parse(const StringType& inputStr, TokenVector& tokens)
+size_t lex_quick_l3_parse(const StringType &inputStr, TokenVector &tokens)
 {
     // L3, ignore # ... and // ... and group contiguous regions unless
     // they are integers, doubles, or strings
@@ -509,8 +512,9 @@ size_t lex_quick_l3_parse(const StringType& inputStr, TokenVector& tokens)
     tokens.clear();
     if (count == 0)
         return 0;
-    int i = 0;
-    while (i < count) {
+    size_t i = 0;
+    while (i < count)
+    {
         if (tk[i].IsType(TokenType::TT0_SPACE))
             ;
         else if (tk[i].IsType(TokenType::TT1_NUMBER_SIGN))
@@ -524,22 +528,29 @@ size_t lex_quick_l3_parse(const StringType& inputStr, TokenVector& tokens)
     Token tmp;
     size_t length = 0;
     bool tokenPushed = false;
-    for (auto it : tk) {
+    for (auto it : tk)
+    {
         //TokenType type = it.type;
-        if (length == 0 && (it.IsDouble() || it.IsInteger() || it.IsString())) {
+        if (length == 0 && (it.IsDouble() || it.IsInteger() || it.IsString()))
+        {
             tokens.push_back(it);
             tokenPushed = true;
-        } else if (!it.IsType(TokenType::TT0_SPACE) && !it.IsType(TokenType::TT0_TAB) && !it.IsType(TokenType::TT0_NEWLINE)) {
+        }
+        else if (!it.IsType(TokenType::TT0_SPACE) && !it.IsType(TokenType::TT0_TAB) && !it.IsType(TokenType::TT0_NEWLINE))
+        {
             tmp.sval += it.sval;
             length += it.sval.length();
-        } else if (length > 0) {
+        }
+        else if (length > 0)
+        {
             // add a new token
             tmp.type = TokenType::TT2_STRING;
             tokens.push_back(tmp);
             tokenPushed = true;
         }
 
-        if (tokenPushed) {
+        if (tokenPushed)
+        {
             tmp.ival = 0;
             tmp.dval = 0.0;
             tmp.sval.clear();
@@ -548,7 +559,8 @@ size_t lex_quick_l3_parse(const StringType& inputStr, TokenVector& tokens)
         }
     }
 
-    if (length > 0) {
+    if (length > 0)
+    {
         // add a new token
         tmp.type = TokenType::TT2_STRING;
         tokens.push_back(tmp);
@@ -558,14 +570,14 @@ size_t lex_quick_l3_parse(const StringType& inputStr, TokenVector& tokens)
     return tokens.size();
 }
 
-size_t lex_quick_l2_parse(const StringType& inputStr, TokenVector& tokens)
+size_t lex_quick_l2_parse(const StringType &inputStr, TokenVector &tokens)
 {
     vector<LexReplacementType> replacements;
     replacements.push_back(KASL::LexReplacementType(KASL::TokenType::TT0_SPACE, KASL::TokenType::TT0_NOTHING, '\0'));
     return lex_quick_parse(inputStr, 2, replacements, tokens);
 }
 
-size_t lex(LexerState& ls, const StringType& inputStr, int level)
+size_t lex(LexerState &ls, const StringType &inputStr, int level)
 {
     // level >= 0: keep character classes contiguous
     // level >= 1: punctuation character classes are not continguous separate
@@ -589,13 +601,17 @@ size_t lex(LexerState& ls, const StringType& inputStr, int level)
     ls.lasttoken = nullptr;
     //bool wasnonprint = true;
 
-    for (auto i = start; i < length; i++) {
-        if (ls.eatChar == false) {
+    for (auto i = start; i < length; i++)
+    {
+        if (ls.eatChar == false)
+        {
             ls.tmptoken.type = TokenType::TT0_NOTHING;
             ls.tmptoken.start = i;
             ls.tmptoken.length = 0;
             ls.tmptoken.cptr = &ls.buffer[i];
-        } else {
+        }
+        else
+        {
             ls.tmptoken.length++;
         }
 
@@ -607,33 +623,44 @@ size_t lex(LexerState& ls, const StringType& inputStr, int level)
         int c = ls.buffer[i];
         //int peekc = (i + 1 < length) ? ls.buffer[i + 1] : 0;
 
-        if (c < 0 || c >= 128) {
+        if (c < 0 || c >= 128)
+        {
             ls.tmptoken.type = TokenType::TT0_NOTHING;
             continue;
         }
 
-        if (level >= 2) {
+        if (level >= 2)
+        {
             size_t len = lex_scan_string(&ls.buffer[i], ls.tmptoken);
-            if (len == 0) {
+            if (len == 0)
+            {
                 len = lex_scan_number(&ls.buffer[i], ls.tmptoken);
             }
-            if (len > 0) {
+            if (len > 0)
+            {
                 gobbledL2 = true;
                 i += len - 1;
-            } else {
-                if (isalpha(c) || c == '_') {
+            }
+            else
+            {
+                if (isalpha(c) || c == '_')
+                {
                     ls.tmptoken.type = TokenType::TT2_ID;
                     gobbledL2 = true;
                     ls.tmptoken.length++;
                 }
             }
         }
-        if (!gobbledL2 && level >= 1) {
-            if (isalpha(c) || (level >= 1 && c == '_')) {
+        if (!gobbledL2 && level >= 1)
+        {
+            if (isalpha(c) || (level >= 1 && c == '_'))
+            {
                 gobbledL1 = true;
                 ls.tmptoken.type = TokenType::TT0_ALPHA;
                 ls.tmptoken.length++;
-            } else {
+            }
+            else
+            {
                 gobbledL1 = true;
                 ls.tmptoken.type = _tokenLookup[c];
                 ls.tmptoken.length++;
@@ -641,29 +668,46 @@ size_t lex(LexerState& ls, const StringType& inputStr, int level)
             if (ispunct(c) && c != '_')
                 keepContinguous = false;
         }
-        if (!gobbledL2 && !gobbledL1 && level >= 0) {
-            if (isalpha(c)) {
+        if (!gobbledL2 && !gobbledL1 && level >= 0)
+        {
+            if (isalpha(c))
+            {
                 ls.tmptoken.type = TokenType::TT0_ALPHA;
-            } else if (isdigit(c)) {
+            }
+            else if (isdigit(c))
+            {
                 ls.tmptoken.type = TokenType::TT0_DIGIT;
-            } else if (ispunct(c)) {
+            }
+            else if (ispunct(c))
+            {
                 ls.tmptoken.type = TokenType::TT0_PUNCT;
                 if (level >= 1)
                     keepContinguous = false;
-            } else if (iscntrl(c)) {
+            }
+            else if (iscntrl(c))
+            {
                 ls.tmptoken.type = TokenType::TT0_CNTRL;
-                if (c == '\r') {
+                if (c == '\r')
+                {
                     // peek at next character
                     if (i + 1 < length && ls.tmptoken.cptr[1] == '\n')
                         eatChar = true;
-                } else if (c == '\n') {
+                }
+                else if (c == '\n')
+                {
                     ls.tmptoken.type = TokenType::TT0_NEWLINE;
-                } else if (c == '\t') {
+                }
+                else if (c == '\t')
+                {
                     ls.tmptoken.type = TokenType::TT0_TAB;
                 }
-            } else if (isblank(c)) {
+            }
+            else if (isblank(c))
+            {
                 ls.tmptoken.type = TokenType::TT0_SPACE;
-            } else {
+            }
+            else
+            {
                 ls.tmptoken.type = TokenType::TT0_CHAR;
                 if (level >= 1)
                     keepContinguous = false;
@@ -687,18 +731,21 @@ size_t lex(LexerState& ls, const StringType& inputStr, int level)
         // finally, add token to list
 
         // case 1: we have no previous token, so add it to the end of the list
-        if (ls.lasttoken == nullptr) {
+        if (ls.lasttoken == nullptr)
+        {
             ls.tokens.push_back(ls.tmptoken);
             ls.lasttoken = &ls.tokens.back();
         }
         // case 2: we have a previous token and it is the same type
         // increase the length of the last token.
-        else if (keepContinguous && ls.lasttoken->type == ls.tmptoken.type) {
+        else if (keepContinguous && ls.lasttoken->type == ls.tmptoken.type)
+        {
             ls.lasttoken->length++;
         }
         // case 3: we have a previous token, but it is not the same type
         // so add another token to the end of the list
-        else {
+        else
+        {
             ls.tokens.push_back(ls.tmptoken);
             ls.lasttoken = &ls.tokens.back();
         }
@@ -707,54 +754,65 @@ size_t lex(LexerState& ls, const StringType& inputStr, int level)
     ls.tokens.shrink_to_fit();
 
     // vector<T>::back() doesn't check if element exists.
-    if (ls.tokens.empty()) {
+    if (ls.tokens.empty())
+    {
         ls.lasttoken = nullptr;
-    } else {
+    }
+    else
+    {
         ls.lasttoken = &ls.tokens.back();
     }
 
     return ls.tokens.size();
 }
 
-void lex_print(LexerState& ls)
+void lex_print(LexerState &ls)
 {
-    for (auto it = ls.tokens.begin(); it != ls.tokens.end(); it++) {
+    for (auto it = ls.tokens.begin(); it != ls.tokens.end(); it++)
+    {
         cout << "type: " << it->type << ", start: " << it->start << ", length: " << it->length << endl;
     }
 }
 
-void lex_tokens_print(vector<Token>& tokens)
+void lex_tokens_print(vector<Token> &tokens)
 {
-    for (auto it = tokens.begin(); it != tokens.end(); it++) {
+    for (auto it = tokens.begin(); it != tokens.end(); it++)
+    {
         cout << "type: " << it->type << ", " << it->sval << endl;
     }
 }
 
-void lex_replace(LexerState& ls, LexerState& output,
-    const vector<LexReplacementType>& replacements)
+void lex_replace(LexerState &ls, LexerState &output,
+                 const vector<LexReplacementType> &replacements)
 {
     lex_init(output);
     output.buffer = ls.buffer;
     output.tokens.clear();
     output.eatChar = false;
     output.lasttoken = nullptr;
-    for (auto it = ls.tokens.begin(); it != ls.tokens.end(); it++) {
+    for (auto it = ls.tokens.begin(); it != ls.tokens.end(); it++)
+    {
         bool skipped = false;
         bool pushed = false;
-        for (auto r = replacements.begin(); r != replacements.end(); r++) {
+        for (auto r = replacements.begin(); r != replacements.end(); r++)
+        {
             TokenType fmType = get<0>(*r);
             TokenType toType = get<1>(*r);
             StringType::value_type c = get<2>(*r);
 
-            if (it->type == fmType) {
-                if (toType == TokenType::TT0_NOTHING) {
+            if (it->type == fmType)
+            {
+                if (toType == TokenType::TT0_NOTHING)
+                {
                     skipped = true;
                     break;
                 }
-                if (it->cptr && *(it->cptr) == c) {
-                    if (!pushed) {
+                if (it->cptr && *(it->cptr) == c)
+                {
+                    if (!pushed)
+                    {
                         output.tokens.push_back(*it);
-                        LexerToken& back = output.tokens.back();
+                        LexerToken &back = output.tokens.back();
                         back.type = toType;
                         pushed = true;
                     }
@@ -764,13 +822,14 @@ void lex_replace(LexerState& ls, LexerState& output,
         }
 
         // leave as-is
-        if (!pushed && !skipped) {
+        if (!pushed && !skipped)
+        {
             output.tokens.push_back(*it);
         }
     }
 }
 
-size_t lex_scan_string(StringType::value_type* cptr, LexerToken& token)
+size_t lex_scan_string(StringType::value_type *cptr, LexerToken &token)
 {
     if (cptr == nullptr)
         return 0;
@@ -779,7 +838,8 @@ size_t lex_scan_string(StringType::value_type* cptr, LexerToken& token)
     int state = 0;
     StringType::value_type c;
 
-    if (state == 0) {
+    if (state == 0)
+    {
         c = *cptr;
         if (c == '\"')
             state = 1;
@@ -789,8 +849,10 @@ size_t lex_scan_string(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    while (state == 1) {
-        if (state == 1) {
+    while (state == 1)
+    {
+        if (state == 1)
+        {
             c = *cptr;
             if (c == '\"')
                 state = 2;
@@ -804,9 +866,11 @@ size_t lex_scan_string(StringType::value_type* cptr, LexerToken& token)
         if (state == 2)
             break;
 
-        if (state == 3) {
+        if (state == 3)
+        {
             c = *cptr;
-            switch (c) {
+            switch (c)
+            {
             case '\"':
             case '\\':
             case '/':
@@ -829,7 +893,8 @@ size_t lex_scan_string(StringType::value_type* cptr, LexerToken& token)
             cptr++;
         }
 
-        while (state >= 4 && state <= 7) {
+        while (state >= 4 && state <= 7)
+        {
             c = *cptr;
             if (isxdigit(c))
                 state++;
@@ -840,7 +905,8 @@ size_t lex_scan_string(StringType::value_type* cptr, LexerToken& token)
             cptr++;
         }
 
-        if (state == 8) {
+        if (state == 8)
+        {
             state = 1;
         }
     }
@@ -851,7 +917,7 @@ size_t lex_scan_string(StringType::value_type* cptr, LexerToken& token)
     return length;
 }
 
-size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
+size_t lex_scan_number(StringType::value_type *cptr, LexerToken &token)
 {
     if (cptr == nullptr)
         return 0;
@@ -861,7 +927,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
     int state = 0;
     StringType::value_type c;
 
-    if (state == 0) {
+    if (state == 0)
+    {
         c = *cptr;
         // start state
         if (c == '-')
@@ -878,7 +945,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    if (state == 1) {
+    if (state == 1)
+    {
         c = *cptr;
         if (c == '.')
             state = 4;
@@ -892,13 +960,15 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    while (state == 2) {
+    while (state == 2)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 2;
         else if (c == '.')
             state = 5;
-        else {
+        else
+        {
             token.length = length;
             token.type = TokenType::TT2_INTEGER;
             return length;
@@ -907,13 +977,15 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    if (state == 3) {
+    if (state == 3)
+    {
         c = *cptr;
         if (c == '.')
             state = 5;
         else if (c == 'x')
             state = 9;
-        else {
+        else
+        {
             token.length = length;
             token.type = TokenType::TT2_INTEGER;
             return length;
@@ -922,7 +994,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    if (state == 4) {
+    if (state == 4)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 5;
@@ -932,13 +1005,15 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    while (state == 5) {
+    while (state == 5)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 5;
         else if (c == 'e' || c == 'E')
             state = 6;
-        else {
+        else
+        {
             token.length = length;
             token.type = TokenType::TT2_DOUBLE;
             return length;
@@ -947,7 +1022,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    if (state == 6) {
+    if (state == 6)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 8;
@@ -959,7 +1035,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    if (state == 7) {
+    if (state == 7)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 8;
@@ -969,11 +1046,13 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    while (state == 8) {
+    while (state == 8)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 8;
-        else {
+        else
+        {
             token.length = length;
             token.type = TokenType::TT2_DOUBLE;
             return length;
@@ -982,7 +1061,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         cptr++;
     }
 
-    if (state == 9) {
+    if (state == 9)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 10;
@@ -997,7 +1077,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
         hexdigits++;
     }
 
-    while (state == 10) {
+    while (state == 10)
+    {
         c = *cptr;
         if (c >= '0' && c <= '9')
             state = 10;
@@ -1005,7 +1086,8 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
             state = 10;
         else if (c >= 'A' && c <= 'F')
             state = 10;
-        else {
+        else
+        {
             token.length = length;
             token.type = TokenType::TT2_HEXINTEGER;
             return length;
@@ -1022,25 +1104,34 @@ size_t lex_scan_number(StringType::value_type* cptr, LexerToken& token)
     return length;
 }
 
-size_t lex_tokens(LexerState& ls, vector<Token>& tokens)
+size_t lex_tokens(LexerState &ls, vector<Token> &tokens)
 {
     tokens.clear();
     tokens.resize(ls.tokens.size());
     size_t i = 0;
-    for (auto it = ls.tokens.begin(); it != ls.tokens.end(); it++) {
+    for (auto it = ls.tokens.begin(); it != ls.tokens.end(); it++)
+    {
         tokens[i].type = it->type;
-        if (it->type != TokenType::TT2_STRING) {
+        if (it->type != TokenType::TT2_STRING)
+        {
             tokens[i].sval = StringType(it->cptr, it->length);
-        } else {
+        }
+        else
+        {
             tokens[i].sval = StringType(it->cptr + 1, it->length - 2);
         }
-        if (it->type == TokenType::TT2_DOUBLE) {
+        if (it->type == TokenType::TT2_DOUBLE)
+        {
             tokens[i].dval = strtod(tokens[i].sval.c_str(), nullptr);
             tokens[i].ival = tokens[i].dval > INT_MAX ? INT_MAX : tokens[i].dval < INT_MIN ? INT_MIN : (int)tokens[i].dval;
-        } else if (it->type == TokenType::TT2_HEXINTEGER) {
+        }
+        else if (it->type == TokenType::TT2_HEXINTEGER)
+        {
             tokens[i].ival = strtol(tokens[i].sval.c_str(), nullptr, 16);
             tokens[i].dval = tokens[i].ival;
-        } else if (it->type == TokenType::TT2_INTEGER) {
+        }
+        else if (it->type == TokenType::TT2_INTEGER)
+        {
             tokens[i].ival = strtol(tokens[i].sval.c_str(), nullptr, 10);
             tokens[i].dval = tokens[i].ival;
         }
@@ -1049,12 +1140,13 @@ size_t lex_tokens(LexerState& ls, vector<Token>& tokens)
     return tokens.size();
 }
 
-string TokenVectorJoin(const TokenVector tokens, const string& separator)
+string TokenVectorJoin(const TokenVector tokens, const string &separator)
 {
     ostringstream ostr;
     string result;
     size_t i = 0;
-    for (auto t : tokens) {
+    for (auto t : tokens)
+    {
         if (i != 0)
             ostr << separator;
         ostr << t.sval;
@@ -1099,23 +1191,25 @@ string TokenVectorJoin(const TokenVector tokens, const string& separator)
 	}
 	}
 	*/
-}
+} // namespace KASL
 
 #ifdef KASL_INTERPRETER
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     ifstream fin;
     bool openedfile = false;
 
-    if (argc >= 2) {
+    if (argc >= 2)
+    {
         fin.open(argv[1], ios::in);
-        if (!fin) {
+        if (!fin)
+        {
             cerr << "Unable to open input file.\n";
             return -1;
         }
         openedfile = true;
     }
-    istream& is = !fin ? cin : fin;
+    istream &is = !fin ? cin : fin;
 
     KASL::LexerState ls, newls;
     vector<KASL::LexReplacementType> replacements;
@@ -1124,32 +1218,39 @@ int main(int argc, char** argv)
     string newline = "\r\n";
     int level = 0;
     lex_init(ls);
-    while (cin) {
+    while (cin)
+    {
         string inputstr;
         getline(cin, inputstr);
         if (inputstr == "quit")
             break;
-        if (inputstr == "clear") {
+        if (inputstr == "clear")
+        {
             lex_init(ls);
             continue;
         }
-        if (inputstr == "level0") {
+        if (inputstr == "level0")
+        {
             level = 0;
             continue;
         }
-        if (inputstr == "level1") {
+        if (inputstr == "level1")
+        {
             level = 1;
             continue;
         }
-        if (inputstr == "level2") {
+        if (inputstr == "level2")
+        {
             level = 2;
             continue;
         }
-        if (inputstr == "print") {
+        if (inputstr == "print")
+        {
             KASL::lex_print(ls);
             continue;
         }
-        if (inputstr == "replace") {
+        if (inputstr == "replace")
+        {
             KASL::lex_replace(ls, newls, replacements);
             KASL::lex_print(newls);
             continue;
@@ -1158,7 +1259,8 @@ int main(int argc, char** argv)
         KASL::lex(ls, inputstr, level);
     }
 
-    if (openedfile) {
+    if (openedfile)
+    {
         fin.close();
     }
     return 0;
