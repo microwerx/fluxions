@@ -275,7 +275,7 @@ __pycache__/
 !*.sln
 !Makefile
 !.gitignore
-!.vs
+!.vscode
 !*.json
 
 # Prerequisites
