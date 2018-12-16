@@ -22,9 +22,9 @@
 #include <sstream>
 #include <string>
 #define GLEW_STATIC
-#include "GL/glew.h"
-#include "glut_extensions.hpp"
 #include <fluxions_opengl.hpp>
+#include <fluxions_gte.hpp>
+#include <glut_extensions.hpp>
 
 GLint g_MaxCombinedTextureUnits = 0;
 std::string g_CurrentDebugMessage;
@@ -303,7 +303,14 @@ void glutTestLitSolidTeapotScene(double fovy, double aspect)
     gluPerspective(fovy, aspect, 0.01, 100.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    // gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    using Fluxions::Matrix4f;
+    using Fluxions::Vector3f;
+    Matrix4f lookAt;
+    lookAt.LookAt(Vector3f(0.0f, 0.0f, 10.0f),
+                  Vector3f(0.0f, 0.0f, 0.0f),
+                  Vector3f(0.0f, 1.0f, 0.0f));
+    glMultMatrixf(lookAt.const_ptr());
 
     glutSolidTeapot(1.0);
 

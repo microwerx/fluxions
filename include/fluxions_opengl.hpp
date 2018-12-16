@@ -21,6 +21,7 @@
 
 #define NOMINMAX
 #define GLEW_STATIC
+#define GLEW_NO_GLU
 #include <GL/glew.h>
 #ifdef WIN32
 #include <GL/wglew.h>

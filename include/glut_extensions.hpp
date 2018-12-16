@@ -19,13 +19,8 @@
 #ifndef FLUXIONS_GLUT_EXTENSIONS_HPP
 #define FLUXIONS_GLUT_EXTENSIONS_HPP
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#ifdef WIN32
-#include <GL/wglew.h>
-#endif
-#include <GL/freeglut.h>
 #include <string>
+#include <fluxions_opengl.hpp>
 
 GLenum glutGetBaseType(GLenum type);
 GLint glutGetTypeComponents(GLenum type);
