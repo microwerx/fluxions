@@ -35,6 +35,7 @@ namespace Viperfish
 class IWidget
 {
   public:
+	virtual ~IWidget() {}
 	virtual void OnInit(const std::vector<std::string> &args) = 0;
 	virtual void OnKill() = 0;
 	virtual void OnUpdate(double elapsedTimeInSeconds) = 0;
@@ -84,7 +85,7 @@ class IWidget
 // Use the decorator pattern
 class Widget : public std::enable_shared_from_this<Widget>, public IWidget
 {
-  protected:
+  public:
 	// this is required to enable shared_from_this() to work properly
 	Widget();
 	Widget(const Widget &) = default;
@@ -117,7 +118,7 @@ class Widget : public std::enable_shared_from_this<Widget>, public IWidget
 		}
 	}
 
-	~Widget()
+	virtual ~Widget()
 	{
 		decorateeWidget_.reset();
 		decoraterWidget_.reset();
@@ -128,7 +129,7 @@ class Widget : public std::enable_shared_from_this<Widget>, public IWidget
 		}
 	}
 
-	inline SharedPtr GetWidgetPtr() { return shared_from_this(); }
+	inline SharedPtr GetWidgetPtr() noexcept { return shared_from_this(); }
 
 	virtual void OnInit(const std::vector<std::string> &args) override
 	{

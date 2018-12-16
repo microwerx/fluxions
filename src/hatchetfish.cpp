@@ -23,6 +23,10 @@
 #include <string.h>
 #include <time.h>
 
+#ifdef __APPLE__
+#define __unix__ 1
+#endif
+
 using namespace std;
 
 Hatchetfish hflog;
@@ -63,7 +67,7 @@ std::string Hatchetfish::makeDTG()
 
 std::string Hatchetfish::makeTimeStamp()
 {
-    char msg[50];
+    char msg[50] = {0};
 #ifdef __STDC_SECURE_LIB__
     struct tm newtime;
     __time64_t long_time;
@@ -74,13 +78,14 @@ std::string Hatchetfish::makeTimeStamp()
     chrono::time_point<chrono::system_clock> tp = chrono::system_clock::now();
     time_t t = chrono::system_clock::to_time_t(tp);
     tm *_Tm = nullptr;
+
 #ifdef WIN32
     localtime_s(_Tm, &t);
 #elif __unix__
     localtime_r(&t, _Tm);
 #endif
-    strftime(msg, 50, "%T", _Tm);
 #endif
+    strftime(msg, 50, "%T", _Tm);
     timeStamp = msg;
     return timeStamp;
 }
