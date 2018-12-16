@@ -167,8 +167,6 @@ class TRect
 
 using Rectf = TRect<float>;
 using Rectd = TRect<double>;
-using Rectb = TRect<char>;
-using Rectub = TRect<unsigned char>;
 using Rects = TRect<short>;
 using Rectus = TRect<unsigned short>;
 using Recti = TRect<int>;
@@ -176,8 +174,6 @@ using Rectui = TRect<unsigned>;
 
 extern template class TRect<float>;
 extern template class TRect<double>;
-extern template class TRect<char>;
-extern template class TRect<unsigned char>;
 extern template class TRect<short>;
 extern template class TRect<unsigned short>;
 extern template class TRect<int>;

@@ -24,8 +24,6 @@ namespace Fluxions
 {
 	template class TRect<float>;
 	template class TRect<double>;
-	template class TRect<char>;
-	template class TRect<unsigned char>;
 	template class TRect<short>;
 	template class TRect<unsigned short>;
 	template class TRect<int>;
