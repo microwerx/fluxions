@@ -54,27 +54,25 @@ class TColor3
     constexpr T *ptr() noexcept { return &r; }
     constexpr const T *const_ptr() const noexcept { return &r; }
 
-    TColor3()
+    constexpr TColor3()
         : r(0), g(0), b(0)
     {
     }
 
-    TColor3(const T value)
+    constexpr TColor3(const T value)
         : r(value), g(value), b(value)
     {
     }
 
-    TColor3(const T newR, const T newG, const T newB)
+    constexpr TColor3(const T newR, const T newG, const T newB)
         : r(newR), g(newG), b(newB)
     {
     }
 
-    TColor3(const TColor3<T> &color)
+    constexpr TColor3(const TColor3<T> &color)
         : r(color.r), g(color.g), b(color.b)
     {
     }
-
-    ~TColor3() {}
 
     template <typename OtherType>
     constexpr operator TColor4<OtherType>() const

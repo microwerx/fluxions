@@ -53,32 +53,30 @@ class TColor4
     static unsigned int gl_type; // UNSIGNED_BYTE, FLOAT, etc.
     static unsigned int gl_size; // 3 for RGB, 4 for RGBA
 
-    TColor4()
+    constexpr TColor4()
         : r(0), g(0), b(0), a(0)
     {
     }
 
-    TColor4(const T value)
+    constexpr TColor4(const T value)
         : r(value), g(value), b(value), a(value)
     {
     }
 
-    TColor4(const T red, const T green, const T blue, const T alpha)
+    constexpr TColor4(const T red, const T green, const T blue, const T alpha)
         : r(red), g(green), b(blue), a(alpha)
     {
     }
 
-    TColor4(const TColor4<T> &color)
+    constexpr TColor4(const TColor4<T> &color)
         : r(color.r), g(color.g), b(color.b), a(color.a)
     {
     }
 
-    TColor4(const TColor3<T> &color, const T alpha = T(1))
+    constexpr TColor4(const TColor3<T> &color, const T alpha = T(1))
         : r(color.r), g(color.g), b(color.b), a(alpha)
     {
     }
-
-    ~TColor4() {}
 
     const TColor4<T> &reset(const T value)
     {

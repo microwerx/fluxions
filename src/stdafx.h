@@ -148,7 +148,7 @@
 
 #include <GL/freeglut.h>
 #include <GL/gl.h>
-#include <GL/glu.h>
+// #include <GL/glu.h>
 #include <GL/glew.h>
 
 #include <Python.h>
