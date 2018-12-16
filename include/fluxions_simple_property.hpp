@@ -439,12 +439,15 @@ class SimpleAssociativePropertyList
 	T &GetValue(const std::string &name)
 	{
 		SharedSimplePropertyPtr ptr = Get(name);
-		if (!ptr)
-			throw std::bad_cast();// ("T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid");
-			// throw std::bad_cast("T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid");
+		if (!ptr) {
+			hflog.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid", __FUNCTION__);
+			throw std::bad_cast();
+		}
 
-		if (ptr->GetTypeID() != typeid(T))
-			throw std::bad_cast();// ("T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible");
+		if (ptr->GetTypeID() != typeid(T)) {
+			hflog.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible", __FUNCTION__);
+			throw std::bad_cast();
+		}
 
 		return *(CastAsPropertyTypeValuePtr<T>(ptr));
 	}
