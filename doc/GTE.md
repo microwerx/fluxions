@@ -2,6 +2,8 @@
 
 The GTE is a template library for doing mathematical operations used throughout the Fluxions library. At some point, it will conform to the TypeScript WebFluxions library as well.
 
+## Classes
+
 | Class Name             | WebFluxions           | TS Implemented |
 |------------------------|-----------------------|----------------|
 | TMatrix2               | Matrix2               | Yes            |
@@ -25,3 +27,9 @@ The GTE is a template library for doing mathematical operations used throughout 
 | TSuperQuadricToroid    | SuperQuadricToroid    | No             |
 | TRay                   | Ray                   | No             |
 | TQuaternion            | Quaternion            | No             |
+
+## Static Functionality
+
+| Operation                  | WebFluxions              | TS Implemented |
+|----------------------------|--------------------------|----------------|
+| TMatrix4::MakePerspectiveX | Matrix4.makePerspectiveX | Yes            |
