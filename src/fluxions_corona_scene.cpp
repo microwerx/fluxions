@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include <filesystem>
+// #include <filesystem>
 #include <fluxions_corona_scene.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_xml.hpp>
