@@ -33,3 +33,9 @@ The GTE is a template library for doing mathematical operations used throughout 
 | Operation                  | WebFluxions              | TS Implemented |
 |----------------------------|--------------------------|----------------|
 | TMatrix4::MakePerspectiveX | Matrix4.makePerspectiveX | Yes            |
+| TMatrix4::MakePerspectiveY | Matrix4.makePerspectiveY | Yes            |
+| TMatrix4::MakeTranslation  | Matrix4.makeTranslation  | Yes            |
+| TMatrix4::MakeRotation     | Matrix4.makeRotation     | Yes            |
+| TMatrix4::MakeScaling      | Matrix4.makeScaling      | Yes            |
+| TMatrix4::MakeRotationX    | Matrix4.makeRotationX    | Yes            |
+ß
