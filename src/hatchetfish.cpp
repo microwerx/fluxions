@@ -77,15 +77,16 @@ std::string Hatchetfish::makeTimeStamp()
 #else
     chrono::time_point<chrono::system_clock> tp = chrono::system_clock::now();
     time_t t = chrono::system_clock::to_time_t(tp);
-    tm *_Tm = nullptr;
-
+    struct tm _Tm;
+    memset(&_Tm, 0, sizeof(struct tm));
+    
 #ifdef WIN32
     localtime_s(_Tm, &t);
 #elif __unix__
-    localtime_r(&t, _Tm);
+    localtime_r(&t, &_Tm);
 #endif
 #endif
-    strftime(msg, 50, "%T", _Tm);
+    strftime(msg, 50, "%T", &_Tm);
     timeStamp = msg;
     return timeStamp;
 }
