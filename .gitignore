@@ -279,6 +279,10 @@ __pycache__/
 !*.json
 !*.keep
 !*.md
+!*.html
+!*.css
+!*.js
+!*.ts
 
 # Prerequisites
 *.d

@@ -1,0 +1,9 @@
+
+body {
+    font-family: 'Linux Libertine O', 'Georgia', 'Times New Roman', 'Times', serif;
+}
+
+h1, h2, h3 {
+    font-family: 'Linux Biolinum O', 'URW Geometric', Futura, 'Helvetica Neue', 'TeX Gyre Heros', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+}
