@@ -278,6 +278,7 @@ __pycache__/
 !.vscode
 !*.json
 !*.keep
+!*.md
 
 # Prerequisites
 *.d
