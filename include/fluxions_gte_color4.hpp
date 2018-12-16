@@ -490,6 +490,7 @@ using Color4us = TColor4<unsigned short>;
 using Color4b = TColor4<char>;
 using Color4ub = TColor4<unsigned char>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TColor4<float>;
 extern template class TColor4<double>;
 extern template class TColor4<int>;
@@ -498,6 +499,7 @@ extern template class TColor4<short>;
 extern template class TColor4<unsigned short>;
 extern template class TColor4<char>;
 extern template class TColor4<unsigned char>;
+#endif
 
 // Scales the color by 255 and then clamps to 0 to 65535
 inline Color4i ToColor4i(const Color4f color, float scale = 255.0f, int min_value = 0, int max_value = 65535)

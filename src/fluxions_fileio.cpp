@@ -19,6 +19,10 @@
 #include "stdafx.h"
 #include <fluxions_fileio.hpp>
 
+#ifdef __APPLE__
+#define __unix__ 1
+#endif
+
 #ifdef WIN32
 
 #elif __unix__

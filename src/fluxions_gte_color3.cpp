@@ -16,20 +16,12 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES 1
 #include "stdafx.h"
 #include <fluxions_gte_color3.hpp>
 
 namespace Fluxions
 {
-template class TColor3<float>;
-template class TColor3<double>;
-template class TColor3<char>;
-template class TColor3<unsigned char>;
-template class TColor3<short>;
-template class TColor3<unsigned short>;
-template class TColor3<int>;
-template class TColor3<unsigned int>;
-
 template <>
 float TColor3<float>::to_float_factor = 1.0f;
 template <>
@@ -128,6 +120,15 @@ template <>
 unsigned int TColor3<int>::gl_size = 3;
 template <>
 unsigned int TColor3<unsigned int>::gl_size = 3;
+
+template class TColor3<float>;
+template class TColor3<double>;
+template class TColor3<char>;
+template class TColor3<unsigned char>;
+template class TColor3<short>;
+template class TColor3<unsigned short>;
+template class TColor3<int>;
+template class TColor3<unsigned int>;
 
 Color3f HLSToRGBf(float h, float l, float s) noexcept
 {

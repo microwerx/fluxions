@@ -529,6 +529,7 @@ using Color3us = TColor3<unsigned short>;
 using Color3b = TColor3<char>;
 using Color3ub = TColor3<unsigned char>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TColor3<float>;
 extern template class TColor3<double>;
 extern template class TColor3<int>;
@@ -537,6 +538,7 @@ extern template class TColor3<short>;
 extern template class TColor3<unsigned short>;
 extern template class TColor3<char>;
 extern template class TColor3<unsigned char>;
+#endif
 
 // Scales the color by 255 and then clamps to 0 to 65535
 inline Color3i ToColor3i(const Color3f color, float scale = 255.0f, int min_value = 0, int max_value = 65535)

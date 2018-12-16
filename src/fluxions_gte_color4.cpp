@@ -16,20 +16,12 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES 1
 #include "stdafx.h"
 #include <fluxions_gte_color4.hpp>
 
 namespace Fluxions
 {
-template class TColor4<float>;
-template class TColor4<double>;
-template class TColor4<char>;
-template class TColor4<unsigned char>;
-template class TColor4<short>;
-template class TColor4<unsigned short>;
-template class TColor4<int>;
-template class TColor4<unsigned int>;
-
 template <>
 float TColor4<float>::to_float_factor = 1.0f;
 template <>
@@ -128,5 +120,14 @@ template <>
 unsigned int TColor4<int>::gl_size = 4;
 template <>
 unsigned int TColor4<unsigned int>::gl_size = 4;
+
+template class TColor4<float>;
+template class TColor4<double>;
+template class TColor4<char>;
+template class TColor4<unsigned char>;
+template class TColor4<short>;
+template class TColor4<unsigned short>;
+template class TColor4<int>;
+template class TColor4<unsigned int>;
 
 } // namespace Fluxions
