@@ -667,7 +667,7 @@ struct __ShaderProgramLocations
     GLint sphl_lights_environmentCubeMap[16] = {-1};
     GLint sphl_lights_depthShadowCubeMap[16] = {-1};
     GLint sphl_lights_depthShadowZFar[16] = {-1};
-    GLint sphl_lights_sph[16][9] = {-1};
+    GLint sphl_lights_sph[16][9] = {{-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}};
 
     GLint toneMapScale = -1;
     GLint toneMapExposure = -1;

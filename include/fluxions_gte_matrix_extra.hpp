@@ -871,8 +871,8 @@ class TMatrix
         std::vector<T> newM;
         newM.resize(newCols * newRows);
 
-        int minCols = min2(newCols, cols);
-        int minRows = min2(newRows, rows);
+        // int minCols = min2(newCols, cols);
+        // int minRows = min2(newRows, rows);
 
         for (int i = 0; i < newCols; i++)
         {

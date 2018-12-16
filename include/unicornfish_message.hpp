@@ -46,6 +46,7 @@ class Message
 	{
 		if (Create())
 			return Push(message);
+		return false;
 	}
 
 	void Move(zmsg_t **msgToMove);

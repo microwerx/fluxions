@@ -72,7 +72,7 @@ class TResourceManager
 	bool IsAHandle(unsigned handle) const;
 	bool IsAHandle(const std::string &name) const;
 	const std::string &GetNameFromHandle(unsigned handle);
-	const std::vector<std::string> &GetNamesFromHandle(unsigned handle);
+	const std::vector<std::string> GetNamesFromHandle(unsigned handle);
 	unsigned GetHandleFromName(const std::string &name) const;
 	unsigned MapNameToHandle(const std::string &name, unsigned handle);
 	void RemoveName(const std::string &name);
@@ -263,7 +263,7 @@ const std::string &TResourceManager<T>::GetNameFromHandle(unsigned handle)
 }
 
 template <typename T>
-const std::vector<std::string> &TResourceManager<T>::GetNamesFromHandle(unsigned handle)
+const std::vector<std::string> TResourceManager<T>::GetNamesFromHandle(unsigned handle)
 {
 	auto it = handleToStringsMap.find(handle);
 	if (it == handleToStringsMap.end())
