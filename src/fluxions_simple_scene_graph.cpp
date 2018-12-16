@@ -23,6 +23,10 @@
 #include <fluxions.hpp>
 #include <fluxions_fileio.hpp>
 
+#ifdef __APPLE__
+#define __unix__
+#endif
+
 namespace Fluxions
 {
 using namespace std;

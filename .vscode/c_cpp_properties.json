@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/dep/include",
-                "/usr/include/python3.6m"
+                "/usr/include/python3.6m",
+                "/usr/local/opt"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
