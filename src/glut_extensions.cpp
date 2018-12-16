@@ -300,7 +300,11 @@ void glutTestLitSolidTeapotScene(double fovy, double aspect)
     glEnable(GL_LIGHTING);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(fovy, aspect, 0.01, 100.0);
+    using Fluxions::Matrix4f;
+    // gluPerspective(fovy, aspect, 0.01, 100.0);
+    Matrix4f perspective;
+    perspective.PerspectiveY((float)fovy, (float)aspect, 0.01f, 100.0f);
+    glMultMatrixf(perspective.const_ptr());
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     // gluLookAt(0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);

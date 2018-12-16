@@ -159,7 +159,7 @@ class TRect
         return (x1() >= p.x && x2() <= p.x) && (y1() >= p.y && y2() <= p.y);
     }
 
-    constexpr inline TVector2<T> Clamp(const TVector2<T> p) const noexcept
+    constexpr TVector2<T> Clamp(const TVector2<T> p) const noexcept
     {
         return TVector2<T>(clamp(p.x, x1(), x2()), clamp(p.y, y1(), y2()));
     }

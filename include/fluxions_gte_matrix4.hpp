@@ -45,7 +45,7 @@ class TMatrix4
     static constexpr size_t numrows() { return 4; }
     static constexpr size_t numcols() { return 4; }
 
-    TMatrix4() noexcept
+    constexpr TMatrix4() noexcept
     {
         m11 = 1;
         m12 = 0;
@@ -85,7 +85,7 @@ class TMatrix4
         m44 = M.m44;
     }
 
-    TMatrix4(TMatrix4<T> &&M) noexcept
+    constexpr TMatrix4(TMatrix4<T> &&M) noexcept
     {
         m11 = std::move(M.m11);
         m12 = std::move(M.m12);
@@ -105,7 +105,7 @@ class TMatrix4
         m44 = std::move(M.m44);
     }
 
-    TMatrix4(const T value) noexcept
+    constexpr TMatrix4(const T value) noexcept
     {
         m11 = value;
         m12 = value;
@@ -125,7 +125,7 @@ class TMatrix4
         m44 = value;
     }
 
-    TMatrix4(
+    constexpr TMatrix4(
         const T a11, const T a12, const T a13, const T a14,
         const T a21, const T a22, const T a23, const T a24,
         const T a31, const T a32, const T a33, const T a34,
@@ -149,7 +149,7 @@ class TMatrix4
         m44 = a44;
     }
 
-    TMatrix4(const T M[numrows()][numcols()]) noexcept
+    constexpr TMatrix4(const T M[numrows()][numcols()]) noexcept
     {
         const T *_v = M[0];
         T *v = &m11;
@@ -159,7 +159,7 @@ class TMatrix4
         }
     }
 
-    TMatrix4(const T M[size()]) noexcept
+    constexpr TMatrix4(const T M[size()]) noexcept
     {
         const T *_v = M;
         T *v = &m11;
