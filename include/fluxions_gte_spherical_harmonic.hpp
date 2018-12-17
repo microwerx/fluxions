@@ -162,8 +162,8 @@ namespace Fluxions
 			}
 			else
 			{
-				hflog.errorfn(__FUNCTION__, "TSphericalHarmonic<VectorType>::operator[](i): maxDegree must be in the range 0 <= maxDegree <= 10");
-				throw std::out_of_range();
+				hflog.errorfn(__FUNCTION__, "maxDegree must be in the range 0 <= maxDegree <= 10");
+				throw std::out_of_range("maxDegree must be in the range 0 <= maxDegree <= 10");
 			}
 		}
 

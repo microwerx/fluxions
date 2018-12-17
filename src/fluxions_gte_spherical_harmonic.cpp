@@ -59,7 +59,7 @@ double _legendre_polynomial(int l, int m, double x)
 	return pll;
 }
 
-double legendre_polynomial(int l, int m, double x)
+double legendre_polynomial(int l, int m, double x) noexcept
 {
 	if (l < 0 || abs(m) > l || x < -1.0 || x > 1.0)
 		return 0.0;
@@ -123,7 +123,7 @@ double legendre_polynomial(int l, int m, double x)
 	return 0.0;
 }
 
-double spherical_harmonic(int l, int m, double theta, double phi)
+double spherical_harmonic(int l, int m, double theta, double phi) noexcept
 {
 	// K = sqrt(2.0) * sqrt((2 * l + 1) / (4 * FX_PI) * factorial(l - abs(ptr)) / factorial(l + abs(ptr)))
 	static const double K[] = {
