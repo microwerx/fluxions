@@ -31,75 +31,38 @@
 
 namespace Viperfish
 {
-
-	class IWidget
-	{
-	public:
-		virtual ~IWidget() {}
-		virtual void OnInit(const std::vector<std::string> &args) = 0;
-		virtual void OnKill() = 0;
-		virtual void OnUpdate(double elapsedTimeInSeconds) = 0;
-
-		virtual void OnKeyDown(const std::string &key, int keymod) = 0;
-		virtual void OnKeyUp(const std::string &key, int keymod) = 0;
-
-		virtual void OnMouseButtonDown(int button) = 0;
-		virtual void OnMouseButtonUp(int button) = 0;
-		virtual void OnMouseMove(int x, int y) = 0;
-		virtual void OnMouseClick(int button, const MouseClickState &mcs) = 0;
-		virtual void OnMouseDoubleClick(int button, const MouseDoubleClickState &mdcs) = 0;
-		virtual void OnMouseDrag(int button, const MouseDragState &mds) = 0;
-
-		virtual void OnMouseEnter() = 0;
-		virtual void OnMouseLeave() = 0;
-
-		virtual void OnMultiEnter(int id) = 0;
-		virtual void OnMultiLeave(int id) = 0;
-		virtual void OnMultiButtonDown(int id, int button, const MouseState &ms) = 0;
-		virtual void OnMultiButtonUp(int id, int button, const MouseState &ms) = 0;
-		virtual void OnMultiMove(int x, int y, const MouseState &ms) = 0;
-
-		virtual void OnGainFocus() = 0;
-		virtual void OnLostFocus() = 0;
-
-		virtual void OnInitContext() = 0;
-		virtual void OnPauseApp() = 0;
-		virtual void OnResumeApp() = 0;
-
-		virtual void OnWindowMove(int x, int y) = 0;
-		virtual void OnWindowVisible() = 0;
-		virtual void OnWindowHidden() = 0;
-
-		virtual void OnGamepadAxis(int axis, float value, const GamepadState &gs) = 0;
-		virtual void OnGamepadButtonDown(int button, float value, const GamepadState &gs) = 0;
-		virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs) = 0;
-
-		virtual void OnReshape(int width, int height) = 0;
-		virtual void OnRender() = 0;
-		virtual void OnRenderOverlay() = 0;
-
-		virtual void OnMainLoop() = 0;
-		virtual void OnLeaveMainLoop() = 0;
-	};
-
 	// Use the decorator pattern
-	class Widget : public std::enable_shared_from_this<Widget>, public IWidget
+	class Widget : public std::enable_shared_from_this<Widget>
 	{
 	public:
 		// this is required to enable shared_from_this() to work properly
-		Widget() { }
-		Widget(const Widget &) = default;
+		Widget();
+		 Widget(const Widget &) = default;
+
+		std::string name_;
+
+		void common_constructor(const std::string &name) {
+			name_ = name;
+			hflog.infofn(__FUNCTION__, "Creating Widget '%s'", name_.c_str());
+		}
 
 	public:
 		using SharedPtr = std::shared_ptr<Widget>;
 		using UniquePtr = std::unique_ptr<Widget>;
 
-		Widget(SharedPtr &decorateeWidget) { decorate(decorateeWidget); }
+		explicit Widget(const std::string &name) noexcept { common_constructor(name); }
+		explicit Widget(const std::string &name, SharedPtr &decorateeWidget) noexcept { common_constructor(name); decorate(decorateeWidget); }
 
 		template <class... _Types>
-		static SharedPtr MakeShared(_Types &&... _Args) { return SharedPtr(new Widget(std::forward<_Types>(_Args)...)); }
+		static SharedPtr MakeShared(const std::string &name, _Types &&... _Args) {
+			Widget *w = new Widget(name, std::forward<_Types>(_Args)...);
+			return SharedPtr(w);
+		}
 		template <class... _Types>
-		static UniquePtr MakeUnique(_Types &&... _Args) { return UniquePtr(new Widget(std::forward<_Types>(_Args)...)); }
+		static UniquePtr MakeUnique(const std::string &name, _Types &&... _Args) {
+			Widget *w = new Widget(name, std::forward<_Types>(_Args)...);
+			return UniquePtr(w);
+		}
 
 		//Widget(SharedPtr && decorateeWidget) { decorateeWidget_ = decorateeWidget; }
 
@@ -110,8 +73,9 @@ namespace Viperfish
 		//	this->setStyle(jsonStyle);
 		//}
 
-		explicit Widget(std::initializer_list<SharedPtr> childWidgets)
+		explicit Widget(std::string &name, std::initializer_list<SharedPtr> childWidgets) noexcept
 		{
+			common_constructor(name);
 			for (auto child = childWidgets.begin(); child != childWidgets.end(); child++)
 			{
 				push_back(*child);
@@ -120,6 +84,7 @@ namespace Viperfish
 
 		virtual ~Widget()
 		{
+			hflog.infofn(__FUNCTION__, "Destroying Widget '%s'", name_.c_str());
 			decorateeWidget_.reset();
 			decoraterWidget_.reset();
 			parent_.reset();
@@ -131,7 +96,7 @@ namespace Viperfish
 
 		inline SharedPtr GetWidgetPtr() noexcept { return shared_from_this(); }
 
-		virtual void OnInit(const std::vector<std::string> &args) override
+		virtual void OnInit(const std::vector<std::string> &args)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnInit(args);
@@ -141,7 +106,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnKill() override
+		virtual void OnKill()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnKill();
@@ -150,9 +115,9 @@ namespace Viperfish
 				w->OnKill();
 			}
 		}
-		virtual void OnUpdate(double timeStamp) override;
+		virtual void OnUpdate(double timeStamp);
 
-		virtual void OnKeyDown(const std::string &key, int keymod) override
+		virtual void OnKeyDown(const std::string &key, int keymod)
 		{
 			HandleKey(key, keymod, true);
 			if (decorateeWidget_)
@@ -162,7 +127,7 @@ namespace Viperfish
 				w->OnKeyDown(key, keymod);
 			}
 		}
-		virtual void OnKeyUp(const std::string &key, int keymod) override
+		virtual void OnKeyUp(const std::string &key, int keymod)
 		{
 			HandleKey(key, keymod, false);
 			if (decorateeWidget_)
@@ -173,7 +138,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnMouseButtonDown(int button) override
+		virtual void OnMouseButtonDown(int button)
 		{
 			HandleMouseButton(button, true);
 			if (decorateeWidget_)
@@ -183,7 +148,7 @@ namespace Viperfish
 				w->OnMouseButtonDown(button);
 			}
 		}
-		virtual void OnMouseButtonUp(int button) override
+		virtual void OnMouseButtonUp(int button)
 		{
 			HandleMouseButton(button, false);
 			if (decorateeWidget_)
@@ -193,7 +158,7 @@ namespace Viperfish
 				w->OnMouseButtonUp(button);
 			}
 		}
-		virtual void OnMouseMove(int x, int y) override
+		virtual void OnMouseMove(int x, int y)
 		{
 			HandleMouseMove(x, y);
 			if (decorateeWidget_)
@@ -203,7 +168,7 @@ namespace Viperfish
 				w->OnMouseMove(x, y);
 			}
 		}
-		virtual void OnMouseClick(int button, const MouseClickState &mcs) override
+		virtual void OnMouseClick(int button, const MouseClickState &mcs)
 		{
 			HandleMouseClick(mcs);
 			if (decorateeWidget_)
@@ -213,7 +178,7 @@ namespace Viperfish
 				w->OnMouseClick(button, mcs);
 			}
 		}
-		virtual void OnMouseDoubleClick(int button, const MouseDoubleClickState &mdcs) override
+		virtual void OnMouseDoubleClick(int button, const MouseDoubleClickState &mdcs)
 		{
 			HandleMouseDoubleClick(mdcs);
 			if (decorateeWidget_)
@@ -223,7 +188,7 @@ namespace Viperfish
 				w->OnMouseDoubleClick(button, mdcs);
 			}
 		}
-		virtual void OnMouseDrag(int button, const MouseDragState &mds) override
+		virtual void OnMouseDrag(int button, const MouseDragState &mds)
 		{
 			HandleMouseDrag(mds);
 			if (decorateeWidget_)
@@ -234,7 +199,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnMouseEnter() override
+		virtual void OnMouseEnter()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMouseEnter();
@@ -243,7 +208,7 @@ namespace Viperfish
 				w->OnMouseEnter();
 			}
 		}
-		virtual void OnMouseLeave() override
+		virtual void OnMouseLeave()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMouseLeave();
@@ -253,7 +218,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnMultiEnter(int id) override
+		virtual void OnMultiEnter(int id)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMultiEnter(id);
@@ -262,7 +227,7 @@ namespace Viperfish
 				w->OnMultiEnter(id);
 			}
 		}
-		virtual void OnMultiLeave(int id) override
+		virtual void OnMultiLeave(int id)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMultiLeave(id);
@@ -271,7 +236,7 @@ namespace Viperfish
 				w->OnMultiLeave(id);
 			}
 		}
-		virtual void OnMultiButtonDown(int id, int button, const MouseState &ms) override
+		virtual void OnMultiButtonDown(int id, int button, const MouseState &ms)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMultiButtonDown(id, button, ms);
@@ -280,7 +245,7 @@ namespace Viperfish
 				w->OnMultiButtonDown(id, button, ms);
 			}
 		}
-		virtual void OnMultiButtonUp(int id, int button, const MouseState &ms) override
+		virtual void OnMultiButtonUp(int id, int button, const MouseState &ms)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMultiButtonUp(id, button, ms);
@@ -289,7 +254,7 @@ namespace Viperfish
 				w->OnMultiButtonUp(id, button, ms);
 			}
 		}
-		virtual void OnMultiMove(int x, int y, const MouseState &ms) override
+		virtual void OnMultiMove(int x, int y, const MouseState &ms)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMultiMove(x, y, ms);
@@ -299,7 +264,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnGainFocus() override
+		virtual void OnGainFocus()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnGainFocus();
@@ -308,7 +273,7 @@ namespace Viperfish
 				w->OnGainFocus();
 			}
 		}
-		virtual void OnLostFocus() override
+		virtual void OnLostFocus()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnLostFocus();
@@ -318,7 +283,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnInitContext() override
+		virtual void OnInitContext()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnInitContext();
@@ -327,7 +292,7 @@ namespace Viperfish
 				w->OnInitContext();
 			}
 		}
-		virtual void OnPauseApp() override
+		virtual void OnPauseApp()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnPauseApp();
@@ -336,7 +301,7 @@ namespace Viperfish
 				w->OnPauseApp();
 			}
 		}
-		virtual void OnResumeApp() override
+		virtual void OnResumeApp()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnResumeApp();
@@ -346,7 +311,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnWindowMove(int x, int y) override
+		virtual void OnWindowMove(int x, int y)
 		{
 			windowRect_.x = x;
 			windowRect_.y = y;
@@ -357,7 +322,7 @@ namespace Viperfish
 				w->OnWindowMove(x, y);
 			}
 		}
-		virtual void OnWindowVisible() override
+		virtual void OnWindowVisible()
 		{
 			visible_ = true;
 			if (decorateeWidget_)
@@ -367,7 +332,7 @@ namespace Viperfish
 				w->OnWindowVisible();
 			}
 		}
-		virtual void OnWindowHidden() override
+		virtual void OnWindowHidden()
 		{
 			visible_ = false;
 			if (decorateeWidget_)
@@ -378,7 +343,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnGamepadAxis(int axis, float value, const GamepadState &gs) override
+		virtual void OnGamepadAxis(int axis, float value, const GamepadState &gs)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnGamepadAxis(axis, value, gs);
@@ -387,7 +352,7 @@ namespace Viperfish
 				w->OnGamepadAxis(axis, value, gs);
 			}
 		}
-		virtual void OnGamepadButtonDown(int button, float value, const GamepadState &gs) override
+		virtual void OnGamepadButtonDown(int button, float value, const GamepadState &gs)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnGamepadButtonDown(button, value, gs);
@@ -396,7 +361,7 @@ namespace Viperfish
 				w->OnGamepadButtonDown(button, value, gs);
 			}
 		}
-		virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs) override
+		virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs)
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnGamepadButtonUp(button, value, gs);
@@ -406,7 +371,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnReshape(int width, int height) override
+		virtual void OnReshape(int width, int height)
 		{
 			windowRect_.w = width;
 			windowRect_.h = height;
@@ -417,7 +382,7 @@ namespace Viperfish
 				w->OnReshape(width, height);
 			}
 		}
-		virtual void OnRender() override
+		virtual void OnRender()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnRender();
@@ -426,7 +391,7 @@ namespace Viperfish
 				w->OnRender();
 			}
 		}
-		virtual void OnRenderOverlay() override
+		virtual void OnRenderOverlay()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnRenderOverlay();
@@ -436,7 +401,7 @@ namespace Viperfish
 			}
 		}
 
-		virtual void OnMainLoop() override
+		virtual void OnMainLoop()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnMainLoop();
@@ -445,7 +410,7 @@ namespace Viperfish
 				w->OnMainLoop();
 			}
 		}
-		virtual void OnLeaveMainLoop() override
+		virtual void OnLeaveMainLoop()
 		{
 			if (decorateeWidget_)
 				decorateeWidget_->OnLeaveMainLoop();
@@ -577,8 +542,21 @@ namespace Viperfish
 		inline const SharedPtr &parent() const { return parent_; }
 		inline SharedPtr &parent() { return parent_; }
 
-		bool decorate(SharedPtr &w);
-		void undecorate();
+		inline bool decorate(SharedPtr w) {
+			if (!w)
+				return false;
+			decorateeWidget_ = w;
+			w->decoraterWidget_ = shared_from_this();
+			return true;
+		}
+
+		inline void undecorate()
+		{
+			if (!decoraterWidget_)
+				return;
+			decoraterWidget_->decorateeWidget_.reset();
+		}
+
 		inline bool decorating() const
 		{
 			if (decorateeWidget_)

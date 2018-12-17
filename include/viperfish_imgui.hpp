@@ -29,7 +29,7 @@ namespace Viperfish
 class ImGuiWidget : public Widget
 {
   protected:
-	ImGuiWidget() {}
+	ImGuiWidget(): Widget("imguiwidget") {}
 	explicit ImGuiWidget(const ImGuiWidget &widget) = default;
 
   public:

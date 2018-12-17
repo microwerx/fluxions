@@ -22,6 +22,13 @@
 
 namespace Viperfish
 {
+	Widget::Widget() {
+		std::ostringstream ostr;
+		ostr << "unknownwidget" << (void*)this;
+		name_ = ostr.str();
+		hflog.infofn(__FUNCTION__, "Constructing %s", name_.c_str());
+	}
+
 	void Widget::Init(int argc, char **argv)
 	{
 		std::vector<std::string> args;
@@ -224,19 +231,19 @@ namespace Viperfish
 		return true;
 	}
 
-	bool Widget::decorate(SharedPtr &w)
-	{
-		if (!w)
-			return false;
-		decorateeWidget_ = w;
-		w->decoraterWidget_ = shared_from_this();
-		return true;
-	}
+	//bool Widget::decorate(SharedPtr w)
+	//{
+	//	if (!w)
+	//		return false;
+	//	decorateeWidget_ = w;
+	//	w->decoraterWidget_ = shared_from_this();
+	//	return true;
+	//}
 
-	void Widget::undecorate()
-	{
-		if (!decoraterWidget_)
-			return;
-		decoraterWidget_->decorateeWidget_.reset();
-	}
+	//void Widget::undecorate()
+	//{
+	//	if (!decoraterWidget_)
+	//		return;
+	//	decoraterWidget_->decorateeWidget_.reset();
+	//}
 } // namespace Viperfish

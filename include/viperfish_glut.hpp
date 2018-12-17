@@ -28,7 +28,7 @@ class GLUTWidget : public Widget
 {
   public:
 	GLUTWidget() {}
-	GLUTWidget(std::shared_ptr<Widget> &decoratee) : Widget(decoratee) {}
+	GLUTWidget(std::shared_ptr<Widget> &decoratee) : Widget(std::string("glutwidget"), decoratee) {}
 
 	void OnInit(const std::vector<std::string> &args);
 
