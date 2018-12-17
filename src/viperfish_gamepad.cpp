@@ -25,6 +25,7 @@ namespace Viperfish
 {
 GamepadState::GamepadState()
 {
+	Init(0);
 }
 
 GamepadState::~GamepadState()
