@@ -214,9 +214,11 @@ using BoundingBoxf = TBoundingBox<float>;
 using BoundingBoxd = TBoundingBox<double>;
 using BoundingBoxi = TBoundingBox<int>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TBoundingBox<float>;
 extern template class TBoundingBox<double>;
 extern template class TBoundingBox<int>;
+#endif
 } // namespace Fluxions
 
 #endif
