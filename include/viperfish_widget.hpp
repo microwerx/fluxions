@@ -102,7 +102,7 @@ class Widget : public std::enable_shared_from_this<Widget>
 		}
 	}
 
-	constexpr SharedPtr GetWidgetPtr() noexcept { return shared_from_this(); }
+	inline SharedPtr GetWidgetPtr() noexcept { return shared_from_this(); }
 
 	virtual void OnInit(const std::vector<std::string> &args)
 	{
@@ -442,115 +442,115 @@ class Widget : public std::enable_shared_from_this<Widget>
 	using iterator = std::vector<SharedPtr>::iterator;
 	using const_iterator = std::vector<SharedPtr>::const_iterator;
 
-	constexpr bool is_leaf() const { return leaf_; }
-	constexpr void clear()
+	inline bool is_leaf() const { return leaf_; }
+	inline void clear()
 	{
 		throwIfLeaf();
 		children_.clear();
 	}
-	constexpr size_t size() const
+	inline size_t size() const
 	{
 		if (leaf_)
 			return 0;
 		return children_.size();
 	}
-	constexpr bool empty() const
+	inline bool empty() const
 	{
 		if (leaf_)
 			return true;
 		return children_.empty();
 	}
-	constexpr void push_back(const SharedPtr &child_)
+	inline void push_back(const SharedPtr &child_)
 	{
 		throwIfLeaf();
 		children_.push_back(child_);
 		child_->parent_ = shared_from_this();
 	}
-	constexpr void emplace_back(SharedPtr &&child_)
+	inline void emplace_back(SharedPtr &&child_)
 	{
 		throwIfLeaf();
 		children_.emplace_back(child_);
 		child_->parent_ = shared_from_this();
 	}
-	constexpr void pop_back()
+	inline void pop_back()
 	{
 		throwIfLeaf();
 		if (!empty())
 			children_.pop_back();
 	}
-	constexpr SharedPtr operator[](size_t _Pos)
+	inline SharedPtr operator[](size_t _Pos)
 	{
 		if (throwIfLeaf())
 			return SharedPtr(nullptr);
 		return children_.at(_Pos);
 	}
-	constexpr const SharedPtr operator[](size_t _Pos) const
+	inline const SharedPtr operator[](size_t _Pos) const
 	{
 		if (throwIfLeaf())
 			return SharedPtr(nullptr);
 		return children_.at(_Pos);
 	}
 
-	constexpr iterator begin()
+	inline iterator begin()
 	{
 		throwIfLeaf();
 		return children_.begin();
 	}
-	constexpr const_iterator begin() const
+	inline const_iterator begin() const
 	{
 		throwIfLeaf();
 		return children_.begin();
 	}
-	constexpr iterator end()
+	inline iterator end()
 	{
 		throwIfLeaf();
 		return children_.end();
 	}
-	constexpr const_iterator end() const
+	inline const_iterator end() const
 	{
 		throwIfLeaf();
 		return children_.end();
 	}
-	constexpr const_iterator cbegin() const
+	inline const_iterator cbegin() const
 	{
 		throwIfLeaf();
 		return children_.cbegin();
 	}
-	constexpr const_iterator cend() const
+	inline const_iterator cend() const
 	{
 		throwIfLeaf();
 		return children_.cend();
 	}
-	constexpr const value_type &at(const size_t _Pos) const
+	inline const value_type &at(const size_t _Pos) const
 	{
 		throwIfLeaf();
 		return children_.at(_Pos);
 	}
-	constexpr value_type &at(const size_t _Pos)
+	inline value_type &at(const size_t _Pos)
 	{
 		throwIfLeaf();
 		return children_.at(_Pos);
 	}
-	constexpr value_type *data()
+	inline value_type *data()
 	{
 		throwIfLeaf();
 		return children_.data();
 	}
-	constexpr const value_type *data() const
+	inline const value_type *data() const
 	{
 		throwIfLeaf();
 		return children_.data();
 	}
 
 	// Properties
-	constexpr const SharedPtr &decoratee() const { return decorateeWidget_; }
-	constexpr SharedPtr &decoratee() { return decorateeWidget_; }
-	constexpr const SharedPtr &decorator() const { return decoraterWidget_; }
-	constexpr SharedPtr &decorator() { return decoraterWidget_; }
-	constexpr const SharedPtr &parent() const { return parent_; }
-	constexpr SharedPtr &parent() { return parent_; }
+	inline const SharedPtr &decoratee() const { return decorateeWidget_; }
+	inline SharedPtr &decoratee() { return decorateeWidget_; }
+	inline const SharedPtr &decorator() const { return decoraterWidget_; }
+	inline SharedPtr &decorator() { return decoraterWidget_; }
+	inline const SharedPtr &parent() const { return parent_; }
+	inline SharedPtr &parent() { return parent_; }
 
-	constexpr bool decorate(SharedPtr w)
+	inline bool decorate(SharedPtr w) noexcept
 	{
 		if (!w)
 			return false;
@@ -559,46 +559,46 @@ class Widget : public std::enable_shared_from_this<Widget>
 		return true;
 	}
 
-	constexpr void undecorate()
+	inline void undecorate()
 	{
 		if (!decoraterWidget_)
 			return;
 		decoraterWidget_->decorateeWidget_.reset();
 	}
 
-	constexpr bool decorating() const
+	inline bool decorating() const
 	{
 		if (decorateeWidget_)
 			return true;
 		return false;
 	}
 
-	constexpr int getX() const { return windowRect_.x; }
-	constexpr int getY() const { return windowRect_.y; }
-	constexpr int getHeight() const { return windowRect_.w; }
-	constexpr int getWidth() const { return windowRect_.h; }
-	constexpr const Recti &windowRect() const { return windowRect_; }
-	constexpr Recti &windowRect() { return windowRect_; }
-	constexpr bool visible() const { return visible_; }
-	constexpr bool is_orpha() const { return !parent_; }
+	inline int getX() const { return windowRect_.x; }
+	inline int getY() const { return windowRect_.y; }
+	inline int getHeight() const { return windowRect_.w; }
+	inline int getWidth() const { return windowRect_.h; }
+	inline const Recti &windowRect() const { return windowRect_; }
+	inline Recti &windowRect() { return windowRect_; }
+	inline bool visible() const { return visible_; }
+	inline bool is_orpha() const { return !parent_; }
 
-	constexpr double GetElapsedTime() const { return t1 - baseTime; }
-	constexpr double GetFrameTime() const { return t1 - t0; }
-	constexpr double GetStopwatchTime() const { return t1 - stopwatchTimeT0; }
-	constexpr void ResetStopwatch() { stopwatchTimeT0 = t1; }
-	constexpr void ResetClock()
+	inline double GetElapsedTime() const { return t1 - baseTime; }
+	inline double GetFrameTime() const { return t1 - t0; }
+	inline double GetStopwatchTime() const { return t1 - stopwatchTimeT0; }
+	inline void ResetStopwatch() { stopwatchTimeT0 = t1; }
+	inline void ResetClock()
 	{
 		baseTime = t1;
 		t0 = t1;
 	}
 
-	constexpr const std::string &caption() const noexcept { return caption_; }
-	constexpr std::string &caption() noexcept { return caption_; }
-	constexpr const std::string &style() const noexcept { return style_; }
-	constexpr const KASL::JSONPtr &jsonStyle() const noexcept { return jsonStyle_; }
-	constexpr KASL::JSONPtr &jsonStyle() noexcept { return jsonStyle_; }
+	inline const std::string &caption() const noexcept { return caption_; }
+	inline std::string &caption() noexcept { return caption_; }
+	inline const std::string &style() const noexcept { return style_; }
+	inline const KASL::JSONPtr &jsonStyle() const noexcept { return jsonStyle_; }
+	inline KASL::JSONPtr jsonStyle() noexcept { return jsonStyle_; }
 
-	constexpr KASL::JSONPtr &setStyle(const std::string &style) noexcept
+	inline KASL::JSONPtr setStyle(const std::string &style) noexcept
 	{
 		processStyle(style);
 		return jsonStyle_;
@@ -615,7 +615,7 @@ class Widget : public std::enable_shared_from_this<Widget>
 
 	// A class should set leaf_ to false if it's okay to be a container, true if not
 	bool leaf_ = false;
-	bool throwIfLeaf() const
+	inline bool throwIfLeaf() const
 	{
 		if (!leaf_)
 			return false;

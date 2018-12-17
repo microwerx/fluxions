@@ -276,37 +276,37 @@ constexpr std::unique_ptr<TSimpleProperty<T>> StaticUniqueSimplePropertyCast(Uni
 	return std::unique_ptr<TSimpleProperty<T>>(static_cast<TSimpleProperty<T> *>(ptr.release()));
 }
 
-#define DECLARE_PROPERTY_TYPE(ctype, type, TypeName)                                                                \
-	using TypeName##Property = TSimpleProperty<ctype>;                                                              \
-	using Unique##TypeName##PropertyPtr = std::unique_ptr<TypeName##Property>;                                      \
-	using Shared##TypeName##PropertyPtr = std::shared_ptr<TypeName##Property>;                                      \
-	constexpr Unique##TypeName##PropertyPtr MakeUnique##TypeName##Property(const ctype &value)                      \
-	{                                                                                                               \
-		return MakeUniqueProperty<ctype>(PropertyType::type, value);                                                \
-	}                                                                                                               \
-	constexpr Shared##TypeName##PropertyPtr MakeShared##TypeName##Property(const ctype &value)                      \
-	{                                                                                                               \
-		return MakeSharedProperty<ctype>(PropertyType::type, value);                                                \
-	}                                                                                                               \
-	constexpr const ctype *Get##TypeName##ValuePtr(const SimpleProperty *ptr)                                       \
-	{                                                                                                               \
-		return CastAsPropertyTypeValuePtr<ctype>(ptr);                                                              \
-	}                                                                                                               \
-	constexpr const ctype *Get##TypeName##ValuePtr(const UniqueSimplePropertyPtr &ptr)                              \
-	{                                                                                                               \
-		return CastAsPropertyTypeValuePtr<ctype>(ptr);                                                              \
-	}                                                                                                               \
-	constexpr const ctype *Get##TypeName##ValuePtr(const SharedSimplePropertyPtr &ptr)                              \
-	{                                                                                                               \
-		return CastAsPropertyTypeValuePtr<ctype>(ptr);                                                              \
-	}                                                                                                               \
-	constexpr Shared##TypeName##PropertyPtr CastToShared##TypeName##PropertyPtr(const SharedSimplePropertyPtr &ptr) \
-	{                                                                                                               \
-		return DynamicSharedSimplePropertyCast<ctype>(ptr);                                                         \
-	}                                                                                                               \
-	constexpr Unique##TypeName##PropertyPtr CastToUnique##TypeName##PropertyPtr(UniqueSimplePropertyPtr &ptr)       \
-	{                                                                                                               \
-		return StaticUniqueSimplePropertyCast<ctype>(ptr);                                                          \
+#define DECLARE_PROPERTY_TYPE(ctype, type, TypeName)                                                             \
+	using TypeName##Property = TSimpleProperty<ctype>;                                                           \
+	using Unique##TypeName##PropertyPtr = std::unique_ptr<TypeName##Property>;                                   \
+	using Shared##TypeName##PropertyPtr = std::shared_ptr<TypeName##Property>;                                   \
+	inline Unique##TypeName##PropertyPtr MakeUnique##TypeName##Property(const ctype &value)                      \
+	{                                                                                                            \
+		return MakeUniqueProperty<ctype>(PropertyType::type, value);                                             \
+	}                                                                                                            \
+	inline Shared##TypeName##PropertyPtr MakeShared##TypeName##Property(const ctype &value)                      \
+	{                                                                                                            \
+		return MakeSharedProperty<ctype>(PropertyType::type, value);                                             \
+	}                                                                                                            \
+	inline const ctype *Get##TypeName##ValuePtr(const SimpleProperty *ptr)                                       \
+	{                                                                                                            \
+		return CastAsPropertyTypeValuePtr<ctype>(ptr);                                                           \
+	}                                                                                                            \
+	inline const ctype *Get##TypeName##ValuePtr(const UniqueSimplePropertyPtr &ptr)                              \
+	{                                                                                                            \
+		return CastAsPropertyTypeValuePtr<ctype>(ptr);                                                           \
+	}                                                                                                            \
+	inline const ctype *Get##TypeName##ValuePtr(const SharedSimplePropertyPtr &ptr)                              \
+	{                                                                                                            \
+		return CastAsPropertyTypeValuePtr<ctype>(ptr);                                                           \
+	}                                                                                                            \
+	inline Shared##TypeName##PropertyPtr CastToShared##TypeName##PropertyPtr(const SharedSimplePropertyPtr &ptr) \
+	{                                                                                                            \
+		return DynamicSharedSimplePropertyCast<ctype>(ptr);                                                      \
+	}                                                                                                            \
+	inline Unique##TypeName##PropertyPtr CastToUnique##TypeName##PropertyPtr(UniqueSimplePropertyPtr &ptr)       \
+	{                                                                                                            \
+		return StaticUniqueSimplePropertyCast<ctype>(ptr);                                                       \
 	}
 
 DECLARE_PROPERTY_TYPE(bool, BOOL, Bool)

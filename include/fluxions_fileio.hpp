@@ -75,29 +75,29 @@ struct FilePathInfo
     bool IsFile() const { return pathType == PathType::File; }
 };
 
-//constexpr std::string  GetFileDrive(const std::string  &filename) { FilePathInfo fpi(filename); return fpi.drive; }
-constexpr std::string GetFileDir(const std::string &path)
+//inline std::string  GetFileDrive(const std::string  &filename) { FilePathInfo fpi(filename); return fpi.drive; }
+inline std::string GetFileDir(const std::string &path)
 {
     FilePathInfo fpi(path);
     return fpi.dir;
 }
-constexpr std::string GetFileNameWithExtension(const std::string &path)
+inline std::string GetFileNameWithExtension(const std::string &path)
 {
     FilePathInfo fpi(path);
     return fpi.fullfname;
 }
-constexpr std::string GetFileName(const std::string &path)
+inline std::string GetFileName(const std::string &path)
 {
     FilePathInfo fpi(path);
     return fpi.fname;
 }
-constexpr std::string GetFileExtension(const std::string &path)
+inline std::string GetFileExtension(const std::string &path)
 {
     FilePathInfo fpi(path);
     return fpi.ext;
 }
 
-constexpr bool TestIfFileExists(const std::string &filename)
+inline bool TestIfFileExists(const std::string &filename)
 {
     std::ifstream fin(filename.c_str(), std::ios::binary);
     if (!fin)
@@ -108,18 +108,18 @@ constexpr bool TestIfFileExists(const std::string &filename)
 
 std::string FindPathIfExists(const std::string &path, const std::vector<std::string> pathsToTry);
 std::string NormalizePathName(const std::string &basepath, const std::string &path);
-constexpr std::string NormalizePathName(const std::string &path) { return NormalizePathName("", path); }
+inline std::string NormalizePathName(const std::string &path) { return NormalizePathName("", path); }
 PathType GetPathType(const std::string &path);
 TimeValue GetPathAccessTime(const std::string &path);
 TimeValue GetPathCreationTime(const std::string &path);
-constexpr bool IsPathDirectory(const std::string &fname) { return GetPathType(fname) == PathType::Directory; }
-constexpr bool IsPathFile(const std::string &fname) { return GetPathType(fname) == PathType::File; }
-constexpr bool IsPathValid(const std::string &path)
+inline bool IsPathDirectory(const std::string &fname) { return GetPathType(fname) == PathType::Directory; }
+inline bool IsPathFile(const std::string &fname) { return GetPathType(fname) == PathType::File; }
+inline bool IsPathValid(const std::string &path)
 {
     auto pt = GetPathType(path);
     return pt == PathType::Directory || pt == PathType::File;
 }
-constexpr bool IsPathWeird(const std::string &fname) { return GetPathType(fname) == PathType::Other; }
+inline bool IsPathWeird(const std::string &fname) { return GetPathType(fname) == PathType::Other; }
 
 bool ReadBool(std::istream &istr);
 int ReadInt(std::istream &istr);

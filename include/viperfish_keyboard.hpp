@@ -29,7 +29,7 @@ struct KeyboardState
 {
 	//map<int, bool> keys;
 	//map<int, bool> modkeys;
-	std::map<std::string, bool> keys;
+	std::map<std::string, int> keys;
 	int modifiers;
 
 	static const int ShiftKeyBit = 1;
@@ -40,19 +40,19 @@ struct KeyboardState
 	static const int CtrlAltBits = 6;
 	static const int ShiftCtrlAltBits = 7;
 
-	constexpr bool ctrlKey() const { return modifiers & CtrlKeyBit; }
-	constexpr bool altKey() const { return modifiers & AltKeyBit; }
-	constexpr bool shiftKey() const { return modifiers & ShiftKeyBit; }
-	constexpr bool ctrlAlt() const { return modifiers & (CtrlKeyBit | AltKeyBit); }
-	constexpr bool shiftAlt() const { return modifiers & (ShiftKeyBit | AltKeyBit); }
-	constexpr bool shiftCtrlAlt() const { return modifiers & (ShiftKeyBit | CtrlKeyBit | AltKeyBit); }
+	inline bool ctrlKey() const { return modifiers & CtrlKeyBit; }
+	inline bool altKey() const { return modifiers & AltKeyBit; }
+	inline bool shiftKey() const { return modifiers & ShiftKeyBit; }
+	inline bool ctrlAlt() const { return modifiers & (CtrlKeyBit | AltKeyBit); }
+	inline bool shiftAlt() const { return modifiers & (ShiftKeyBit | AltKeyBit); }
+	inline bool shiftCtrlAlt() const { return modifiers & (ShiftKeyBit | CtrlKeyBit | AltKeyBit); }
 
-	constexpr void Clear()
+	inline void Clear()
 	{
 		keys.clear();
 		modifiers = 0;
 	}
-	constexpr void Reset()
+	inline void Reset()
 	{
 		modifiers = 0;
 		for (auto &key : keys)
@@ -60,21 +60,21 @@ struct KeyboardState
 			key.second = false;
 		}
 	}
-	constexpr void SetKey(const std::string &key, bool state) { keys[key] = state; }
-	constexpr void SetKey(const std::string &key, int keymod, bool state)
+	inline void SetKey(const std::string &key, bool state) { keys[key] = state; }
+	inline void SetKey(const std::string &key, int keymod, bool state)
 	{
 		modifiers = keymod;
 		keys[key] = state;
 	}
 	void SetKey(unsigned char c, int keymod, bool state);
-	constexpr bool IsPressed(const std::string &key) const
+	inline bool IsPressed(const std::string &key) const
 	{
-		auto it = keys.find(key);
+		std::map<std::string, int>::const_iterator it = keys.find(key);
 		if (it != keys.end())
 			return it->second;
 		return false;
 	}
-	constexpr bool IsPressed(const std::string &key, int keymod) const { return keymod == modifiers && IsPressed(key); }
+	inline bool IsPressed(const std::string &key, int keymod) const { return keymod == modifiers && IsPressed(key); }
 	bool CheckKeyPressed(std::vector<std::string> keys);
 	int CountKeysPressed(std::vector<std::string> keys);
 };

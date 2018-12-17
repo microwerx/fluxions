@@ -120,8 +120,8 @@ class SimpleTexture
 	constexpr GLuint GetTextureId() const { return id; }
 	constexpr GLenum GetTarget() const { return target; }
 
-	constexpr void FreeMemory() noexcept { image.reset(); }
-	constexpr Image4f &GetImage() noexcept { return image; }
+	inline void FreeMemory() noexcept { image.reset(); }
+	inline Image4f &GetImage() noexcept { return image; }
 
 	SamplerObject samplerObject;
 

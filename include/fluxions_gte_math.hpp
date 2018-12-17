@@ -420,12 +420,6 @@ constexpr void MakeCubeVectorFromFaceST(int face, float s, float t, float *x, fl
     }
 }
 
-template <typename T>
-constexpr T clamp(T x, T min, T max) noexcept
-{
-    return x < min ? min : x > max ? max : x;
-}
-
 //template <typename T>
 //T wrap(T X, T min, T max)
 //{

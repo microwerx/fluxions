@@ -106,7 +106,7 @@ class SimpleGeometryMesh
 	using IndexPtr = Index *;
 	using SurfacePtr = Surface *;
 
-	constexpr void Attrib4f(int i, float x, float y, float z, float w, bool addIndex = false)
+	inline void Attrib4f(int i, float x, float y, float z, float w, bool addIndex = false)
 	{
 		if (!within(i, 0, 7))
 			return;
@@ -125,17 +125,17 @@ class SimpleGeometryMesh
 		}
 	}
 
-	constexpr void Attrib3f(int i, float x, float y, float z, bool addIndex = false) { Attrib4f(i, x, y, z, 1.0f, addIndex); }
-	constexpr void Attrib2f(int i, float x, float y, bool addIndex = false) { Attrib4f(i, x, y, 0.0f, 1.0f, addIndex); }
-	constexpr void Attrib1f(int i, float x, bool addIndex = false) { Attrib4f(i, x, 0.0f, 0.0f, 1.0f, addIndex); }
+	inline void Attrib3f(int i, float x, float y, float z, bool addIndex = false) { Attrib4f(i, x, y, z, 1.0f, addIndex); }
+	inline void Attrib2f(int i, float x, float y, bool addIndex = false) { Attrib4f(i, x, y, 0.0f, 1.0f, addIndex); }
+	inline void Attrib1f(int i, float x, bool addIndex = false) { Attrib4f(i, x, 0.0f, 0.0f, 1.0f, addIndex); }
 
-	constexpr void Attrib4f(int i, const Vector4f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, v.z, v.w, addIndex); }
-	constexpr void Attrib3f(int i, const Vector3f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, v.z, 1.0f, addIndex); }
-	constexpr void Attrib2f(int i, const Vector2f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, 0.0f, 1.0f, addIndex); }
+	inline void Attrib4f(int i, const Vector4f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, v.z, v.w, addIndex); }
+	inline void Attrib3f(int i, const Vector3f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, v.z, 1.0f, addIndex); }
+	inline void Attrib2f(int i, const Vector2f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, 0.0f, 1.0f, addIndex); }
 
 	void Reset();
 	void BeginSurface(SurfaceType type);
-	constexpr void AddIndex(int i = -1)
+	inline void AddIndex(int i = -1)
 	{
 		if (i < 0)
 			indices.push_back(GetIndexCount());
@@ -147,8 +147,8 @@ class SimpleGeometryMesh
 			surfaces.back().count++;
 		dirty = true;
 	}
-	constexpr void SetMaterial(const std::string &materialName) { curMaterialName = materialName; }
-	constexpr Surface &GetSurface(int i)
+	inline void SetMaterial(const std::string &materialName) { curMaterialName = materialName; }
+	inline Surface &GetSurface(int i)
 	{
 		if (within(i, 0, (int)surfaces.size()))
 		{
@@ -156,7 +156,7 @@ class SimpleGeometryMesh
 		}
 		return blahSurface;
 	}
-	constexpr const Surface &GetSurface(int i) const
+	inline const Surface &GetSurface(int i) const
 	{
 		if (within(i, 0, (int)surfaces.size()))
 		{
@@ -165,80 +165,80 @@ class SimpleGeometryMesh
 		return blahSurface;
 	}
 
-	constexpr const std::vector<Surface> &GetSurfaces() const { return surfaces; }
-	constexpr const std::vector<Vertex> &GetVertices() const { return vertices; }
-	constexpr const std::vector<Index> &GetIndices() const { return indices; }
+	inline const std::vector<Surface> &GetSurfaces() const { return surfaces; }
+	inline const std::vector<Vertex> &GetVertices() const { return vertices; }
+	inline const std::vector<Index> &GetIndices() const { return indices; }
 
-	constexpr Vertex &GetVertex(int i)
+	inline Vertex &GetVertex(int i)
 	{
 		if (within(i, 0, GetVertexCount()))
 			return vertices[i];
 		return blahVertex;
 	}
-	constexpr int GetVertexCount() const { return (int)vertices.size(); }
-	constexpr int GetVertexSize() const { return (int)sizeof(Vertex); }
-	constexpr int GetVertexOffset(int i) const
+	inline int GetVertexCount() const { return (int)vertices.size(); }
+	inline int GetVertexSize() const { return (int)sizeof(Vertex); }
+	inline int GetVertexOffset(int i) const
 	{
 		if (within(i, 0, 7))
 			return i * sizeof(Vector4f);
 		return 0;
 	}
-	constexpr const void *GetVertexData() const { return &vertices[0]; }
-	constexpr size_t GetVertexDataSize() const { return (size_t)(sizeof(Vertex) * vertices.size()); }
-	constexpr Vertex *GetVertexData() { return vertices.empty() ? nullptr : &vertices[0]; }
+	inline const void *GetVertexData() const { return &vertices[0]; }
+	inline size_t GetVertexDataSize() const { return (size_t)(sizeof(Vertex) * vertices.size()); }
+	inline Vertex *GetVertexData() { return vertices.empty() ? nullptr : &vertices[0]; }
 
-	constexpr Index &GetIndex(int i)
+	inline Index &GetIndex(int i)
 	{
 		if (within(i, 0, GetIndexCount()))
 			return indices[i];
 		return blahIndex;
 	}
-	constexpr Index GetIndexCount() const { return (Index)indices.size(); }
-	constexpr size_t GetIndexSize() const { return sizeof(Index); }
-	constexpr const void *GetIndexData() const { return &indices[0]; }
-	constexpr size_t GetIndexDataSize() const { return (size_t)(sizeof(Index) * indices.size()); }
-	constexpr Index *GetIndexData() { return indices.empty() ? nullptr : &indices[0]; }
+	inline Index GetIndexCount() const { return (Index)indices.size(); }
+	inline size_t GetIndexSize() const { return sizeof(Index); }
+	inline const void *GetIndexData() const { return &indices[0]; }
+	inline size_t GetIndexDataSize() const { return (size_t)(sizeof(Index) * indices.size()); }
+	inline Index *GetIndexData() { return indices.empty() ? nullptr : &indices[0]; }
 
-	constexpr void EnableAttrib(int i)
+	inline void EnableAttrib(int i)
 	{
 		if (within(i, 0, 7))
 			attribInfo[i].enabled = true;
 	}
-	constexpr void DisableAttrib(int i)
+	inline void DisableAttrib(int i)
 	{
 		if (within(i, 0, 7))
 			attribInfo[i].enabled = false;
 	}
-	constexpr bool IsAttribEnabled(int i) const
+	inline bool IsAttribEnabled(int i) const
 	{
 		if (within(i, 0, 7))
 			return attribInfo[i].enabled;
 		return false;
 	}
-	constexpr bool IsAttribNormalized(int i) const
+	inline bool IsAttribNormalized(int i) const
 	{
 		if (within(i, 0, 7))
 			return attribInfo[i].normalized;
 		return false;
 	}
-	constexpr const char *GetAttribName(int i) const
+	inline const char *GetAttribName(int i) const
 	{
 		if (within(i, 0, 7))
 			return attribInfo[i].name.c_str();
 		return nullptr;
 	}
-	constexpr void SetAttribName(int i, const std::string &name)
+	inline void SetAttribName(int i, const std::string &name)
 	{
 		if (within(i, 0, 7))
 			attribInfo[i].name = name;
 	}
-	//constexpr void SetAttribName(int i, const char *name) { if (within(i, 0, 7)) attribInfo[i].name = name; }
-	constexpr void SetAttribNormalized(int i, bool normalized)
+	//inline void SetAttribName(int i, const char *name) { if (within(i, 0, 7)) attribInfo[i].name = name; }
+	inline void SetAttribNormalized(int i, bool normalized)
 	{
 		if (within(i, 0, 7))
 			attribInfo[i].normalized = normalized;
 	}
-	constexpr int GetAttribLocation(const std::string &name) const
+	inline int GetAttribLocation(const std::string &name) const
 	{
 		for (int i = 0; i < 8; i++)
 		{
@@ -247,7 +247,7 @@ class SimpleGeometryMesh
 		}
 		return -1;
 	}
-	constexpr bool IsDirty() const { return dirty; }
+	inline bool IsDirty() const { return dirty; }
 
 	bool SaveOBJ(const std::string &path, bool output_normals = true, bool output_texcoords = true);
 
@@ -273,7 +273,7 @@ class SimpleGeometryMesh
 	Vertex blahVertex;
 	Index blahIndex;
 
-	constexpr bool within(int i, int a, int b) const { return i >= a && i <= b; }
+	inline bool within(int i, int a, int b) const { return i >= a && i <= b; }
 };
 } // namespace Fluxions
 

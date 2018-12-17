@@ -424,19 +424,22 @@ struct Sph4f
 	MultispectralSph4f msph;
 	int maxDegree = 0;
 
-	Sph4f() {}
-	Sph4f(int degree, float value = 0.0f)
+	inline Sph4f() {}
+
+	inline Sph4f(int degree, float value = 0.0f)
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i].resize(degree, value);
 		maxDegree = degree;
 	}
-	Sph4f(const Sph4f &sph)
+
+	inline Sph4f(const Sph4f &sph)
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i] = sph.msph[i];
 	}
-	Sph4f &operator=(const Sph4f &sph)
+
+	inline Sph4f &operator=(const Sph4f &sph)
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i] = sph.msph[i];
@@ -456,28 +459,32 @@ struct Sph4f
 	SphericalHarmonicf &operator[](size_t i) { return msph[i]; }
 	const SphericalHarmonicf &operator[](size_t i) const { return msph[i]; }
 
-	void resize(int degree, float value = 0.0f)
+	inline void resize(int degree, float value = 0.0f)
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i].resize(degree, value);
 		maxDegree = degree;
 	}
-	void reset()
+
+	inline void reset()
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i].resize(maxDegree, 0.0f);
 	}
-	size_t size() const { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
 
-	constexpr void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
-	constexpr void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
+	constexpr size_t size() const noexcept { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
 
-	void Accumulate(const Sph4f &b, const float c, int maxDegrees = -1)
+	inline void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
+
+	inline void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
+
+	inline void Accumulate(const Sph4f &b, const float c, int maxDegrees = -1)
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i].Accumulate(b[i], c, maxDegrees);
 	}
-	void Accumulate(const Sph4f &b, const Sph4f &c, int maxDegrees = -1)
+
+	inline void Accumulate(const Sph4f &b, const Sph4f &c, int maxDegrees = -1)
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i].Accumulate(b[i], c[i], maxDegrees);

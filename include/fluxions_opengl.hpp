@@ -44,9 +44,9 @@ class OpenGLNameTranslator
   public:
 	OpenGLNameTranslator();
 
-	constexpr int GetEnum(const std::string &name) const noexcept
+	inline int GetEnum(const std::string &name) const noexcept
 	{
-		auto it = enums.find(name);
+		std::map<std::string, int>::const_iterator it = enums.find(name);
 		if (it == enums.end())
 			it = enums.find(std::string("GL_") + name);
 		if (it == enums.end())
@@ -54,9 +54,9 @@ class OpenGLNameTranslator
 		return it->second;
 	}
 
-	constexpr const char *GetString(int id) const noexcept
+	inline const char *GetString(int id) const noexcept
 	{
-		auto it = enum_strings.find(id);
+		std::map<int, std::string>::const_iterator it = enum_strings.find(id);
 		if (it != enum_strings.end())
 			return it->second.c_str();
 		return empty_string.c_str();

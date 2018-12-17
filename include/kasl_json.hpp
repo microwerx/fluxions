@@ -181,21 +181,21 @@ class JSON : public std::enable_shared_from_this<JSON>
 	static JSONPtr MakeObject(const std::map<std::string, JSONPtr> members) { return std::make_shared<JSON>(members); }
 
 	JSONPtr operator=(const JSONPtr &rhs);
-	constexpr JSONPtr operator=(int ival)
+	inline JSONPtr operator=(int ival)
 	{
 		Clear();
 		dval_ = ival;
 		type_ = Type::Number;
 		return shared_from_this();
 	}
-	constexpr JSONPtr operator=(double dval)
+	inline JSONPtr operator=(double dval)
 	{
 		Clear();
 		dval_ = dval;
 		type_ = Type::Number;
 		return shared_from_this();
 	}
-	constexpr JSONPtr operator=(const std::string &sval)
+	inline JSONPtr operator=(const std::string &sval)
 	{
 		Clear();
 		sval_ = sval;
@@ -203,11 +203,11 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr const bool operator==(int ival) const { return IsNumber() && dval_ == (double)ival; }
-	constexpr const bool operator==(const std::string &sval) const { return IsString() && sval_ == sval; }
-	constexpr const bool operator==(bool bval) const { return (bval && IsTrue()) ? true : (!bval && IsFalse()) ? true : false; }
-	constexpr const bool operator==(const JSONPtr &rhs) const { return Equals(rhs); }
-	constexpr const bool operator==(const void *ptr) const
+	inline const bool operator==(int ival) const { return IsNumber() && dval_ == (double)ival; }
+	inline const bool operator==(const std::string &sval) const { return IsString() && sval_ == sval; }
+	inline const bool operator==(bool bval) const { return (bval && IsTrue()) ? true : (!bval && IsFalse()) ? true : false; }
+	inline const bool operator==(const JSONPtr &rhs) const { return Equals(rhs); }
+	inline const bool operator==(const void *ptr) const
 	{
 		if (ptr == nullptr && IsNull())
 			return true;
@@ -220,16 +220,16 @@ class JSON : public std::enable_shared_from_this<JSON>
 	bool Deserialize(const std::string &json);
 	long DeserializeParseTokens(const TokenVector &tokens, long startIndex = 0);
 
-	constexpr bool IsNull() const { return type_ == Type::Null; }
-	constexpr bool IsTrue() const { return type_ == Type::True; }
-	constexpr bool IsFalse() const { return type_ == Type::False; }
-	constexpr bool IsBoolean() const { return type_ == Type::True || type_ == Type::False; }
-	constexpr bool IsFinite() const { return type_ == Type::Number && isfinite(dval_); }
-	constexpr bool IsNaN() const { return type_ == Type::Number && isnan(dval_); }
-	constexpr bool IsNumber() const { return type_ == Type::Number; }
-	constexpr bool IsString() const { return type_ == Type::String; }
-	constexpr bool IsArray() const { return type_ == Type::Array; }
-	constexpr bool IsObject() const { return type_ == Type::Object; }
+	inline bool IsNull() const { return type_ == Type::Null; }
+	inline bool IsTrue() const { return type_ == Type::True; }
+	inline bool IsFalse() const { return type_ == Type::False; }
+	inline bool IsBoolean() const { return type_ == Type::True || type_ == Type::False; }
+	inline bool IsFinite() const { return type_ == Type::Number && isfinite(dval_); }
+	inline bool IsNaN() const { return type_ == Type::Number && isnan(dval_); }
+	inline bool IsNumber() const { return type_ == Type::Number; }
+	inline bool IsString() const { return type_ == Type::String; }
+	inline bool IsArray() const { return type_ == Type::Array; }
+	inline bool IsObject() const { return type_ == Type::Object; }
 
 	static JSONPtr NewArray() { return std::make_shared<JSON>(Type::Array); }
 	static JSONPtr NewObject() { return std::make_shared<JSON>(Type::Object); }
@@ -239,7 +239,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 	static JSONPtr New(const JSONPtr &value) { return std::make_shared<JSON>(value); }
 	static JSONPtr New() { return std::make_shared<JSON>(Type::Null); }
 
-	constexpr int Size() const
+	inline int Size() const
 	{
 		if (IsArray())
 			return (int)array_.size();
@@ -247,7 +247,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 			return (int)map_.size();
 		return 0;
 	}
-	constexpr bool Empty() const
+	inline bool Empty() const
 	{
 		if (IsArray())
 			return array_.empty();
@@ -264,17 +264,17 @@ class JSON : public std::enable_shared_from_this<JSON>
 		map_.clear();
 	}
 
-	constexpr int AsInt() const { return IsNumber() ? (int)dval_ : 0; }
-	constexpr int64_t AsInt64() const { return IsNumber() ? (int64_t)dval_ : 0; }
-	constexpr double AsDouble() const { return IsNumber() ? dval_ : 0.0; }
-	constexpr float AsFloat() const { return IsNumber() ? float(dval_) : 0.0f; }
-	constexpr size_t Length() const { return IsArray() ? array_.size() : IsObject() ? map_.size() : 0; }
-	constexpr std::map<std::string, JSONPtr> &AsObject() noexcept { return map_; }
-	constexpr const std::map<std::string, JSONPtr> &AsObject() const noexcept { return map_; }
-	constexpr std::vector<JSONPtr> &AsArray() noexcept { return array_; }
-	constexpr const std::vector<JSONPtr> &AsArray() const noexcept { return array_; }
+	inline int AsInt() const { return IsNumber() ? (int)dval_ : 0; }
+	inline int64_t AsInt64() const { return IsNumber() ? (int64_t)dval_ : 0; }
+	inline double AsDouble() const { return IsNumber() ? dval_ : 0.0; }
+	inline float AsFloat() const { return IsNumber() ? float(dval_) : 0.0f; }
+	inline size_t Length() const { return IsArray() ? array_.size() : IsObject() ? map_.size() : 0; }
+	inline std::map<std::string, JSONPtr> &AsObject() noexcept { return map_; }
+	inline const std::map<std::string, JSONPtr> &AsObject() const noexcept { return map_; }
+	inline std::vector<JSONPtr> &AsArray() noexcept { return array_; }
+	inline const std::vector<JSONPtr> &AsArray() const noexcept { return array_; }
 
-	constexpr std::vector<int> AsIntArray() const noexcept
+	inline std::vector<int> AsIntArray() const noexcept
 	{
 		std::vector<int> result;
 		for (auto &e : array_)
@@ -285,7 +285,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return result;
 	}
 
-	constexpr std::vector<float> AsFloatArray() const noexcept
+	inline std::vector<float> AsFloatArray() const noexcept
 	{
 		std::vector<float> result;
 		for (auto &e : array_)
@@ -296,7 +296,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return result;
 	}
 
-	constexpr std::vector<double> AsDoubleArray() const noexcept
+	inline std::vector<double> AsDoubleArray() const noexcept
 	{
 		std::vector<double> result;
 		for (auto &e : array_)
@@ -306,10 +306,10 @@ class JSON : public std::enable_shared_from_this<JSON>
 		}
 		return result;
 	}
-	constexpr JSON &AsJSON() noexcept { return *this; }
-	constexpr const JSON &AsJSON() const noexcept { return *this; }
+	inline JSON &AsJSON() noexcept { return *this; }
+	inline const JSON &AsJSON() const noexcept { return *this; }
 
-	constexpr bool Has(const std::string &key) const noexcept
+	inline bool Has(const std::string &key) const noexcept
 	{
 		if (!IsObject())
 			return false;
@@ -317,7 +317,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 			return false;
 		return true;
 	}
-	constexpr bool HasKeyOfType(const std::string &key, Type type) const noexcept
+	inline bool HasKeyOfType(const std::string &key, Type type) const noexcept
 	{
 		std::map<std::string, JSONPtr>::const_iterator it = map_.find(key);
 		if (it != map_.end())
@@ -333,64 +333,64 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return false;
 	}
 
-	constexpr JSONPtr operator[](int index)
+	inline JSONPtr operator[](int index)
 	{
 		if (IsArray())
 			return array_.at(index);
 		throw std::runtime_error("JSON object is not an array");
 	}
-	constexpr const JSONPtr &operator[](int index) const
+	inline const JSONPtr &operator[](int index) const
 	{
 		if (IsArray())
 			return array_.at(index);
 		throw std::runtime_error("JSON object is not an array");
 	}
-	constexpr JSONPtr operator[](const std::string &key)
+	inline JSONPtr operator[](const std::string &key)
 	{
 		if (IsObject())
 			return map_.at(key);
 		throw std::runtime_error("JSON object is not an object");
 	}
-	constexpr const JSONPtr &operator[](const std::string &key) const
-	{
-		if (IsObject())
-			return map_.at(key);
-		throw std::runtime_error("JSON object is not an object");
-	}
-
-	constexpr JSONPtr getElement(int index)
-	{
-		if (IsArray())
-			return array_.at(index);
-		throw std::runtime_error("JSON object is not an array");
-	}
-	constexpr const JSONPtr &getElement(int index) const
-	{
-		if (IsArray())
-			return array_.at(index);
-		throw std::runtime_error("JSON object is not an array");
-	}
-	constexpr JSONPtr getMember(const std::string &key)
-	{
-		if (IsObject())
-			return map_.at(key);
-		throw std::runtime_error("JSON object is not an object");
-	}
-	constexpr const JSONPtr &getMember(const std::string &key) const
+	inline const JSONPtr &operator[](const std::string &key) const
 	{
 		if (IsObject())
 			return map_.at(key);
 		throw std::runtime_error("JSON object is not an object");
 	}
 
-	constexpr JSONPtr set(Type whichType)
+	inline JSONPtr getElement(int index)
+	{
+		if (IsArray())
+			return array_.at(index);
+		throw std::runtime_error("JSON object is not an array");
+	}
+	inline const JSONPtr &getElement(int index) const
+	{
+		if (IsArray())
+			return array_.at(index);
+		throw std::runtime_error("JSON object is not an array");
+	}
+	inline JSONPtr getMember(const std::string &key)
+	{
+		if (IsObject())
+			return map_.at(key);
+		throw std::runtime_error("JSON object is not an object");
+	}
+	inline const JSONPtr &getMember(const std::string &key) const
+	{
+		if (IsObject())
+			return map_.at(key);
+		throw std::runtime_error("JSON object is not an object");
+	}
+
+	inline JSONPtr set(Type whichType)
 	{
 		Clear();
 		type_ = whichType;
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const int ival)
+	inline JSONPtr set(const int ival)
 	{
 		Clear();
 		type_ = Type::Number;
@@ -398,7 +398,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const double dval)
+	inline JSONPtr set(const double dval)
 	{
 		Clear();
 		type_ = Type::Number;
@@ -406,7 +406,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const std::string &sval)
+	inline JSONPtr set(const std::string &sval)
 	{
 		Clear();
 		type_ = Type::String;
@@ -414,7 +414,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(std::initializer_list<int> numberList)
+	inline JSONPtr set(std::initializer_list<int> numberList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -425,7 +425,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const std::vector<int> &numberList)
+	inline JSONPtr set(const std::vector<int> &numberList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -436,7 +436,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(std::initializer_list<float> numberList)
+	inline JSONPtr set(std::initializer_list<float> numberList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -447,7 +447,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const std::vector<float> &numberList)
+	inline JSONPtr set(const std::vector<float> &numberList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -458,7 +458,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(std::initializer_list<double> numberList)
+	inline JSONPtr set(std::initializer_list<double> numberList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -469,7 +469,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const std::vector<double> &numberList)
+	inline JSONPtr set(const std::vector<double> &numberList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -480,7 +480,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(std::initializer_list<std::string> stringList)
+	inline JSONPtr set(std::initializer_list<std::string> stringList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -491,7 +491,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const std::vector<std::string> &stringList)
+	inline JSONPtr set(const std::vector<std::string> &stringList)
 	{
 		Clear();
 		type_ = Type::Array;
@@ -502,7 +502,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(std::initializer_list<std::pair<std::string, JSONPtr>> members)
+	inline JSONPtr set(std::initializer_list<std::pair<std::string, JSONPtr>> members)
 	{
 		Clear();
 		type_ = Type::Object;
@@ -513,7 +513,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const std::map<std::string, JSONPtr> &members)
+	inline JSONPtr set(const std::map<std::string, JSONPtr> &members)
 	{
 		Clear();
 		type_ = Type::Object;
@@ -524,7 +524,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr set(const JSONPtr &json)
+	inline JSONPtr set(const JSONPtr &json)
 	{
 		Clear();
 		if (!json)
@@ -543,14 +543,14 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return shared_from_this();
 	}
 
-	constexpr JSONPtr PushBack(JSONPtr &json)
+	inline JSONPtr PushBack(JSONPtr &json)
 	{
 		if (!json || !IsArray())
 			throw std::runtime_error("JSON object is not an array");
 		array_.push_back(json);
 		return shared_from_this();
 	}
-	constexpr JSONPtr PopBack()
+	inline JSONPtr PopBack()
 	{
 		if (!IsArray())
 			std::runtime_error("JSON object is not an array");
@@ -561,8 +561,8 @@ class JSON : public std::enable_shared_from_this<JSON>
 		return json;
 	}
 
-	constexpr Type GetType() const { return type_; }
-	constexpr bool InstanceOf(const Type t) const { return type_ == t; }
+	inline Type GetType() const { return type_; }
+	inline bool InstanceOf(const Type t) const { return type_ == t; }
 	bool Equals(const JSONPtr &rhs) const;
 
   private:
@@ -576,14 +576,14 @@ class JSON : public std::enable_shared_from_this<JSON>
 	void copyMap(const std::map<std::string, JSONPtr> &m);
 };
 
-constexpr bool operator==(const JSONPtr &lhs, const JSONPtr &rhs)
+inline bool operator==(const JSONPtr &lhs, const JSONPtr &rhs)
 {
 	if (!lhs || !rhs)
 		return false;
 	return lhs->Equals(rhs);
 }
 
-constexpr bool operator!=(const JSONPtr &lhs, const JSONPtr &rhs)
+inline bool operator!=(const JSONPtr &lhs, const JSONPtr &rhs)
 {
 	if (!lhs || !rhs)
 		return false;
