@@ -16,12 +16,12 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_matrix2.hpp>
 
-
 namespace Fluxions
 {
-	template class TMatrix2<float>;
-	template class TMatrix2<double>;
-}
+template class TMatrix2<float>;
+template class TMatrix2<double>;
+} // namespace Fluxions

@@ -16,14 +16,14 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_ray.hpp>
 
-
 namespace Fluxions
 {
-	// template specializations
-	template class TRay<float>;
-	template class TRay<double>;
-	template class TRay<int>;
-}
+// template specializations
+template class TRay<float>;
+template class TRay<double>;
+template class TRay<int>;
+} // namespace Fluxions

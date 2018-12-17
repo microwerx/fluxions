@@ -16,14 +16,14 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_superquadric.hpp>
 
-
 namespace Fluxions
 {
-	template class SuperQuadricEllipsoid<float>;
-	template class SuperQuadricEllipsoid<double>;
-	template class SuperQuadricToroid<float>;
-	template class SuperQuadricToroid<double>;
-}
+template class SuperQuadricEllipsoid<float>;
+template class SuperQuadricEllipsoid<double>;
+template class SuperQuadricToroid<float>;
+template class SuperQuadricToroid<double>;
+} // namespace Fluxions

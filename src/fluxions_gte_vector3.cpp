@@ -16,19 +16,19 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_vector3.hpp>
 
-
 namespace Fluxions
 {
-	// template specializations
-	template class TVector3<float>;
-	template class TVector3<double>;
-	template class TVector3<signed char>;
-	template class TVector3<unsigned char>;
-	template class TVector3<int>;
-	template class TVector3<unsigned int>;
-	template class TVector3<short>;
-	template class TVector3<unsigned short>;
-}
+// template specializations
+template class TVector3<float>;
+template class TVector3<double>;
+template class TVector3<signed char>;
+template class TVector3<unsigned char>;
+template class TVector3<int>;
+template class TVector3<unsigned int>;
+template class TVector3<short>;
+template class TVector3<unsigned short>;
+} // namespace Fluxions

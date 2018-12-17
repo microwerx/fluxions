@@ -87,7 +87,7 @@ void SphlSampler::resize(int samplesX, int samplesY)
             avgVector += randomVectors[i];
             float s;
             float t;
-            int side;
+            size_t side;
             MakeFaceSTFromCubeVector(randomVectors[i].x, randomVectors[i].y, randomVectors[i].z, &s, &t, &side);
             debug_sides[i] = side;
         }

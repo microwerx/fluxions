@@ -17,7 +17,6 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 
-
 // stdafx.h : include file for standard system include files,
 // or project specific include files that are used frequently, but
 // are changed infrequently
@@ -55,8 +54,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <inttypes.h>
-
-
 
 // TODO: reference additional headers your program requires here
 #include <ArHosekSkyModel.h>
@@ -134,7 +131,6 @@
 #include <viperfish_widget.hpp>
 #include <viperfish_xinput.hpp>
 
-
 #ifndef FLUXIONS_NO_SDL
 #ifdef WIN32
 #include <SDL2/SDL.h>
@@ -144,7 +140,6 @@
 #include <SDL2/SDL_image.h>
 #endif
 #endif
-
 
 #include <Python.h>
 

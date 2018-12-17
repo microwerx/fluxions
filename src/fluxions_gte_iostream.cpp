@@ -16,18 +16,18 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_iostream.hpp>
 
-
 namespace Fluxions
 {
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3f &V);
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3d &V);
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3b &V);
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3ub &V);
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3s &V);
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3us &V);
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3i &V);
-	template std::ostream &operator <<(std::ostream &ostr, const Vector3ui &V);
-}
+template std::ostream &operator<<(std::ostream &ostr, const Vector3f &V);
+template std::ostream &operator<<(std::ostream &ostr, const Vector3d &V);
+template std::ostream &operator<<(std::ostream &ostr, const Vector3b &V);
+template std::ostream &operator<<(std::ostream &ostr, const Vector3ub &V);
+template std::ostream &operator<<(std::ostream &ostr, const Vector3s &V);
+template std::ostream &operator<<(std::ostream &ostr, const Vector3us &V);
+template std::ostream &operator<<(std::ostream &ostr, const Vector3i &V);
+template std::ostream &operator<<(std::ostream &ostr, const Vector3ui &V);
+} // namespace Fluxions

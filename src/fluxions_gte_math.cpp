@@ -16,6 +16,7 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_math.hpp>
 #include <random>
@@ -24,11 +25,11 @@ using namespace std;
 
 namespace Fluxions
 {
-	float randomSampler(float _min0, float _max0)
-	{
-		static mt19937 s;
-		uniform_real_distribution<float> urd(_min0, _max0);
+float randomSampler(float _min0, float _max0)
+{
+	static mt19937 s;
+	uniform_real_distribution<float> urd(_min0, _max0);
 
-		return urd(s);
-	}
+	return urd(s);
 }
+} // namespace Fluxions

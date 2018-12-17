@@ -16,13 +16,13 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_bounding_box.hpp>
 
-
 namespace Fluxions
 {
-	template class TBoundingBox<float>;
-	template class TBoundingBox<double>;
-	template class TBoundingBox<int>;
-}
+template class TBoundingBox<float>;
+template class TBoundingBox<double>;
+template class TBoundingBox<int>;
+} // namespace Fluxions

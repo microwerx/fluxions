@@ -22,6 +22,7 @@
 // #include <algorithm>
 #include <string>
 #include <vector>
+#include <memory.h>
 #include <fluxions_gte_color3.hpp>
 #include <fluxions_gte_color4.hpp>
 #include <fluxions_gte_math.hpp>
@@ -57,10 +58,8 @@ class TImage
     constexpr size_t width() const { return imageWidth; }
     constexpr size_t height() const { return imageHeight; }
     constexpr size_t depth() const { return imageDepth; }
-    constexpr size_t addr(int x, int y, int z = 0)
+    constexpr size_t addr(size_t x, size_t y, size_t z = 0)
     {
-        if (x < 0 || y < 0 || z < 0)
-            return 0;
         if (x >= imageWidth || y >= imageHeight || z >= imageDepth)
             return 0;
         return z * zstride + y * imageWidth + x;

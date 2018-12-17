@@ -552,7 +552,7 @@ TImage<ColorType> TImage<ColorType>::ScaleImage(size_t newWidth, size_t newHeigh
 {
     TImage<ColorType> out;
     out.resize(newWidth, newHeight, imageDepth);
-    int newDepth = imageDepth;
+    size_t newDepth = imageDepth;
     Vector3d d(imageWidth / (double)newWidth, imageHeight / (double)newHeight, imageDepth / (double)newDepth);
     Vector3d src;
     for (size_t z = 0; z < newDepth; z++)
@@ -782,17 +782,22 @@ void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int from
     float scaleFactor_itof = 1.0f / 255.99f;
     float scaleFactor_ftoi = 255.99f;
 
+    const unsigned glconstant_RGB = 0x1907;
+    const unsigned glconstant_RGBA = 0x1908;
+    const unsigned glconstant_FLOAT = 0x1406;
+    const unsigned glconstant_UNSIGNED_BYTE = 0x1401;
+
     size_t stride;
-    if (fromFormat == 3 || fromFormat == GL_RGB)
+    if (fromFormat == 3 || fromFormat == glconstant_RGB)
         stride = 3;
-    else if (fromFormat == 4 || fromFormat == GL_RGBA)
+    else if (fromFormat == 4 || fromFormat == glconstant_RGBA)
         stride = 4;
     else
         return;
 
     resize(width, height, depth);
     size_t count = width * height * depth;
-    if (fromType == GL_UNSIGNED_BYTE && toType == GL_FLOAT)
+    if (fromType == glconstant_UNSIGNED_BYTE && toType == glconstant_FLOAT)
     {
         unsigned char *data = (unsigned char *)_pixels;
         for (size_t i = 0; i < count; i++)
@@ -805,39 +810,39 @@ void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int from
             data += stride;
         }
     }
-    else if (fromType == GL_FLOAT && toType == GL_UNSIGNED_BYTE)
+    else if (fromType == glconstant_FLOAT && toType == glconstant_UNSIGNED_BYTE)
     {
         float *data = (float *)_pixels;
         for (size_t i = 0; i < count; i++)
         {
             typename ColorType::type *v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++)
+            for (size_t j = 0; j < stride; j++)
             {
                 v[j] = (typename ColorType::type)clamp((int)(scaleFactor_ftoi * data[j]), 0, 255);
             }
             data += stride;
         }
     }
-    else if (fromType == GL_UNSIGNED_BYTE && toType == GL_UNSIGNED_BYTE)
+    else if (fromType == glconstant_UNSIGNED_BYTE && toType == glconstant_UNSIGNED_BYTE)
     {
         unsigned char *data = (unsigned char *)_pixels;
-        for (int i = 0; i < count; i++)
+        for (size_t i = 0; i < count; i++)
         {
             typename ColorType::type *v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++)
+            for (size_t j = 0; j < stride; j++)
             {
                 v[j] = (typename ColorType::type)data[j];
             }
             data += stride;
         }
     }
-    else if (fromType == GL_FLOAT && toType == GL_FLOAT)
+    else if (fromType == glconstant_FLOAT && toType == glconstant_FLOAT)
     {
         float *data = (float *)_pixels;
-        for (int i = 0; i < count; i++)
+        for (size_t i = 0; i < count; i++)
         {
             typename ColorType::type *v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++)
+            for (size_t j = 0; j < stride; j++)
             {
                 v[j] = (typename ColorType::type)data[j];
             }
@@ -1092,6 +1097,8 @@ double TImage<ColorType>::getAverage() const
     I /= (double)getNumPixels();
     return I;
 }
+
+// EXPLICIT INSTANTIATION //////////////////////////////////////////////////////
 
 template class TImage<Color3i>;
 template class TImage<Color3f>;
