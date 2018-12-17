@@ -51,6 +51,11 @@ void XInputGamepadState::Init(unsigned whichStickID)
     Poll();
 }
 
+float stickToFloat(short x, short deadzone)
+{
+	return fabs(x) < deadzone ? 0.0f : (x / 32768.0f);
+}
+
 void XInputGamepadState::Poll()
 {
     GamepadState::Poll();
@@ -68,19 +73,25 @@ void XInputGamepadState::Poll()
     swap(lastAxes, axes);
     swap(lastButtons, buttons);
 
+
+
     // compute delta's and stick information
-    float thumblx = (float)max(0, abs(gamepadState.Gamepad.sThumbLX) - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-    float thumbly = (float)max(0, abs(gamepadState.Gamepad.sThumbLY) - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-    float thumbrx = (float)max(0, abs(gamepadState.Gamepad.sThumbRX) - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-    float thumbry = (float)max(0, abs(gamepadState.Gamepad.sThumbRY) - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-    float stlx = gamepadState.Gamepad.sThumbLX < 0 ? -1.0f : 1.0f;
-    float stly = gamepadState.Gamepad.sThumbLY < 0 ? -1.0f : 1.0f;
-    float strx = gamepadState.Gamepad.sThumbRX < 0 ? -1.0f : 1.0f;
-    float stry = gamepadState.Gamepad.sThumbRY < 0 ? -1.0f : 1.0f;
-    axes[0] = thumblx * stlx / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-    axes[1] = -thumbly * stly / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-    axes[2] = thumbrx * strx / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-    axes[3] = -thumbry * stry / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	axes[0] = stickToFloat(gamepadState.Gamepad.sThumbLX, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	axes[1] = stickToFloat(gamepadState.Gamepad.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	axes[2] = stickToFloat(gamepadState.Gamepad.sThumbRX, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	axes[3] = stickToFloat(gamepadState.Gamepad.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+	//float thumblx = (float)std::max<int>(0, abs(gamepadState.Gamepad.sThumbLX) - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+ //   float thumbly = (float)std::max<int>(0, abs(gamepadState.Gamepad.sThumbLY) - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+ //   float thumbrx = (float)std::max<int>(0, abs(gamepadState.Gamepad.sThumbRX) - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+ //   float thumbry = (float)std::max<int>(0, abs(gamepadState.Gamepad.sThumbRY) - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+    //float stlx = gamepadState.Gamepad.sThumbLX < 0 ? -1.0f : 1.0f;
+    //float stly = gamepadState.Gamepad.sThumbLY < 0 ? -1.0f : 1.0f;
+    //float strx = gamepadState.Gamepad.sThumbRX < 0 ? -1.0f : 1.0f;
+    //float stry = gamepadState.Gamepad.sThumbRY < 0 ? -1.0f : 1.0f;
+    //axes[0] = thumblx * stlx / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+    //axes[1] = -thumbly * stly / (32768.0f - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+    //axes[2] = thumbrx * strx / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
+    //axes[3] = -thumbry * stry / (32768.0f - XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
 
     float leftshoulder = gamepadState.Gamepad.bLeftTrigger / 255.0f;
     float rightshoulder = gamepadState.Gamepad.bRightTrigger / 255.0f;

@@ -24,7 +24,7 @@
 #endif
 
 #ifdef WIN32
-
+#include <Windows.h>
 #elif __unix__
 #include <libgen.h> // for dirname() and basename()
 #include <unistd.h> // for realpath()
@@ -32,19 +32,18 @@
 
 #include <memory.h> // for free()
 #include <stdlib.h>
-#include <errno.h>
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 #include <regex>
 #include <string>
 #include <vector>
 
-#ifdef WIN32
-#include <Windows.h>
-#endif
-
 namespace Fluxions
 {
+
+	const int bitIsDirectory = _S_IFDIR;
+	const int bitIsRegularFile = _S_IFREG;
 
 // const std::string BlankString;
 
@@ -268,7 +267,7 @@ bool FilePathInfo::TestIfFileExists(const std::string &filename)
 #elif __unix__
     struct stat Stat;
 #endif
-    int retval = stat_with_errno(path.c_str(), &Stat);
+    int retval = stat_with_errno(filename.c_str(), &Stat);
     if (retval == 0)
         return true;
     else
@@ -330,8 +329,6 @@ void FilePathInfo::fill_stat_info()
 
 #ifdef WIN32
     struct _stat Stat;
-    int S_IFDIR = _S_IFDIR;
-    int S_IFREG = _S_IFREG;
 #define S_IF
 #elif __unix__
     struct stat Stat;
@@ -344,9 +341,9 @@ void FilePathInfo::fill_stat_info()
     }
     else
     {
-        if (Stat.st_mode & S_IFDIR)
+        if (Stat.st_mode & bitIsDirectory)
             pathType = PathType::Directory;
-        else if (Stat.st_mode & S_IFREG)
+        else if (Stat.st_mode & bitIsRegularFile)
             pathType = PathType::File;
         else
             pathType = PathType::Other;
@@ -447,8 +444,6 @@ PathType GetPathType(const std::string &path)
 {
 #ifdef WIN32
     struct _stat Stat;
-    int S_IFDIR = _S_IFDIR;
-    int S_IFREG = _S_IFREG;
 #elif __unix__
     struct stat Stat;
 #endif
@@ -458,9 +453,9 @@ PathType GetPathType(const std::string &path)
         // do not print errors...
         return PathType::DoesNotExist;
     }
-    if (Stat.st_mode & S_IFDIR)
+    if (Stat.st_mode & bitIsDirectory)
         return PathType::Directory;
-    else if (Stat.st_mode & S_IFREG)
+    else if (Stat.st_mode & bitIsRegularFile)
         return PathType::File;
     return PathType::Other;
 }

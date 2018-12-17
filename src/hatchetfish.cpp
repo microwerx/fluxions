@@ -85,8 +85,8 @@ std::string Hatchetfish::makeTimeStamp()
 #elif __unix__
     localtime_r(&t, &_Tm);
 #endif
+	strftime(msg, 50, "%T", &_Tm);
 #endif
-    strftime(msg, 50, "%T", &_Tm);
     timeStamp = msg;
     return timeStamp;
 }
