@@ -41,9 +41,13 @@
 
 namespace Fluxions
 {
-
-	const int bitIsDirectory = _S_IFDIR;
-	const int bitIsRegularFile = _S_IFREG;
+#ifdef WIN32
+const int bitIsDirectory = _S_IFDIR;
+const int bitIsRegularFile = _S_IFREG;
+#elif __unix__
+const int bitIsDirectory = S_IFDIR;
+const int bitIsRegularFile = S_IFREG;
+#endif
 
 // const std::string BlankString;
 

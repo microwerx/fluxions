@@ -28,6 +28,7 @@
 #include <viperfish_keyboard.hpp>
 #include <viperfish_gamepad.hpp>
 #include <kasl_json.hpp>
+#include <hatchetfish.hpp>
 
 namespace Viperfish
 {
