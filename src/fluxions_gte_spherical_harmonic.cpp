@@ -1224,6 +1224,30 @@ T calc_spherical_harmonic(int max_degree, const T *a, const T theta, const T phi
 	return accum;
 }
 
+template float calc_degree_0<float>(const float *a, float theta, float phi);
+template float calc_degree_1<float>(const float *a, float theta, float phi);
+template float calc_degree_2<float>(const float *a, float theta, float phi);
+template float calc_degree_3<float>(const float *a, float theta, float phi);
+template float calc_degree_4<float>(const float *a, float theta, float phi);
+template float calc_degree_5<float>(const float *a, float theta, float phi);
+template float calc_degree_6<float>(const float *a, float theta, float phi);
+template float calc_degree_7<float>(const float *a, float theta, float phi);
+template float calc_degree_8<float>(const float *a, float theta, float phi);
+template float calc_degree_9<float>(const float *a, float theta, float phi);
+template float calc_degree_10<float>(const float *a, float theta, float phi);
+
+template double calc_degree_0<double>(const double *a, double theta, double phi);
+template double calc_degree_1<double>(const double *a, double theta, double phi);
+template double calc_degree_2<double>(const double *a, double theta, double phi);
+template double calc_degree_3<double>(const double *a, double theta, double phi);
+template double calc_degree_4<double>(const double *a, double theta, double phi);
+template double calc_degree_5<double>(const double *a, double theta, double phi);
+template double calc_degree_6<double>(const double *a, double theta, double phi);
+template double calc_degree_7<double>(const double *a, double theta, double phi);
+template double calc_degree_8<double>(const double *a, double theta, double phi);
+template double calc_degree_9<double>(const double *a, double theta, double phi);
+template double calc_degree_10<double>(const double *a, double theta, double phi);
+
 template double calc_spherical_harmonic<double>(int, const double *, double, double);
 template float calc_spherical_harmonic<float>(int, const float *, float, float);
 
