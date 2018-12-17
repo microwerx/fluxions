@@ -25,7 +25,7 @@ namespace Viperfish
 {
 GamepadState::GamepadState()
 {
-	Init(0);
+    Init(0);
 }
 
 GamepadState::~GamepadState()
@@ -168,7 +168,7 @@ void GamepadState::makeHexRepresentation()
     for (int i = 0; i < (int)GamePadBitNum::NUMBITS; i++)
     {
         float f = 15.99f * (0.5f * (1.0f + clamp(curState.GetBitf(i), -1.0f, 1.0f)));
-        char h = (char)clamp(f, 0, 15);
+        char h = (char)clamp((int)f, 0, 15);
         char c;
         if (h < 10)
         {
