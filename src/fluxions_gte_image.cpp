@@ -548,20 +548,20 @@ void TImage<ColorType>::scaleColors(const float x)
 }
 
 template <typename ColorType>
-TImage<ColorType> TImage<ColorType>::ScaleImage(int newWidth, int newHeight, bool bilinear)
+TImage<ColorType> TImage<ColorType>::ScaleImage(size_t newWidth, size_t newHeight, bool bilinear)
 {
     TImage<ColorType> out;
     out.resize(newWidth, newHeight, imageDepth);
     int newDepth = imageDepth;
     Vector3d d(imageWidth / (double)newWidth, imageHeight / (double)newHeight, imageDepth / (double)newDepth);
     Vector3d src;
-    for (int z = 0; z < newDepth; z++)
+    for (size_t z = 0; z < newDepth; z++)
     {
         src.y = 0.0;
-        for (int y = 0; y < newHeight; y++)
+        for (size_t y = 0; y < newHeight; y++)
         {
             src.x = 0.0;
-            for (int x = 0; x < newWidth; x++)
+            for (size_t x = 0; x < newWidth; x++)
             {
                 // truncate coordinates
                 Vector3i pint((int)src.x, (int)src.y, (int)src.z);
@@ -578,7 +578,7 @@ TImage<ColorType> TImage<ColorType>::ScaleImage(int newWidth, int newHeight, boo
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMRaw(const std::string &filename, int z)
+void TImage<ColorType>::savePPMRaw(const std::string &filename, size_t z)
 {
     const float scale = ColorType::to_float_factor * 255.0f;
     float maxColorFound = maxrgb() * scale;
@@ -591,9 +591,9 @@ void TImage<ColorType>::savePPMRaw(const std::string &filename, int z)
     fout << imageHeight << " ";
     fout << maxColorFound << std::endl;
 
-    for (int y = 0; y < imageHeight; y++)
+    for (size_t y = 0; y < imageHeight; y++)
     {
-        for (int x = 0; x < imageWidth; x++)
+        for (size_t x = 0; x < imageWidth; x++)
         {
             Color3f color = getPixel(x, y, z) * scale;
             int ir = (int)color.r;
@@ -612,8 +612,8 @@ void TImage<ColorType>::loadPPM(const std::string &filename)
     std::ifstream fin(filename.c_str());
 
     std::string magicNumber;
-    int width;
-    int height;
+    size_t width;
+    size_t height;
     int maxInt;
 
     fin >> magicNumber;
@@ -634,9 +634,9 @@ void TImage<ColorType>::loadPPM(const std::string &filename)
     const float scale = ColorType::from_float_factor / 255.99f;
 
     resize(width, height);
-    for (int y = 0; y < imageHeight; y++)
+    for (size_t y = 0; y < imageHeight; y++)
     {
-        for (int x = 0; x < imageWidth; x++)
+        for (size_t x = 0; x < imageWidth; x++)
         {
             Color3f color;
             fin >> color.r >> color.g >> color.b;
@@ -651,7 +651,7 @@ void TImage<ColorType>::loadPPM(const std::string &filename)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPM(const std::string &filename, int z, bool flipy)
+void TImage<ColorType>::savePPM(const std::string &filename, size_t z, bool flipy)
 {
     const float scale = ColorType::to_float_factor * 255.99f;
     float maxColorFound = maxrgb() * scale;
@@ -664,8 +664,8 @@ void TImage<ColorType>::savePPM(const std::string &filename, int z, bool flipy)
     fout << imageHeight << " ";
     fout << maxColorFound << std::endl;
 
-    int y1 = 0;
-    int y2 = imageHeight;
+    size_t y1 = 0;
+    size_t y2 = imageHeight;
     int dy = 1;
     if (flipy)
     {
@@ -673,9 +673,9 @@ void TImage<ColorType>::savePPM(const std::string &filename, int z, bool flipy)
         y2 = -1;
         dy = -1;
     }
-    for (int y = y1; y != y2; y += dy)
+    for (size_t y = y1; y != y2; y += dy)
     {
-        for (int x = 0; x < imageWidth; x++)
+        for (size_t x = 0; x < imageWidth; x++)
         {
             ColorType c = getPixel(x, y, z);
             Color3i color(
@@ -690,7 +690,7 @@ void TImage<ColorType>::savePPM(const std::string &filename, int z, bool flipy)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMi(const std::string &filename, float scale, int minValue, int maxValue, int z, bool flipy)
+void TImage<ColorType>::savePPMi(const std::string &filename, float scale, int minValue, int maxValue, size_t z, bool flipy)
 {
     if (maxValue <= 0)
     {
@@ -704,8 +704,8 @@ void TImage<ColorType>::savePPMi(const std::string &filename, float scale, int m
     fout << imageHeight << " ";
     fout << maxValue << std::endl;
 
-    int y1 = 0;
-    int y2 = imageHeight;
+    size_t y1 = 0;
+    size_t y2 = imageHeight;
     int dy = 1;
     if (flipy)
     {
@@ -713,9 +713,9 @@ void TImage<ColorType>::savePPMi(const std::string &filename, float scale, int m
         y2 = -1;
         dy = -1;
     }
-    for (int y = y1; y != y2; y += dy)
+    for (size_t y = y1; y != y2; y += dy)
     {
-        for (int x = 0; x < imageWidth; x++)
+        for (size_t x = 0; x < imageWidth; x++)
         {
             Color4i color = ToColor4i(getPixel(x, y, z), scale, minValue, maxValue);
             fout << color.r << " " << color.g << " " << color.b << std::endl;
@@ -726,7 +726,7 @@ void TImage<ColorType>::savePPMi(const std::string &filename, float scale, int m
 }
 
 template <typename ColorType>
-void TImage<ColorType>::savePPMHDRI(const std::string &filename, int z)
+void TImage<ColorType>::savePPMHDRI(const std::string &filename, size_t z)
 {
     std::ofstream fout(filename.c_str());
 
@@ -735,9 +735,9 @@ void TImage<ColorType>::savePPMHDRI(const std::string &filename, int z)
     fout << imageHeight << " ";
     fout << "1.0" << std::endl;
 
-    for (int y = 0; y < imageHeight; y++)
+    for (size_t y = 0; y < imageHeight; y++)
     {
-        for (int x = 0; x < imageWidth; x++)
+        for (size_t x = 0; x < imageWidth; x++)
         {
             ColorType c = getPixel(x, y, z);
             Color3f color = ToColor3f(c);
@@ -749,7 +749,7 @@ void TImage<ColorType>::savePPMHDRI(const std::string &filename, int z)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::resize(int width, int height, int depth)
+void TImage<ColorType>::resize(size_t width, size_t height, size_t depth)
 {
     imageWidth = width;
     imageHeight = height;
@@ -771,18 +771,18 @@ void TImage<ColorType>::clear(const ColorType &clearcolor)
 }
 
 template <typename ColorType>
-void TImage<ColorType>::setImageData(unsigned int format, unsigned int type, int width, int height, int depth, void *_pixels)
+void TImage<ColorType>::setImageData(unsigned int format, unsigned int type, size_t width, size_t height, size_t depth, void *_pixels)
 {
     _setImageData(format, type, ColorType::gl_type, ColorType::gl_size, width, height, depth, _pixels);
 }
 
 template <typename ColorType>
-void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, int width, int height, int depth, void *_pixels)
+void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, size_t width, size_t height, size_t depth, void *_pixels)
 {
     float scaleFactor_itof = 1.0f / 255.99f;
     float scaleFactor_ftoi = 255.99f;
 
-    int stride;
+    size_t stride;
     if (fromFormat == 3 || fromFormat == GL_RGB)
         stride = 3;
     else if (fromFormat == 4 || fromFormat == GL_RGBA)
@@ -791,14 +791,14 @@ void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int from
         return;
 
     resize(width, height, depth);
-    int count = width * height * depth;
+    size_t count = width * height * depth;
     if (fromType == GL_UNSIGNED_BYTE && toType == GL_FLOAT)
     {
         unsigned char *data = (unsigned char *)_pixels;
-        for (int i = 0; i < count; i++)
+        for (size_t i = 0; i < count; i++)
         {
             typename ColorType::type *v = pixels[i].ptr();
-            for (int j = 0; j < stride; j++)
+            for (size_t j = 0; j < stride; j++)
             {
                 v[j] = (typename ColorType::type)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
             }
@@ -808,7 +808,7 @@ void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int from
     else if (fromType == GL_FLOAT && toType == GL_UNSIGNED_BYTE)
     {
         float *data = (float *)_pixels;
-        for (int i = 0; i < count; i++)
+        for (size_t i = 0; i < count; i++)
         {
             typename ColorType::type *v = pixels[i].ptr();
             for (int j = 0; j < stride; j++)

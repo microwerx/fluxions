@@ -153,8 +153,8 @@ void Sphl::createMesh(FxModel &model)
 		{0.3f, 0.0f, 0.15f},
 		{0.0f, 0.15f, 0.3f}};
 
-	int firstIndex = 0;
-	int lastIndex = MaxComponents - 1;
+	size_t firstIndex = 0;
+	size_t lastIndex = MaxComponents - 1;
 	if (makeSimpleSPHLs)
 	{
 		firstIndex = lastIndex = 3;
@@ -196,15 +196,15 @@ void Sphl::createMesh(FxModel &model)
 		}
 	}
 
-	int k = 0;
+	size_t k = 0;
 	for (size_t j = firstIndex; j <= lastIndex; j++)
 	{
 		sph_model.BeginSurface(SimpleGeometryMesh::SurfaceType::Triangles);
 		for (size_t i = 0; i < model.triangleCount; i++)
 		{
-			int v0 = k * model.vertexCount + model.triangles[i].x;
-			int v1 = k * model.vertexCount + model.triangles[i].y;
-			int v2 = k * model.vertexCount + model.triangles[i].z;
+			size_t v0 = k * model.vertexCount + model.triangles[i].x;
+			size_t v1 = k * model.vertexCount + model.triangles[i].y;
+			size_t v2 = k * model.vertexCount + model.triangles[i].z;
 			Vector3f dp1 = sph_model.GetVertex(v1).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 			Vector3f dp2 = sph_model.GetVertex(v2).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 			Vector3f N = dp1.cross(dp2).norm();

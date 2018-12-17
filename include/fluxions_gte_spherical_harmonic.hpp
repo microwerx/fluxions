@@ -37,7 +37,7 @@ namespace Fluxions
 double legendre_polynomial(int l, int m, double x) noexcept;
 double spherical_harmonic(int l, int m, double theta, double phi) noexcept;
 
-constexpr int GetMaxSphCoefficients(int l) noexcept { return l * (l + 1) + l + 1; }
+constexpr size_t GetMaxSphCoefficients(size_t l) noexcept { return l * (l + 1) + l + 1; }
 
 template <typename T>
 T calc_spherical_harmonic(int max_degree, const T *a, T theta, T phi);

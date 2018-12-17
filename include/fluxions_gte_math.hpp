@@ -265,7 +265,7 @@ constexpr T multiply_add(T a, T b, T c) noexcept
 
 float randomSampler(float _min0, float _max0);
 
-constexpr void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float *t, int *whichFace) noexcept
+constexpr void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float *t, size_t *whichFace) noexcept
 {
     // ma is absolute value
     float absX = fabs(x);
@@ -351,7 +351,7 @@ constexpr void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, flo
     *t = 0.5f * (tc / maxAxis + 1.0f);
 }
 
-constexpr void MakeCubeVectorFromFaceST(int face, float s, float t, float *x, float *y, float *z) noexcept
+constexpr void MakeCubeVectorFromFaceST(size_t face, float s, float t, float *x, float *y, float *z) noexcept
 {
     // 0 GL_TEXTURE_CUBE_MAP_POSITIVE_X
     // 1 GL_TEXTURE_CUBE_MAP_NEGATIVE_X
