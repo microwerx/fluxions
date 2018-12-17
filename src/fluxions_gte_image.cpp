@@ -800,7 +800,7 @@ void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int from
             typename ColorType::type *v = pixels[i].ptr();
             for (int j = 0; j < stride; j++)
             {
-                v[j] = (typename ColorType::type)clamp(scaleFactor_itof * data[j], 0, 255);
+                v[j] = (typename ColorType::type)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
             }
             data += stride;
         }
@@ -813,7 +813,7 @@ void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int from
             typename ColorType::type *v = pixels[i].ptr();
             for (int j = 0; j < stride; j++)
             {
-                v[j] = (typename ColorType::type)clamp(scaleFactor_ftoi * data[j], 0, 255);
+                v[j] = (typename ColorType::type)clamp((int)(scaleFactor_ftoi * data[j]), 0, 255);
             }
             data += stride;
         }
