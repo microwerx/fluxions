@@ -118,34 +118,34 @@ class TMatrix2
             static_cast<U>(m21), static_cast<U>(m22));
     }
 
-    constexpr auto LoadIdentity() noexcept
+    constexpr TMatrix2<T> &LoadIdentity() noexcept
     {
         return *this = MakeIdentity();
     }
 
-    constexpr auto LoadZero() noexcept
+    constexpr TMatrix2<T> &LoadZero() noexcept
     {
         return *this = MakeZero();
     }
 
-    constexpr auto MultMatrix(const TMatrix2<T> &M) noexcept
+    constexpr TMatrix2<T> &MultMatrix(const TMatrix2<T> &M) noexcept
     {
         return *this = (TMatrix2<T>)multiply(*this, M);
     }
 
-    constexpr auto operator*=(const TMatrix2<T> &M) noexcept
+    constexpr TMatrix2<T> &operator*=(const TMatrix2<T> &M) noexcept
     {
         return *this = (TMatrix2<T>)multiply(*this, M);
     }
 
-    constexpr auto operator+=(const TMatrix2<T> &M) noexcept
+    constexpr TMatrix2<T> &operator+=(const TMatrix2<T> &M) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 + M.m11, m12 + M.m12,
                    m21 + M.m21, m22 + M.m22);
     }
 
-    constexpr auto operator-=(const TMatrix2<T> &M) noexcept
+    constexpr TMatrix2<T> &operator-=(const TMatrix2<T> &M) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 - M.m11, m12 - M.m12,
@@ -153,7 +153,7 @@ class TMatrix2
     }
 
     template <typename U>
-    constexpr auto operator+=(const U c) noexcept
+    constexpr TMatrix2<T> &operator+=(const U c) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 + c, m12 + c,
@@ -161,7 +161,7 @@ class TMatrix2
     }
 
     template <typename U>
-    constexpr auto operator-=(const U c) noexcept
+    constexpr TMatrix2<T> &operator-=(const U c) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 - c, m12 - c,
@@ -169,7 +169,7 @@ class TMatrix2
     }
 
     template <typename U>
-    constexpr auto operator*=(const U c) noexcept
+    constexpr TMatrix2<T> &operator*=(const U c) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 * c, m12 * c,
@@ -177,7 +177,7 @@ class TMatrix2
     }
 
     template <typename U>
-    constexpr auto operator/=(const U c) noexcept
+    constexpr TMatrix2<T> &operator/=(const U c) noexcept
     {
         return *this = TMatrix2<T>(
                    m11 / c, m12 / c,

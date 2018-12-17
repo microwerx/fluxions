@@ -169,7 +169,7 @@ class TMatrix4
         }
     }
 
-    constexpr auto operator=(const TMatrix4<T> &M) noexcept
+    constexpr TMatrix4<T> &operator=(const TMatrix4<T> &M) noexcept
     {
         m11 = M.m11;
         m12 = M.m12;
@@ -191,7 +191,7 @@ class TMatrix4
     }
 
     template <typename U>
-    constexpr auto operator=(const TMatrix4<U> &M) noexcept
+    constexpr TMatrix4<T> &operator=(const TMatrix4<U> &M) noexcept
     {
         m11 = static_cast<T>(M.m11);
         m12 = static_cast<T>(M.m12);

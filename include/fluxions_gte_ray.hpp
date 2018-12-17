@@ -38,7 +38,7 @@ class TRay
     }
     ~TRay() {}
 
-    constexpr auto operator=(const TRay<T> &ray) noexcept
+    constexpr TRay<T>& operator=(const TRay<T> &ray) noexcept
     {
         origin = ray.origin;
         direction = ray.direction;

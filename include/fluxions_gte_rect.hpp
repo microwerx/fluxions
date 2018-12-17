@@ -74,7 +74,7 @@ class TRect
     }
 
     template <typename T2>
-    constexpr const TVector2<T> &operator=(const TRect<T2> &rect) noexcept
+    constexpr TVector2<T> &operator=(const TRect<T2> &rect) noexcept
     {
         x = (T)rect.x;
         y = (T)rect.y;

@@ -77,7 +77,7 @@ class TVector3
         z = V[2];
     }
 
-    constexpr auto operator=(const TVector3<T> &V) noexcept
+    constexpr TVector3<T> &operator=(const TVector3<T> &V) noexcept
     {
         x = V.x;
         y = V.y;
@@ -85,7 +85,7 @@ class TVector3
         return *this;
     }
 
-    constexpr auto operator=(const TVector3<T> &&V) noexcept
+    constexpr TVector3<T> &operator=(const TVector3<T> &&V) noexcept
     {
         x = std::move(V.x);
         y = std::move(V.y);
@@ -113,7 +113,7 @@ class TVector3
     //}
 
     template <typename U>
-    constexpr auto operator+=(const U val) noexcept
+    constexpr TVector3<T> &operator+=(const U val) noexcept
     {
         x += static_cast<T>(val);
         y += static_cast<T>(val);
@@ -122,7 +122,7 @@ class TVector3
     }
 
     template <typename U>
-    constexpr auto operator-=(const U val) noexcept
+    constexpr TVector3<T> &operator-=(const U val) noexcept
     {
         x -= static_cast<T>(val);
         y -= static_cast<T>(val);
@@ -131,7 +131,7 @@ class TVector3
     }
 
     template <typename U>
-    constexpr auto operator*=(const U val) noexcept
+    constexpr TVector3<T> &operator*=(const U val) noexcept
     {
         x *= static_cast<T>(val);
         y *= static_cast<T>(val);
@@ -140,7 +140,7 @@ class TVector3
     }
 
     template <typename U>
-    constexpr auto operator/=(const U val) noexcept
+    constexpr TVector3<T> &operator/=(const U val) noexcept
     {
         x /= static_cast<T>(val);
         y /= static_cast<T>(val);
@@ -149,7 +149,7 @@ class TVector3
     }
 
     template <typename U>
-    constexpr auto operator+=(const TVector3<U> &V) noexcept
+    constexpr TVector3<T> &operator+=(const TVector3<U> &V) noexcept
     {
         x += V.x;
         y += V.y;
@@ -158,7 +158,7 @@ class TVector3
     }
 
     template <typename U>
-    constexpr auto operator-=(const TVector3<U> &V) noexcept
+    constexpr TVector3<T> &operator-=(const TVector3<U> &V) noexcept
     {
         x -= V.x;
         y -= V.y;
