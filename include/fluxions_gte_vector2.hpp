@@ -66,7 +66,7 @@ class TVector2
         y = V[1];
     }
 
-    constexpr auto operator=(const TVector2<T> &V) noexcept
+    constexpr TVector2<T> &operator=(const TVector2<T> &V) noexcept
     {
         x = V.x;
         y = V.y;
@@ -87,7 +87,7 @@ class TVector2
     }
 
     template <typename U>
-    constexpr auto operator+=(const U c) noexcept
+    constexpr TVector2<T> &operator+=(const U c) noexcept
     {
         x += c;
         y += c;
@@ -95,7 +95,7 @@ class TVector2
     }
 
     template <typename U>
-    constexpr auto operator-=(const U c) noexcept
+    constexpr TVector2<T> &operator-=(const U c) noexcept
     {
         x -= c;
         y -= c;
@@ -103,7 +103,7 @@ class TVector2
     }
 
     template <typename U>
-    constexpr auto operator*=(const U c) noexcept
+    constexpr TVector2<T> &operator*=(const U c) noexcept
     {
         x *= c;
         y *= c;
@@ -111,7 +111,7 @@ class TVector2
     }
 
     template <typename U>
-    constexpr auto operator/=(const U c) noexcept
+    constexpr TVector2<T> &operator/=(const U c) noexcept
     {
         x /= c;
         y /= c;
@@ -119,7 +119,7 @@ class TVector2
     }
 
     template <typename U>
-    constexpr auto operator+=(const TVector2<U> &V) noexcept
+    constexpr TVector2<T> &operator+=(const TVector2<U> &V) noexcept
     {
         x += V.x;
         y += V.y;
@@ -406,13 +406,13 @@ constexpr auto operator-(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
 }
 
 template <typename T, typename U>
-constexpr auto operator==(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
+constexpr bool operator==(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
 {
     return (v1.x == v2.x && v1.y == v2.y);
 }
 
 template <typename T, typename U>
-constexpr auto operator!=(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
+constexpr bool operator!=(const TVector2<T> &v1, const TVector2<U> &v2) noexcept
 {
     return (v1.x != v2.x || v1.y != v2.y);
 }

@@ -383,13 +383,13 @@ class TMatrix4
     }
 
     template <typename U>
-    constexpr auto operator*=(const TMatrix4<U> &M) noexcept
+    constexpr TMatrix4<T> &operator*=(const TMatrix4<U> &M) noexcept
     {
         return *this = multiply(*this, M);
     }
 
     template <typename U>
-    constexpr auto operator+=(const TMatrix4<U> &M) noexcept
+    constexpr TMatrix4<T> &operator+=(const TMatrix4<U> &M) noexcept
     {
         m11 += M.m11;
         m12 += M.m12;
@@ -411,7 +411,7 @@ class TMatrix4
     }
 
     template <typename U>
-    constexpr auto operator-=(const TMatrix4<U> &M) noexcept
+    constexpr TMatrix4<T> &operator-=(const TMatrix4<U> &M) noexcept
     {
         m11 -= M.m11;
         m12 -= M.m12;
@@ -437,7 +437,7 @@ class TMatrix4
     //template <typename U> const TMatrix4<T> operator - (const TMatrix4<U> & M) const;
 
     template <typename U>
-    constexpr auto operator+=(const U c) noexcept
+    constexpr TMatrix4<T> &operator+=(const U c) noexcept
     {
         m11 += c;
         m12 += c;
@@ -459,7 +459,7 @@ class TMatrix4
     }
 
     template <typename U>
-    constexpr auto operator-=(const U c) noexcept
+    constexpr TMatrix4<T> &operator-=(const U c) noexcept
     {
         m11 -= c;
         m12 -= c;
@@ -481,7 +481,7 @@ class TMatrix4
     }
 
     template <typename U>
-    constexpr auto operator*=(const U c) noexcept
+    constexpr TMatrix4<T> &operator*=(const U c) noexcept
     {
         m11 *= c;
         m12 *= c;
@@ -503,7 +503,7 @@ class TMatrix4
     }
 
     template <typename U>
-    constexpr auto operator/=(const U c) noexcept
+    constexpr TMatrix4<T> &operator/=(const U c) noexcept
     {
         m11 /= c;
         m12 /= c;
