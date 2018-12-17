@@ -432,8 +432,11 @@ bool TMatrix3<T>::Invert()
 
 using Matrix3f = TMatrix3<float>;
 using Matrix3d = TMatrix3<double>;
+
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TMatrix3<float>;
 extern template class TMatrix3<double>;
+#endif
 } // namespace Fluxions
 
 #endif

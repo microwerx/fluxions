@@ -172,12 +172,14 @@ using Rectus = TRect<unsigned short>;
 using Recti = TRect<int>;
 using Rectui = TRect<unsigned>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TRect<float>;
 extern template class TRect<double>;
 extern template class TRect<short>;
 extern template class TRect<unsigned short>;
 extern template class TRect<int>;
 extern template class TRect<unsigned int>;
+#endif
 } // namespace Fluxions
 
 #endif

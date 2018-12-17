@@ -112,8 +112,10 @@ class Matrix4Stack
 using Matrix4Stackf = Matrix4Stack<float>;
 using Matrix4Stackd = Matrix4Stack<double>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class Matrix4Stack<float, 32>;
 extern template class Matrix4Stack<double, 32>;
+#endif
 } // namespace Fluxions
 
 #endif

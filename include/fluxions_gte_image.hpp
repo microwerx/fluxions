@@ -220,6 +220,7 @@ using Image4f = TImage<Color4f>;
 using Image4i = TImage<Color4i>;
 using Image4ub = TImage<Color4ub>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TImage<Color3f>;
 extern template class TImage<Color3i>;
 extern template class TImage<Color3ub>;
@@ -227,6 +228,7 @@ extern template class TImage<Color3ub>;
 extern template class TImage<Color4f>;
 extern template class TImage<Color4i>;
 extern template class TImage<Color4ub>;
+#endif
 } // namespace Fluxions
 
 #endif

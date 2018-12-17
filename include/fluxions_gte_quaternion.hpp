@@ -148,11 +148,14 @@ TMatrix3<T> TQuaternion<T>::toMatrix3() const
         2 * b * d - 2 * a * c, 2 * c * d + 2 * a * b, 1 - 2 * b * b - 2 * c * c);
 }
 
-extern template class TQuaternion<float>;
-extern template class TQuaternion<double>;
-
 using Quaternionf = TQuaternion<float>;
 using Quaterniond = TQuaternion<double>;
+
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
+extern template class TQuaternion<float>;
+extern template class TQuaternion<double>;
+#endif
+
 } // namespace Fluxions
 
 #endif

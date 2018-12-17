@@ -555,6 +555,7 @@ using Vector4us = TVector4<unsigned short>;
 using Vector4i = TVector4<int>;
 using Vector4ui = TVector4<unsigned int>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TVector4<float>;
 extern template class TVector4<double>;
 extern template class TVector4<char>;
@@ -563,6 +564,7 @@ extern template class TVector4<short>;
 extern template class TVector4<unsigned short>;
 extern template class TVector4<int>;
 extern template class TVector4<unsigned int>;
+#endif
 
 template <typename T, typename U>
 constexpr auto operator+(const U a, const TVector4<T> &V)

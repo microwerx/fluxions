@@ -50,8 +50,10 @@ TPlane<T>::~TPlane()
 using Planef = TPlane<float>;
 using Planed = TPlane<double>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TPlane<float>;
 extern template class TPlane<double>;
+#endif
 } // namespace Fluxions
 
 #endif

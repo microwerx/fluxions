@@ -287,8 +287,11 @@ class TMatrix2
 
 using Matrix2f = TMatrix2<float>;
 using Matrix2d = TMatrix2<double>;
+
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TMatrix2<float>;
 extern template class TMatrix2<double>;
+#endif
 } // namespace Fluxions
 
 #endif

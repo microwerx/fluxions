@@ -1647,11 +1647,13 @@ class TMatrix4
 //		0.0, 0.0, 0.0, 1.0);
 //}
 
-extern template class TMatrix4<float>;
-extern template class TMatrix4<double>;
-
 using Matrix4f = TMatrix4<float>;
 using Matrix4d = TMatrix4<double>;
+
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
+extern template class TMatrix4<float>;
+extern template class TMatrix4<double>;
+#endif
 
 template <typename T, typename U>
 constexpr auto operator*(const TMatrix4<T> &m1, const TMatrix4<U> &m2) noexcept

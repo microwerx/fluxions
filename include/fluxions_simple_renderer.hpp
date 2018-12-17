@@ -810,12 +810,14 @@ class SimpleRenderer
     int triangleCount = 0;
 };
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class SimpleRenderer<GLbyte, GL_BYTE>;
 extern template class SimpleRenderer<GLubyte, GL_UNSIGNED_BYTE>;
 extern template class SimpleRenderer<GLshort, GL_SHORT>;
 extern template class SimpleRenderer<GLushort, GL_UNSIGNED_SHORT>;
 extern template class SimpleRenderer<GLint, GL_INT>;
 extern template class SimpleRenderer<GLuint, GL_UNSIGNED_INT>;
+#endif
 
 using SimpleRenderer_GLubyte = SimpleRenderer<GLubyte, GL_UNSIGNED_BYTE>;
 using SimpleRenderer_GLushort = SimpleRenderer<GLushort, GL_UNSIGNED_SHORT>;

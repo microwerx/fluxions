@@ -81,9 +81,11 @@ using Rayf = TRay<float>;
 using Rayd = TRay<double>;
 using Rayi = TRay<int>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TRay<float>;
 extern template class TRay<double>;
 extern template class TRay<int>;
+#endif
 } // namespace Fluxions
 
 #endif

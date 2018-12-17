@@ -164,15 +164,18 @@ class SuperQuadricToroid
 	T alpha;
 };
 
-extern template class SuperQuadricEllipsoid<float>;
-extern template class SuperQuadricEllipsoid<double>;
-extern template class SuperQuadricToroid<float>;
-extern template class SuperQuadricToroid<double>;
-
 using SuperQuadricEllipsoidf = SuperQuadricEllipsoid<float>;
 using SuperQuadricEllipsoidd = SuperQuadricEllipsoid<double>;
 using SuperQuadricToroidf = SuperQuadricToroid<float>;
 using SuperQuadricToroidd = SuperQuadricToroid<double>;
+
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
+extern template class SuperQuadricEllipsoid<float>;
+extern template class SuperQuadricEllipsoid<double>;
+extern template class SuperQuadricToroid<float>;
+extern template class SuperQuadricToroid<double>;
+#endif
+
 } // namespace Fluxions
 
 #endif

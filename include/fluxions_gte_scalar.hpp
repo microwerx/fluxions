@@ -94,8 +94,10 @@ class TScalar
 using Scalarf = TScalar<float>;
 using Scalard = TScalar<double>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TScalar<float>;
 extern template class TScalar<double>;
+#endif
 } // namespace Fluxions
 
 #endif

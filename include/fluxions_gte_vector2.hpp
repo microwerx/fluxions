@@ -330,6 +330,7 @@ using Vector2us = TVector2<unsigned short>;
 using Vector2i = TVector2<int>;
 using Vector2ui = TVector2<unsigned int>;
 
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 extern template class TVector2<float>;
 extern template class TVector2<double>;
 extern template class TVector2<char>;
@@ -338,6 +339,7 @@ extern template class TVector2<short>;
 extern template class TVector2<unsigned short>;
 extern template class TVector2<int>;
 extern template class TVector2<unsigned int>;
+#endif
 
 template <typename T, typename U>
 constexpr auto operator+(const U a, const TVector2<T> &V)
