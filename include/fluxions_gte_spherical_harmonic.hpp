@@ -41,8 +41,10 @@ namespace Fluxions
 	template <typename T>
 	T calc_spherical_harmonic(int max_degree, const T *a, T theta, T phi);
 
+#ifdef FLUXIONS_NO_EXTERN_TEMPLATES
 	extern template float calc_spherical_harmonic<float>(int max_degree, const float *, float theta, float phi);
 	extern template double calc_spherical_harmonic<double>(int max_degree, const double *, double theta, double phi);
+#endif
 
 	template <typename VectorType, typename ScalarType>
 	class TSphericalHarmonic
@@ -396,12 +398,14 @@ namespace Fluxions
 	//using SphericalHarmonic4f = TSphericalHarmonic<Vector4f>;
 	//using SphericalHarmonic4d = TSphericalHarmonic<Vector4d>;
 
+#ifdef FLUXIONS_NO_EXTERN_TEMPLATES
 	extern template class TSphericalHarmonic<float, float>;
 	extern template class TSphericalHarmonic<double, double>;
 	//extern template class TSphericalHarmonic<Vector3f>;
 	//extern template class TSphericalHarmonic<Vector3d>;
 	//extern template class TSphericalHarmonic<Vector4f>;
 	//extern template class TSphericalHarmonic<Vector4d>;
+#endif
 
 	using MultispectralSph4f = SphericalHarmonicf[4];
 	using MultispectralSph4d = SphericalHarmonicd[4];
