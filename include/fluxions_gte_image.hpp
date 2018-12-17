@@ -52,12 +52,12 @@ class TImage
     }
     TImage(int width, int height, int depth = 1) { resize(width, height, depth); }
 
-    inline void setBorderColor(const ColorType &color) { borderColor = color; }
-    inline const ColorType &getBorderColor() const { return borderColor; }
-    inline int width() const { return imageWidth; }
-    inline int height() const { return imageHeight; }
-    inline int depth() const { return imageDepth; }
-    inline size_t addr(int x, int y, int z = 0)
+    constexpr void setBorderColor(const ColorType &color) { borderColor = color; }
+    constexpr const ColorType &getBorderColor() const { return borderColor; }
+    constexpr int width() const { return imageWidth; }
+    constexpr int height() const { return imageHeight; }
+    constexpr int depth() const { return imageDepth; }
+    constexpr size_t addr(int x, int y, int z = 0)
     {
         if (x < 0 || y < 0 || z < 0)
             return 0;
@@ -66,7 +66,7 @@ class TImage
         return z * zstride + y * imageWidth + x;
     }
 
-    inline ColorType *getPixels(int index)
+    constexpr ColorType *getPixels(int index)
     {
         if (index < 0 || index >= imageDepth)
             return NULL;
@@ -85,14 +85,14 @@ class TImage
     void scaleColors(float x);
     TImage<ColorType> ScaleImage(int newWidth, int newHeight, bool bilinear = false);
 
-    inline void setPixel(int x, int y, ColorType color) noexcept
+    constexpr void setPixel(int x, int y, ColorType color) noexcept
     {
         if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight)
             return;
         pixels[y * imageWidth + x] = color;
     }
 
-    inline ColorType getPixel(int x, int y) const
+    constexpr ColorType getPixel(int x, int y) const
     {
         if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight)
             return borderColor;
@@ -101,25 +101,25 @@ class TImage
     }
 
     // Same as setPixel(X, y, color) but without image bounds checking: unsafe!
-    inline void setPixelUnsafe(int x, int y, ColorType color)
+    constexpr void setPixelUnsafe(int x, int y, ColorType color)
     {
         pixels[y * imageWidth + x] = color;
     }
 
     // Same as getPixel(X, y) but without image bounds checking: unsafe!
-    inline ColorType getPixelUnsafe(int x, int y) const
+    constexpr ColorType getPixelUnsafe(int x, int y) const
     {
         return pixels[y * imageWidth + x];
     }
 
-    inline void setPixel(int x, int y, int z, const ColorType &color)
+    constexpr void setPixel(int x, int y, int z, const ColorType &color)
     {
         if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight || z < 0 || z >= imageDepth)
             return;
         pixels[z * zstride + y * imageWidth + x] = color;
     }
 
-    inline ColorType getPixel(int x, int y, int z) const
+    constexpr ColorType getPixel(int x, int y, int z) const
     {
         if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight || z < 0 || z >= imageDepth)
             return borderColor;
@@ -147,12 +147,12 @@ class TImage
         return minColorFound;
     }
 
-    inline ColorType getPixelCubeMap(const Vector3f &v) const
+    constexpr ColorType getPixelCubeMap(const Vector3f &v) const
     {
         return getPixelCubeMap(v.x, v.y, v.z);
     }
 
-    inline ColorType getPixelCubeMap(float x, float y, float z) const
+    constexpr ColorType getPixelCubeMap(float x, float y, float z) const
     {
         if (imageDepth != 6)
             return borderColor;
@@ -166,18 +166,18 @@ class TImage
     }
 
     // Same as setPixel(X, y, color) but without image bounds checking: unsafe!
-    inline void setPixelUnsafe(int x, int y, int z, const ColorType &color)
+    constexpr void setPixelUnsafe(int x, int y, int z, const ColorType &color)
     {
         pixels[z * zstride + y * imageWidth + x] = color;
     }
 
     // Same as getPixel(X, y) but without image bounds checking: unsafe!
-    inline ColorType getPixelUnsafe(int x, int y, int z) const
+    constexpr ColorType getPixelUnsafe(int x, int y, int z) const
     {
         return pixels[z * zstride + y * imageWidth + x];
     }
 
-    inline const void *getImageData(int z) const
+    constexpr const void *getImageData(int z) const
     {
         return &pixels[z * zstride];
     }

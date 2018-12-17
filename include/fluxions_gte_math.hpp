@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <type_traits>
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include <math.h>
 
 namespace Fluxions
 {
@@ -159,13 +159,13 @@ const float FX_F32_2_SQRTPI = 1.12837916f; // 2/sqrt(pi)
 const float FX_F32_SQRT1_2 = 0.70710678f;  // 1/sqrt(2)
 
 template <typename T>
-inline T DegToRad(T x)
+constexpr T DegToRad(T x) noexcept
 {
     return x * FX_DEGREES_TO_RADIANS;
 }
 
 template <typename T>
-inline T RadToDeg(T x)
+constexpr T RadToDeg(T x) noexcept
 {
     return x * FX_RADIANS_TO_DEGREES;
 }
@@ -219,7 +219,7 @@ constexpr T saturate(T x, T maxvalue) noexcept
 }
 
 template <typename T>
-constexpr inline T saturate(T x) noexcept
+constexpr T saturate(T x) noexcept
 {
     return (x > T(1)) ? T(1) : x;
 }
@@ -265,7 +265,7 @@ constexpr T multiply_add(T a, T b, T c) noexcept
 
 float randomSampler(float _min0, float _max0);
 
-inline void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float *t, int *whichFace)
+constexpr void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float *t, int *whichFace) noexcept
 {
     // ma is absolute value
     float absX = fabs(x);
@@ -351,7 +351,7 @@ inline void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float 
     *t = 0.5f * (tc / maxAxis + 1.0f);
 }
 
-inline void MakeCubeVectorFromFaceST(int face, float s, float t, float *x, float *y, float *z)
+constexpr void MakeCubeVectorFromFaceST(int face, float s, float t, float *x, float *y, float *z) noexcept
 {
     // 0 GL_TEXTURE_CUBE_MAP_POSITIVE_X
     // 1 GL_TEXTURE_CUBE_MAP_NEGATIVE_X
@@ -420,8 +420,8 @@ inline void MakeCubeVectorFromFaceST(int face, float s, float t, float *x, float
     }
 }
 
-template <typename T1, typename T2, typename T3>
-inline T1 clamp(T1 x, T2 min, T3 max)
+template <typename T>
+constexpr T clamp(T x, T min, T max) noexcept
 {
     return x < min ? min : x > max ? max : x;
 }
@@ -441,20 +441,20 @@ inline T1 clamp(T1 x, T2 min, T3 max)
 //	return X;
 //}
 
-template <typename T1, typename T2>
-inline T1 min2(T1 x1, T2 x2)
+template <typename T>
+constexpr T min2(T x1, T x2) noexcept
 {
     return x1 < x2 ? x1 : x2;
 }
 
-template <typename T1, typename T2>
-inline T1 max2(T1 x1, T2 x2)
+template <typename T>
+constexpr T max2(T x1, T x2) noexcept
 {
     return x1 > x2 ? x1 : x2;
 }
 
 template <typename T>
-inline T min3(T x1, T x2, T x3)
+constexpr T min3(T x1, T x2, T x3) noexcept
 {
     if (x1 < x2)
     {
@@ -470,19 +470,19 @@ inline T min3(T x1, T x2, T x3)
 }
 
 template <typename T>
-inline T max3(T x1, T x2, T x3)
+constexpr T max3(T x1, T x2, T x3) noexcept
 {
     return (x1 > x2) ? (x1 > x3) ? x1 : x3 : (x2 > x3) ? x2 : x3;
 }
 
 template <typename T>
-inline T sqr(T x)
+constexpr T sqr(T x) noexcept
 {
     return x * x;
 }
 
 template <typename T>
-inline T sgn(T x)
+constexpr T sgn(T x) noexcept
 {
     if (x < 0)
         return -1;
@@ -493,7 +493,7 @@ inline T sgn(T x)
 }
 
 template <typename T>
-inline T abs(T x)
+constexpr T abs(T x) noexcept
 {
     if (x < 0)
         return -x;
@@ -506,7 +506,7 @@ inline T abs(T x)
 *
 * s(ptr,n) = sgn(sin(ptr)) * |sin(ptr)|^n
 */
-inline double sqS(double v, double n)
+constexpr double sqS(double v, double n) noexcept
 {
     return sgn(sin(v)) * pow(abs(sin(v)), n);
 }
@@ -516,7 +516,7 @@ inline double sqS(double v, double n)
 *
 * c(ptr,n) = sgn(cos(ptr)) * |cos(ptr)|^n
 */
-inline double sqC(double v, double n)
+constexpr double sqC(double v, double n) noexcept
 {
     return sgn(cos(v)) * pow(abs(cos(v)), n);
 }
@@ -526,25 +526,25 @@ inline double sqC(double v, double n)
 *
 * CT(ptr,n,alpha) = alpha + c(ptr,n)
 */
-inline double sqCT(double v, double n, double alpha)
+constexpr double sqCT(double v, double n, double alpha) noexcept
 {
     return alpha + sqC(v, n);
 }
 
 template <typename T>
-inline T Radians(T x)
+constexpr T Radians(T x) noexcept
 {
     return (T)(x * FX_RADIANS_TO_DEGREES);
 }
 
 template <typename T>
-inline T Degrees(T x)
+constexpr T Degrees(T x) noexcept
 {
     return (T)(x * FX_DEGREES_TO_RADIANS);
 }
 
 template <class T>
-inline T SRGBToLinear(T x) noexcept
+constexpr T SRGBToLinear(T x) noexcept
 {
     T a = T(0.055);
     T e = T(2.4);
@@ -554,7 +554,7 @@ inline T SRGBToLinear(T x) noexcept
 }
 
 template <class T>
-inline T LinearToSRGB(T x) noexcept
+constexpr T LinearToSRGB(T x) noexcept
 {
     T a = T(0.055);
     T e = T(2.4);
@@ -563,10 +563,10 @@ inline T LinearToSRGB(T x) noexcept
     return x <= bottom ? (x * bottomFactor) : ((T(1) + a) * pow(x, T(1) / e) - a);
 }
 
-inline f32_t LinearToSRGBf(f32_t x) noexcept { return LinearToSRGB<f32_t>(x); }
-inline f64_t LinearToSRGBd(f64_t x) noexcept { return LinearToSRGB<f64_t>(x); }
-inline f32_t SRGBToLinearf(f32_t x) noexcept { return SRGBToLinear<f32_t>(x); }
-inline f64_t SRGBToLineard(f64_t x) noexcept { return SRGBToLinear<f64_t>(x); }
+constexpr f32_t LinearToSRGBf(f32_t x) noexcept { return LinearToSRGB<f32_t>(x); }
+constexpr f64_t LinearToSRGBd(f64_t x) noexcept { return LinearToSRGB<f64_t>(x); }
+constexpr f32_t SRGBToLinearf(f32_t x) noexcept { return SRGBToLinear<f32_t>(x); }
+constexpr f64_t SRGBToLineard(f64_t x) noexcept { return SRGBToLinear<f64_t>(x); }
 
 } //namespace Fluxions
 

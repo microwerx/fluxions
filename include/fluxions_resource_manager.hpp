@@ -52,13 +52,13 @@ class TResourceManager
 	void Clear();
 	void Reset();
 
-	inline void clear() { Clear(); }
-	inline auto begin() -> decltype(resources.begin()) { return resources.begin(); }
-	inline auto end() -> decltype(resources.end()) { return resources.end(); }
-	inline auto cbegin() const -> decltype(resources.cbegin()) { return resources.cbegin(); }
-	inline auto cend() const -> decltype(resources.cend()) { return resources.cend(); }
-	inline auto empty() const -> decltype(resources.empty()) { return resources.empty(); }
-	inline auto size() const -> decltype(resources.size()) { return resources.size(); }
+	constexpr void clear() { Clear(); }
+	constexpr auto begin() -> decltype(resources.begin()) { return resources.begin(); }
+	constexpr auto end() -> decltype(resources.end()) { return resources.end(); }
+	constexpr auto cbegin() const -> decltype(resources.cbegin()) { return resources.cbegin(); }
+	constexpr auto cend() const -> decltype(resources.cend()) { return resources.cend(); }
+	constexpr auto empty() const -> decltype(resources.empty()) { return resources.empty(); }
+	constexpr auto size() const -> decltype(resources.size()) { return resources.size(); }
 
 	void DeleteUnnamedResources();
 

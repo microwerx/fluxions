@@ -469,8 +469,8 @@ struct Sph4f
 	}
 	size_t size() const { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
 
-	inline void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
-	inline void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
+	constexpr void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
+	constexpr void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
 
 	void Accumulate(const Sph4f &b, const float c, int maxDegrees = -1)
 	{

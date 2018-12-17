@@ -541,25 +541,25 @@ extern template class TColor3<unsigned char>;
 #endif
 
 // Scales the color by 255 and then clamps to 0 to 65535
-inline Color3i ToColor3i(const Color3f color, float scale = 255.0f, int min_value = 0, int max_value = 65535)
+constexpr Color3i ToColor3i(const Color3f color, float scale = 255.0f, int min_value = 0, int max_value = 65535)
 {
     return color.ToColor3<int, float>(scale, min_value, max_value);
 }
 
 // Scales the color by 255 and then clamps to 0 to 255
-inline Color3ub ToColor3ub(const Color3f color, float scale = 255.99f, int min_value = 0, int max_value = 255)
+constexpr Color3ub ToColor3ub(const Color3f color, float scale = 255.99f, int min_value = 0, int max_value = 255)
 {
     return color.ToColor3<unsigned char, float>(scale, (unsigned char)min_value, (unsigned char)max_value);
 }
 
 // Scales the color by 1/255 and then clamps to 0 to 1
-inline Color3f ToColor3f(const Color3ub color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
+constexpr Color3f ToColor3f(const Color3ub color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
 {
     return color.ToColor3<float>(scale, min_value, max_value);
 }
 
 // Scales the color by 1/255 and then clamps to 0 to 1
-inline Color3f ToColor3f(const Color3i color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
+constexpr Color3f ToColor3f(const Color3i color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
 {
     return color.ToColor3<float>(scale, min_value, max_value);
 }
@@ -568,7 +568,7 @@ Color3f HLSToRGBf(float h, float l, float s) noexcept;
 Color3d HLSToRGBd(double h, double l, double s) noexcept;
 
 template <typename T>
-inline TColor3<T> SRGBtoRGB(const TColor3<T> &color) noexcept
+constexpr TColor3<T> SRGBtoRGB(const TColor3<T> &color) noexcept
 {
     return TColor3<T>(
         SRGBToLinear<T>(color.r),
@@ -577,7 +577,7 @@ inline TColor3<T> SRGBtoRGB(const TColor3<T> &color) noexcept
 }
 
 template <typename T>
-inline TColor3<T> RGBtoSRGB(const TColor3<T> &color) noexcept
+constexpr TColor3<T> RGBtoSRGB(const TColor3<T> &color) noexcept
 {
     return TColor3<T>(
         LinearToSRGB<T>(color.r),
@@ -585,7 +585,7 @@ inline TColor3<T> RGBtoSRGB(const TColor3<T> &color) noexcept
         LinearToSRGB<T>(color.b));
 }
 
-inline Color3f SRGBtoRGBf(const Color3f &color) noexcept
+constexpr Color3f SRGBtoRGBf(const Color3f &color) noexcept
 {
     return Color3f(
         SRGBToLinear<f32_t>(color.r),
@@ -593,7 +593,7 @@ inline Color3f SRGBtoRGBf(const Color3f &color) noexcept
         SRGBToLinear<f32_t>(color.b));
 }
 
-inline Color3d SRGBtoRGBd(const Color3d &color) noexcept
+constexpr Color3d SRGBtoRGBd(const Color3d &color) noexcept
 {
     return Color3d(
         SRGBToLinear<f64_t>(color.r),
@@ -601,7 +601,7 @@ inline Color3d SRGBtoRGBd(const Color3d &color) noexcept
         SRGBToLinear<f64_t>(color.b));
 }
 
-inline Color3f RGBtoSRGBf(const Color3f &color) noexcept
+constexpr Color3f RGBtoSRGBf(const Color3f &color) noexcept
 {
     return Color3f(
         LinearToSRGB<f32_t>(color.r),
@@ -609,7 +609,7 @@ inline Color3f RGBtoSRGBf(const Color3f &color) noexcept
         LinearToSRGB<f32_t>(color.b));
 }
 
-inline Color3d RGBtoSRGBf(const Color3d &color) noexcept
+constexpr Color3d RGBtoSRGBf(const Color3d &color) noexcept
 {
     return Color3d(
         LinearToSRGB<f64_t>(color.r),

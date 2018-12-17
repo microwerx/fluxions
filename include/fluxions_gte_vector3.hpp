@@ -171,47 +171,47 @@ class TVector3
     //template <typename U> TVector3<T> operator + (const TVector3<U> & V) const;
     //template <typename U> TVector3<T> operator - (const TVector3<U> & V) const;
 
-    //inline TVector3<T> multiply(const TVector3<T> &V) const
+    //constexpr TVector3<T> multiply(const TVector3<T> &V) const
     //{
     //	return TVector3<T>(X*V.X, y*V.y, z*V.z);
     //}
 
-    //inline TVector3<T> divide(const TVector3<T> &V) const
+    //constexpr TVector3<T> divide(const TVector3<T> &V) const
     //{
     //	return TVector3<T>(X / V.X, y / V.y, z / V.z);
     //}
 
-    //inline TVector3<T> sub(const int val) const
+    //constexpr TVector3<T> sub(const int val) const
     //{
     //	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
     //}
 
-    //inline TVector3<T> sub(const float val) const
+    //constexpr TVector3<T> sub(const float val) const
     //{
     //	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
     //}
 
-    //inline TVector3<T> sub(const double val) const
+    //constexpr TVector3<T> sub(const double val) const
     //{
     //	return TVector3<T>((T)(X - val), (T)(y - val), (T)(z - val));
     //}
 
-    //inline TVector3<T> add(const int val) const
+    //constexpr TVector3<T> add(const int val) const
     //{
     //	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
     //}
 
-    //inline TVector3<T> add(const float val) const
+    //constexpr TVector3<T> add(const float val) const
     //{
     //	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
     //}
 
-    //inline TVector3<T> add(const double val) const
+    //constexpr TVector3<T> add(const double val) const
     //{
     //	return TVector3<T>((T)(X + val), (T)(y + val), (T)(z + val));
     //}
 
-    inline TVector3<T> &reset(T _x = 0, T _y = 0, T _z = 0)
+    constexpr TVector3<T> &reset(T _x = 0, T _y = 0, T _z = 0)
     {
         x = _x;
         y = _y;

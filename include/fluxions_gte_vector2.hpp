@@ -298,25 +298,25 @@ constexpr auto dot(const TVector2<U> &v1, const TVector2<U> &v2) noexcept
 // N O N - C L A S S   O P E R A T I O N S //////////////////////////
 
 template <typename T, typename U>
-inline TVector2<U> operator*(const T a, const TVector2<U> V)
+constexpr TVector2<U> operator*(const T a, const TVector2<U> V)
 {
     return TVector2<U>((U)(a * V.x), (U)(a * V.y));
 }
 
 template <typename T, typename U>
-inline TVector2<T> operator*(const TVector2<T> V, const U a)
+constexpr TVector2<T> operator*(const TVector2<T> V, const U a)
 {
     return TVector2<T>((T)(a * V.x), (T)(a * V.y));
 }
 
 template <typename T, typename U>
-inline TVector2<T> operator/(const TVector2<T> V, const U a)
+constexpr TVector2<T> operator/(const TVector2<T> V, const U a)
 {
     return TVector2<T>((T)(V.x / a), (T)(V.y / a));
 }
 
 template <typename T, typename U>
-inline TVector2<T> operator/(const U a, const TVector2<T> V)
+constexpr TVector2<T> operator/(const U a, const TVector2<T> V)
 {
     return TVector2<T>((T)(a / V.x), (T)(a / V.y));
 }

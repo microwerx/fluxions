@@ -1073,7 +1073,7 @@ class TMatrix4
 
 //template<typename T>
 //template<typename U>
-//inline TMatrix4<T> TMatrix4<T>::multiply(TMatrix4<T> m1, TMatrix4<U> m2)
+//constexpr TMatrix4<T> TMatrix4<T>::multiply(TMatrix4<T> m1, TMatrix4<U> m2)
 //{
 //	return TMatrix4<T>(
 //		(T)(m1.m14*m2.m41 + m1.m13*m2.m31 + m1.m12*m2.m21 + m1.m11*m2.m11),
@@ -1260,7 +1260,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<T> & TMatrix4<T>::Transpose()
+//constexpr TMatrix4<T> & TMatrix4<T>::Transpose()
 //{
 //	return *this = AsTranspose();
 //}
@@ -1458,7 +1458,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeRotation(double angleInDegrees, double X, double y, double z)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeRotation(double angleInDegrees, double X, double y, double z)
 //{
 //	double angleInRadians = angleInDegrees * FX_DEGREES_TO_RADIANS;
 //	double c = cos(angleInRadians);
@@ -1477,7 +1477,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeScaling(double X, double y, double z)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeScaling(double X, double y, double z)
 //{
 //	return TMatrix4<double>(
 //		X, 0, 0, 0,
@@ -1488,7 +1488,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeTranslation(double X, double y, double z)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeTranslation(double X, double y, double z)
 //{
 //	return TMatrix4<double>(
 //		1, 0, 0, X,
@@ -1499,7 +1499,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeOrtho(double left, double right, double bottom, double top, double near_value, double far_value)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeOrtho(double left, double right, double bottom, double top, double near_value, double far_value)
 //{
 //	double tx = -(right + left) / (right - left);
 //	double ty = -(top + bottom) / (top - bottom);
@@ -1514,7 +1514,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeOrtho2D(double left, double right, double bottom, double top)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeOrtho2D(double left, double right, double bottom, double top)
 //{
 //	double tx = -(right + left) / (right - left);
 //	double ty = -(top + bottom) / (top - bottom);
@@ -1528,7 +1528,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeFrustum(double left, double right, double bottom, double top, double near_value, double far_value)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeFrustum(double left, double right, double bottom, double top, double near_value, double far_value)
 //{
 //	double A = (right + left) / (right - left);
 //	double B = (top + bottom) / (top - bottom);
@@ -1544,7 +1544,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakePerspective(double angleInDegrees, double aspect, double near_value, double far_value)
+//constexpr TMatrix4<double> TMatrix4<T>::MakePerspective(double angleInDegrees, double aspect, double near_value, double far_value)
 //{
 //	double f = 1.0 / std::tan(FX_DEGREES_TO_RADIANS * 0.5 * angleInDegrees);
 
@@ -1557,7 +1557,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakePerspectiveX(double angleInDegrees, double aspect, double near_value, double far_value)
+//constexpr TMatrix4<double> TMatrix4<T>::MakePerspectiveX(double angleInDegrees, double aspect, double near_value, double far_value)
 //{
 //	double f = 1.0 / std::tan(FX_DEGREES_TO_RADIANS * 0.5 * angleInDegrees);
 
@@ -1570,7 +1570,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakePerspectiveY(double angleInDegrees, double aspect, double near_value, double far_value)
+//constexpr TMatrix4<double> TMatrix4<T>::MakePerspectiveY(double angleInDegrees, double aspect, double near_value, double far_value)
 //{
 //	double f = 1.0 / std::tan(FX_DEGREES_TO_RADIANS * 0.5 * angleInDegrees);
 
@@ -1583,7 +1583,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeLookAt(TVector3<double> eye, TVector3<double> center, TVector3<double> up)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeLookAt(TVector3<double> eye, TVector3<double> center, TVector3<double> up)
 //{
 //	TVector3<double> F = (center - eye).norm();
 //	TVector3<double> S = F.cross(up).norm();
@@ -1598,7 +1598,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeShadowBias()
+//constexpr TMatrix4<double> TMatrix4<T>::MakeShadowBias()
 //{
 //	return TMatrix4<double>(
 //		0.5, 0.0, 0.0, 0.5,
@@ -1608,7 +1608,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeCubeMatrix(int face)
+//constexpr TMatrix4<double> TMatrix4<T>::MakeCubeMatrix(int face)
 //{
 //	// support GL_TEXTURE_CUBE_MAP_POSITIVE_X, ... constants
 //	if (face >= 0x8515 && face <= 0x851A) face -= 0x8515;
@@ -1638,7 +1638,7 @@ class TMatrix4
 //}
 
 //template <typename T>
-//inline TMatrix4<double> TMatrix4<T>::MakeIdentity()
+//constexpr TMatrix4<double> TMatrix4<T>::MakeIdentity()
 //{
 //	return TMatrix4<double>(
 //		1.0, 0.0, 0.0, 0.0,

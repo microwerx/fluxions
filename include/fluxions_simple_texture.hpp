@@ -117,11 +117,11 @@ class SimpleTexture
 	void SetTextureCubeMap(GLenum format, GLenum type, int width, int height, void **data, bool genMipMap = true);
 	void SetTextureCubeMap(GLenum format, GLenum type, int width, int height, void *posxData, void *posyData, void *poszData, void *negxData, void *negyData, void *negzData, bool genMipMap = true);
 
-	GLuint GetTextureId() const { return id; }
-	GLenum GetTarget() const { return target; }
+	constexpr GLuint GetTextureId() const { return id; }
+	constexpr GLenum GetTarget() const { return target; }
 
-	void FreeMemory() { image.reset(); }
-	inline Image4f &GetImage() { return image; }
+	constexpr void FreeMemory() noexcept { image.reset(); }
+	constexpr Image4f &GetImage() noexcept { return image; }
 
 	SamplerObject samplerObject;
 

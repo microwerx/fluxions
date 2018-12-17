@@ -41,7 +41,7 @@ class XInputGamepadState : public GamepadState
 	virtual bool IsConnected();
 
   private:
-	inline double iff(bool status, double trueValue = 1.0, double falseValue = 0.0) const
+	constexpr double iff(bool status, double trueValue = 1.0, double falseValue = 0.0) const noexcept
 	{
 		if (status)
 			return trueValue;

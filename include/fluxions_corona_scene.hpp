@@ -84,57 +84,57 @@ class CoronaJob
 
 	void EnableHQ() { isHQ = true; }
 	void DisableHQ() { isHQ = false; }
-	inline bool IsHQ() const { return isHQ; }
+	constexpr bool IsHQ() const { return isHQ; }
 
-	inline void SetMaxRayDepth(int depth) { maxRayDepth = clamp(depth, 1, 50); }
-	inline void SetPassLimit(int limit) { passLimit = clamp(limit, 1, 100); }
+	constexpr void SetMaxRayDepth(int depth) { maxRayDepth = clamp(depth, 1, 50); }
+	constexpr void SetPassLimit(int limit) { passLimit = clamp(limit, 1, 100); }
 
-	inline void SetIgnoreCache(bool bState) { ignoreCache = bState; }
+	constexpr void SetIgnoreCache(bool bState) { ignoreCache = bState; }
 
 	void EnableHDR() { isHDR = true; }
 	void DisableHDR() { isHDR = false; }
-	inline bool IsHDR() const { return isHDR; }
+	constexpr bool IsHDR() const { return isHDR; }
 
-	inline bool IsReady() const { return state == State::Ready; }
-	inline bool IsRunning() const { return state == State::Running; }
-	inline bool IsFinished() const { return state == State::Finished; }
+	constexpr bool IsReady() const { return state == State::Ready; }
+	constexpr bool IsRunning() const { return state == State::Running; }
+	constexpr bool IsFinished() const { return state == State::Finished; }
 
-	inline bool IsREF() const { return type == Type::REF; }
-	inline bool IsREF_CubeMap() const { return type == Type::REF_CubeMap; }
-	inline bool IsSky() const { return type == Type::Sky; }
-	inline bool IsGEN() const { return type == Type::GEN; }
-	inline bool IsVIZ() const { return type == Type::VIZ; }
+	constexpr bool IsREF() const { return type == Type::REF; }
+	constexpr bool IsREF_CubeMap() const { return type == Type::REF_CubeMap; }
+	constexpr bool IsSky() const { return type == Type::Sky; }
+	constexpr bool IsGEN() const { return type == Type::GEN; }
+	constexpr bool IsVIZ() const { return type == Type::VIZ; }
 
-	inline void SetImageDimensions(int w, int h)
+	constexpr void SetImageDimensions(int w, int h)
 	{
 		imageWidth = clamp(w, 0, 8192);
 		imageHeight = clamp(h, 0, 8192);
 	}
 
-	inline double GetElapsedTime() const { return elapsedTime; }
+	constexpr double GetElapsedTime() const { return elapsedTime; }
 
-	inline const std::string &GetOutputPath() const
+	constexpr const std::string &GetOutputPath() const
 	{
 		if (isHQ)
 			return hq_output_path_ppm;
 		else
 			return output_path_ppm;
 	}
-	inline const std::string &GetName() const { return scene_name; }
+	constexpr const std::string &GetName() const { return scene_name; }
 
-	inline int GetGENLightIndex() const
+	constexpr int GetGENLightIndex() const
 	{
 		if (IsGEN())
 			return recvLight;
 		return -1;
 	}
-	inline int GetVIZSendLightIndex() const
+	constexpr int GetVIZSendLightIndex() const
 	{
 		if (IsVIZ())
 			return sendLight;
 		return -1;
 	}
-	inline int GetVIZRecvLightIndex() const
+	constexpr int GetVIZRecvLightIndex() const
 	{
 		if (IsVIZ())
 			return recvLight;
@@ -155,15 +155,15 @@ class CoronaJob
 	static std::string MakeGENName(const std::string &prefix, int recvLightIndex, bool isHDR = false, bool isHQ = false, bool ks = false, int MaxRayDepth = 5, int PassLimit = 1);
 	static std::string MakeHIERName(const std::string &prefix, int sendLightIndex, int MaxDegrees);
 
-	inline bool IsJobFinished() const { return finished; }
-	inline void MarkJobFinished() { finished = true; }
-	inline void MarkJobUnfinished()
+	constexpr bool IsJobFinished() const { return finished; }
+	constexpr void MarkJobFinished() { finished = true; }
+	constexpr void MarkJobUnfinished()
 	{
 		finished = false;
 		working = false;
 	}
-	inline bool IsJobWorking() const { return working; }
-	inline void MarkJobWorking() { working = true; }
+	constexpr bool IsJobWorking() const { return working; }
+	constexpr void MarkJobWorking() { working = true; }
 
 	std::string ToString() const;
 	void FromString(const std::string &str);

@@ -314,7 +314,7 @@ class VertexArrayObject
         glBindVertexArray(0);
     }
 
-    inline void *cast_to_pointer(size_t i) const noexcept
+    constexpr void *cast_to_pointer(size_t i) const noexcept
     {
         return (void *)i;
     }

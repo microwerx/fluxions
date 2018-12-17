@@ -138,7 +138,7 @@ class TVector4
         return TVector4<T>(-x, -y, -z, -w);
     }
 
-    inline TVector4<T> &reset(T _x = 0, T _y = 0, T _z = 0, T _w = 1)
+    constexpr TVector4<T> &reset(T _x = 0, T _y = 0, T _z = 0, T _w = 1) noexcept
     {
         x = _x;
         y = _y;

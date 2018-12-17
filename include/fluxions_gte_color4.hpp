@@ -502,25 +502,25 @@ extern template class TColor4<unsigned char>;
 #endif
 
 // Scales the color by 255 and then clamps to 0 to 65535
-inline Color4i ToColor4i(const Color4f color, float scale = 255.0f, int min_value = 0, int max_value = 65535)
+constexpr Color4i ToColor4i(const Color4f color, float scale = 255.0f, int min_value = 0, int max_value = 65535)
 {
     return color.ToColor4<int, float>(scale, min_value, max_value);
 }
 
 // Scales the color by 255 and then clamps to 0 to 255
-inline Color4ub ToColor4ub(const Color4f color, float scale = 255.99f, int min_value = 0, int max_value = 255)
+constexpr Color4ub ToColor4ub(const Color4f color, float scale = 255.99f, int min_value = 0, int max_value = 255)
 {
     return color.ToColor4<unsigned char, float>(scale, (unsigned char)min_value, (unsigned char)max_value);
 }
 
 // Scales the color by 1/255 and then clamps to 0 to 1
-inline Color4f ToColor4f(const Color4ub color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
+constexpr Color4f ToColor4f(const Color4ub color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
 {
     return color.ToColor4<float>(scale, min_value, max_value);
 }
 
 // Scales the color by 1/255 and then clamps to 0 to 1
-inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
+constexpr Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f)
 {
     return color.ToColor4<float>(scale, min_value, max_value);
 }
@@ -529,7 +529,7 @@ inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float
 // M A T H   F U N C T I O N S ///////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-//inline Color4f sqrt(const Color4f & color) noexcept
+//constexpr Color4f sqrt(const Color4f & color) noexcept
 //{
 //	return Color4f(
 //		std::sqrt(color.r),
@@ -539,7 +539,7 @@ inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float
 //	);
 //}
 
-//inline Color4d sqrt(const Color4d & color) noexcept
+//constexpr Color4d sqrt(const Color4d & color) noexcept
 //{
 //	return Color4d(
 //		std::sqrt(color.r),
@@ -550,7 +550,7 @@ inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float
 //}
 
 //template <typename T>
-//inline TColor4<T> SRGBtoRGB(const TColor4<T> & c) noexcept
+//constexpr TColor4<T> SRGBtoRGB(const TColor4<T> & c) noexcept
 //{
 //	return Color4f(
 //		SRGBToLinear<T>(color.r),
@@ -561,7 +561,7 @@ inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float
 //}
 
 //template <typename T>
-//inline TColor4<T> RGBtoSRGB(const TColor4<T> & c) noexcept
+//constexpr TColor4<T> RGBtoSRGB(const TColor4<T> & c) noexcept
 //{
 //	return Color4f(
 //		LinearToSRGB<T>(color.r),
@@ -591,7 +591,7 @@ inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float
 //	);
 //}
 
-//inline Color4f RGBtoSRGBf(const Color4f & color) noexcept
+//constexpr Color4f RGBtoSRGBf(const Color4f & color) noexcept
 //{
 //	return Color4f(
 //		LinearToSRGB<f32_t>(color.r),
@@ -601,7 +601,7 @@ inline Color4f ToColor4f(const Color4i color, float scale = 1.0f / 255.0f, float
 //	);
 //}
 
-//inline Color4d RGBtoSRGBf(const Color4d & color) noexcept
+//constexpr Color4d RGBtoSRGBf(const Color4d & color) noexcept
 //{
 //	return Color4d(
 //		LinearToSRGB<f64_t>(color.r),

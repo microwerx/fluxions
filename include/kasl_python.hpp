@@ -70,9 +70,9 @@ class PythonInterpreter
 	/// <summary>addCommand(cmd, str) adds a command string to the command deque.</summary>
 	void addCommand(Command cmd, const std::string &str);
 
-	inline bool isInitialized() const { return currentState != State::InitialState; }
-	inline bool isStarted() const { return currentState == State::Started; }
-	inline bool isReady() const { return currentState == State::Ready; }
+	constexpr bool isInitialized() const { return currentState != State::InitialState; }
+	constexpr bool isStarted() const { return currentState == State::Started; }
+	constexpr bool isReady() const { return currentState == State::Ready; }
 
 	// Mutex control of the Python Interpreter thread
 

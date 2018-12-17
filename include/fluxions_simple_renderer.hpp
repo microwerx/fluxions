@@ -61,92 +61,92 @@ class SimpleUniform
 
     std::vector<GLubyte> buffer;
 
-    inline const SimpleUniform &operator=(const SimpleUniform &uniform)
+    constexpr const SimpleUniform &operator=(const SimpleUniform &uniform)
     {
         // name = uniform.name;
         ChangeType(uniform.type, uniform.count, uniform.transpose, uniform.buffer.data());
         return *this;
     }
 
-    inline SimpleUniform &operator=(const TMatrix2<GLfloat> &m)
+    constexpr SimpleUniform &operator=(const TMatrix2<GLfloat> &m)
     {
         UniformMatrix2fv(m.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TMatrix3<GLfloat> &m)
+    constexpr SimpleUniform &operator=(const TMatrix3<GLfloat> &m)
     {
         UniformMatrix3fv(m.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TMatrix4<GLfloat> &m)
+    constexpr SimpleUniform &operator=(const TMatrix4<GLfloat> &m)
     {
         UniformMatrix4fv(m.const_ptr());
         return *this;
     }
-    //inline SimpleUniform & operator=(const TMatrix2x3<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
-    //inline SimpleUniform & operator=(const TMatrix2x4<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
-    //inline SimpleUniform & operator=(const TMatrix3x2<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
-    //inline SimpleUniform & operator=(const TMatrix3x4<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
-    //inline SimpleUniform & operator=(const TMatrix4x2<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
-    //inline SimpleUniform & operator=(const TMatrix4x3<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
+    //constexpr SimpleUniform & operator=(const TMatrix2x3<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
+    //constexpr SimpleUniform & operator=(const TMatrix2x4<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
+    //constexpr SimpleUniform & operator=(const TMatrix3x2<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
+    //constexpr SimpleUniform & operator=(const TMatrix3x4<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
+    //constexpr SimpleUniform & operator=(const TMatrix4x2<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
+    //constexpr SimpleUniform & operator=(const TMatrix4x3<GLfloat> &ptr) { UniformMatrix2x3fv(ptr.ptr); return *this; }
 
-    inline SimpleUniform &operator=(const TMatrix2<double> &m) { return *this = (TMatrix2<float>)(m); }
-    inline SimpleUniform &operator=(const TMatrix3<double> &m) { return *this = (TMatrix3<float>)(m); }
-    inline SimpleUniform &operator=(const TMatrix4<double> &m) { return *this = (TMatrix4<float>)(m); }
-    //inline SimpleUniform & operator=(const TMatrix2x3<double> &ptr) { return *this = (TMatrix2x3<float>)(ptr); }
-    //inline SimpleUniform & operator=(const TMatrix2x4<double> &ptr) { return *this = (TMatrix2x4<float>)(ptr); }
-    //inline SimpleUniform & operator=(const TMatrix3x2<double> &ptr) { return *this = (TMatrix3x2<float>)(ptr); }
-    //inline SimpleUniform & operator=(const TMatrix3x4<double> &ptr) { return *this = (TMatrix3x4<float>)(ptr); }
-    //inline SimpleUniform & operator=(const TMatrix4x2<double> &ptr) { return *this = (TMatrix4x2<float>)(ptr); }
-    //inline SimpleUniform & operator=(const TMatrix4x3<double> &ptr) { return *this = (TMatrix4x3<float>)(ptr); }
+    constexpr SimpleUniform &operator=(const TMatrix2<double> &m) { return *this = (TMatrix2<float>)(m); }
+    constexpr SimpleUniform &operator=(const TMatrix3<double> &m) { return *this = (TMatrix3<float>)(m); }
+    constexpr SimpleUniform &operator=(const TMatrix4<double> &m) { return *this = (TMatrix4<float>)(m); }
+    //constexpr SimpleUniform & operator=(const TMatrix2x3<double> &ptr) { return *this = (TMatrix2x3<float>)(ptr); }
+    //constexpr SimpleUniform & operator=(const TMatrix2x4<double> &ptr) { return *this = (TMatrix2x4<float>)(ptr); }
+    //constexpr SimpleUniform & operator=(const TMatrix3x2<double> &ptr) { return *this = (TMatrix3x2<float>)(ptr); }
+    //constexpr SimpleUniform & operator=(const TMatrix3x4<double> &ptr) { return *this = (TMatrix3x4<float>)(ptr); }
+    //constexpr SimpleUniform & operator=(const TMatrix4x2<double> &ptr) { return *this = (TMatrix4x2<float>)(ptr); }
+    //constexpr SimpleUniform & operator=(const TMatrix4x3<double> &ptr) { return *this = (TMatrix4x3<float>)(ptr); }
 
-    inline SimpleUniform &operator=(const TVector2<GLfloat> &v)
+    constexpr SimpleUniform &operator=(const TVector2<GLfloat> &v)
     {
         Uniform2fv(v.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TVector3<GLfloat> &v)
+    constexpr SimpleUniform &operator=(const TVector3<GLfloat> &v)
     {
         Uniform3fv(v.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TVector4<GLfloat> &v)
+    constexpr SimpleUniform &operator=(const TVector4<GLfloat> &v)
     {
         Uniform4fv(v.const_ptr());
         return *this;
     }
 
-    inline SimpleUniform &operator=(const TVector2<double> &v) { return *this = (TVector2<float>)(v); }
-    inline SimpleUniform &operator=(const TVector3<double> &v) { return *this = (TVector3<float>)(v); }
-    inline SimpleUniform &operator=(const TVector4<double> &v) { return *this = (TVector4<float>)(v); }
+    constexpr SimpleUniform &operator=(const TVector2<double> &v) { return *this = (TVector2<float>)(v); }
+    constexpr SimpleUniform &operator=(const TVector3<double> &v) { return *this = (TVector3<float>)(v); }
+    constexpr SimpleUniform &operator=(const TVector4<double> &v) { return *this = (TVector4<float>)(v); }
 
-    inline SimpleUniform &operator=(const TVector2<GLint> &v)
+    constexpr SimpleUniform &operator=(const TVector2<GLint> &v)
     {
         Uniform2iv(v.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TVector3<GLint> &v)
+    constexpr SimpleUniform &operator=(const TVector3<GLint> &v)
     {
         Uniform3iv(v.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TVector4<GLint> &v)
+    constexpr SimpleUniform &operator=(const TVector4<GLint> &v)
     {
         Uniform4iv(v.const_ptr());
         return *this;
     }
 
-    inline SimpleUniform &operator=(const TVector2<GLuint> &v)
+    constexpr SimpleUniform &operator=(const TVector2<GLuint> &v)
     {
         Uniform2uiv(v.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TVector3<GLuint> &v)
+    constexpr SimpleUniform &operator=(const TVector3<GLuint> &v)
     {
         Uniform3uiv(v.const_ptr());
         return *this;
     }
-    inline SimpleUniform &operator=(const TVector4<GLuint> &v)
+    constexpr SimpleUniform &operator=(const TVector4<GLuint> &v)
     {
         Uniform4uiv(v.const_ptr());
         return *this;
@@ -239,7 +239,7 @@ class SimpleUniform
     //SimpleUniform(TVector3<GLuint> &&v) { Uniform3uiv(v.const_ptr()); }
     //SimpleUniform(TVector4<GLuint> &&v) { Uniform4uiv(v.const_ptr()); }
 
-    inline void SetProgramUniform(GLint uniformLocation)
+    constexpr void SetProgramUniform(GLint uniformLocation)
     {
         if (uniformLocation < 0)
             return;
@@ -376,7 +376,7 @@ class SimpleUniform
         }
     }
 
-    inline void ChangeType(GLenum newType, GLint newCount, GLboolean newTranspose, const GLubyte *newData)
+    constexpr void ChangeType(GLenum newType, GLint newCount, GLboolean newTranspose, const GLubyte *newData)
     {
         if (newData == NULL)
             return;
@@ -395,62 +395,62 @@ class SimpleUniform
         memcpy(&buffer[0], newData, sizeInBytes);
     }
 
-    inline void Uniform1fv(GLenum newType, int newCount, const GLfloat *values) { ChangeType(newType, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform1fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform2fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT_VEC2, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform3fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT_VEC3, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform4fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT_VEC4, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform1iv(int newCount, const GLint *values) { ChangeType(GL_INT, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform2iv(int newCount, const GLint *values) { ChangeType(GL_INT_VEC2, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform3iv(int newCount, const GLint *values) { ChangeType(GL_INT_VEC3, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform4iv(int newCount, const GLint *values) { ChangeType(GL_INT_VEC4, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform1uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform2uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC2, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform3uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC3, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform4uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC4, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform1fv(GLenum newType, int newCount, const GLfloat *values) { ChangeType(newType, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform1fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform2fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT_VEC2, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform3fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT_VEC3, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform4fv(int newCount, const GLfloat *values) { ChangeType(GL_FLOAT_VEC4, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform1iv(int newCount, const GLint *values) { ChangeType(GL_INT, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform2iv(int newCount, const GLint *values) { ChangeType(GL_INT_VEC2, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform3iv(int newCount, const GLint *values) { ChangeType(GL_INT_VEC3, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform4iv(int newCount, const GLint *values) { ChangeType(GL_INT_VEC4, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform1uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform2uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC2, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform3uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC3, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform4uiv(int newCount, const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC4, newCount, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
 
-    inline void Uniform1fv(const GLfloat *values) { ChangeType(GL_FLOAT, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform2fv(const GLfloat *values) { ChangeType(GL_FLOAT_VEC2, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform3fv(const GLfloat *values) { ChangeType(GL_FLOAT_VEC3, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform4fv(const GLfloat *values) { ChangeType(GL_FLOAT_VEC4, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform1iv(const GLint *values) { ChangeType(GL_INT, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform2iv(const GLint *values) { ChangeType(GL_INT_VEC2, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform3iv(const GLint *values) { ChangeType(GL_INT_VEC3, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform4iv(const GLint *values) { ChangeType(GL_INT_VEC4, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform1uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform2uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC2, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform3uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC3, 1, false, reinterpret_cast<const GLubyte *>(values)); }
-    inline void Uniform4uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC4, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform1fv(const GLfloat *values) { ChangeType(GL_FLOAT, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform2fv(const GLfloat *values) { ChangeType(GL_FLOAT_VEC2, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform3fv(const GLfloat *values) { ChangeType(GL_FLOAT_VEC3, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform4fv(const GLfloat *values) { ChangeType(GL_FLOAT_VEC4, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform1iv(const GLint *values) { ChangeType(GL_INT, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform2iv(const GLint *values) { ChangeType(GL_INT_VEC2, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform3iv(const GLint *values) { ChangeType(GL_INT_VEC3, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform4iv(const GLint *values) { ChangeType(GL_INT_VEC4, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform1uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform2uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC2, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform3uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC3, 1, false, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void Uniform4uiv(const GLuint *values) { ChangeType(GL_UNSIGNED_INT_VEC4, 1, false, reinterpret_cast<const GLubyte *>(values)); }
 
-    inline void UniformMatrix2fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT2, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix3fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT3, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix4fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT4, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix2x3fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x3, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix2x4fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x4, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix3x2fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x2, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix3x4fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x4, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix4x2fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x2, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix4x3fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x3, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix2fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT2, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix3fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT3, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix4fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT4, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix2x3fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x3, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix2x4fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x4, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix3x2fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x2, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix3x4fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x4, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix4x2fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x2, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix4x3fv(int newCount, GLboolean newTranspose, const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x3, newCount, newTranspose, reinterpret_cast<const GLubyte *>(values)); }
 
-    inline void UniformMatrix2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix2x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x3, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix2x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x4, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix3x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x2, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix3x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x4, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix4x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x2, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformMatrix4x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x3, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix2x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x3, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix2x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x4, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix3x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x2, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix3x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x4, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix4x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x2, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformMatrix4x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x3, 1, GL_FALSE, reinterpret_cast<const GLubyte *>(values)); }
 
-    inline void UniformTransposeMatrix2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix2x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x3, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix2x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x4, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix3x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x2, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix3x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x4, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix4x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x2, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
-    inline void UniformTransposeMatrix4x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x3, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix2x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x3, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix2x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT2x4, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix3x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x2, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix3x4fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT3x4, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix4x2fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x2, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
+    constexpr void UniformTransposeMatrix4x3fv(const GLfloat *values) { ChangeType(GL_FLOAT_MAT4x3, 1, GL_TRUE, reinterpret_cast<const GLubyte *>(values)); }
 
     template <typename T>
     T *getAs()

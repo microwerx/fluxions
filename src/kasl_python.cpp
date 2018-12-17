@@ -32,13 +32,13 @@
 #include <windows.h>
 #endif
 
-inline std::string wstring_to_string(const std::wstring &wstr)
+constexpr std::string wstring_to_string(const std::wstring &wstr) noexcept
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     return converter.to_bytes(wstr);
 }
 
-inline std::wstring string_to_wstring(const std::string &str)
+constexpr std::wstring string_to_wstring(const std::string &str) noexcept
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     return converter.from_bytes(str);

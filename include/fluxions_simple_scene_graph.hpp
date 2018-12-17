@@ -367,7 +367,7 @@ struct SimpleGpuTexture
         Unbind();
     }
 
-    inline GLuint GetTexture() const
+    constexpr GLuint GetTexture() const
     {
         if (!texture_)
             return 0;
@@ -410,35 +410,35 @@ struct SphlImageTexture
 
 //	// SSPHHLightHierarchy() { }
 
-//	inline void reset()
+//	constexpr void reset()
 //	{
 //		sph.reset();
 //		for (int k = 0; k < 4; k++)
 //			msph[k].reset();
 //	}
 
-//	inline void resize(int maxDegree)
+//	constexpr void resize(int maxDegree)
 //	{
 //		sph.resize(maxDegree);
 //		for (int k = 0; k < 4; k++)
 //			msph[k].resize(maxDegree);
 //	}
 
-//	inline void resize(int maxDegree, float value)
+//	constexpr void resize(int maxDegree, float value)
 //	{
 //		sph.resize(maxDegree, value);
 //		for (int k = 0; k < 4; k++)
 //			msph[k].resize(maxDegree, value);
 //	}
 
-//	inline void Accumulate(const SSPHHLightHierarchy & hier)
+//	constexpr void Accumulate(const SSPHHLightHierarchy & hier)
 //	{
 //		sph.Accumulate(hier.sph, hier.percentVisible);
 //		for (int k = 0; k < 4; k++)
 //			msph[k].Accumulate(hier.msph[k], hier.percentVisible);
 //	}
 
-//	inline void CopySph(const MultispectralSph4f & _msph, float _percentVisible)
+//	constexpr void CopySph(const MultispectralSph4f & _msph, float _percentVisible)
 //	{
 //		for (int k = 0; k < 3; k++)
 //		{
@@ -531,22 +531,22 @@ class SimpleSSPHHLight
     void IsolateCoefficient(int j, int l, int m);
     void SetCoefficient(int j, int l, int m, float value);
     void RandomizeCoefficient(int j, int l, int m, float minValue, float maxValue);
-    inline void Standardize() { MakeIntensityChannel4f(msph); }
+    constexpr void Standardize() { MakeIntensityChannel4f(msph); }
     void Randomize(float size = 1.0f);
 
     void ChangeDegrees(int degrees);
-    inline void IncDegrees() { ChangeDegrees(maxDegree + 1); }
-    inline void DecDegrees() { ChangeDegrees(maxDegree - 1); }
+    constexpr void IncDegrees() { ChangeDegrees(maxDegree + 1); }
+    constexpr void DecDegrees() { ChangeDegrees(maxDegree - 1); }
 
     void ResizeHierarchies(int size);
 
     void MakeDirty();
 
-    inline bool IsDirty() { return dirty; }
-    inline int GetMaxCoefficients() const { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
-    inline int GetMaxCoefficients(int degree) { return degree * (degree + 1) + degree + 1; }
-    inline void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
-    inline void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
+    constexpr bool IsDirty() { return dirty; }
+    constexpr int GetMaxCoefficients() const { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
+    constexpr int GetMaxCoefficients(int degree) { return degree * (degree + 1) + degree + 1; }
+    constexpr void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
+    constexpr void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
 
     // Hierarchies
     void SortHierarchiesByPercent();

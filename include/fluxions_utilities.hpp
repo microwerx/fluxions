@@ -25,7 +25,7 @@
 namespace Fluxions
 {
 
-inline std::vector<std::string> argc_argv_to_vector_string(int argc, char **argv)
+constexpr std::vector<std::string> argc_argv_to_vector_string(int argc, char **argv)
 {
 	std::vector<std::string> args;
 	for (int i = 0; i < argc; i++)
