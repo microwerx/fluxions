@@ -194,6 +194,12 @@ bool ImGuiWidget::CreateDeviceObjects()
     program = glCreateProgram();
     vshader = glCreateShader(GL_VERTEX_SHADER);
     fshader = glCreateShader(GL_FRAGMENT_SHADER);
+    bool result = true;
+    if (program == 0 || vshader == 0 || fshader == 0)
+    {
+        hflog.errorfn(__FUNCTION__, "Unable to create IMGUI shader program and/or shaders");
+        return false;
+    }
     glShaderSource(vshader, 1, &vertex_shader, 0);
     glShaderSource(fshader, 1, &fragment_shader, 0);
     glCompileShader(vshader);
@@ -209,6 +215,7 @@ bool ImGuiWidget::CreateDeviceObjects()
         glGetShaderInfoLog(vshader, infoLogLength, NULL, infoLog);
         hflog.error("%s(): failed to compile ImGui vertex shader\n%s\n", infoLog);
         delete[] infoLog;
+        result = false;
     }
 
     glCompileShader(fshader);
@@ -222,6 +229,12 @@ bool ImGuiWidget::CreateDeviceObjects()
         glGetShaderInfoLog(fshader, infoLogLength, NULL, infoLog);
         hflog.error("%s(): failed to compile ImGui fragment shader\n%s\n", infoLog);
         delete[] infoLog;
+        result = false;
+    }
+
+    if (!result)
+    {
+        return false;
     }
 
     glAttachShader(program, vshader);
@@ -305,6 +318,8 @@ void ImGuiWidget::InvalidateDeviceObjects()
 
 void ImGuiWidget::RenderDrawLists()
 {
+    if (program == 0)
+        return;
     ImDrawData *draw_data = ImGui::GetDrawData();
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     ImGuiIO &io = ImGui::GetIO();
