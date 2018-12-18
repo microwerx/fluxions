@@ -265,7 +265,7 @@ constexpr T multiply_add(T a, T b, T c) noexcept
 
 float randomSampler(float _min0, float _max0);
 
-constexpr void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float *t, size_t *whichFace) noexcept
+inline void MakeFaceSTFromCubeVector(float x, float y, float z, float *s, float *t, size_t *whichFace) noexcept
 {
     // ma is absolute value
     float absX = fabs(x);
@@ -500,7 +500,7 @@ constexpr T abs(T x) noexcept
 *
 * s(ptr,n) = sgn(sin(ptr)) * |sin(ptr)|^n
 */
-constexpr double sqS(double v, double n) noexcept
+inline double sqS(double v, double n) noexcept
 {
     return sgn(sin(v)) * pow(abs(sin(v)), n);
 }
@@ -510,7 +510,7 @@ constexpr double sqS(double v, double n) noexcept
 *
 * c(ptr,n) = sgn(cos(ptr)) * |cos(ptr)|^n
 */
-constexpr double sqC(double v, double n) noexcept
+inline double sqC(double v, double n) noexcept
 {
     return sgn(cos(v)) * pow(abs(cos(v)), n);
 }
@@ -520,7 +520,7 @@ constexpr double sqC(double v, double n) noexcept
 *
 * CT(ptr,n,alpha) = alpha + c(ptr,n)
 */
-constexpr double sqCT(double v, double n, double alpha) noexcept
+inline double sqCT(double v, double n, double alpha) noexcept
 {
     return alpha + sqC(v, n);
 }

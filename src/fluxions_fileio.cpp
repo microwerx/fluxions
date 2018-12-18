@@ -107,16 +107,9 @@ void FilePathInfo::Set(const std::string &_path)
 {
     Clear();
 
-    try
-    {
-        std::regex path_replace("[/\\\\]+");
-        std::string p = std::regex_replace(_path, path_replace, "/");
-        origpath = p;
-    }
-    catch (const std::regex_error &e)
-    {
-        hflog.errorfn(__FUNCTION__, "%s", e.what());
-    }
+    std::regex path_replace("[/\\\\]+");
+    std::string p = std::regex_replace(_path, path_replace, "/");
+    origpath = p;
 
     // updated to use realpath on POSIX
 #ifdef __unix__
