@@ -141,7 +141,7 @@ class PhysicallyBasedSky
 	Astronomy::AstroCalc astroCalc;
 	Astronomy::HorizonCoord sunPosition;
 	Vector3f sunVector;
-	float turbidity;
+	float turbidity = 1.0f;
 	Color4f groundAlbedo;
 	Color4f groundRadiance;
 	Color4f sunDiskRadiance;
