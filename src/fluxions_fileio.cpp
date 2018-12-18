@@ -363,15 +363,19 @@ std::string ReadTextFile(const std::string &filename)
     if (!fin)
         return "";
 
-    std::string str;
-    fin.seekg(0, std::ios::end);
-    size_t size = (size_t)fin.tellg();
-    str.resize(size);
-    fin.seekg(0, std::ios::beg);
-    fin.read(&str[0], size);
-
+    std::stringstream sstr;
+    sstr << fin.rdbuf();
     fin.close();
-    return str;
+    return sstr.str();
+    // std::string str;
+    // fin.seekg(0, std::ios::end);
+    // size_t size = (size_t)fin.tellg();
+    // str.resize(size);
+    // fin.seekg(0, std::ios::beg);
+    // fin.read(&str[0], size);
+
+    // fin.close();
+    // return str;
 }
 
 std::vector<FXubyte> ReadBinaryFile(const std::string &filename)

@@ -34,7 +34,7 @@ std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::stri
 {
 	std::shared_ptr<SimpleShader> shader(new SimpleShader());
 	FilePathInfo fpi(filename);
-	hflog.info("%s(): loading shader `%s'", __FUNCTION__, fpi.fullfname.c_str());
+	hflog.infofn(__FUNCTION__, "loading shader `%s'", fpi.fullfname.c_str());
 	if (!fpi.IsFile())
 		return shader;
 
@@ -62,7 +62,7 @@ std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::stri
 	glGetShaderInfoLog(shader->shader, ival, NULL, infoLog);
 	if (shader->hadError)
 	{
-		hflog.error("%s(): error compiling shader %s\n%s", __FUNCTION__, filename.c_str(), shader->infoLog.c_str());
+		hflog.errorfn(__FUNCTION__, "error compiling shader %s\n%s", filename.c_str(), shader->infoLog.c_str());
 	}
 
 	return shader;

@@ -212,7 +212,7 @@ void Renderer::LoadShaders()
 
 		for (auto &p : rc.programs)
 		{
-			hflog.info("%s(): loading program %s", __FUNCTION__, p.name.c_str());
+			hflog.infofn(__FUNCTION__, "loading program %s", p.name.c_str());
 			std::string vspath = FindPathIfExists(p.vertshader, Paths);
 			std::string fspath = FindPathIfExists(p.fragshader, Paths);
 			std::string gspath = FindPathIfExists(p.geomshader, Paths);

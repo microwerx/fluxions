@@ -273,16 +273,32 @@ bool SimpleProgram::Link()
 
     // if (numAttached == 0) return false;
 
-    hflog.error("%s(): GL Error: %s", __FUNCTION__, glewGetErrorString(glGetError()));
+	{
+		GLenum glerror = glGetError();
+		if (glerror != 0) {
+			hflog.errorfn(__FUNCTION__, "GL Error: %s", (const char *)glewGetErrorString(glerror));
+		}
+	}
 
     static int linkCalled = 0;
     linkCalled++;
     GLint bufSize;
 
     //if (program == 9) return false;
+	try {
+		glLinkProgram(program);
+	}
+	catch (...) {
+		hflog.errorfn(__FUNCTION__, "Unknown error linking program %d", program);
+	}
 
-    glLinkProgram(program);
-    hflog.error("%s(): GL Error: %s", __FUNCTION__, glewGetErrorString(glGetError()));
+	{
+		GLenum glerror = glGetError();
+		if (glerror != 0)
+		{
+			hflog.errorfn(__FUNCTION__, "GL Error: %s", (const char *)glewGetErrorString(glerror));
+		}
+	}
 
     linkStatus_ = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &linkStatus_);
@@ -340,7 +356,7 @@ bool SimpleProgram::Link()
             ;
             activeUniforms[name].size = size;
             activeUniforms[name].type = type;
-            hflog.info("%s(): uniform (%02d) %20s %s", __FUNCTION__, activeUniforms[name].index, activeUniforms[name].GetNameOfType(), name.c_str());
+            hflog.infofn(__FUNCTION__, "uniform (%02d) %20s %s", activeUniforms[name].index, activeUniforms[name].GetNameOfType(), name.c_str());
         }
 
         for (int i = 0; i < numAttribs; i++)
@@ -350,13 +366,13 @@ bool SimpleProgram::Link()
             activeAttributes[name].index = glGetAttribLocation(program, buffer);
             activeAttributes[name].size = size;
             activeAttributes[name].type = type;
-            hflog.info("%s(): attrib  (%02d) %20s %s", __FUNCTION__, activeAttributes[name].index, activeAttributes[name].GetNameOfType(), name.c_str());
+            hflog.infofn(__FUNCTION__, "attrib  (%02d) %20s %s", activeAttributes[name].index, activeAttributes[name].GetNameOfType(), name.c_str());
         }
     }
 
     if (linked)
     {
-        hflog.info("%s(): program %d linked.", __FUNCTION__, program);
+        hflog.infofn(__FUNCTION__, "program %d linked.", program);
     }
 
     return linked;
