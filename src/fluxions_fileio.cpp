@@ -107,9 +107,16 @@ void FilePathInfo::Set(const std::string &_path)
 {
     Clear();
 
-    std::regex path_replace("[/\\]+", std::regex::awk);
-    std::string p = std::regex_replace(_path, path_replace, "/");
-    origpath = p;
+    try
+    {
+        std::regex path_replace("[/\\\\]+");
+        std::string p = std::regex_replace(_path, path_replace, "/");
+        origpath = p;
+    }
+    catch (const std::regex_error &e)
+    {
+        hflog.errorfn(__FUNCTION__, "%s", e.what());
+    }
 
     // updated to use realpath on POSIX
 #ifdef __unix__
@@ -225,7 +232,7 @@ std::string FilePathInfo::getFullPathName(const std::string &filename)
 
     outputStr = pathStr;
 #endif
-    std::regex path_replace("[/\\]+", std::regex::awk);
+    std::regex path_replace("[/\\\\]+");
     std::string p = std::regex_replace(outputStr, path_replace, "/");
 
     return p;
@@ -258,7 +265,7 @@ std::string FilePathInfo::getCurrentDirectory()
         output = "";
     }
 #endif
-    std::regex path_replace("[/\\]+", std::regex::awk);
+    std::regex path_replace("[/\\\\]+");
     std::string p = std::regex_replace(output, path_replace, "/");
 
     return p;
