@@ -40,6 +40,9 @@ namespace Viperfish
 
 	void DearImGuiWidget::OnInit(const std::vector<std::string> &args)
 	{
+		Widget::OnInit(args);
+
+		hflog.infofn(__FUNCTION__, "Creating ImGui Context");
 		pImGuiContext = ImGui::CreateContext();
 		pIO = &ImGui::GetIO();
 		pIO->DisplaySize.x = 640.0f;
@@ -67,13 +70,12 @@ namespace Viperfish
 		pIO->KeyMap[ImGuiKey_Z] = 'z';
 
 		CreateDeviceObjects();
-
-		Widget::OnInit(args);
 	}
 
 	void DearImGuiWidget::OnKill()
 	{
 		InvalidateDeviceObjects();
+		hflog.infofn(__FUNCTION__, "Destroying ImGui Context");
 		ImGui::DestroyContext(pImGuiContext);
 		pIO = nullptr;
 		pImGuiContext = nullptr;
@@ -149,20 +151,15 @@ namespace Viperfish
 		Widget::OnUpdate(timeStamp);
 	}
 
-	void DearImGuiWidget::OnRender3D()
+	void DearImGuiWidget::OnPreRender()
 	{
-		Widget::OnRender3D();
-	}
-
-	void DearImGuiWidget::OnRender2D()
-	{
-		Widget::OnRender2D();
-	}
-
-	void DearImGuiWidget::OnRenderDearImGui()
-	{
-		Widget::OnRenderDearImGui();
+		Widget::OnPreRender();
 		ImGui::NewFrame();
+	}
+
+	void DearImGuiWidget::OnPostRender()
+	{
+		Widget::OnPostRender();
 		ImGui::Render();
 		RenderDrawLists();
 	}
@@ -191,6 +188,7 @@ namespace Viperfish
 		pIO->Fonts->TexID = (ImTextureID)id;
 
 		const GLchar *vertex_shader = "#version 100\n"
+			"precision highp float;\n"
 			"uniform mat4 ProjectionMatrix;\n"
 			"in vec4 aPosition;\n"
 			"in vec3 aTexcoord;\n"
@@ -201,10 +199,11 @@ namespace Viperfish
 			"{\n"
 			"	vTexcoord = aTexcoord;\n"
 			"	vColor = aColor;\n"
-			"	gl_Position = ProjectionMatrix * vec4(aPosition.xyz,1);\n"
+			"	gl_Position = ProjectionMatrix * vec4(aPosition.xyz,1.0);\n"
 			"}\n";
 
 		const GLchar *fragment_shader = "#version 100\n"
+			"precision highp float;\n"
 			"uniform sampler2D Texture0;\n"
 			"in vec3 vTexcoord;\n"
 			"in vec4 vColor;\n"
@@ -301,6 +300,7 @@ namespace Viperfish
 		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
 		glBindVertexArray(last_vertex_array);
 
+		hflog.infofn(__FUNCTION__, "ImGui Device Objects Created");
 		return true;
 	}
 
@@ -336,6 +336,7 @@ namespace Viperfish
 			ImGui::GetIO().Fonts->TexID = 0;
 			fontTextureId = 0;
 		}
+		hflog.infofn(__FUNCTION__, "ImGui Device Objects Invalidated");
 	}
 
 	void DearImGuiWidget::RenderDrawLists()

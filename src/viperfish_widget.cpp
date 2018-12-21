@@ -563,11 +563,11 @@ namespace Viperfish
 	{
 		if (decorateeWidget_)
 		{
-			decorateeWidget_->OnPostRender();
+			decorateeWidget_->OnPreRender();
 		}
 		for (auto &w : children_)
 		{
-			w->OnPostRender();
+			w->OnPreRender();
 		}
 	}
 

@@ -54,9 +54,8 @@ namespace Viperfish
 		virtual void OnKeyDown(const std::string &key, int keymod) override;
 		virtual void OnKeyUp(const std::string &key, int keymod) override;
 
-		virtual void OnRender3D() override;
-		virtual void OnRender2D() override;
-		virtual void OnRenderDearImGui() override;
+		virtual void OnPreRender() override;
+		virtual void OnPostRender() override;
 
 	protected:
 		GLuint fontTextureId = 0;
