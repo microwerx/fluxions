@@ -55,6 +55,19 @@
 #include <math.h>
 #include <inttypes.h>
 
+#ifndef FLUXIONS_NO_SDL
+#ifdef WIN32
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#else
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#endif
+#endif
+#include <sodium.h>
+#include <curl/curl.h>
+#include <Python.h>
+
 // TODO: reference additional headers your program requires here
 #include <ArHosekSkyModel.h>
 #include <fluxions.hpp>
@@ -68,9 +81,9 @@
 #include <fluxions_fileio.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_bounding_box.hpp>
-//#include <fluxions_gte_color3.hpp>
-//#include <fluxions_gte_color4.hpp>
-//#include <fluxions_gte_geometric_algebra.hpp>
+#include <fluxions_gte_color3.hpp>
+#include <fluxions_gte_color4.hpp>
+#include <fluxions_gte_geometric_algebra.hpp>
 #include <fluxions_gte_image.hpp>
 #include <fluxions_gte_iostream.hpp>
 #include <fluxions_gte_math.hpp>
@@ -130,17 +143,5 @@
 #include <viperfish_utilities.hpp>
 #include <viperfish_widget.hpp>
 #include <viperfish_xinput.hpp>
-
-#ifndef FLUXIONS_NO_SDL
-#ifdef WIN32
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#else
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#endif
-#endif
-
-#include <Python.h>
 
 #endif
