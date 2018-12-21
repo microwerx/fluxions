@@ -66,14 +66,24 @@
 
 namespace Fluxions
 {
-extern bool debugging;
-extern const std::string BlankString;
+	extern bool debugging;
+	extern const std::string BlankString;
 
-std::string GetPathTracerName(const std::string &sceneName, bool ks, int mrd, int pl);
-std::string GetSphlRenderName(const std::string &sceneName, int md);
-std::string GetPathTracerSphlRenderName(const std::string &sceneName, bool ks, int mrd, int pl, int md);
-std::string GetStatsName(const std::string &sceneName, bool ks, int mrd, int pl, int md);
+	std::string GetPathTracerName(const std::string &sceneName, bool ks, int mrd, int pl);
+	std::string GetSphlRenderName(const std::string &sceneName, int md);
+	std::string GetPathTracerSphlRenderName(const std::string &sceneName, bool ks, int mrd, int pl, int md);
+	std::string GetStatsName(const std::string &sceneName, bool ks, int mrd, int pl, int md);
 
+	std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **argv);
+
+	void ReadGLInfo();
+	const std::string &GetRenderer();
+	const std::string &GetVendor();
+	const std::string &GetVersion();
+
+	void Init();
+	void Kill();
+	void YieldThread();
 } // namespace Fluxions
 
 #endif

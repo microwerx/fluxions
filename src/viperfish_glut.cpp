@@ -42,7 +42,7 @@ static void display()
     if (!widget)
         return;
 
-    widget->OnRender();
+    widget->OnRender3D();
 }
 
 static void idle()

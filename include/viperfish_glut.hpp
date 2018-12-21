@@ -40,9 +40,6 @@ class GLUTWidget : public Widget
 };
 
 void SetGLUTWidget(std::shared_ptr<Widget> &widget);
-const char *KeyToHTML5Name(char c);
-const char *SpecialKeyToHTML5Name(int key);
-int HTML5NameToKey(const std::string &key);
 } // namespace Viperfish
 
 #endif

@@ -19,16 +19,14 @@
 #include "stdafx.h"
 #include <fluxions.hpp>
 
-#ifdef WIN32
-#pragma comment(lib, "SDL2.lib")
-#pragma comment(lib, "SDL2_image.lib")
-//#pragma comment(lib, "glew32s.lib")
-#endif
-
 namespace Fluxions
 {
 bool debugging = false;
 const std::string BlankString("");
+bool __checkedGLInfo = false;
+std::string gl_version;
+std::string gl_renderer;
+std::string gl_vendor;
 
 std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename)
 {
@@ -96,4 +94,111 @@ std::string FindFileIfExists(const std::string &filename, const std::vector<std:
 
 	return output;
 }
+
+std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **argv)
+{
+	std::map<std::string, std::string> argv_options;
+	for (int i = 0; i < argc; i++)
+	{
+		string option = argv[i];
+		hflog.info("%s(): Processing '%s'", __FUNCTION__, option.c_str());
+		std::regex dashequals("(^-+|=)",
+			std::regex_constants::ECMAScript);
+		std::sregex_token_iterator it(option.begin(),
+			option.end(),
+			dashequals,
+			-1);
+		std::sregex_token_iterator end;
+		size_t count = 0;
+
+		string key = "";
+		string value = "";
+		for (; it != end; it++)
+		{
+			if (count == 1)
+			{
+				key = *it;
+			}
+			else if (count == 2)
+			{
+				value = *it;
+			}
+			string token = *it;
+			hflog.info("%s(): token %d '%s'", __FUNCTION__, count, token.c_str());
+			count++;
+		}
+		if (key.length() > 0)
+		{
+			argv_options.emplace(std::make_pair(key, value));
+			hflog.info("%s(): argv adding key '%s' = '%s'", __FUNCTION__, key.c_str(), value.c_str());
+		}
+	}
+	return argv_options;
+}
+
+void ReadGLInfo()
+{
+	__checkedGLInfo = true;
+	gl_version = (const char *)glGetString(GL_VERSION);
+	gl_vendor = (const char *)glGetString(GL_VENDOR);
+	gl_renderer = (const char *)glGetString(GL_RENDERER);
+
+	hflog.info("GL_RENDERER: %s\n", gl_renderer.c_str());
+	hflog.info("GL_VERSION:  %s\n", gl_version.c_str());
+	hflog.info("GL_VENDOR:   %s\n", gl_vendor.c_str());
+}
+
+const std::string &GetRenderer()
+{
+	if (!__checkedGLInfo) ReadGLInfo();
+	return gl_renderer;
+}
+
+const std::string &GetVendor()
+{
+	if (!__checkedGLInfo) ReadGLInfo();
+	return gl_vendor;
+}
+
+const std::string &GetVersion()
+{
+	if (!__checkedGLInfo) ReadGLInfo();
+	return gl_version;
+}
+
+void Init()
+{
+	// Perform any necessary initialization steps here
+	hflog.info("%s(): Initializing Fluxions", __FUNCTION__);
+	glewInit();
+	ReadGLInfo();
+
+	glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB, GL_NICEST);
+
+#ifndef FLUXIONS_NO_SDL
+	hflog.infofn(__FUNCTION__, "Initializing SDL");
+	SDL_Init(SDL_INIT_EVERYTHING);
+	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+#endif
+}
+
+void Kill()
+{
+
+}
+
+void YieldThread()
+{
+#ifdef WIN32
+	INPUT input;
+	ZeroMemory(&input, sizeof(INPUT));
+	input.type = INPUT_MOUSE;
+	input.mi.dwFlags = MOUSEEVENTF_MOVE;
+	SendInput(1, &input, sizeof(INPUT));
+	Sleep(0);
+#elif _POSIX_VERSION
+	usleep(0);
+#endif
+}
+
 } // namespace Fluxions
