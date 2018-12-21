@@ -40,7 +40,7 @@ namespace Viperfish
 
 	void DearImGuiWidget::OnInit(const std::vector<std::string> &args)
 	{
-		ImGuiContext *pImguiContext = ImGui::CreateContext();
+		pImGuiContext = ImGui::CreateContext();
 		pIO = &ImGui::GetIO();
 		pIO->DisplaySize.x = 640.0f;
 		pIO->DisplaySize.y = 480.0f;
@@ -201,7 +201,7 @@ namespace Viperfish
 			"{\n"
 			"	vTexcoord = aTexcoord;\n"
 			"	vColor = aColor;\n"
-			"	gl_Position = ProjectionMatrix * vec4(vPosition.xyz,1);\n"
+			"	gl_Position = ProjectionMatrix * vec4(aPosition.xyz,1);\n"
 			"}\n";
 
 		const GLchar *fragment_shader = "#version 100\n"
@@ -210,7 +210,7 @@ namespace Viperfish
 			"in vec4 vColor;\n"
 			"void main()\n"
 			"{\n"
-			" gl_FragColor = vColor * texture(Texture0, vTexcoord.st);\n"
+			" gl_FragColor = vColor * texture2D(Texture0, vTexcoord.st);\n"
 			"}\n";
 
 		program = glCreateProgram();
