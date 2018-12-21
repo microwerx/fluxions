@@ -35,21 +35,6 @@ namespace Viperfish
 		common_constructor(name);
 	}
 
-	Widget::Widget(const std::string &name, SharedPtr &decorateeWidget) noexcept
-	{
-		common_constructor(name);
-		decorate(decorateeWidget);
-	}
-
-	Widget::Widget(std::string &name, std::initializer_list<SharedPtr> childWidgets) noexcept
-	{
-		common_constructor(name);
-		for (auto child = childWidgets.begin(); child != childWidgets.end(); child++)
-		{
-			push_back(*child);
-		}
-	}
-
 	Widget::~Widget()
 	{
 		hflog.infofn(__FUNCTION__, "Destroying Widget '%s'", name_.c_str());

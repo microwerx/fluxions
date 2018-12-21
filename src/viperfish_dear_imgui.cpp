@@ -17,35 +17,30 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
-#include <viperfish_imgui.hpp>
+#include <viperfish_dear_imgui.hpp>
 
 namespace Viperfish
 {
-	ImGuiWidget::ImGuiWidget()
+	DearImGuiWidget::DearImGuiWidget()
 		: Widget("imguiwidget")
 	{
 
 	}
 
-	ImGuiWidget::ImGuiWidget(const std::string &name)
+	DearImGuiWidget::DearImGuiWidget(const std::string &name)
 		: Widget(name)
 	{
 
 	}
 
-	ImGuiWidget::ImGuiWidget(const std::string &name, SharedPtr &decorateeWidget)
-		: Widget(name)
-	{
-		decorate(decorateeWidget);
-	}
-
-	ImGuiWidget::~ImGuiWidget()
+	DearImGuiWidget::~DearImGuiWidget()
 	{
 
 	}
 
-	void ImGuiWidget::OnInit(const std::vector<std::string> &args)
+	void DearImGuiWidget::OnInit(const std::vector<std::string> &args)
 	{
+		ImGuiContext *pImguiContext = ImGui::CreateContext();
 		pIO = &ImGui::GetIO();
 		pIO->DisplaySize.x = 640.0f;
 		pIO->DisplaySize.y = 480.0f;
@@ -76,30 +71,31 @@ namespace Viperfish
 		Widget::OnInit(args);
 	}
 
-	void ImGuiWidget::OnKill()
+	void DearImGuiWidget::OnKill()
 	{
-		Widget::OnKill();
-
 		InvalidateDeviceObjects();
+		ImGui::DestroyContext(pImGuiContext);
 		pIO = nullptr;
-		ImGui::Shutdown();
+		pImGuiContext = nullptr;
+
+		Widget::OnKill();
 	}
 
-	void ImGuiWidget::OnMouseButtonDown(int button)
+	void DearImGuiWidget::OnMouseButtonDown(int button)
 	{
 		Widget::OnMouseButtonDown(button);
 		if (within(button, 0, 4) && pIO != nullptr)
 			pIO->MouseDown[button] = true;
 	}
 
-	void ImGuiWidget::OnMouseButtonUp(int button)
+	void DearImGuiWidget::OnMouseButtonUp(int button)
 	{
 		Widget::OnMouseButtonUp(button);
 		if (within(button, 0, 4) && pIO != nullptr)
 			pIO->MouseDown[button] = false;
 	}
 
-	void ImGuiWidget::OnMouseMove(int x, int y)
+	void DearImGuiWidget::OnMouseMove(int x, int y)
 	{
 		Widget::OnMouseMove(x, y);
 		if (pIO != nullptr)
@@ -109,7 +105,7 @@ namespace Viperfish
 		}
 	}
 
-	void ImGuiWidget::OnKeyDown(const std::string &key, int keymod)
+	void DearImGuiWidget::OnKeyDown(const std::string &key, int keymod)
 	{
 		Widget::OnKeyDown(key, keymod);
 		if (pIO == nullptr || key.empty())
@@ -125,7 +121,7 @@ namespace Viperfish
 		}
 	}
 
-	void ImGuiWidget::OnKeyUp(const std::string &key, int keymod)
+	void DearImGuiWidget::OnKeyUp(const std::string &key, int keymod)
 	{
 		Widget::OnKeyUp(key, keymod);
 		if (pIO == nullptr || key.empty())
@@ -141,7 +137,7 @@ namespace Viperfish
 		}
 	}
 
-	void ImGuiWidget::OnUpdate(double timeStamp)
+	void DearImGuiWidget::OnUpdate(double timeStamp)
 	{
 		if (pIO != nullptr)
 		{
@@ -153,17 +149,17 @@ namespace Viperfish
 		Widget::OnUpdate(timeStamp);
 	}
 
-	void ImGuiWidget::OnRender3D()
+	void DearImGuiWidget::OnRender3D()
 	{
 		Widget::OnRender3D();
 	}
 
-	void ImGuiWidget::OnRender2D()
+	void DearImGuiWidget::OnRender2D()
 	{
 		Widget::OnRender2D();
 	}
 
-	void ImGuiWidget::OnRenderDearImGui()
+	void DearImGuiWidget::OnRenderDearImGui()
 	{
 		Widget::OnRenderDearImGui();
 		ImGui::NewFrame();
@@ -171,7 +167,7 @@ namespace Viperfish
 		RenderDrawLists();
 	}
 
-	bool ImGuiWidget::CreateDeviceObjects()
+	bool DearImGuiWidget::CreateDeviceObjects()
 	{
 		// Backup GL state
 		GLint last_texture, last_array_buffer, last_vertex_array;
@@ -308,7 +304,7 @@ namespace Viperfish
 		return true;
 	}
 
-	void ImGuiWidget::InvalidateDeviceObjects()
+	void DearImGuiWidget::InvalidateDeviceObjects()
 	{
 		if (vao)
 			glDeleteVertexArrays(1, &vao);
@@ -342,7 +338,7 @@ namespace Viperfish
 		}
 	}
 
-	void ImGuiWidget::RenderDrawLists()
+	void DearImGuiWidget::RenderDrawLists()
 	{
 		if (program == 0)
 			return;

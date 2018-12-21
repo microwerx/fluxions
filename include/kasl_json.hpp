@@ -218,7 +218,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 
 	std::string Serialize() const;
 	bool Deserialize(const std::string &json);
-	long DeserializeParseTokens(const TokenVector &tokens, long startIndex = 0);
+	long DeserializeParseTokens(const TokenVector &tokens, size_t startIndex = 0);
 
 	inline bool IsNull() const { return type_ == Type::Null; }
 	inline bool IsTrue() const { return type_ == Type::True; }

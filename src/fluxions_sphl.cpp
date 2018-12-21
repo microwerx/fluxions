@@ -212,9 +212,9 @@ void Sphl::createMesh(FxModel &model)
 			sph_model.GetVertex(v1).attribs[1] += N;
 			sph_model.GetVertex(v2).attribs[1] += N;
 
-			sph_model.AddIndex(k * model.vertexCount + model.triangles[i].x);
-			sph_model.AddIndex(k * model.vertexCount + model.triangles[i].y);
-			sph_model.AddIndex(k * model.vertexCount + model.triangles[i].z);
+			sph_model.AddIndex(k * (int)model.vertexCount + model.triangles[i].x);
+			sph_model.AddIndex(k * (int)model.vertexCount + model.triangles[i].y);
+			sph_model.AddIndex(k * (int)model.vertexCount + model.triangles[i].z);
 		}
 		k++;
 	}
@@ -223,9 +223,9 @@ void Sphl::createMesh(FxModel &model)
 	{
 		for (size_t i = 0; i < model.triangleCount; i++)
 		{
-			int v0 = j * model.vertexCount + model.triangles[i].x;
-			int v1 = j * model.vertexCount + model.triangles[i].y;
-			int v2 = j * model.vertexCount + model.triangles[i].z;
+			size_t v0 = j * model.vertexCount + model.triangles[i].x;
+			size_t v1 = j * model.vertexCount + model.triangles[i].y;
+			size_t v2 = j * model.vertexCount + model.triangles[i].z;
 			sph_model.GetVertex(v0).attribs[1].normalize();
 			sph_model.GetVertex(v1).attribs[1].normalize();
 			sph_model.GetVertex(v2).attribs[1].normalize();
@@ -279,7 +279,7 @@ void Sphl::createLightProbe()
 		glBindTexture(GL_TEXTURE_CUBE_MAP, lightProbeTexIds[2]);
 		for (size_t face = 0; face < lightProbe.depth(); face++)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, lightProbe.width(), lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(face));
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(face));
 		}
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);

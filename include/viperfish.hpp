@@ -33,9 +33,8 @@
 #include <viperfish_xinput.hpp>
 #include <viperfish_utilities.hpp>
 #include <viperfish_stopwatch.hpp>
-#include <viperfish_glut.hpp>
 #include <viperfish_widget.hpp>
-#include <viperfish_imgui.hpp>
+#include <viperfish_dear_imgui.hpp>
 
 namespace Viperfish
 {

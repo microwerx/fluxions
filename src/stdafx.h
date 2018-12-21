@@ -25,6 +25,12 @@
 #ifndef FLUXIONS_STDAFX_H
 #define FLUXIONS_STDAFX_H
 
+#define NOMINMAX
+#define _USE_MATH_DEFINES
+#ifndef FLUXIONS_NO_EXTERN_TEMPLATES
+#define FLUXIONS_NO_EXTERN_TEMPLATES
+#endif
+
 #ifdef WIN32
 #include "targetver.h"
 
@@ -51,22 +57,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define _USE_MATH_DEFINES
 #include <math.h>
 #include <inttypes.h>
 
 #ifndef FLUXIONS_NO_SDL
-#ifdef WIN32
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#else
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#endif
 #endif
 #include <sodium.h>
 #include <curl/curl.h>
 #include <Python.h>
+
+#include <GL/glew.h>
+#ifndef FLUXIONS_NO_FREEGLUT
+#include <GL/freeglut.h>
+#endif
+
+#ifndef FLUXIONS_NO_OPENEXR
+#define OPENEXR_DLL
+#include <OpenEXR/ImfRgbaFile.h>
+#endif
 
 // TODO: reference additional headers your program requires here
 #include <ArHosekSkyModel.h>
@@ -136,7 +146,6 @@
 #include <unicornfish_worker.hpp>
 #include <viperfish.hpp>
 #include <viperfish_gamepad.hpp>
-#include <viperfish_glut.hpp>
 #include <viperfish_keyboard.hpp>
 #include <viperfish_mouse.hpp>
 #include <viperfish_stopwatch.hpp>

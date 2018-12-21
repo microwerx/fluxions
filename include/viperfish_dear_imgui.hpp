@@ -16,36 +16,32 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#ifndef VIPERFISH_GUI_HPP
-#define VIPERFISH_GUI_HPP
+#ifndef VIPERFISH_DEAR_IMGUI_HPP
+#define VIPERFISH_DEAR_IMGUI_HPP
 
 #include <memory>
 #include <string>
-#include <viperfish.hpp>
+#include <fluxions_opengl.hpp>
+#include <viperfish_widget.hpp>
 #include <imgui.h>
 
 namespace Viperfish
 {
-
-	class ImGuiWidget : public Widget
+	class DearImGuiWidget : public Widget
 	{
 	protected:
-		ImGuiWidget();
-		ImGuiWidget(const ImGuiWidget &widget) = default;
-		ImGuiWidget(ImGuiWidget &&widget) = default;
+		DearImGuiWidget();
+		DearImGuiWidget(const DearImGuiWidget &widget) = default;
+		DearImGuiWidget(DearImGuiWidget &&widget) = default;
 
 	public:
-		using SharedPtr = std::shared_ptr<ImGuiWidget>;
-		using UniquePtr = std::unique_ptr<ImGuiWidget>;
+		using SharedPtr = std::shared_ptr<DearImGuiWidget>;
+		using UniquePtr = std::unique_ptr<DearImGuiWidget>;
 
-		template <class... _Types>
-		static SharedPtr MakeShared(_Types &&... _Args) { return SharedPtr(new ImGuiWidget(std::forward<_Types>(_Args)...)); }
-		template <class... _Types>
-		static UniquePtr MakeUnique(_Types &&... _Args) { return UniquePtr(new ImGuiWidget(std::forward<_Types>(_Args)...)); }
+		DearImGuiWidget(const std::string &name);
+		virtual ~DearImGuiWidget() override;
 
-		ImGuiWidget(const std::string &name);
-		ImGuiWidget(const std::string &name, SharedPtr &decorateeWidget);
-		virtual ~ImGuiWidget() override;
+		inline Widget::SharedPtr AsWidgetPtr() noexcept { return Widget::shared_from_this(); }
 
 		virtual void OnInit(const std::vector<std::string> &args) override;
 		virtual void OnKill() override;
@@ -75,6 +71,7 @@ namespace Viperfish
 		GLuint abo = 0;
 		GLuint vao = 0;
 		GLuint eabo = 0;
+		ImGuiContext *pImGuiContext = nullptr;
 		ImGuiIO *pIO = nullptr;
 
 		bool CreateDeviceObjects();
@@ -83,4 +80,4 @@ namespace Viperfish
 	};
 } // namespace Viperfish
 
-#endif
+#endif // VIPERFISH_IMGUI_HPP

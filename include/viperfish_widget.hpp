@@ -23,7 +23,6 @@
 #include <vector>
 #include <string>
 #include <fluxions_gte_rect.hpp>
-#include <viperfish.hpp>
 #include <viperfish_mouse.hpp>
 #include <viperfish_keyboard.hpp>
 #include <viperfish_gamepad.hpp>
@@ -39,35 +38,15 @@ namespace Viperfish
 		using SharedPtr = std::shared_ptr<Widget>;
 		using UniquePtr = std::unique_ptr<Widget>;
 
-		template <class... _Types>
-		static SharedPtr MakeShared(const std::string &name, _Types &&... _Args)
-		{
-			Widget *w = new Widget(name, std::forward<_Types>(_Args)...);
-			return SharedPtr(w);
-		}
-
-		template <class... _Types>
-		static UniquePtr MakeUnique(const std::string &name, _Types &&... _Args)
-		{
-			Widget *w = new Widget(name, std::forward<_Types>(_Args)...);
-			return UniquePtr(w);
-		}
-
-		inline SharedPtr GetWidgetPtr() noexcept { return shared_from_this(); }
+		inline SharedPtr GetSharedPtr() noexcept { return shared_from_this(); }
 
 		// this is required to enable shared_from_this() to work properly
 		Widget();
 		Widget(const Widget &) = default;	// default copy constructor
 		Widget(Widget &&) = default;		// default move constructor
 
-		std::string name_;
-
-		void common_constructor(const std::string &name) noexcept;
-
 		// Constructors
 		explicit Widget(const std::string &name) noexcept;
-		explicit Widget(const std::string &name, SharedPtr &decorateeWidget) noexcept;
-		explicit Widget(std::string &name, std::initializer_list<SharedPtr> childWidgets) noexcept;
 		virtual ~Widget();
 
 		// Imperative functions
@@ -116,6 +95,7 @@ namespace Viperfish
 		inline void undecorate() noexcept { if (!decoraterWidget_) return; decoraterWidget_->decorateeWidget_.reset(); }
 		inline bool isDecorating() const noexcept { if (decorateeWidget_) return true; return false; }
 
+		inline const std::string &getName() const noexcept { return name_; }
 		inline int getX() const { return windowRect_.x; }
 		inline int getY() const { return windowRect_.y; }
 		inline int getHeight() const { return windowRect_.w; }
@@ -180,6 +160,9 @@ namespace Viperfish
 		SharedPtr decoraterWidget_;
 		SharedPtr parent_;
 		std::vector<SharedPtr> children_;
+
+		std::string name_;
+		void common_constructor(const std::string &name) noexcept;
 
 		Recti windowRect_;
 		bool visible_ = true;

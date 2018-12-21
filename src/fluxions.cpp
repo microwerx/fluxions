@@ -100,7 +100,7 @@ std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **ar
 	std::map<std::string, std::string> argv_options;
 	for (int i = 0; i < argc; i++)
 	{
-		string option = argv[i];
+		std::string option = argv[i];
 		hflog.info("%s(): Processing '%s'", __FUNCTION__, option.c_str());
 		std::regex dashequals("(^-+|=)",
 			std::regex_constants::ECMAScript);
@@ -111,8 +111,8 @@ std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **ar
 		std::sregex_token_iterator end;
 		size_t count = 0;
 
-		string key = "";
-		string value = "";
+		std::string key = "";
+		std::string value = "";
 		for (; it != end; it++)
 		{
 			if (count == 1)
@@ -123,7 +123,7 @@ std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **ar
 			{
 				value = *it;
 			}
-			string token = *it;
+			std::string token = *it;
 			hflog.info("%s(): token %d '%s'", __FUNCTION__, count, token.c_str());
 			count++;
 		}

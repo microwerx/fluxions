@@ -22,7 +22,9 @@
 #define NOMINMAX
 #define GLEW_NO_GLU
 #include <GL/glew.h>
+#ifndef FLUXIONS_NO_FREEGLUT
 #include <GL/freeglut.h>
+#endif
 #include <glut_extensions.hpp>
 #include <map>
 #include <string>
@@ -61,4 +63,4 @@ namespace Fluxions
 	void APIENTRY FluxionsGLDebugFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam);
 } // namespace Fluxions
 
-#endif
+#endif // FLUXIONS_OPENGL_HPP

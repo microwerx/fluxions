@@ -535,40 +535,12 @@ void SimpleSSPHHLight::RandomizeCoefficient(int j, int l, int m, float minValue,
 
 void SimpleSSPHHLight::SortHierarchiesByPercent()
 {
-    return;
 
-    if (index < 0)
-        throw "SSPHHLight not properly initialized";
-    //int selfIndex = index;
-    //sort(hierarchies.begin(), hierarchies.end(),
-    //	[selfIndex](const SSPHHLightHierarchy & a, const SSPHHLightHierarchy & b)
-    //{
-    //	// cause self to float to node 0
-    //	if (a.index == selfIndex)
-    //		return true;
-    //	if (b.index == selfIndex)
-    //		return false;
-    //	return b.percentVisible < a.percentVisible;
-    //});
 }
 
 void SimpleSSPHHLight::SortHierarchiesByIndex()
 {
-    return;
 
-    if (index < 0)
-        throw "SSPHHLight not properly initialized";
-    //int selfIndex = index;
-    //sort(hierarchies.begin(), hierarchies.end(),
-    //	[selfIndex](const SSPHHLightHierarchy & a, const SSPHHLightHierarchy & b)
-    //{
-    //	//// cause self to float to node 0
-    //	//if (a.index == selfIndex)
-    //	//	return true;
-    //	//if (b.index == selfIndex)
-    //	//	return false;
-    //	return a.index < b.index;
-    //});
 }
 
 void SimpleSSPHHLight::CopySphlToHierarchies()
