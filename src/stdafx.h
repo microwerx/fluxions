@@ -62,7 +62,8 @@
 #include <fluxions_bbox.hpp>
 #include <fluxions_config.hpp>
 #include <fluxions_corona.hpp>
-#include <fluxions_corona_scene.hpp>
+#include <fluxions_corona_job.hpp>
+#include <fluxions_corona_scene_file.hpp>
 #include <fluxions_es2_renderer.hpp>
 #include <fluxions_es2_state_info.hpp>
 #include <fluxions_fileio.hpp>

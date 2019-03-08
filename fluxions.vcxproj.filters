@@ -13,9 +13,6 @@
     <ClCompile Include="src\fluxions_corona.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_corona_scene.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_es2_renderer.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -247,6 +244,12 @@
     <ClCompile Include="dep\src\imgui_draw.cpp">
       <Filter>dep\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_corona_job.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_corona_scene_file.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\fluxions.hpp">
@@ -262,9 +265,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_corona.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_corona_scene.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_es2_renderer.hpp">
@@ -521,6 +521,12 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_gte_vector4.hpp">
       <Filter>include\GTE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_corona_job.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_corona_scene_file.hpp">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

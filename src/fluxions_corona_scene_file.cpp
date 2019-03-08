@@ -18,7 +18,7 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
 // #include <filesystem>
-#include <fluxions_corona_scene.hpp>
+#include <fluxions_corona_scene_file.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_xml.hpp>
 
@@ -857,7 +857,7 @@ void CoronaJob::CopySPHToSph4f(Sph4f &sph_)
 std::string CoronaJob::MakeCoronaCommandLine()
 {
     std::ostringstream cmd;
-    cmd << "\"C:\\Program Files\\Corona\\Corona.exe\" " << scene_path << " -silent";
+    cmd << "\"C:\\Program Files\\Corona\\Standalone\\Corona.exe\" " << scene_path << " -silent";
 
     if (isHDR)
     {
@@ -878,6 +878,8 @@ std::string CoronaJob::MakeCoronaCommandLine()
     }
 
     cmd << " -c " << scene_name << "_tonemap.conf";
+
+	hflog.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
 
     return cmd.str();
 }
