@@ -486,13 +486,11 @@
     <ClInclude Include="include\fluxions_gte_vector4.hpp">
       <Filter>include\GTE</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="include\fluxions_corona_job.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_corona_scene_file.hpp">
       <Filter>include</Filter>
-=======
     <ClInclude Include="include\viperfish_dear_imgui.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -504,7 +502,6 @@
     </ClInclude>
     <ClInclude Include="dep\include\imstb_truetype.h">
       <Filter>dep\include</Filter>
->>>>>>> 6c8017914ff2211cd74fe1540601d0f3733b199d
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
