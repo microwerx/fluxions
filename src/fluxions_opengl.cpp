@@ -27,6 +27,10 @@ namespace Fluxions
 {
 OpenGLNameTranslator glNameTranslator;
 
+//////////////////////////////////////////////////////////////////////
+// O p e n G L N a m e T r a n s l a t o r ///////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 OpenGLNameTranslator::OpenGLNameTranslator()
 {
 	enums["GL_ZERO"] = 0;
@@ -2163,4 +2167,168 @@ OpenGLNameTranslator::OpenGLNameTranslator()
 	enum_strings[0x82E5] = "GL_MAX_VERTEX_ATTRIB_STRIDE";
 	enum_strings[0x8C2A] = "GL_TEXTURE_BUFFER_BINDING";
 }
+
+int OpenGLNameTranslator::GetEnum(const std::string &name) const noexcept
+{
+	std::map<std::string, int>::const_iterator it = enums.find(name);
+	if (it == enums.end())
+		it = enums.find(std::string("GL_") + name);
+	if (it == enums.end())
+		return 0;
+	return it->second;
+}
+
+const char *OpenGLNameTranslator::GetString(int id) const noexcept
+{
+	std::map<int, std::string>::const_iterator it = enum_strings.find(id);
+	if (it != enum_strings.end())
+		return it->second.c_str();
+	return empty_string.c_str();
+}
+
+//////////////////////////////////////////////////////////////////////
+// Q u i c k G L E r r o r C h e c k e r /////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+QuickGLErrorChecker::QuickGLErrorChecker()
+{
+	e = glGetError();
+}
+
+bool QuickGLErrorChecker::IsError()
+{
+	e = glGetError();
+	if (e != GL_NO_ERROR)
+	{
+		hflog.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
+		return true;
+	}
+	return false;
+}
+
+void QuickGLErrorChecker::Reset()
+{
+	e = glGetError();
+}
+
+//////////////////////////////////////////////////////////////////////
+// F l u x i o n s G L D e b u g F u n c /////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+void EnableGLDebugFunc()
+{
+	if (GLEW_ARB_debug_output)
+	{
+		glDebugMessageCallback((GLDEBUGPROC)Fluxions::FluxionsGLDebugFunc, NULL);
+		glEnable(GL_DEBUG_OUTPUT);
+	}
+	else
+	{
+		hflog.warningfn(__FUNCTION__, "No glDebugMessageCallback");
+	}
+}
+
+void APIENTRY FluxionsGLDebugFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam)
+{
+	if (id == 131185)
+		return;
+
+	ostringstream ostr;
+	ostr << "(" << g_CurrentDebugMessage << ") ";
+	//ostr << "frame: " << gt_frameCount;
+	//ostr << " error: " << gt_errorCount++;
+	ostr << " id: " << id;
+
+	ostr << " severity: ";
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_LOW:
+		ostr << "LOW";
+		break;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		ostr << "MEDIUM";
+		break;
+	case GL_DEBUG_SEVERITY_HIGH:
+		ostr << "HIGH";
+		break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+		ostr << "NOTIFICATION";
+		break;
+	default:
+		ostr << severity;
+		break;
+	}
+
+	ostr << " source: ";
+	switch (source)
+	{
+	case GL_DEBUG_SOURCE_API:
+		ostr << "API";
+		break;
+	case GL_DEBUG_SOURCE_APPLICATION:
+		ostr << "APPLICATION";
+		break;
+	case GL_DEBUG_SOURCE_OTHER:
+		ostr << "OTHER";
+		break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+		ostr << "SHADER COMPILER";
+		break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:
+		ostr << "THIRD PARTY";
+		break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+		ostr << "WINDOW SYSTEM";
+		break;
+	default:
+		ostr << type;
+		break;
+	}
+
+	ostr << " type: ";
+	switch (type)
+	{
+	case GL_DEBUG_TYPE_ERROR:
+		ostr << "ERROR";
+		break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		ostr << "DEPRECATED BEHAVIOR";
+		break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		ostr << "UNDEFINED BEHAVIOR";
+		break;
+	case GL_DEBUG_TYPE_PORTABILITY:
+		ostr << "PORTABILITY";
+		break;
+	case GL_DEBUG_TYPE_PERFORMANCE:
+		ostr << "PERFORMANCE";
+		break;
+	case GL_DEBUG_TYPE_MARKER:
+		ostr << "MARKER";
+		break;
+	case GL_DEBUG_TYPE_PUSH_GROUP:
+		ostr << "PUSH GROUP";
+		break;
+	case GL_DEBUG_TYPE_POP_GROUP:
+		ostr << "POP GROUP";
+		break;
+	case GL_DEBUG_TYPE_OTHER:
+		ostr << "OTHER";
+		break;
+	default:
+		ostr << type;
+		break;
+	}
+
+	hflog.info("%s", ostr.str().c_str());
+	string m = message;
+	istringstream istr(m);
+	string line;
+	while (getline(istr, line))
+	{
+		hflog.info("> %s", line.c_str());
+	}
+}
+
+
 } // namespace Fluxions

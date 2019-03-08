@@ -192,6 +192,8 @@ class TImage
     void savePPMi(const std::string &filename, float scale, int minValue, int maxValue, size_t z = 0, bool flipy = false);
     void savePPMHDRI(const std::string &filename, size_t z = 0);
     void loadPPM(const std::string &filename);
+	void loadEXR(const std::string &path);
+	void saveEXR(const std::string &path);
 
     bool flipX(int z = 0);
     bool flipY(int z = 0);

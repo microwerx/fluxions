@@ -516,6 +516,8 @@ SimpleMaterial()
 }
 };
 */
+
+int test_fluxions_simple_property();
 } // namespace Fluxions
 
 #endif // FLUXIONS_SIMPLE_PROPERTY_HPP

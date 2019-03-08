@@ -353,7 +353,7 @@ const std::string PropertyTypeToString(PropertyType propertyType)
 	return std::string("UNKNOWN VALUE TYPE");
 }
 
-int test_fluxions_simple_property(int argc, char **argv)
+int test_fluxions_simple_property()
 {
 	using namespace std;
 	using namespace Fluxions;

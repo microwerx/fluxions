@@ -20,13 +20,11 @@
 #define FLUXIONS_OPENGL_HPP
 
 #define NOMINMAX
-#define GLEW_STATIC
 #define GLEW_NO_GLU
 #include <GL/glew.h>
-#ifdef WIN32
-#include <GL/wglew.h>
-#endif
+#ifndef FLUXIONS_NO_FREEGLUT
 #include <GL/freeglut.h>
+#endif
 #include <glut_extensions.hpp>
 #include <map>
 #include <string>
@@ -34,61 +32,35 @@
 
 namespace Fluxions
 {
-
-class OpenGLNameTranslator
-{
-	std::map<std::string, int> enums;
-	std::map<int, std::string> enum_strings;
-	const std::string empty_string;
-
-  public:
-	OpenGLNameTranslator();
-
-	inline int GetEnum(const std::string &name) const noexcept
+	class OpenGLNameTranslator
 	{
-		std::map<std::string, int>::const_iterator it = enums.find(name);
-		if (it == enums.end())
-			it = enums.find(std::string("GL_") + name);
-		if (it == enums.end())
-			return 0;
-		return it->second;
-	}
+	public:
+		OpenGLNameTranslator();
+		int GetEnum(const std::string &name) const noexcept;
+		const char *GetString(int id) const noexcept;
+	private:
+		std::map<std::string, int> enums;
+		std::map<int, std::string> enum_strings;
+		const std::string empty_string;
+	};
 
-	inline const char *GetString(int id) const noexcept
+	extern OpenGLNameTranslator glNameTranslator;
+
+	class QuickGLErrorChecker
 	{
-		std::map<int, std::string>::const_iterator it = enum_strings.find(id);
-		if (it != enum_strings.end())
-			return it->second.c_str();
-		return empty_string.c_str();
-	}
-};
+	public:
+		QuickGLErrorChecker();
+		bool IsError();
+		void Reset();
+	private:
+		GLenum e;
+	};
 
-extern OpenGLNameTranslator glNameTranslator;
-
-class QuickGLErrorChecker
-{
-  public:
-	QuickGLErrorChecker() { e = glGetError(); }
-
-	bool IsError()
-	{
-		e = glGetError();
-		if (e != GL_NO_ERROR)
-		{
-			hflog.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
-			return true;
-		}
-		return false;
-	}
-
-	void Reset()
-	{
-		e = glGetError();
-	}
-
-  private:
-	GLenum e;
-};
+#ifndef WIN32
+#define APIENTRY
+#endif
+	void EnableGLDebugFunc();
+	void APIENTRY FluxionsGLDebugFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam);
 } // namespace Fluxions
 
-#endif
+#endif // FLUXIONS_OPENGL_HPP

@@ -23,7 +23,6 @@
 #include <vector>
 #include <string>
 #include <fluxions_gte_rect.hpp>
-#include <viperfish.hpp>
 #include <viperfish_mouse.hpp>
 #include <viperfish_keyboard.hpp>
 #include <viperfish_gamepad.hpp>
@@ -32,636 +31,175 @@
 
 namespace Viperfish
 {
-// Use the decorator pattern
-class Widget : public std::enable_shared_from_this<Widget>
-{
-  public:
-	// this is required to enable shared_from_this() to work properly
-	Widget();
-	Widget(const Widget &) = default;
+	// Use the decorator pattern
+	class Widget : public std::enable_shared_from_this<Widget>
+	{
+	public:
+		using SharedPtr = std::shared_ptr<Widget>;
+		using UniquePtr = std::unique_ptr<Widget>;
 
-	std::string name_;
+		inline SharedPtr GetSharedPtr() noexcept { return shared_from_this(); }
 
-	void common_constructor(const std::string &name)
-	{
-		name_ = name;
-		hflog.infofn(__FUNCTION__, "Creating Widget '%s'", name_.c_str());
-	}
+		// this is required to enable shared_from_this() to work properly
+		Widget();
+		Widget(const Widget &) = default;	// default copy constructor
+		Widget(Widget &&) = default;		// default move constructor
 
-  public:
-	using SharedPtr = std::shared_ptr<Widget>;
-	using UniquePtr = std::unique_ptr<Widget>;
+		// Constructors
+		explicit Widget(const std::string &name) noexcept;
+		virtual ~Widget();
 
-	explicit Widget(const std::string &name) noexcept { common_constructor(name); }
-	explicit Widget(const std::string &name, SharedPtr &decorateeWidget) noexcept
-	{
-		common_constructor(name);
-		decorate(decorateeWidget);
-	}
+		// Imperative functions
 
-	template <class... _Types>
-	static SharedPtr MakeShared(const std::string &name, _Types &&... _Args)
-	{
-		Widget *w = new Widget(name, std::forward<_Types>(_Args)...);
-		return SharedPtr(w);
-	}
-	template <class... _Types>
-	static UniquePtr MakeUnique(const std::string &name, _Types &&... _Args)
-	{
-		Widget *w = new Widget(name, std::forward<_Types>(_Args)...);
-		return UniquePtr(w);
-	}
+		void Init(int argc, char **argv);
+		void Init(std::vector<std::string> args);
+		void Kill();
+		void MainLoop();
+		void LeaveMainLoop();
 
-	//Widget(SharedPtr && decorateeWidget) { decorateeWidget_ = decorateeWidget; }
+		// Child container stuff (adapted from Stroustrup's book)
+		using value_type = SharedPtr;
+		using iterator = std::vector<SharedPtr>::iterator;
+		using const_iterator = std::vector<SharedPtr>::const_iterator;
 
-	//Widget(int X, int y, int width, int height, const std::string & caption, const std::string & jsonStyle)
-	//{
-	//	windowRect_.SetFromPoints(Vector2i(X, y), Vector2i(X + width, y + height));
-	//	caption_ = caption;
-	//	this->setStyle(jsonStyle);
-	//}
+		// Child container stuff dependent on whether leaf_ is true or not.
+		inline bool isLeaf() const { return leaf_; }
+		inline void clear() noexcept { children_.clear(); }
+		inline size_t size() const noexcept { if (leaf_) return 0; return children_.size(); }
+		inline bool empty() const noexcept { if (leaf_) return true; return children_.empty(); }
+		inline void push_back(const SharedPtr &child_) noexcept { if (leaf_) return; children_.push_back(child_); child_->parent_ = shared_from_this(); }
+		inline void emplace_back(SharedPtr &&child_) noexcept { if (leaf_) return; children_.emplace_back(child_); child_->parent_ = shared_from_this(); }
+		inline void pop_back() noexcept { if (!empty()) children_.pop_back(); }
+		inline SharedPtr operator[](size_t _Pos) noexcept { if (leaf_) return SharedPtr(nullptr); return children_.at(_Pos); }
+		inline const SharedPtr operator[](size_t _Pos) const noexcept { if (leaf_) return SharedPtr(nullptr); return children_.at(_Pos); }
+		inline iterator begin() noexcept { if (leaf_) return children_.end(); return children_.begin(); }
+		inline const_iterator begin() const noexcept { if (leaf_) return children_.end(); }
+		inline iterator end() noexcept { return children_.end(); }
+		inline const_iterator end() const noexcept { return children_.end(); }
+		inline const_iterator cbegin() const noexcept { if (leaf_) return children_.cend(); return children_.cbegin(); }
+		inline const_iterator cend() const noexcept { return children_.cend(); }
+		inline const value_type &at(const size_t _Pos) const { throwIfLeaf(); return children_.at(_Pos); }
+		inline value_type &at(const size_t _Pos) { throwIfLeaf(); return children_.at(_Pos); }
+		inline value_type *data() noexcept { if (leaf_) return nullptr; return children_.data(); }
+		inline const value_type *data() const noexcept { if (leaf_) return nullptr; return children_.data(); }
 
-	explicit Widget(std::string &name, std::initializer_list<SharedPtr> childWidgets) noexcept
-	{
-		common_constructor(name);
-		for (auto child = childWidgets.begin(); child != childWidgets.end(); child++)
-		{
-			push_back(*child);
-		}
-	}
+		// Properties
+		inline const SharedPtr &decoratee() const noexcept { return decorateeWidget_; }
+		inline SharedPtr &decoratee() noexcept { return decorateeWidget_; }
+		inline const SharedPtr &decorator() const noexcept { return decoraterWidget_; }
+		inline SharedPtr &decorator() noexcept { return decoraterWidget_; }
+		inline const SharedPtr &parent() const noexcept { return parent_; }
+		inline SharedPtr &parent() noexcept { return parent_; }
 
-	virtual ~Widget()
-	{
-		hflog.infofn(__FUNCTION__, "Destroying Widget '%s'", name_.c_str());
-		decorateeWidget_.reset();
-		decoraterWidget_.reset();
-		parent_.reset();
-		for (auto &w : children_)
-		{
-			w.reset();
-		}
-	}
+		inline bool decorate(SharedPtr w) noexcept { if (!w) return false; decorateeWidget_ = w; w->decoraterWidget_ = shared_from_this(); return true; }
+		inline void undecorate() noexcept { if (!decoraterWidget_) return; decoraterWidget_->decorateeWidget_.reset(); }
+		inline bool isDecorating() const noexcept { if (decorateeWidget_) return true; return false; }
 
-	inline SharedPtr GetWidgetPtr() noexcept { return shared_from_this(); }
+		inline const std::string &getName() const noexcept { return name_; }
+		inline int getX() const { return windowRect_.x; }
+		inline int getY() const { return windowRect_.y; }
+		inline int getHeight() const { return windowRect_.w; }
+		inline int getWidth() const { return windowRect_.h; }
+		inline const Recti &windowRect() const { return windowRect_; }
+		inline Recti &windowRect() { return windowRect_; }
+		inline bool isVisible() const { return visible_; }
+		inline bool isOrphan() const { return !parent_; }
 
-	virtual void OnInit(const std::vector<std::string> &args)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnInit(args);
-		for (auto &w : children_)
-		{
-			w->OnInit(args);
-		}
-	}
+		inline double GetElapsedTime() const { return t1 - baseTime; }
+		inline double GetFrameTime() const { return t1 - t0; }
+		inline double GetStopwatchTime() const { return t1 - stopwatchTimeT0; }
+		inline void ResetStopwatch() { stopwatchTimeT0 = t1; }
+		inline void ResetClock() { baseTime = t1; t0 = t1; }
 
-	virtual void OnKill()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnKill();
-		for (auto &w : children_)
-		{
-			w->OnKill();
-		}
-	}
-	virtual void OnUpdate(double timeStamp);
+		inline const std::string &caption() const noexcept { return caption_; }
+		inline std::string &caption() noexcept { return caption_; }
+		inline const std::string &style() const noexcept { return style_; }
+		inline const KASL::JSONPtr jsonStyle() const noexcept { return jsonStyle_; }
+		inline KASL::JSONPtr jsonStyle() noexcept { return jsonStyle_; }
+		inline KASL::JSONPtr setStyle(const std::string &style) noexcept { processStyle(style); return jsonStyle_; }
 
-	virtual void OnKeyDown(const std::string &key, int keymod)
-	{
-		HandleKey(key, keymod, true);
-		if (decorateeWidget_)
-			decorateeWidget_->OnKeyDown(key, keymod);
-		for (auto &w : children_)
-		{
-			w->OnKeyDown(key, keymod);
-		}
-	}
-	virtual void OnKeyUp(const std::string &key, int keymod)
-	{
-		HandleKey(key, keymod, false);
-		if (decorateeWidget_)
-			decorateeWidget_->OnKeyUp(key, keymod);
-		for (auto &w : children_)
-		{
-			w->OnKeyUp(key, keymod);
-		}
-	}
+		virtual void OnInit(const std::vector<std::string> &args);
+		virtual void OnKill();
+		virtual void OnUpdate(double timeStamp);
+		virtual void OnKeyDown(const std::string &key, int keymod);
+		virtual void OnKeyUp(const std::string &key, int keymod);
+		virtual void OnMouseButtonDown(int button);
+		virtual void OnMouseButtonUp(int button);
+		virtual void OnMouseMove(int x, int y);
+		virtual void OnMouseClick(int button, const MouseClickState &mcs);
+		virtual void OnMouseDoubleClick(int button, const MouseDoubleClickState &mdcs);
+		virtual void OnMouseDrag(int button, const MouseDragState &mds);
+		virtual void OnMouseEnter();
+		virtual void OnMouseLeave();
+		virtual void OnMultiEnter(int id);
+		virtual void OnMultiLeave(int id);
+		virtual void OnMultiButtonDown(int id, int button, const MouseState &ms);
+		virtual void OnMultiButtonUp(int id, int button, const MouseState &ms);
+		virtual void OnMultiMove(int x, int y, const MouseState &ms);
+		virtual void OnGainFocus();
+		virtual void OnLostFocus();
+		virtual void OnInitContext();
+		virtual void OnPauseApp();
+		virtual void OnResumeApp();
+		virtual void OnWindowMove(int x, int y);
+		virtual void OnWindowVisible();
+		virtual void OnWindowHidden();
+		virtual void OnGamepadAxis(int axis, float value, const GamepadState &gs);
+		virtual void OnGamepadButtonDown(int button, float value, const GamepadState &gs);
+		virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs);
+		virtual void OnReshape(int width, int height);
+		virtual void OnPreRender();
+		virtual void OnRender3D();
+		virtual void OnRender2D();
+		virtual void OnRenderDearImGui();
+		virtual void OnPostRender();
+		virtual void OnMainLoop();
+		virtual void OnLeaveMainLoop();
+	private:
+		SharedPtr decorateeWidget_;
+		SharedPtr decoraterWidget_;
+		SharedPtr parent_;
+		std::vector<SharedPtr> children_;
 
-	virtual void OnMouseButtonDown(int button)
-	{
-		HandleMouseButton(button, true);
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseButtonDown(button);
-		for (auto &w : children_)
-		{
-			w->OnMouseButtonDown(button);
-		}
-	}
-	virtual void OnMouseButtonUp(int button)
-	{
-		HandleMouseButton(button, false);
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseButtonUp(button);
-		for (auto &w : children_)
-		{
-			w->OnMouseButtonUp(button);
-		}
-	}
-	virtual void OnMouseMove(int x, int y)
-	{
-		HandleMouseMove(x, y);
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseMove(x, y);
-		for (auto &w : children_)
-		{
-			w->OnMouseMove(x, y);
-		}
-	}
-	virtual void OnMouseClick(int button, const MouseClickState &mcs)
-	{
-		HandleMouseClick(mcs);
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseClick(button, mcs);
-		for (auto &w : children_)
-		{
-			w->OnMouseClick(button, mcs);
-		}
-	}
-	virtual void OnMouseDoubleClick(int button, const MouseDoubleClickState &mdcs)
-	{
-		HandleMouseDoubleClick(mdcs);
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseDoubleClick(button, mdcs);
-		for (auto &w : children_)
-		{
-			w->OnMouseDoubleClick(button, mdcs);
-		}
-	}
-	virtual void OnMouseDrag(int button, const MouseDragState &mds)
-	{
-		HandleMouseDrag(mds);
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseDrag(button, mds);
-		for (auto &w : children_)
-		{
-			w->OnMouseDrag(button, mds);
-		}
-	}
+		std::string name_;
+		void common_constructor(const std::string &name) noexcept;
 
-	virtual void OnMouseEnter()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseEnter();
-		for (auto &w : children_)
-		{
-			w->OnMouseEnter();
-		}
-	}
-	virtual void OnMouseLeave()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMouseLeave();
-		for (auto &w : children_)
-		{
-			w->OnMouseLeave();
-		}
-	}
+		Recti windowRect_;
+		bool visible_ = true;
 
-	virtual void OnMultiEnter(int id)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMultiEnter(id);
-		for (auto &w : children_)
-		{
-			w->OnMultiEnter(id);
-		}
-	}
-	virtual void OnMultiLeave(int id)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMultiLeave(id);
-		for (auto &w : children_)
-		{
-			w->OnMultiLeave(id);
-		}
-	}
-	virtual void OnMultiButtonDown(int id, int button, const MouseState &ms)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMultiButtonDown(id, button, ms);
-		for (auto &w : children_)
-		{
-			w->OnMultiButtonDown(id, button, ms);
-		}
-	}
-	virtual void OnMultiButtonUp(int id, int button, const MouseState &ms)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMultiButtonUp(id, button, ms);
-		for (auto &w : children_)
-		{
-			w->OnMultiButtonUp(id, button, ms);
-		}
-	}
-	virtual void OnMultiMove(int x, int y, const MouseState &ms)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMultiMove(x, y, ms);
-		for (auto &w : children_)
-		{
-			w->OnMultiMove(x, y, ms);
-		}
-	}
+		// A class should set leaf_ to false if it's okay to be a container, true if not
+		bool leaf_ = false;
 
-	virtual void OnGainFocus()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnGainFocus();
-		for (auto &w : children_)
-		{
-			w->OnGainFocus();
-		}
-	}
-	virtual void OnLostFocus()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnLostFocus();
-		for (auto &w : children_)
-		{
-			w->OnLostFocus();
-		}
-	}
+		inline bool throwIfLeaf() const { if (!leaf_) { return false; } throw std::out_of_range("this class instance is a leaf, not a container"); return true; }
 
-	virtual void OnInitContext()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnInitContext();
-		for (auto &w : children_)
-		{
-			w->OnInitContext();
-		}
-	}
-	virtual void OnPauseApp()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnPauseApp();
-		for (auto &w : children_)
-		{
-			w->OnPauseApp();
-		}
-	}
-	virtual void OnResumeApp()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnResumeApp();
-		for (auto &w : children_)
-		{
-			w->OnResumeApp();
-		}
-	}
+		double stopwatchTimeT0 = 0.0;
+		double baseTime = 0.0;
+		double t0 = 0.0;
+		double t1 = 0.0;
 
-	virtual void OnWindowMove(int x, int y)
-	{
-		windowRect_.x = x;
-		windowRect_.y = y;
-		if (decorateeWidget_)
-			decorateeWidget_->OnWindowMove(x, y);
-		for (auto &w : children_)
-		{
-			w->OnWindowMove(x, y);
-		}
-	}
-	virtual void OnWindowVisible()
-	{
-		visible_ = true;
-		if (decorateeWidget_)
-			decorateeWidget_->OnWindowVisible();
-		for (auto &w : children_)
-		{
-			w->OnWindowVisible();
-		}
-	}
-	virtual void OnWindowHidden()
-	{
-		visible_ = false;
-		if (decorateeWidget_)
-			decorateeWidget_->OnWindowHidden();
-		for (auto &w : children_)
-		{
-			w->OnWindowHidden();
-		}
-	}
+		void PollGamepads();
+		void HandleKey(const std::string &key, int keymod, bool pressed);
+		void HandleMouseButton(int button, bool pressed);
+		void HandleMouseMove(int x, int y);
+		void HandleMouseClick(const MouseClickState &mcs);
+		void HandleMouseDoubleClick(const MouseDoubleClickState &mdcs);
+		void HandleMouseDrag(const MouseDragState &mds);
 
-	virtual void OnGamepadAxis(int axis, float value, const GamepadState &gs)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnGamepadAxis(axis, value, gs);
-		for (auto &w : children_)
-		{
-			w->OnGamepadAxis(axis, value, gs);
-		}
-	}
-	virtual void OnGamepadButtonDown(int button, float value, const GamepadState &gs)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnGamepadButtonDown(button, value, gs);
-		for (auto &w : children_)
-		{
-			w->OnGamepadButtonDown(button, value, gs);
-		}
-	}
-	virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs)
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnGamepadButtonUp(button, value, gs);
-		for (auto &w : children_)
-		{
-			w->OnGamepadButtonUp(button, value, gs);
-		}
-	}
+		virtual bool processStyle(const std::string &style);
 
-	virtual void OnReshape(int width, int height)
-	{
-		windowRect_.w = width;
-		windowRect_.h = height;
-		if (decorateeWidget_)
-			decorateeWidget_->OnReshape(width, height);
-		for (auto &w : children_)
-		{
-			w->OnReshape(width, height);
-		}
-	}
-	virtual void OnRender()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnRender();
-		for (auto &w : children_)
-		{
-			w->OnRender();
-		}
-	}
-	virtual void OnRenderOverlay()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnRenderOverlay();
-		for (auto &w : children_)
-		{
-			w->OnRenderOverlay();
-		}
-	}
+	protected:
+		GamepadState gamepads[4];
+		GamepadState kbgamepad;
+		KeyboardState keyboard;
+		MouseState mouse;
+		KASL::JSONPtr jsonStyle_;
+		std::string style_;
+		std::string caption_;
+		void makeLeaf(bool state) { leaf_ = state; }
 
-	virtual void OnMainLoop()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnMainLoop();
-		for (auto &w : children_)
-		{
-			w->OnMainLoop();
-		}
-	}
-	virtual void OnLeaveMainLoop()
-	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnLeaveMainLoop();
-		for (auto &w : children_)
-		{
-			w->OnLeaveMainLoop();
-		}
-	}
-
-	// Imperative functions
-
-	void Init(int argc, char **argv);
-	void Init(std::vector<std::string> args);
-	void Kill();
-	void MainLoop();
-	void LeaveMainLoop();
-
-	// Child container stuff (adapted from Stroustrup's book)
-
-	using value_type = SharedPtr;
-	using iterator = std::vector<SharedPtr>::iterator;
-	using const_iterator = std::vector<SharedPtr>::const_iterator;
-
-	inline bool is_leaf() const { return leaf_; }
-	inline void clear()
-	{
-		throwIfLeaf();
-		children_.clear();
-	}
-	inline size_t size() const
-	{
-		if (leaf_)
-			return 0;
-		return children_.size();
-	}
-	inline bool empty() const
-	{
-		if (leaf_)
-			return true;
-		return children_.empty();
-	}
-	inline void push_back(const SharedPtr &child_)
-	{
-		throwIfLeaf();
-		children_.push_back(child_);
-		child_->parent_ = shared_from_this();
-	}
-	inline void emplace_back(SharedPtr &&child_)
-	{
-		throwIfLeaf();
-		children_.emplace_back(child_);
-		child_->parent_ = shared_from_this();
-	}
-	inline void pop_back()
-	{
-		throwIfLeaf();
-		if (!empty())
-			children_.pop_back();
-	}
-	inline SharedPtr operator[](size_t _Pos)
-	{
-		if (throwIfLeaf())
-			return SharedPtr(nullptr);
-		return children_.at(_Pos);
-	}
-	inline const SharedPtr operator[](size_t _Pos) const
-	{
-		if (throwIfLeaf())
-			return SharedPtr(nullptr);
-		return children_.at(_Pos);
-	}
-
-	inline iterator begin()
-	{
-		throwIfLeaf();
-		return children_.begin();
-	}
-	inline const_iterator begin() const
-	{
-		throwIfLeaf();
-		return children_.begin();
-	}
-	inline iterator end()
-	{
-		throwIfLeaf();
-		return children_.end();
-	}
-	inline const_iterator end() const
-	{
-		throwIfLeaf();
-		return children_.end();
-	}
-	inline const_iterator cbegin() const
-	{
-		throwIfLeaf();
-		return children_.cbegin();
-	}
-	inline const_iterator cend() const
-	{
-		throwIfLeaf();
-		return children_.cend();
-	}
-	inline const value_type &at(const size_t _Pos) const
-	{
-		throwIfLeaf();
-		return children_.at(_Pos);
-	}
-	inline value_type &at(const size_t _Pos)
-	{
-		throwIfLeaf();
-		return children_.at(_Pos);
-	}
-	inline value_type *data()
-	{
-		throwIfLeaf();
-		return children_.data();
-	}
-	inline const value_type *data() const
-	{
-		throwIfLeaf();
-		return children_.data();
-	}
-
-	// Properties
-	inline const SharedPtr &decoratee() const { return decorateeWidget_; }
-	inline SharedPtr &decoratee() { return decorateeWidget_; }
-	inline const SharedPtr &decorator() const { return decoraterWidget_; }
-	inline SharedPtr &decorator() { return decoraterWidget_; }
-	inline const SharedPtr &parent() const { return parent_; }
-	inline SharedPtr &parent() { return parent_; }
-
-	inline bool decorate(SharedPtr w) noexcept
-	{
-		if (!w)
-			return false;
-		decorateeWidget_ = w;
-		w->decoraterWidget_ = shared_from_this();
-		return true;
-	}
-
-	inline void undecorate()
-	{
-		if (!decoraterWidget_)
-			return;
-		decoraterWidget_->decorateeWidget_.reset();
-	}
-
-	inline bool decorating() const
-	{
-		if (decorateeWidget_)
-			return true;
-		return false;
-	}
-
-	inline int getX() const { return windowRect_.x; }
-	inline int getY() const { return windowRect_.y; }
-	inline int getHeight() const { return windowRect_.w; }
-	inline int getWidth() const { return windowRect_.h; }
-	inline const Recti &windowRect() const { return windowRect_; }
-	inline Recti &windowRect() { return windowRect_; }
-	inline bool visible() const { return visible_; }
-	inline bool is_orpha() const { return !parent_; }
-
-	inline double GetElapsedTime() const { return t1 - baseTime; }
-	inline double GetFrameTime() const { return t1 - t0; }
-	inline double GetStopwatchTime() const { return t1 - stopwatchTimeT0; }
-	inline void ResetStopwatch() { stopwatchTimeT0 = t1; }
-	inline void ResetClock()
-	{
-		baseTime = t1;
-		t0 = t1;
-	}
-
-	inline const std::string &caption() const noexcept { return caption_; }
-	inline std::string &caption() noexcept { return caption_; }
-	inline const std::string &style() const noexcept { return style_; }
-	inline const KASL::JSONPtr &jsonStyle() const noexcept { return jsonStyle_; }
-	inline KASL::JSONPtr jsonStyle() noexcept { return jsonStyle_; }
-
-	inline KASL::JSONPtr setStyle(const std::string &style) noexcept
-	{
-		processStyle(style);
-		return jsonStyle_;
-	}
-
-  private:
-	SharedPtr decorateeWidget_;
-	SharedPtr decoraterWidget_;
-	SharedPtr parent_;
-	std::vector<SharedPtr> children_;
-
-	Recti windowRect_;
-	bool visible_ = true;
-
-	// A class should set leaf_ to false if it's okay to be a container, true if not
-	bool leaf_ = false;
-	inline bool throwIfLeaf() const
-	{
-		if (!leaf_)
-			return false;
-		throw std::out_of_range("this class instance is a leaf, not a container");
-		return true;
-	}
-
-	double stopwatchTimeT0 = 0.0;
-	double baseTime = 0.0;
-	double t0 = 0.0;
-	double t1 = 0.0;
-
-	void PollGamepads();
-	void HandleKey(const std::string &key, int keymod, bool pressed);
-	void HandleMouseButton(int button, bool pressed);
-	void HandleMouseMove(int x, int y);
-	void HandleMouseClick(const MouseClickState &mcs);
-	void HandleMouseDoubleClick(const MouseDoubleClickState &mdcs);
-	void HandleMouseDrag(const MouseDragState &mds);
-
-	virtual bool processStyle(const std::string &style);
-
-  protected:
-	GamepadState gamepads[4];
-	GamepadState kbgamepad;
-	KeyboardState keyboard;
-	MouseState mouse;
-	KASL::JSONPtr jsonStyle_;
-	std::string style_;
-	std::string caption_;
-	void makeLeaf(bool state) { leaf_ = state; }
-
-	const double getT0() const { return t0; }
-	const double getT1() const { return t1; }
-};
-
-//template <typename T, typename T2>
-//std::shared_ptr<T> Make(std::shared_ptr<T2> & decoratee) {
-//	if (decoratee) return make_shared<T>((std::shared_ptr<Widget>)(decoratee));
-//	return make_shared<T>();
-//}
-
-//template <typename T>
-//std::shared_ptr<T> Make() {
-//	return make_shared<T>();
-//}
+		const double getT0() const { return t0; }
+		const double getT1() const { return t1; }
+	};
 } // namespace Viperfish
 
 #endif

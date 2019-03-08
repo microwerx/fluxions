@@ -308,22 +308,22 @@ class TColor4
             remap_value_min_max<T, OtherType>(a, src_min_value, src_max_value, dst_min_value, dst_max_value));
     }
 
-    constexpr TColor4<T> Clamp(T min_value, T max_value) const
+    constexpr TColor4<T> Clamp(T minValue, T maxValue) const
     {
         return TColor4<T>(
-            Fluxions::clamp<T>(r, min_value, max_value),
-            Fluxions::clamp<T>(g, min_value, max_value),
-            Fluxions::clamp<T>(b, min_value, max_value),
-            Fluxions::clamp<T>(a, min_value, max_value));
+            Fluxions::clamp<T>(r, minValue, maxValue),
+            Fluxions::clamp<T>(g, minValue, maxValue),
+            Fluxions::clamp<T>(b, minValue, maxValue),
+            Fluxions::clamp<T>(a, minValue, maxValue));
     }
 
-    constexpr TColor4<T> ScaleClamp(T scale, T min_value, T max_value) const
+    constexpr TColor4<T> ScaleClamp(T scale, T minValue, T maxValue) const
     {
         return TColor4<T>(
-            Fluxions::clamp<T>(r * scale, min_value, max_value),
-            Fluxions::clamp<T>(g * scale, min_value, max_value),
-            Fluxions::clamp<T>(b * scale, min_value, max_value),
-            Fluxions::clamp<T>(a * scale, min_value, max_value));
+            Fluxions::clamp<T>(r * scale, minValue, maxValue),
+            Fluxions::clamp<T>(g * scale, minValue, maxValue),
+            Fluxions::clamp<T>(b * scale, minValue, maxValue),
+            Fluxions::clamp<T>(a * scale, minValue, maxValue));
     }
 
     constexpr TColor4<T> &clamp() noexcept

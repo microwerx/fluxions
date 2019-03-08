@@ -26,8 +26,10 @@ SphlSampler::SphlSampler()
     resize(ix, iy);
 }
 
-void SphlSampler::resize(int samplesX, int samplesY)
+void SphlSampler::resize(size_t samplesX, size_t samplesY)
 {
+	ix = samplesX;
+	iy = samplesY;
     if (numSamples != ix * iy)
     {
         numSamples = ix * iy;

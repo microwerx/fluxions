@@ -19,9 +19,6 @@
     <ClCompile Include="src\fluxions_fileio.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_gte.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_gte_bounding_box.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -163,13 +160,7 @@
     <ClCompile Include="src\kasl_python.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\kasl_syntax_semantic_analyzer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\unicornfish_broker.cpp">
@@ -196,22 +187,10 @@
     <ClCompile Include="src\unicornfish_worker.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\viperfish.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\viperfish_analog_bitset.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\viperfish_application.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\viperfish_gamepad.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_glut.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_imgui.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\viperfish_keyboard.cpp">
@@ -232,16 +211,16 @@
     <ClCompile Include="dep\src\ArHosekSkyModel.cpp">
       <Filter>dep\src</Filter>
     </ClCompile>
-    <ClCompile Include="dep\src\glew.c">
-      <Filter>dep\src</Filter>
-    </ClCompile>
     <ClCompile Include="dep\src\imgui.cpp">
       <Filter>dep\src</Filter>
     </ClCompile>
-    <ClCompile Include="dep\src\imgui_demo.cpp">
+    <ClCompile Include="dep\src\imgui_draw.cpp">
       <Filter>dep\src</Filter>
     </ClCompile>
-    <ClCompile Include="dep\src\imgui_draw.cpp">
+    <ClCompile Include="src\viperfish_dear_imgui.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\src\imgui_widgets.cpp">
       <Filter>dep\src</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_corona_job.cpp">
@@ -396,12 +375,6 @@
     <ClInclude Include="include\viperfish_gamepad.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\viperfish_glut.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_imgui.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\viperfish_keyboard.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -442,15 +415,6 @@
       <Filter>dep\include</Filter>
     </ClInclude>
     <ClInclude Include="dep\include\imgui_internal.h">
-      <Filter>dep\include</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\stb_rect_pack.h">
-      <Filter>dep\include</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\stb_textedit.h">
-      <Filter>dep\include</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\stb_truetype.h">
       <Filter>dep\include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_gte.hpp">
@@ -522,11 +486,25 @@
     <ClInclude Include="include\fluxions_gte_vector4.hpp">
       <Filter>include\GTE</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="include\fluxions_corona_job.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_corona_scene_file.hpp">
       <Filter>include</Filter>
+=======
+    <ClInclude Include="include\viperfish_dear_imgui.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\imstb_rectpack.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\imstb_textedit.h">
+      <Filter>dep\include</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\imstb_truetype.h">
+      <Filter>dep\include</Filter>
+>>>>>>> 6c8017914ff2211cd74fe1540601d0f3733b199d
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

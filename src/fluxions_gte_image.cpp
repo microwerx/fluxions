@@ -18,8 +18,13 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
 #include <algorithm>
-#include <fluxions_gte_image.hpp>
 #include <fstream>
+#include <fluxions_gte_image.hpp>
+#define _CRT_SECURE_NO_WARNINGS
+#pragma warning(disable : 4996)
+#define OPENEXR_DLL
+#include <OpenEXR/ImfRgbaFile.h>
+#undef _CRT_SECURE_NO_WARNINGS
 
 namespace Fluxions
 {
@@ -746,6 +751,32 @@ void TImage<ColorType>::savePPMHDRI(const std::string &filename, size_t z)
     }
 
     fout.close();
+}
+
+template <typename ColorType>
+void TImage<ColorType>::loadEXR(const std::string &path)
+{
+#ifndef FLUXIONS_NO_OPENEXR
+	//RgbaOutputFile file();
+#endif
+}
+
+template <typename ColorType>
+void TImage<ColorType>::saveEXR(const std::string &path)
+{
+#ifndef FLUXIONS_NO_OPENEXR
+	const Imf::Rgba black(0.0f, 0.0f, 0.0f, 1.0f);
+	std::vector<Imf::Rgba> halfPixels(imageWidth * imageHeight * imageDepth, black);
+	const size_t count = imageWidth * imageHeight * imageDepth;
+	for (size_t i = 0; i < count; i++)
+	{
+		Color3f color = ToColor3f(pixels[i]);
+		halfPixels[i] = Imf::Rgba(color.r, color.g, color.b);
+	}
+	Imf::RgbaOutputFile file(path.c_str(), imageWidth, imageHeight, Imf::WRITE_RGBA);
+	file.setFrameBuffer(halfPixels.data(), 1, imageWidth);
+	file.writePixels(1);
+#endif
 }
 
 template <typename ColorType>

@@ -16,7 +16,7 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#define FLUXIONS_NO_EXTERN_TEMPLATES 1
+#define FLUXIONS_NO_EXTERN_TEMPLATES
 #include "stdafx.h"
 #include <fluxions_gte_color4.hpp>
 
@@ -33,27 +33,27 @@ float TColor4<double>::from_float_factor = 1.0f;
 template <>
 float TColor4<unsigned char>::to_float_factor = 255.99f;
 template <>
-float TColor4<unsigned char>::from_float_factor = 1.0 / 255.00f;
+float TColor4<unsigned char>::from_float_factor = 1.0f / 255.00f;
 template <>
 float TColor4<unsigned int>::to_float_factor = 255.99f;
 template <>
-float TColor4<unsigned int>::from_float_factor = 1.0 / 255.00f;
+float TColor4<unsigned int>::from_float_factor = 1.0f / 255.00f;
 template <>
 float TColor4<unsigned short>::to_float_factor = 255.99f;
 template <>
-float TColor4<unsigned short>::from_float_factor = 1.0 / 255.00f;
+float TColor4<unsigned short>::from_float_factor = 1.0f / 255.00f;
 template <>
 float TColor4<char>::to_float_factor = 127.99f;
 template <>
-float TColor4<char>::from_float_factor = 1.0 / 127.00f;
+float TColor4<char>::from_float_factor = 1.0f / 127.00f;
 template <>
 float TColor4<int>::to_float_factor = 255.99f;
 template <>
-float TColor4<int>::from_float_factor = 1.0 / 255.00f;
+float TColor4<int>::from_float_factor = 1.0f / 255.00f;
 template <>
 float TColor4<short>::to_float_factor = 255.99f;
 template <>
-float TColor4<short>::from_float_factor = 1.0 / 255.00f;
+float TColor4<short>::from_float_factor = 1.0f / 255.00f;
 
 template <>
 TColor4<float>::type TColor4<float>::min_value = 0.0f;

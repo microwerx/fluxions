@@ -1,21 +1,23 @@
 {
-    "configurations": [
-        {
-            "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/dep/include",
-                "/usr/include/python3.6m",
-                "/usr/local/opt",
-                "/usr/local/Cellar/python/3.7.1/Frameworks/Python.framework/Versions/3.7/include/python3.7m"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c11",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "gcc-x64"
-        }
-    ],
+    "configurations": [{
+        "name": "Linux",
+        "includePath": [
+            "${workspaceFolder}/**",
+            "${workspaceFolder}/include",
+            "${workspaceFolder}/dep/include",
+            "${workspaceFolder}/../libs/include",
+            "/usr/include/python3.6m",
+            "/usr/include/python3.7m",
+            "/usr/local/opt",
+            "/usr/local/Cellar/python/3.7.1/Frameworks/Python.framework/Versions/3.7/include/python3.7m",
+            "C:/Program Files/Python36/include",
+            "C:/Program Files/Python37/include"
+        ],
+        "defines": [],
+        "compilerPath": "/usr/bin/gcc",
+        "cStandard": "c11",
+        "cppStandard": "c++17",
+        "intelliSenseMode": "gcc-x64"
+    }],
     "version": 4
 }

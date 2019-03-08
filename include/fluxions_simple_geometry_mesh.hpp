@@ -169,10 +169,12 @@ class SimpleGeometryMesh
 	inline const std::vector<Vertex> &GetVertices() const { return vertices; }
 	inline const std::vector<Index> &GetIndices() const { return indices; }
 
-	inline Vertex &GetVertex(int i)
+	inline Vertex &GetVertex(size_t i)
 	{
-		if (within(i, 0, GetVertexCount()))
+		if (i < GetVertexCount())
+		{
 			return vertices[i];
+		}
 		return blahVertex;
 	}
 	inline int GetVertexCount() const { return (int)vertices.size(); }

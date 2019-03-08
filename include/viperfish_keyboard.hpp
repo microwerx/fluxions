@@ -78,6 +78,12 @@ struct KeyboardState
 	bool CheckKeyPressed(std::vector<std::string> keys);
 	int CountKeysPressed(std::vector<std::string> keys);
 };
+
+
+const char *KeyToHTML5Name(char c);
+const char *SpecialKeyToHTML5Name(int key);
+int HTML5NameToKey(const std::string &key);
+
 } // namespace Viperfish
 
 #endif

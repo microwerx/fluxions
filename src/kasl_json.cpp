@@ -247,10 +247,10 @@ bool JSON::Deserialize(const std::string &json)
     return DeserializeParseTokens(tokens);
 }
 
-long JSON::DeserializeParseTokens(const TokenVector &tokens, long startIndex)
+long JSON::DeserializeParseTokens(const TokenVector &tokens, size_t startIndex)
 {
-    long len = (long)tokens.size();
-    for (long i = startIndex; i < len; i++)
+    size_t len = tokens.size();
+    for (size_t i = startIndex; i < len; i++)
     {
         if (tokens[i].IsIntegerOrDouble())
         {

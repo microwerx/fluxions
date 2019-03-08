@@ -19,6 +19,7 @@
 #ifndef FLUXIONS_MATRIX4_HPP
 #define FLUXIONS_MATRIX4_HPP
 
+#include <functional>
 #include <fluxions_gte_math.hpp>
 #include <fluxions_gte_vector3.hpp>
 #include <fluxions_gte_vector4.hpp>

@@ -20,6 +20,9 @@
 #ifndef FLUXIONS_GTE_RECT_HPP
 #define FLUXIONS_GTE_RECT_HPP
 
+#define NOMINMAX
+
+#include <algorithm>
 #include <fluxions_gte_vector2.hpp>
 
 namespace Fluxions
