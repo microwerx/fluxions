@@ -177,8 +177,8 @@ class SimpleGeometryMesh
 		}
 		return blahVertex;
 	}
-	inline int GetVertexCount() const { return (int)vertices.size(); }
-	inline int GetVertexSize() const { return (int)sizeof(Vertex); }
+	inline size_t GetVertexCount() const { return vertices.size(); }
+	inline int GetVertexSize() const { return sizeof(Vertex); }
 	inline int GetVertexOffset(int i) const
 	{
 		if (within(i, 0, 7))

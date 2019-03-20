@@ -105,13 +105,13 @@ struct G4multivector
 //  TYPE operator/(const TYPE &lhs, ScalarType rhs) { ... }
 //
 
-G40vec operator+(const G40vec &lhs, const G40vec &rhs)
+inline G40vec operator+(const G40vec &lhs, const G40vec &rhs)
 {
     return G40vec(
         lhs.x + rhs.x);
 }
 
-G41vec operator+(const G41vec &lhs, const G41vec &rhs)
+inline G41vec operator+(const G41vec &lhs, const G41vec &rhs)
 {
     return G41vec(
         lhs.e1 + rhs.e1,
@@ -120,7 +120,7 @@ G41vec operator+(const G41vec &lhs, const G41vec &rhs)
         lhs.e4 + rhs.e4);
 }
 
-G42vec operator+(const G42vec &lhs, const G42vec &rhs)
+inline G42vec operator+(const G42vec &lhs, const G42vec &rhs)
 {
     return G42vec(
         lhs.e1e2 + rhs.e1e2,
@@ -131,7 +131,7 @@ G42vec operator+(const G42vec &lhs, const G42vec &rhs)
         lhs.e3e4 + rhs.e3e4);
 }
 
-G43vec operator+(const G43vec &lhs, const G43vec &rhs)
+inline G43vec operator+(const G43vec &lhs, const G43vec &rhs)
 {
     return G43vec(
         lhs.e1e2e3 + rhs.e1e2e3,
@@ -140,19 +140,19 @@ G43vec operator+(const G43vec &lhs, const G43vec &rhs)
         lhs.e2e3e4 + rhs.e2e3e4);
 }
 
-G44vec operator+(const G44vec &lhs, const G44vec &rhs)
+inline G44vec operator+(const G44vec &lhs, const G44vec &rhs)
 {
     return G44vec(
         lhs.e1e2e3e4 + rhs.e1e2e3e4);
 }
 
-G40vec operator-(const G40vec &lhs, const G40vec &rhs)
+inline G40vec operator-(const G40vec &lhs, const G40vec &rhs)
 {
     return G40vec(
         lhs.x - rhs.x);
 }
 
-G41vec operator-(const G41vec &lhs, const G41vec &rhs)
+inline G41vec operator-(const G41vec &lhs, const G41vec &rhs)
 {
     return G41vec(
         lhs.e1 - rhs.e1,
@@ -161,7 +161,7 @@ G41vec operator-(const G41vec &lhs, const G41vec &rhs)
         lhs.e4 - rhs.e4);
 }
 
-G42vec operator-(const G42vec &lhs, const G42vec &rhs)
+inline G42vec operator-(const G42vec &lhs, const G42vec &rhs)
 {
     return G42vec(
         lhs.e1e2 - rhs.e1e2,
@@ -172,7 +172,7 @@ G42vec operator-(const G42vec &lhs, const G42vec &rhs)
         lhs.e3e4 - rhs.e3e4);
 }
 
-G43vec operator-(const G43vec &lhs, const G43vec &rhs)
+inline G43vec operator-(const G43vec &lhs, const G43vec &rhs)
 {
     return G43vec(
         lhs.e1e2e3 - rhs.e1e2e3,
@@ -181,7 +181,7 @@ G43vec operator-(const G43vec &lhs, const G43vec &rhs)
         lhs.e2e3e4 - rhs.e2e3e4);
 }
 
-G44vec operator-(const G44vec &lhs, const G44vec &rhs)
+inline G44vec operator-(const G44vec &lhs, const G44vec &rhs)
 {
     return G44vec(
         lhs.e1e2e3e4 - rhs.e1e2e3e4);

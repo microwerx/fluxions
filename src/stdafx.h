@@ -74,7 +74,9 @@
 #endif
 
 #ifndef FLUXIONS_NO_OPENEXR
+#ifdef WIN32
 #define OPENEXR_DLL
+#endif
 #include <OpenEXR/ImfRgbaFile.h>
 #endif
 
