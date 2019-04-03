@@ -190,26 +190,26 @@ namespace Viperfish
 		const GLchar *vertex_shader = "#version 100\n"
 			"precision highp float;\n"
 			"uniform mat4 ProjectionMatrix;\n"
-			"in vec4 aPosition;\n"
-			"in vec3 aTexcoord;\n"
-			"in vec4 aColor;\n"
-			"out vec3 vTexcoord;\n"
-			"out vec4 vColor;\n"
+			"attribute vec4 aPosition;\n"
+			"attribute vec3 aTexcoord;\n"
+			"attribute vec4 aColor;\n"
+			"varying vec3 vTexcoord;\n"
+			"varying vec4 vColor;\n"
 			"void main()\n"
 			"{\n"
-			"	vTexcoord = aTexcoord;\n"
-			"	vColor = aColor;\n"
-			"	gl_Position = ProjectionMatrix * vec4(aPosition.xyz,1.0);\n"
+			"  vTexcoord = aTexcoord;\n"
+			"  vColor = aColor;\n"
+			"  gl_Position = ProjectionMatrix * vec4(aPosition.xyz,1.0);\n"
 			"}\n";
 
 		const GLchar *fragment_shader = "#version 100\n"
 			"precision highp float;\n"
 			"uniform sampler2D Texture0;\n"
-			"in vec3 vTexcoord;\n"
-			"in vec4 vColor;\n"
+			"varying vec3 vTexcoord;\n"
+			"varying vec4 vColor;\n"
 			"void main()\n"
 			"{\n"
-			" gl_FragColor = vColor * texture2D(Texture0, vTexcoord.st);\n"
+			"  gl_FragColor = vColor * texture2D(Texture0, vTexcoord.st);\n"
 			"}\n";
 
 		program = glCreateProgram();
@@ -234,8 +234,10 @@ namespace Viperfish
 			char *infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetShaderInfoLog(vshader, infoLogLength, NULL, infoLog);
-			hflog.error("%s(): failed to compile ImGui vertex shader\n%s\n", infoLog);
+			hflog.errorfn(__FUNCTION__, "failed to compile ImGui vertex shader\n-----\n%s-----\n%s\n-----\n", infoLog, vertex_shader);
 			delete[] infoLog;
+			glDeleteShader(vshader);
+			vshader = 0;
 			result = false;
 		}
 
@@ -248,13 +250,17 @@ namespace Viperfish
 			char *infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetShaderInfoLog(fshader, infoLogLength, NULL, infoLog);
-			hflog.error("%s(): failed to compile ImGui fragment shader\n%s\n", infoLog);
+			hflog.errorfn(__FUNCTION__, "failed to compile ImGui fragment shader\n-----\n%s-----\n%s\n-----\n", infoLog, fragment_shader);
 			delete[] infoLog;
+			glDeleteShader(fshader);
+			fshader = 0;
 			result = false;
 		}
 
 		if (!result)
 		{
+			glDeleteProgram(program);
+			program = 0;
 			return false;
 		}
 
