@@ -518,6 +518,9 @@ class SimpleSSPHHLight
     // Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
     bool ReadJsonSph(const std::string &path);
 
+	// Writes name.obj and name.mtl to the path
+	bool SaveOBJ(const std::string &path, const std::string &name);
+
     bool LightProbeToSph(const Image4f &lightProbe, MultispectralSph4f &sph);
     bool SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe);
     bool SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe, int maxDegree);
