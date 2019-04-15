@@ -23,6 +23,9 @@
 
 namespace Fluxions
 {
+	static const std::string corona_conf_prefix("../corona_conf/");
+	static const std::string corona_export_prefix("corona_export/");
+	static const std::string corona_output_prefix("corona_output/");
 
 	/////////////////////////////////////////////////////////////////////
 	// CoronaJob ////////////////////////////////////////////////////////
@@ -31,14 +34,14 @@ namespace Fluxions
 	CoronaJob::CoronaJob(const std::string &name, Type jobtype, int arg1, int arg2)
 	{
 		scene_name = name;
-		scene_path = name + ".scn";
-		output_path_exr = name + ".exr";
-		output_path_ppm = name + ".ppm";
-		output_path_png = name + ".png";
-		conf_path = name + ".conf";
-		hq_output_path_exr = name + "_hq.exr";
-		hq_output_path_ppm = name + "_hq.ppm";
-		hq_conf_path = name + "_hq.conf";
+		scene_path = corona_export_prefix + name + ".scn";
+		output_path_exr = corona_output_prefix + name + ".exr";
+		output_path_ppm = corona_output_prefix + name + ".ppm";
+		output_path_png = corona_output_prefix + name + ".png";
+		conf_path = corona_conf_prefix + name + ".conf";
+		hq_output_path_exr = corona_output_prefix + name + "_hq.exr";
+		hq_output_path_ppm = corona_output_prefix + name + "_hq.ppm";
+		hq_conf_path = corona_conf_prefix + name + "_hq.conf";
 
 		type = jobtype;
 
@@ -47,18 +50,18 @@ namespace Fluxions
 		case Type::GEN:
 			sendLight = SphlSunIndex;
 			recvLight = arg1;
-			conf_path = "sphlgen.conf";
-			hq_conf_path = "sphlgen_hq.conf";
+			conf_path = corona_conf_prefix + "sphlgen.conf";
+			hq_conf_path = corona_conf_prefix + "sphlgen_hq.conf";
 			break;
 		case Type::VIZ:
 			sendLight = arg1;
 			recvLight = arg2;
-			conf_path = "sphlviz.conf";
-			hq_conf_path = "sphlviz_hq.conf";
+			conf_path = corona_conf_prefix + "sphlviz.conf";
+			hq_conf_path = corona_conf_prefix + "sphlviz_hq.conf";
 			break;
 		case Type::REF:
-			conf_path = "ssphh_ground_truth.conf";
-			hq_conf_path = "ssphh_ground_truth_hq.conf";
+			conf_path = corona_conf_prefix + "ssphh_ground_truth.conf";
+			hq_conf_path = corona_conf_prefix + "ssphh_ground_truth_hq.conf";
 			break;
 		case Type::REF_CubeMap:
 			break;
@@ -88,6 +91,7 @@ namespace Fluxions
 			}
 		}
 
+		std::string tonemapconf = corona_export_prefix + scene_name + "_tonemap.conf";
 		if (1)
 		{
 			float tonemap = ssg.environment.toneMapExposure;
@@ -99,7 +103,9 @@ namespace Fluxions
 			{
 				tonemap = 0.0f;
 			}
-			std::ofstream fout(scene_name + "_tonemap.conf");
+			hflog.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
+
+			std::ofstream fout(tonemapconf);
 			fout << "Float colorMap.simpleExposure = " << tonemap << std::endl;
 			if (type == Type::REF)
 			{
@@ -150,7 +156,6 @@ namespace Fluxions
 		elapsedTime = hflog.getSecondsElapsed() - t0;
 		state = result ? State::Finished : State::Error;
 
-		std::string tonemapconf = scene_name + "_tonemap.conf";
 #ifdef WIN32
 		DeleteFile(tonemapconf.c_str());
 		DeleteFile(scene_path.c_str());
@@ -209,7 +214,7 @@ namespace Fluxions
 			cmd << " -c " << conf_path;
 		}
 
-		cmd << " -c " << scene_name << "_tonemap.conf";
+		cmd << " -c " << corona_export_prefix + scene_name << "_tonemap.conf";
 
 		hflog.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
 

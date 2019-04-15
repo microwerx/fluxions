@@ -17,10 +17,63 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "stdafx.h"
+#include <fluxions_simple_geometry_mesh.hpp>
 #include <fluxions_sphl_sampler.hpp>
 
 namespace Fluxions
 {
+	bool SaveSphlOBJ(const std::string &path, const std::string &name, const Color3f Kd, std::vector<Vector3f> &verts, std::vector<Vector3ui> &triangles);
+	
+	bool SaveSphlOBJ(const std::string &path, const std::string &name, const Color3f Kd, std::vector<Vector3f> &verts, std::vector<Vector3ui> &triangles)
+	{
+		std::vector<Vector3f> normals;
+		normals.resize(verts.size());
+		for (auto &n : normals) {
+			n.reset();
+		}
+		for (auto &tri : triangles) {
+			Vector3f a = verts[tri.y] - verts[tri.x];
+			Vector3f b = verts[tri.z] - verts[tri.x];
+			Vector3f c = a.cross(b).normalize();
+			normals[tri.x] += c;
+			normals[tri.y] += c;
+			normals[tri.z] += c;
+		}
+		std::ofstream fout;
+		fout.open(path + "/" + name + ".obj");
+		fout << "mtllib " << name << ".mtl\n";
+		// output vertices
+		for (const Vector3f &v : verts) {
+			fout << "v " << v.x << " " << v.y << " " << v.z << "\n";
+		}
+		fout << "\n";
+		for (Vector3f &n : normals) {
+			n.normalize();
+			fout << "vn " << n.x << " " << n.y << " " << n.z << "\n";
+		}
+		fout << "\n\ng " << name << "\n";
+		fout << "usemtl " << name << "\n";
+		// output faces
+		for (const Vector3ui &t : triangles) {
+			fout << "f ";
+			fout << (t.x + 1) << "//" << (t.x + 1) << " ";
+			fout << (t.y + 1) << "//" << (t.y + 1) << " ";
+			fout << (t.z + 1) << "//" << (t.z + 1) << "\n";
+		}
+		fout.close();
+
+		// Write a material
+		fout.open(path + "/" + name + ".mtl");
+		fout << "\nnewmtl " << name << "\n\n";
+		fout << "    Kd " << Kd.r << " " << Kd.g << " " << Kd.b << "\n";
+		fout << "    Ks 0.1 0.1 0.1\n";
+		fout << "    Ns 1.0\n";
+		fout << "    Tr 1.0";
+		fout << "    d 0.0";
+		fout.close();
+		return true;
+	}
+
 	bool SphlImageTexture::LoadLightProbe(const std::string &path)
 	{
 		FilePathInfo fpi(path);
@@ -36,8 +89,8 @@ namespace Fluxions
 	{
 		float v_coefs[4][121];
 
-		int maxDegree = sph[0].GetMaxDegree();
-		int numCoefs = sph[0].getMaxCoefficients();
+		size_t maxDegree = sph[0].GetMaxDegree();
+		size_t numCoefs = sph[0].getMaxCoefficients();
 		for (int j = 0; j < 4; j++)
 		{
 			for (int lm = 0; lm < numCoefs; lm++)
@@ -251,7 +304,105 @@ namespace Fluxions
 	bool SimpleSSPHHLight::SaveOBJ(const std::string &path, const std::string &name)
 	{
 		FilePathInfo fpi(path);
+		static const char *icos_path = "resources/models/icos4.txt";
+		static size_t numVertices = 0;
+		static size_t numTriangles = 0;
+		static std::vector<Vector3f> vertices;
+		static std::vector<Vector3ui> triangles;
+		static std::vector<Vector3f> rgbiy[5];
 
+		if (!fpi.IsDirectory())
+		{
+			hflog.errorfn(__FUNCTION__, "Path %s is not a directory!", path.c_str());
+			return false;
+		}
+
+		if (numTriangles == 0) {
+			FilePathInfo geosphere(icos_path);
+
+			if (!geosphere.Exists()) {
+				hflog.errorfn(__FUNCTION__, "Icosahedron %s does not exist", icos_path);
+				return false;
+			}
+			std::ifstream fin(icos_path);
+			fin >> numVertices;
+			vertices.resize(numVertices);
+			for (Vector3f &v : vertices) {
+				fin >> v.x;
+				fin >> v.y;
+				fin >> v.z;
+				v.normalize();
+			}
+			fin >> numTriangles;
+			triangles.resize(numTriangles);
+			for (Vector3ui &t : triangles) {
+				fin >> t.x >> t.y >> t.z;
+			}
+			fin.close();
+		}
+
+		// Make sure new RGBIY vertices are the right size
+		for (auto &x : rgbiy) {
+			x.resize(vertices.size());
+		}
+
+		for (size_t i = 0; i < 3; i++) {
+			if (msph[i].GetMaxDegree() < 5) {
+				msph[i].resize(5);
+			}
+			for (size_t lm = 0; lm < msph[i].getMaxCoefficients(); lm++) {
+				float x = 2.0f * (float)rand() / (float)RAND_MAX - 1.0f;
+				msph[i].setCoefficient(lm, x);
+			}
+		}
+
+		// Calculate the 3D positions for the red, green,
+		// blue, intensity, and luma Y' channels
+		for (size_t i = 0; i < vertices.size(); i++) {
+			Vector3f &v = vertices[i];
+			float theta = v.theta();
+			float phi = v.phi();
+			float r = this->msph[0].calc(theta, phi);
+			float g = this->msph[1].calc(theta, phi);
+			float b = this->msph[2].calc(theta, phi);
+			float I = 0.333333 * (r + g + b);
+			float Y = 0.299 * r + 0.587 * g + 0.114 * b;
+			rgbiy[0][i] = (0.5 + 0.25 * r) * v;
+			rgbiy[1][i] = (0.5 + 0.25 * g) * v;
+			rgbiy[2][i] = (0.5 + 0.25 * b) * v;
+			rgbiy[3][i] = (0.5 + 0.25 * I) * v;
+			rgbiy[4][i] = (0.5 + 0.25 * Y) * v;
+			if (i < 5) std::cout << r << std::endl;
+		}
+		const Color3f R(1.0, 0.0, 0.0);
+		const Color3f G(0.0, 1.0, 0.0);
+		const Color3f B(0.0, 0.0, 1.0);
+		const Color3f W(1.0, 1.0, 1.0);
+
+		// Try to save all the files; stop if one fails
+		bool result = true;
+		if (result) result = SaveSphlOBJ(path, name + "_sph_ch0_R", R, rgbiy[0], triangles);
+		if (result) result = SaveSphlOBJ(path, name + "_sph_ch1_G", G, rgbiy[1], triangles);
+		if (result) result = SaveSphlOBJ(path, name + "_sph_ch2_B", B, rgbiy[2], triangles);
+		if (result) result = SaveSphlOBJ(path, name + "_sph_ch3_I", W, rgbiy[3], triangles);
+		if (result) result = SaveSphlOBJ(path, name + "_sph_ch4_Y", W, rgbiy[4], triangles);
+
+		return result;
+		//if (!__g_sphl_icos) {
+		//	__g_sphl_icos = new SimpleGeometryMesh();
+		//	for (size_t i = 0; i < numVertices; i++) {
+		//		__g_sphl_icos->Attrib3f(0, vertices[i]);
+		//	}
+		//	__g_sphl_icos->BeginSurface(SimpleGeometryMesh::SurfaceType::Triangles);
+		//	for (size_t i = 0; i < numTriangles; i++) {
+		//		__g_sphl_icos->AddIndex(triangles[i * 3 + 0]);
+		//		__g_sphl_icos->AddIndex(triangles[i * 3 + 1]);
+		//		__g_sphl_icos->AddIndex(triangles[i * 3 + 2]);
+		//	}
+		//	__g_sphl_icos->EnableAttrib(0);
+		//}
+
+		/* TODO: Move this into the ASCM section
 		const float a = 0.0f;
 		const float b = 1.0f;
 		const float c = ((1.0f + sqrtf(5.0f)) / 2.0f);
@@ -308,7 +459,7 @@ namespace Fluxions
 
 		// subdivide
 		std::vector<Vector3f> inew;
-		for (size_t i = 0; i < indcs.size(); i+=3) {
+		for (size_t i = 0; i < indcs.size(); i += 3) {
 			size_t vi = indcs[i];
 			size_t vj = indcs[i + 1];
 			size_t vk = indcs[i + 2];
@@ -320,49 +471,7 @@ namespace Fluxions
 			verts.push_back(sideb);
 			verts.push_back(sidec);
 		}
-
-		std::ofstream fout;
-		fout.open(path + "/" + name + "Red.obj");
-		fout << "mtllib " << name << ".mtl\n";
-		// output vertices
-		fout << "\n\no " << name << "Red\n";
-		fout << "usemtl " << name << "Red\n";
-		fout.close();
-
-		fout.open(path + "/" + name + "Green.obj");
-		// output faces
-		fout << "\n\no " << name << "Green\n";
-		fout << "usemtl " << name << "Green\n";
-		fout.close();
-
-		fout.open(path + "/" + name + "Blue.obj");
-		// output faces
-		fout << "\n\no " << name << "Blue\n";
-		fout << "usemtl " << name << "Blue\n";
-		fout.close();
-
-		fout.open(path + "/" + name + "Mono.obj");
-		// output faces
-		fout << "\n\no " << name << "Mono\n";
-		fout << "usemtl " << name << "Mono\n";
-		// output faces
-		fout.close();
-
-		fout.open(path + "/" + name + ".mtl");
-		fout << "\nnewmtl " << name << "Red\n\n";
-		fout << "Kd 1.0 0.0 0.0\n";
-		fout << "Ks 0.1 0.1 0.1\n";
-		fout << "\nnewmtl " << name << "Green\n\n";
-		fout << "Kd 0.0 1.0 0.0\n";
-		fout << "Ks 0.1 0.1 0.1\n";
-		fout << "\nnewmtl " << name << "Blue\n\n";
-		fout << "Kd 0.0 0.0 1.0\n";
-		fout << "Ks 0.1 0.1 0.1\n";
-		fout << "\nnewmtl " << name << "Mono\n\n";
-		fout << "Kd 1.0 1.0 1.0\n";
-		fout << "Ks 0.1 0.1 0.1\n";
-		fout.close();
-		return true;
+		*/
 	}
 
 	bool SimpleSSPHHLight::LightProbeToSph(const Image4f &lightProbe, MultispectralSph4f &sph)

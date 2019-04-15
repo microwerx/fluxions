@@ -433,6 +433,8 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
     if (cacheDoesNotExist)
     {
         // save a cache
+		hflog.infofn(__FUNCTION__, "Writing cache %s", cache_filename.c_str());
+
         std::ofstream fout(cache_filename, std::ios::binary);
 
         long vertexCount = (long)Vertices.size();
@@ -474,6 +476,8 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
 
 bool OBJStaticModel::SaveOBJ(const std::string &filename)
 {
+	hflog.infofn(__FUNCTION__, "Writing OBJ %s", filename.c_str());
+
     std::ofstream fout(filename.c_str());
     // 1. Output Vertices
     for (auto it = Vertices.begin(); it != Vertices.end(); it++)
@@ -516,6 +520,8 @@ bool OBJStaticModel::SaveOBJ(const std::string &filename)
 
 void OBJStaticModel::SavePrecompiled(const std::string &filename, const std::string objname)
 {
+	hflog.infofn(__FUNCTION__, "Writing precompiled %s", filename.c_str());
+
     std::string outFilename = filename + ".cpp";
     std::ofstream fout(outFilename.c_str());
 

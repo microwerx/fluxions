@@ -32,7 +32,11 @@ std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::stri
 {
 	std::shared_ptr<SimpleShader> shader(new SimpleShader());
 	FilePathInfo fpi(filename);
-	hflog.infofn(__FUNCTION__, "loading shader `%s'", fpi.fullfname.c_str());
+	const char *typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
+		(type == GL_FRAGMENT_SHADER) ? "fragment" :
+		(type == GL_GEOMETRY_SHADER) ? "geometry" :
+		"unknown";
+	hflog.infofn(__FUNCTION__, "loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 	if (!fpi.IsFile())
 		return shader;
 

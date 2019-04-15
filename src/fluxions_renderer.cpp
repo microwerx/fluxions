@@ -247,7 +247,7 @@ void Renderer::LoadShaders()
 			program->Link();
 			if (!program->IsLinked())
 			{
-				hflog.error("%s(): Program not linked!", __FUNCTION__);
+				hflog.errorfn(__FUNCTION__, "Program not linked!");
 			}
 			for (auto attrib : p.vertex_attribs)
 			{

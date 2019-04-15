@@ -311,6 +311,7 @@ bool SimpleProgram::Link()
     if (bufSize > 0)
     {
         glGetProgramInfoLog(program, bufSize, NULL, &infoLog[0]);
+		hflog.errorfn(__FUNCTION__, "Program link error:\n%s", infoLog.c_str());
     }
 
     validateStatus_ = 0;
@@ -321,7 +322,8 @@ bool SimpleProgram::Link()
     if (bufSize > 0)
     {
         glGetProgramInfoLog(program, 0, NULL, &validateLog[0]);
-    }
+		hflog.errorfn(__FUNCTION__, "Program validation error:\n%s", validateLog.c_str());
+	}
 
     for (shaderIt = shaders.begin(); shaderIt != shaders.end(); ++shaderIt)
     {
