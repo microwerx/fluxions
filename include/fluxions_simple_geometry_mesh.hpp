@@ -139,7 +139,7 @@ class SimpleGeometryMesh
 	{
 		if (i < 0)
 			indices.push_back(GetIndexCount());
-		else if (within(i, 0, GetVertexCount() - 1))
+		else if (within(i, 0, (int)GetVertexCount() - 1))
 			indices.push_back(i);
 		else
 			return;

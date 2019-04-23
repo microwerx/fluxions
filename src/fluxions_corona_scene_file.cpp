@@ -24,9 +24,9 @@
 
 namespace Fluxions
 {
-	static const std::string corona_conf_prefix("corona_conf/");
-	static const std::string corona_export_prefix("corona_export/");
-	static const std::string corona_output_prefix("corona_output/");
+	//static const std::string corona_conf_prefix("corona_conf/");
+	//static const std::string corona_export_prefix("corona_export/");
+	//static const std::string corona_output_prefix("corona_output/");
 
 	CoronaSceneFile::CoronaSceneFile()
 	{
@@ -77,7 +77,6 @@ namespace Fluxions
 		cameraMatrix = ssg.camera.actualViewMatrix;
 
 		hflog.infofn(__FUNCTION__, "Writing Regular scene %s", filename.c_str());
-
 		std::ofstream fout(filename);
 		if (!fout)
 			return;
@@ -88,7 +87,7 @@ namespace Fluxions
 		//fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Reflect\"><componentName>diffuseDirect</componentName></renderElement>" << std::endl;
 		//fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Indirect\"><componentName>diffuseIndirect</componentName></renderElement>" << std::endl << std::endl;
 
-		XmlString(fout, "conffile", "../" + corona_conf_prefix + "export_corona_ground_truth.conf") << "\n\n";
+		XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "export_corona_ground_truth.conf") << "\n\n";
 
 		// Camera
 		writeCamera(fout);
@@ -115,7 +114,6 @@ namespace Fluxions
 		SetCubeMapCamera(cameraPosition, cameraPosition + Vector3f(0.0f, 0.0f, -1.0f), Vector3f(0.0f, 1.0f, 0.0f));
 
 		hflog.infofn(__FUNCTION__, "Writing Cube Map SCN scene %s", filename.c_str());
-
 		std::ofstream fout(filename);
 		if (!fout)
 			return;
@@ -139,13 +137,12 @@ namespace Fluxions
 	void CoronaSceneFile::WriteSkySCN(const std::string &filename, const SimpleSceneGraph &ssg)
 	{
 		hflog.infofn(__FUNCTION__, "Writing Sky scene %s", filename.c_str());
-
 		std::ofstream fout(filename);
 		if (!fout)
 			return;
 
 		XmlBeginTag(fout, "scene") << std::endl;
-		XmlString(fout, "conffile", "../" + corona_conf_prefix + "ssphh_sky.conf", 1) << std::endl
+		XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "ssphh_sky.conf", 1) << std::endl
 			<< std::endl;
 		SetCubeMapCamera(Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f), Vector3f(0.0f, 0.0f, 1.0f));
 		writeCamera(fout);
@@ -169,7 +166,7 @@ namespace Fluxions
 			return false;
 
 		XmlBeginTag(fout, "scene") << std::endl;
-		XmlString(fout, "conffile", "../" + corona_conf_prefix + "sphlviz.conf", 1) << std::endl
+		XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "sphlviz.conf", 1) << std::endl
 			<< std::endl;
 
 		// Camera
@@ -203,6 +200,21 @@ namespace Fluxions
 				0.0f, 0.1f, 0.0f, -sphl1.position.z,
 				0.0f, 0.0f, 0.1f, sphl1.position.y,
 				0.0f, 0.0f, 0.0f, 1.0f);
+			FilePathInfo fpi(CoronaJob::exportPathPrefix + "sphlviz.mtl");
+			if (!fpi.Exists()) {
+				hflog.infofn(__FUNCTION__, "Writing out sphlviz.mtl");
+				std::ofstream svout(CoronaJob::exportPathPrefix + "sphlviz.mtl");
+				svout << "<mtlLib>"
+					"<materialDefinition name = \"sphlSphereLight\">"
+					"<material class = \"Native\">"
+					"<emission>"
+					"<color>100 100 100 </color>"
+					"</emission>"
+					"</material>"
+					"</materialDefinition>"
+					"</mtlLib>";
+				svout.close();
+			}
 			// int tab = 0;
 			XmlString(fout, "mtllib", "sphlviz.mtl", 1) << std::endl;
 			XmlBeginTag(fout, "geometryGroup", 1) << std::endl;
@@ -303,9 +315,8 @@ namespace Fluxions
 
 		// Generate lights MTLLIB
 
-		std::string lights_mtllib_path = corona_export_prefix + lights_mtllib;
+		std::string lights_mtllib_path = CoronaJob::exportPathPrefix + lights_mtllib;
 		hflog.infofn(__FUNCTION__, "Writing lights_mtllib %s", lights_mtllib_path.c_str());
-
 		std::ofstream fout(lights_mtllib_path);
 		XmlBeginTag(fout, "mtlLib") << std::endl;
 		XmlBeginTag(fout, "mapDefinition", "name", "Skylight_environment", 1) << std::endl;
@@ -345,8 +356,12 @@ namespace Fluxions
 			std::map<std::string, int> written_materials;
 			std::map<std::string, std::string> written_maps;
 
-			std::ofstream mtl_fout("materials.mtl");
-			std::ofstream mtlxml_fout("materials_corona.mtl");
+			std::string MTLpath = CoronaJob::exportPathPrefix + "materials.mtl";
+			std::string CoronaMTLpath = CoronaJob::exportPathPrefix + "materials_corona.mtl";
+			hflog.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
+			hflog.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
+			std::ofstream mtl_fout(MTLpath);
+			std::ofstream mtlxml_fout(CoronaMTLpath);
 			XmlBeginTag(mtlxml_fout, "mtlLib") << std::endl;
 
 			std::string last_mtllib;
@@ -364,8 +379,10 @@ namespace Fluxions
 				for (auto &surface : obj.Surfaces)
 				{
 					std::ostringstream obj_pathname;
-					obj_pathname << corona_export_prefix + "object_" << std::setw(3) << std::setfill('0') << obj_count << "_" << sgo.objectName << ".obj";
-					std::ofstream obj_fout(obj_pathname.str());
+					obj_pathname << "object_" << std::setw(3) << std::setfill('0') << obj_count << "_" << sgo.objectName << ".obj";
+					std::string OBJpath = CoronaJob::exportPathPrefix + obj_pathname.str();
+					hflog.infofn(__FUNCTION__, "Writing out %s", OBJpath.c_str());
+					std::ofstream obj_fout(OBJpath);
 
 					mtl_name = sgo.objectName + "_" + surface.materialName;
 					for (auto &c : mtl_name)
@@ -532,11 +549,11 @@ namespace Fluxions
 
 #ifdef WIN32
 				// CopyFile(dst, src, bOverWrite?)
-				CopyFile(mapIt.second.c_str(), (corona_export_prefix + mapIt.first).c_str(), TRUE);
+				CopyFile(mapIt.second.c_str(), (CoronaJob::exportPathPrefix + mapIt.first).c_str(), TRUE);
 #else
 				// POSIX version does not exist
 				// So we will call system instead
-				std::string cp_args = mapIt.second + " corona_export/" + mapIt.first;
+				std::string cp_args = mapIt.second + " " + CoronaJob::exportPathPrefix + mapIt.first;
 				execl("/bin/cp", cp_args.c_str());
 #endif
 				//copy_file(mapIt.second, corona_export_prefix + mapIt.first);
@@ -551,8 +568,12 @@ namespace Fluxions
 		std::map<std::string, int> written_materials;
 		std::map<std::string, std::string> written_maps;
 
-		std::ofstream mtl_fout("materials.mtl");
-		std::ofstream mtlxml_fout("materials_corona.mtl");
+		std::string MTLpath = CoronaJob::exportPathPrefix + "materials.mtl";
+		std::string CoronaMTLpath = CoronaJob::exportPathPrefix + "materials_corona.mtl";
+		hflog.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
+		hflog.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
+		std::ofstream mtl_fout(MTLpath);
+		std::ofstream mtlxml_fout(CoronaMTLpath);
 		XmlBeginTag(mtlxml_fout, "mtlLib") << std::endl;
 
 		std::string last_mtllib;
@@ -670,7 +691,7 @@ namespace Fluxions
 
 #ifdef WIN32
 			// CopyFile(dst, src, bOverWrite?)
-			CopyFile(mapIt.second.c_str(), (corona_export_prefix + mapIt.first).c_str(), TRUE);
+			CopyFile(mapIt.second.c_str(), (CoronaJob::exportPathPrefix + mapIt.first).c_str(), TRUE);
 #else
 			// POSIX version does not exist
 			// So we will call system instead
@@ -705,354 +726,354 @@ namespace Fluxions
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////
-	// CoronaJob ////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////
-
-	CoronaJob::CoronaJob(const std::string &name, Type jobtype, int arg1, int arg2)
-	{
-		scene_name = name;
-		scene_path = corona_export_prefix + name + ".scn";
-		output_path_exr = corona_output_prefix + name + ".exr";
-		output_path_ppm = corona_output_prefix + name + ".ppm";
-		output_path_png = corona_output_prefix + name + ".png";
-		conf_path = corona_conf_prefix + name + ".conf";
-		hq_output_path_exr = corona_output_prefix + name + "_hq.exr";
-		hq_output_path_ppm = corona_output_prefix + name + "_hq.ppm";
-		hq_conf_path = corona_conf_prefix + name + "_hq.conf";
-
-		type = jobtype;
-
-		switch (jobtype)
-		{
-		case Type::GEN:
-			sendLight = SphlSunIndex;
-			recvLight = arg1;
-			conf_path = corona_conf_prefix + "sphlgen.conf";
-			hq_conf_path = corona_conf_prefix + "sphlgen_hq.conf";
-			break;
-		case Type::VIZ:
-			sendLight = arg1;
-			recvLight = arg2;
-			conf_path = corona_conf_prefix + "sphlviz.conf";
-			hq_conf_path = corona_conf_prefix + "sphlviz_hq.conf";
-			break;
-		case Type::REF:
-			conf_path = corona_conf_prefix + "ssphh_ground_truth.conf";
-			hq_conf_path = corona_conf_prefix + "ssphh_ground_truth_hq.conf";
-			break;
-		case Type::REF_CubeMap:
-			break;
-		case Type::Sky:
-			break;
-		}
-	}
-
-	CoronaJob::~CoronaJob()
-	{
-	}
-
-	void CoronaJob::Start(CoronaSceneFile &coronaScene, SimpleSceneGraph &ssg)
-	{
-		if (state != State::Ready)
-		{
-			return;
-		}
-
-		if (!ignoreCache)
-		{
-			FilePathInfo fpi(isHQ ? hq_output_path_exr : output_path_exr);
-			if (fpi.Exists())
-			{
-				state = State::Finished;
-				return;
-			}
-		}
-
-		std::string tonemapconf = corona_export_prefix + scene_name + "_tonemap.conf";
-
-		if (1)
-		{
-			float tonemap = ssg.environment.toneMapExposure;
-			if (type == Type::VIZ)
-			{
-				tonemap = 0.0f;
-			}
-			if (type == Type::GEN)
-			{
-				tonemap = 0.0f;
-			}
-			hflog.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
-
-			std::ofstream fout(tonemapconf);
-			fout << "Float colorMap.simpleExposure = " << tonemap << std::endl;
-			if (type == Type::REF)
-			{
-				fout << "Int image.width = " << imageWidth << std::endl;
-				fout << "Int image.height = " << imageHeight << std::endl;
-			}
-			else
-			{
-				fout << "Int image.width = " << 6 * 128 << std::endl;
-				fout << "Int image.height = " << 128 << std::endl;
-			}
-			if (!isHQ)
-			{
-				fout << "Int shading.maxRayDepth = " << maxRayDepth << std::endl;
-				fout << "Int progressive.passLimit = " << passLimit << std::endl;
-			}
-			fout.close();
-		}
-
-		double t0 = hflog.getSecondsElapsed();
-		state = State::Running;
-		bool result = true;
-		switch (type)
-		{
-		case Type::REF:
-			coronaScene.WriteSCN(scene_path, ssg);
-			result = Run();
-			break;
-		case Type::REF_CubeMap:
-			coronaScene.WriteCubeMapSCN(scene_path, ssg);
-			result = Run();
-			break;
-		case Type::Sky:
-			coronaScene.WriteSkySCN(scene_path, ssg);
-			result = Run();
-			break;
-		case Type::GEN:
-			coronaScene.WriteSphlVizSCN(scene_path, ssg, -1, recvLight);
-			result = Run();
-			break;
-		case Type::VIZ:
-			coronaScene.WriteSphlVizSCN(scene_path, ssg, sendLight, recvLight);
-			result = Run();
-			break;
-		default:
-			break;
-		}
-		elapsedTime = hflog.getSecondsElapsed() - t0;
-		state = result ? State::Finished : State::Error;
-
-#ifdef WIN32
-		DeleteFile(tonemapconf.c_str());
-		DeleteFile(scene_path.c_str());
-#else
-		execl("rm", tonemapconf.c_str());
-		execl("rm", scene_path.c_str());
-#endif
-	}
-
-	void CoronaJob::CopySPH(const Sph4f &sph_)
-	{
-		if (!IsFinished() && !IsGEN() && !IsVIZ())
-			return;
-		memset(sph, 0, sizeof(float) * 484);
-		for (size_t i = 0; i < sph_.size(); i++)
-		{
-			sph[121 * 0 + i] = sph_.r().getCoefficient(i);
-			sph[121 * 1 + i] = sph_.g().getCoefficient(i);
-			sph[121 * 2 + i] = sph_.g().getCoefficient(i);
-			sph[121 * 3 + i] = sph_.a().getCoefficient(i);
-		}
-	}
-
-	void CoronaJob::CopySPHToSph4f(Sph4f &sph_)
-	{
-		sph_.resize(MaxSphlDegree);
-		for (size_t i = 0; i < sph_.size(); i++)
-		{
-			sph_.r().setCoefficient(i, sph[121 * 0 + i]);
-			sph_.g().setCoefficient(i, sph[121 * 1 + i]);
-			sph_.b().setCoefficient(i, sph[121 * 2 + i]);
-			sph_.a().setCoefficient(i, sph[121 * 3 + i]);
-		}
-	}
-
-	std::string CoronaJob::MakeCoronaCommandLine()
-	{
-		std::ostringstream cmd;
-		cmd << "\"C:\\Program Files\\Corona\\Standalone\\Corona.exe\" " << scene_path << " -silent";
-
-		if (isHDR)
-		{
-			cmd << " -oR " << (isHQ ? hq_output_path_exr : output_path_exr);
-		}
-		else
-		{
-			cmd << " -o " << (isHQ ? hq_output_path_exr : output_path_exr);
-		}
-
-		if (isHQ)
-		{
-			cmd << " -c " << hq_conf_path;
-		}
-		else
-		{
-			cmd << " -c " << conf_path;
-		}
-
-		cmd << " -c " << corona_export_prefix + scene_name << "_tonemap.conf";
-
-		hflog.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
-
-		return cmd.str();
-	}
-
-	std::string CoronaJob::MakeConvertCommandLine()
-	{
-		std::ostringstream cmd;
-		if (isHQ)
-		{
-			cmd << "magick " << hq_output_path_exr << " -compress none " << hq_output_path_ppm;
-		}
-		else
-		{
-			cmd << "magick " << output_path_exr << " -compress none " << output_path_ppm;
-		}
-		return cmd.str();
-	}
-
-	bool CoronaJob::Run()
-	{
-		int retval = 0;
-		retval = lastCoronaRetval = system(MakeCoronaCommandLine().c_str());
-		if (retval != 0)
-		{
-			hflog.errorfn(__FUNCTION__, "unable to run corona");
-			return false;
-		}
-		//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
-		//if (retval != 0) return false;
-
-		{
-			std::ostringstream cmd;
-			cmd << "magick " << output_path_exr << " " << output_path_png;
-			retval = lastConvertRetval = system(cmd.str().c_str());
-			if (retval != 0)
-			{
-				hflog.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
-				return false;
-			}
-		}
-		{
-			std::ostringstream cmd;
-			cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
-			retval = lastConvertRetval = system(cmd.str().c_str());
-			if (retval != 0)
-			{
-				hflog.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
-				return false;
-			}
-		}
-		return true;
-	}
-
-	std::string CoronaJob::ToString() const
-	{
-		std::ostringstream ostr;
-		//ostr << imageWidth << std::endl;
-		//ostr << imageHeight << std::endl;
-		//ostr << ignoreCache << std::endl;
-		//ostr << maxRayDepth << std::endl;
-		//ostr << passLimit << std::endl;
-		//ostr << elapsedTime << std::endl;
-		//ostr << finished << std::endl;
-		//ostr << working << std::endl;
-		//ostr << isHQ << std::endl;
-		//ostr << isHDR << std::endl;
-		//ostr << sendLight << std::endl;
-		//ostr << recvLight << std::endl;
-		//ostr << (type == Type::VIZ ? "VIZ" : (type == Type::GEN ? "GEN" : "REF")) << std::endl;
-		//ostr << scene_name << std::endl;
-		//ostr << output_path_ppm << std::endl;
-
-		return ostr.str();
-	}
-
-	void CoronaJob::FromString(const std::string &str)
-	{
-	}
-
-	//////////////////////////////////////////////////////////////////
-	// Static CoronaJob methods //////////////////////////////////////
-	//////////////////////////////////////////////////////////////////
-
-	std::string CoronaJob::MakeREFName(const std::string &prefix, bool isCubeMap, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
-	{
-		std::ostringstream ostr;
-
-		if (!prefix.empty())
-			ostr << prefix << "_";
-		ostr << "REF";
-		if (isCubeMap)
-			ostr << "_cubemap";
-		if (isHDR)
-			ostr << "_hdr";
-		if (isHQ)
-			ostr << "_hq";
-		else
-		{
-			ostr << "_" << std::setw(2) << std::setfill('0') << MaxRayDepth;
-			ostr << "_" << std::setw(2) << std::setfill('0') << PassLimit;
-			if (ks)
-				ostr << "_Ks";
-		}
-		return ostr.str();
-	}
-
-	std::string CoronaJob::MakeVIZName(const std::string &prefix, int srcLightIndex, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
-	{
-		std::ostringstream ostr;
-		if (!prefix.empty())
-			ostr << prefix << "_";
-		ostr << "VIZ" << std::setfill('0') << std::setw(2) << srcLightIndex + 1 << std::setw(2) << recvLightIndex + 1;
-		if (isHDR)
-			ostr << "_hdr";
-		if (isHQ)
-			ostr << "_hq";
-		else
-		{
-			ostr << "_" << std::setw(2) << std::setfill('0') << MaxRayDepth;
-			ostr << "_" << std::setw(2) << std::setfill('0') << PassLimit;
-			if (ks)
-				ostr << "_Ks";
-		}
-		return ostr.str();
-	}
-
-	std::string CoronaJob::MakeGENName(const std::string &prefix, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
-	{
-		std::ostringstream ostr;
-		if (!prefix.empty())
-			ostr << prefix << "_";
-		ostr << "GEN" << std::setfill('0') << std::setw(2) << recvLightIndex + 1;
-		if (isHDR)
-			ostr << "_hdr";
-		if (isHQ)
-			ostr << "_hq";
-		else
-		{
-			if (MaxRayDepth >= 0)
-				ostr << "_" << std::setw(2) << std::setfill('0') << MaxRayDepth;
-			if (PassLimit >= 0)
-				ostr << "_" << std::setw(2) << std::setfill('0') << PassLimit;
-			if (ks)
-				ostr << "_Ks";
-		}
-		return ostr.str();
-	}
-
-	std::string CoronaJob::MakeHIERName(const std::string &prefix, int sendLightIndex, int MaxDegrees)
-	{
-		std::ostringstream ostr;
-		if (!prefix.empty())
-			ostr << prefix << "_";
-		ostr << "HIER" << std::setfill('0') << std::setw(2) << sendLightIndex + 1;
-		if (MaxDegrees >= 0)
-			ostr << "_" << MaxDegrees;
-		return ostr.str();
-	}
+//	/////////////////////////////////////////////////////////////////////
+//	// CoronaJob ////////////////////////////////////////////////////////
+//	/////////////////////////////////////////////////////////////////////
+//
+//	CoronaJob::CoronaJob(const std::string &name, Type jobtype, int arg1, int arg2)
+//	{
+//		scene_name = name;
+//		scene_path = corona_export_prefix + name + ".scn";
+//		output_path_exr = corona_output_prefix + name + ".exr";
+//		output_path_ppm = corona_output_prefix + name + ".ppm";
+//		output_path_png = corona_output_prefix + name + ".png";
+//		conf_path = corona_conf_prefix + name + ".conf";
+//		hq_output_path_exr = corona_output_prefix + name + "_hq.exr";
+//		hq_output_path_ppm = corona_output_prefix + name + "_hq.ppm";
+//		hq_conf_path = corona_conf_prefix + name + "_hq.conf";
+//
+//		type = jobtype;
+//
+//		switch (jobtype)
+//		{
+//		case Type::GEN:
+//			sendLight = SphlSunIndex;
+//			recvLight = arg1;
+//			conf_path = corona_conf_prefix + "sphlgen.conf";
+//			hq_conf_path = corona_conf_prefix + "sphlgen_hq.conf";
+//			break;
+//		case Type::VIZ:
+//			sendLight = arg1;
+//			recvLight = arg2;
+//			conf_path = corona_conf_prefix + "sphlviz.conf";
+//			hq_conf_path = corona_conf_prefix + "sphlviz_hq.conf";
+//			break;
+//		case Type::REF:
+//			conf_path = corona_conf_prefix + "ssphh_ground_truth.conf";
+//			hq_conf_path = corona_conf_prefix + "ssphh_ground_truth_hq.conf";
+//			break;
+//		case Type::REF_CubeMap:
+//			break;
+//		case Type::Sky:
+//			break;
+//		}
+//	}
+//
+//	CoronaJob::~CoronaJob()
+//	{
+//	}
+//
+//	void CoronaJob::Start(CoronaSceneFile &coronaScene, SimpleSceneGraph &ssg)
+//	{
+//		if (state != State::Ready)
+//		{
+//			return;
+//		}
+//
+//		if (!ignoreCache)
+//		{
+//			FilePathInfo fpi(isHQ ? hq_output_path_exr : output_path_exr);
+//			if (fpi.Exists())
+//			{
+//				state = State::Finished;
+//				return;
+//			}
+//		}
+//
+//		std::string tonemapconf = corona_export_prefix + scene_name + "_tonemap.conf";
+//
+//		if (1)
+//		{
+//			float tonemap = ssg.environment.toneMapExposure;
+//			if (type == Type::VIZ)
+//			{
+//				tonemap = 0.0f;
+//			}
+//			if (type == Type::GEN)
+//			{
+//				tonemap = 0.0f;
+//			}
+//			hflog.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
+//
+//			std::ofstream fout(tonemapconf);
+//			fout << "Float colorMap.simpleExposure = " << tonemap << std::endl;
+//			if (type == Type::REF)
+//			{
+//				fout << "Int image.width = " << imageWidth << std::endl;
+//				fout << "Int image.height = " << imageHeight << std::endl;
+//			}
+//			else
+//			{
+//				fout << "Int image.width = " << 6 * 128 << std::endl;
+//				fout << "Int image.height = " << 128 << std::endl;
+//			}
+//			if (!isHQ)
+//			{
+//				fout << "Int shading.maxRayDepth = " << maxRayDepth << std::endl;
+//				fout << "Int progressive.passLimit = " << passLimit << std::endl;
+//			}
+//			fout.close();
+//		}
+//
+//		double t0 = hflog.getSecondsElapsed();
+//		state = State::Running;
+//		bool result = true;
+//		switch (type)
+//		{
+//		case Type::REF:
+//			coronaScene.WriteSCN(scene_path, ssg);
+//			result = Run();
+//			break;
+//		case Type::REF_CubeMap:
+//			coronaScene.WriteCubeMapSCN(scene_path, ssg);
+//			result = Run();
+//			break;
+//		case Type::Sky:
+//			coronaScene.WriteSkySCN(scene_path, ssg);
+//			result = Run();
+//			break;
+//		case Type::GEN:
+//			coronaScene.WriteSphlVizSCN(scene_path, ssg, -1, recvLight);
+//			result = Run();
+//			break;
+//		case Type::VIZ:
+//			coronaScene.WriteSphlVizSCN(scene_path, ssg, sendLight, recvLight);
+//			result = Run();
+//			break;
+//		default:
+//			break;
+//		}
+//		elapsedTime = hflog.getSecondsElapsed() - t0;
+//		state = result ? State::Finished : State::Error;
+//
+//#ifdef WIN32
+//		DeleteFile(tonemapconf.c_str());
+//		DeleteFile(scene_path.c_str());
+//#else
+//		execl("rm", tonemapconf.c_str());
+//		execl("rm", scene_path.c_str());
+//#endif
+//	}
+//
+//	void CoronaJob::CopySPH(const Sph4f &sph_)
+//	{
+//		if (!IsFinished() && !IsGEN() && !IsVIZ())
+//			return;
+//		memset(sph, 0, sizeof(float) * 484);
+//		for (size_t i = 0; i < sph_.size(); i++)
+//		{
+//			sph[121 * 0 + i] = sph_.r().getCoefficient(i);
+//			sph[121 * 1 + i] = sph_.g().getCoefficient(i);
+//			sph[121 * 2 + i] = sph_.g().getCoefficient(i);
+//			sph[121 * 3 + i] = sph_.a().getCoefficient(i);
+//		}
+//	}
+//
+//	void CoronaJob::CopySPHToSph4f(Sph4f &sph_)
+//	{
+//		sph_.resize(MaxSphlDegree);
+//		for (size_t i = 0; i < sph_.size(); i++)
+//		{
+//			sph_.r().setCoefficient(i, sph[121 * 0 + i]);
+//			sph_.g().setCoefficient(i, sph[121 * 1 + i]);
+//			sph_.b().setCoefficient(i, sph[121 * 2 + i]);
+//			sph_.a().setCoefficient(i, sph[121 * 3 + i]);
+//		}
+//	}
+//
+//	std::string CoronaJob::MakeCoronaCommandLine()
+//	{
+//		std::ostringstream cmd;
+//		cmd << "\"C:\\Program Files\\Corona\\Standalone\\Corona.exe\" " << scene_path << " -silent";
+//
+//		if (isHDR)
+//		{
+//			cmd << " -oR " << (isHQ ? hq_output_path_exr : output_path_exr);
+//		}
+//		else
+//		{
+//			cmd << " -o " << (isHQ ? hq_output_path_exr : output_path_exr);
+//		}
+//
+//		if (isHQ)
+//		{
+//			cmd << " -c " << hq_conf_path;
+//		}
+//		else
+//		{
+//			cmd << " -c " << conf_path;
+//		}
+//
+//		cmd << " -c " << corona_export_prefix + scene_name << "_tonemap.conf";
+//
+//		hflog.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
+//
+//		return cmd.str();
+//	}
+//
+//	std::string CoronaJob::MakeConvertCommandLine()
+//	{
+//		std::ostringstream cmd;
+//		if (isHQ)
+//		{
+//			cmd << "magick " << hq_output_path_exr << " -compress none " << hq_output_path_ppm;
+//		}
+//		else
+//		{
+//			cmd << "magick " << output_path_exr << " -compress none " << output_path_ppm;
+//		}
+//		return cmd.str();
+//	}
+//
+//	bool CoronaJob::Run()
+//	{
+//		int retval = 0;
+//		retval = lastCoronaRetval = system(MakeCoronaCommandLine().c_str());
+//		if (retval != 0)
+//		{
+//			hflog.errorfn(__FUNCTION__, "unable to run corona");
+//			return false;
+//		}
+//		//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
+//		//if (retval != 0) return false;
+//
+//		{
+//			std::ostringstream cmd;
+//			cmd << "magick " << output_path_exr << " " << output_path_png;
+//			retval = lastConvertRetval = system(cmd.str().c_str());
+//			if (retval != 0)
+//			{
+//				hflog.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
+//				return false;
+//			}
+//		}
+//		{
+//			std::ostringstream cmd;
+//			cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
+//			retval = lastConvertRetval = system(cmd.str().c_str());
+//			if (retval != 0)
+//			{
+//				hflog.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
+//
+//	std::string CoronaJob::ToString() const
+//	{
+//		std::ostringstream ostr;
+//		//ostr << imageWidth << std::endl;
+//		//ostr << imageHeight << std::endl;
+//		//ostr << ignoreCache << std::endl;
+//		//ostr << maxRayDepth << std::endl;
+//		//ostr << passLimit << std::endl;
+//		//ostr << elapsedTime << std::endl;
+//		//ostr << finished << std::endl;
+//		//ostr << working << std::endl;
+//		//ostr << isHQ << std::endl;
+//		//ostr << isHDR << std::endl;
+//		//ostr << sendLight << std::endl;
+//		//ostr << recvLight << std::endl;
+//		//ostr << (type == Type::VIZ ? "VIZ" : (type == Type::GEN ? "GEN" : "REF")) << std::endl;
+//		//ostr << scene_name << std::endl;
+//		//ostr << output_path_ppm << std::endl;
+//
+//		return ostr.str();
+//	}
+//
+//	void CoronaJob::FromString(const std::string &str)
+//	{
+//	}
+//
+//	//////////////////////////////////////////////////////////////////
+//	// Static CoronaJob methods //////////////////////////////////////
+//	//////////////////////////////////////////////////////////////////
+//
+//	std::string CoronaJob::MakeREFName(const std::string &prefix, bool isCubeMap, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
+//	{
+//		std::ostringstream ostr;
+//
+//		if (!prefix.empty())
+//			ostr << prefix << "_";
+//		ostr << "REF";
+//		if (isCubeMap)
+//			ostr << "_cubemap";
+//		if (isHDR)
+//			ostr << "_hdr";
+//		if (isHQ)
+//			ostr << "_hq";
+//		else
+//		{
+//			ostr << "_" << std::setw(2) << std::setfill('0') << MaxRayDepth;
+//			ostr << "_" << std::setw(2) << std::setfill('0') << PassLimit;
+//			if (ks)
+//				ostr << "_Ks";
+//		}
+//		return ostr.str();
+//	}
+//
+//	std::string CoronaJob::MakeVIZName(const std::string &prefix, int srcLightIndex, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
+//	{
+//		std::ostringstream ostr;
+//		if (!prefix.empty())
+//			ostr << prefix << "_";
+//		ostr << "VIZ" << std::setfill('0') << std::setw(2) << srcLightIndex + 1 << std::setw(2) << recvLightIndex + 1;
+//		if (isHDR)
+//			ostr << "_hdr";
+//		if (isHQ)
+//			ostr << "_hq";
+//		else
+//		{
+//			ostr << "_" << std::setw(2) << std::setfill('0') << MaxRayDepth;
+//			ostr << "_" << std::setw(2) << std::setfill('0') << PassLimit;
+//			if (ks)
+//				ostr << "_Ks";
+//		}
+//		return ostr.str();
+//	}
+//
+//	std::string CoronaJob::MakeGENName(const std::string &prefix, int recvLightIndex, bool isHDR, bool isHQ, bool ks, int MaxRayDepth, int PassLimit)
+//	{
+//		std::ostringstream ostr;
+//		if (!prefix.empty())
+//			ostr << prefix << "_";
+//		ostr << "GEN" << std::setfill('0') << std::setw(2) << recvLightIndex + 1;
+//		if (isHDR)
+//			ostr << "_hdr";
+//		if (isHQ)
+//			ostr << "_hq";
+//		else
+//		{
+//			if (MaxRayDepth >= 0)
+//				ostr << "_" << std::setw(2) << std::setfill('0') << MaxRayDepth;
+//			if (PassLimit >= 0)
+//				ostr << "_" << std::setw(2) << std::setfill('0') << PassLimit;
+//			if (ks)
+//				ostr << "_Ks";
+//		}
+//		return ostr.str();
+//	}
+//
+//	std::string CoronaJob::MakeHIERName(const std::string &prefix, int sendLightIndex, int MaxDegrees)
+//	{
+//		std::ostringstream ostr;
+//		if (!prefix.empty())
+//			ostr << prefix << "_";
+//		ostr << "HIER" << std::setfill('0') << std::setw(2) << sendLightIndex + 1;
+//		if (MaxDegrees >= 0)
+//			ostr << "_" << MaxDegrees;
+//		return ostr.str();
+//	}
 
 } // namespace Fluxions

@@ -49,6 +49,12 @@ namespace Viperfish
 		pIO->DisplaySize.y = 480.0f;
 		pIO->DeltaTime = 0.0f;
 
+		FilePathInfo urwdock("resources/fonts/dock-medium.otf");
+		if (urwdock.Exists()) {
+			ImFont *font = pIO->Fonts->AddFontFromFileTTF("resources/fonts/dock-medium.otf", 24.0f);
+		}
+
+
 		pIO->KeyMap[ImGuiKey_Tab] = 0x09; // Keyboard mapping. ImGui will use those indices to peek into the pIO.KeyDown[] array.
 		pIO->KeyMap[ImGuiKey_LeftArrow] = 0x100 + GLUT_KEY_LEFT;
 		pIO->KeyMap[ImGuiKey_RightArrow] = 0x100 + GLUT_KEY_RIGHT;
@@ -166,6 +172,7 @@ namespace Viperfish
 
 	bool DearImGuiWidget::CreateDeviceObjects()
 	{
+		hflog.infofn(__FUNCTION__, "Creating ImGui device objects...");
 		// Backup GL state
 		GLint last_texture, last_array_buffer, last_vertex_array;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);

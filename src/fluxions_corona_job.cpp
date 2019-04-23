@@ -23,9 +23,13 @@
 
 namespace Fluxions
 {
-	static const std::string corona_conf_prefix("../corona_conf/");
-	static const std::string corona_export_prefix("corona_export/");
-	static const std::string corona_output_prefix("corona_output/");
+	//static const std::string corona_conf_prefix("../corona_conf/");
+	//static const std::string corona_export_prefix("corona_export/");
+	//static const std::string corona_output_prefix("corona_output/");
+
+	const std::string CoronaJob::exportPathPrefix = "corona_export/";
+	const std::string CoronaJob::outputPathPrefix = "corona_output/";
+	const std::string CoronaJob::confPathPrefix = "corona_conf/";
 
 	/////////////////////////////////////////////////////////////////////
 	// CoronaJob ////////////////////////////////////////////////////////
@@ -34,14 +38,14 @@ namespace Fluxions
 	CoronaJob::CoronaJob(const std::string &name, Type jobtype, int arg1, int arg2)
 	{
 		scene_name = name;
-		scene_path = corona_export_prefix + name + ".scn";
-		output_path_exr = corona_output_prefix + name + ".exr";
-		output_path_ppm = corona_output_prefix + name + ".ppm";
-		output_path_png = corona_output_prefix + name + ".png";
-		conf_path = corona_conf_prefix + name + ".conf";
-		hq_output_path_exr = corona_output_prefix + name + "_hq.exr";
-		hq_output_path_ppm = corona_output_prefix + name + "_hq.ppm";
-		hq_conf_path = corona_conf_prefix + name + "_hq.conf";
+		scene_path = exportPathPrefix + name + ".scn";
+		output_path_exr = outputPathPrefix + name + ".exr";
+		output_path_ppm = outputPathPrefix + name + ".ppm";
+		output_path_png = outputPathPrefix + name + ".png";
+		conf_path = confPathPrefix + name + ".conf";
+		hq_output_path_exr = outputPathPrefix + name + "_hq.exr";
+		hq_output_path_ppm = outputPathPrefix + name + "_hq.ppm";
+		hq_conf_path = confPathPrefix + name + "_hq.conf";
 
 		type = jobtype;
 
@@ -50,18 +54,18 @@ namespace Fluxions
 		case Type::GEN:
 			sendLight = SphlSunIndex;
 			recvLight = arg1;
-			conf_path = corona_conf_prefix + "sphlgen.conf";
-			hq_conf_path = corona_conf_prefix + "sphlgen_hq.conf";
+			conf_path = confPathPrefix + "sphlgen.conf";
+			hq_conf_path = confPathPrefix + "sphlgen_hq.conf";
 			break;
 		case Type::VIZ:
 			sendLight = arg1;
 			recvLight = arg2;
-			conf_path = corona_conf_prefix + "sphlviz.conf";
-			hq_conf_path = corona_conf_prefix + "sphlviz_hq.conf";
+			conf_path = confPathPrefix + "sphlviz.conf";
+			hq_conf_path = confPathPrefix + "sphlviz_hq.conf";
 			break;
 		case Type::REF:
-			conf_path = corona_conf_prefix + "ssphh_ground_truth.conf";
-			hq_conf_path = corona_conf_prefix + "ssphh_ground_truth_hq.conf";
+			conf_path = confPathPrefix + "ssphh_ground_truth.conf";
+			hq_conf_path = confPathPrefix + "ssphh_ground_truth_hq.conf";
 			break;
 		case Type::REF_CubeMap:
 			break;
@@ -91,10 +95,10 @@ namespace Fluxions
 			}
 		}
 
-		std::string tonemapconf = corona_export_prefix + scene_name + "_tonemap.conf";
+		std::string tonemapconf = exportPathPrefix + scene_name + "_tonemap.conf";
 		if (1)
 		{
-			float tonemap = ssg.environment.toneMapExposure;
+			float tonemap = ssg.environment.toneMapScale;
 			if (type == Type::VIZ)
 			{
 				tonemap = 0.0f;
@@ -214,7 +218,7 @@ namespace Fluxions
 			cmd << " -c " << conf_path;
 		}
 
-		cmd << " -c " << corona_export_prefix + scene_name << "_tonemap.conf";
+		cmd << " -c " << exportPathPrefix + scene_name << "_tonemap.conf";
 
 		hflog.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
 
@@ -237,8 +241,12 @@ namespace Fluxions
 
 	bool CoronaJob::Run()
 	{
+		std::string commandLine = MakeCoronaCommandLine();
+		const char *cmd = commandLine.c_str();
+
 		int retval = 0;
-		retval = lastCoronaRetval = system(MakeCoronaCommandLine().c_str());
+		hflog.infofn(__FUNCTION__, "running %s", cmd);
+		retval = lastCoronaRetval = system(cmd);
 		if (retval != 0)
 		{
 			hflog.errorfn(__FUNCTION__, "unable to run corona");
@@ -250,7 +258,9 @@ namespace Fluxions
 		{
 			std::ostringstream cmd;
 			cmd << "magick " << output_path_exr << " " << output_path_png;
-			retval = lastConvertRetval = system(cmd.str().c_str());
+			const char *pcmd = cmd.str().c_str();
+			hflog.infofn(__FUNCTION__, "running %s", pcmd);
+			retval = lastConvertRetval = system(pcmd);
 			if (retval != 0)
 			{
 				hflog.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
@@ -260,7 +270,9 @@ namespace Fluxions
 		{
 			std::ostringstream cmd;
 			cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
-			retval = lastConvertRetval = system(cmd.str().c_str());
+			const char *pcmd = cmd.str().c_str();
+			hflog.infofn(__FUNCTION__, "running %s", pcmd);
+			retval = lastConvertRetval = system(pcmd);
 			if (retval != 0)
 			{
 				hflog.errorfn(__FUNCTION__, "unable to convert PNG to PPM");

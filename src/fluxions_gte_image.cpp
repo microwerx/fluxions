@@ -757,7 +757,33 @@ template <typename ColorType>
 void TImage<ColorType>::loadEXR(const std::string &path)
 {
 #ifndef FLUXIONS_NO_OPENEXR
-	//RgbaOutputFile file();
+	double t1 = hflog.getMillisecondsElapsed();
+	Imf::RgbaInputFile file(path.c_str());
+	Imath::Box2i dw = file.dataWindow();
+	size_t w = dw.max.x - dw.min.x + 1;
+	size_t h = dw.max.y - dw.min.y + 1;
+	//Imf::Array2D<Imf::Rgba> filePixels;
+	std::vector<Imf::Rgba> filePixels(w*h);
+	//filePixels.resizeErase(h, w);
+	file.setFrameBuffer(&filePixels[0], 1, w);
+	file.readPixels(dw.min.y, dw.max.y);
+
+	resize(w, h);
+	size_t addr = 0;
+	float minC = 1e6;
+	float maxC = -1e6;
+	for (auto j = 0; j < h; j++) {
+		for (auto i = 0; i < w; i++) {
+			Imf::Rgba rgba = filePixels[addr];
+			Color3f color(float(rgba.r), float(rgba.g), float(rgba.b));
+			minC = std::min(minC, color.minrgb());
+			maxC = std::max(maxC, color.maxrgb());
+			setPixel(i, j, color);
+			addr++;
+		}
+	}
+	t1 = hflog.getMillisecondsElapsed() - t1;
+	hflog.infofn("TImage<>::loadEXR", "Read %dx%d image from %s (%3f ms) (min, max) = (%-2.3f, %-2.3f)", w, h, path.c_str(), t1, minC, maxC);
 #endif
 }
 
@@ -765,6 +791,7 @@ template <typename ColorType>
 void TImage<ColorType>::saveEXR(const std::string &path)
 {
 #ifndef FLUXIONS_NO_OPENEXR
+	double t1 = hflog.getMillisecondsElapsed();
 	const Imf::Rgba black(0.0f, 0.0f, 0.0f, 1.0f);
 	std::vector<Imf::Rgba> halfPixels(imageWidth * imageHeight * imageDepth, black);
 	const size_t count = imageWidth * imageHeight * imageDepth;
@@ -775,7 +802,9 @@ void TImage<ColorType>::saveEXR(const std::string &path)
 	}
 	Imf::RgbaOutputFile file(path.c_str(), imageWidth, imageHeight, Imf::WRITE_RGBA);
 	file.setFrameBuffer(halfPixels.data(), 1, imageWidth);
-	file.writePixels(1);
+	file.writePixels(imageHeight);
+	t1 = hflog.getMillisecondsElapsed() - t1;
+	hflog.infofn("TImage<>::saveEXR", "Wrote %dx%d image to %s (%3f ms)", imageWidth, imageHeight, path.c_str(), t1);
 #endif
 }
 

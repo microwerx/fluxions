@@ -268,6 +268,7 @@ class JSON : public std::enable_shared_from_this<JSON>
 	inline int64_t AsInt64() const { return IsNumber() ? (int64_t)dval_ : 0; }
 	inline double AsDouble() const { return IsNumber() ? dval_ : 0.0; }
 	inline float AsFloat() const { return IsNumber() ? float(dval_) : 0.0f; }
+	inline const std::string AsString() const { return IsString() ? sval_ : Serialize(); }
 	inline size_t Length() const { return IsArray() ? array_.size() : IsObject() ? map_.size() : 0; }
 	inline std::map<std::string, JSONPtr> &AsObject() noexcept { return map_; }
 	inline const std::map<std::string, JSONPtr> &AsObject() const noexcept { return map_; }

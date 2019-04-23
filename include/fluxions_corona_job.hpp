@@ -29,6 +29,10 @@ namespace Fluxions
 	class CoronaJob
 	{
 	public:
+		static const std::string exportPathPrefix;
+		static const std::string outputPathPrefix;
+		static const std::string confPathPrefix;
+
 		enum class Type
 		{
 			REF,
@@ -73,12 +77,20 @@ namespace Fluxions
 
 		constexpr double GetElapsedTime() const { return elapsedTime; }
 
-		constexpr const std::string &GetOutputPath() const
+		constexpr const std::string &GetOutputPath(bool exrPathInstead = false) const
 		{
-			if (isHQ)
-				return hq_output_path_ppm;
-			else
-				return output_path_ppm;
+			if (exrPathInstead) {
+				if (isHQ)
+					return hq_output_path_exr;
+				else
+					return output_path_exr;
+			}
+			else {
+				if (isHQ)
+					return hq_output_path_ppm;
+				else
+					return output_path_ppm;
+			}
 		}
 		constexpr const std::string &GetName() const { return scene_name; }
 

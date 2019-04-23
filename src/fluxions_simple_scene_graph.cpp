@@ -560,7 +560,7 @@ bool SimpleSceneGraph::Load(const std::string &filename)
         }
         else if (str == "tonemap")
         {
-            environment.toneMapScale = clamp(ReadFloat(istr), -12.0f, 12.0f);
+            environment.toneMapScale = clamp(ReadFloat(istr), -20.0f, 20.0f);
             environment.toneMapExposure = environment.toneMapScale;
         }
         else if (str == "gamma")

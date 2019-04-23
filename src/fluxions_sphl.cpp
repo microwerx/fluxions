@@ -192,6 +192,8 @@ void Sphl::createMesh(FxModel &model)
 				sph = -sph;							 // sph = 1.0f - sph;
 				sph_model.Attrib3f(2, InvColors[j]); // (Opposite) Red SPH Color
 			}
+			// Added this line to move SPH between 0.25 and 0.5
+			sph = 0.25f + 0.25f * sph;
 			sph_model.Attrib3f(0, offsets[j] + scales[j] * sph * model.vertices[i]); // Position
 		}
 	}

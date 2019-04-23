@@ -254,7 +254,7 @@ class TSphericalHarmonic
 	constexpr VectorType calc(VectorType theta, VectorType phi) noexcept
 	{
 		const VectorType *a = &coefficients[0];
-		return calc_spherical_harmonic<VectorType>(maxDegree, a, theta, phi);
+		return calc_spherical_harmonic<VectorType>((int)maxDegree, a, theta, phi);
 	}
 
   private:
@@ -490,7 +490,7 @@ struct Sph4f
 			msph[i].Accumulate(b[i], c[i], maxDegrees);
 	}
 
-	void SaveJSON(const std::string &path);
+	void SaveJSON(const std::string &path, const std::string &name, const Vector3f &position);
 };
 } // namespace Fluxions
 

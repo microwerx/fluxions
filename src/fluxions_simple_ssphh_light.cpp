@@ -23,7 +23,7 @@
 namespace Fluxions
 {
 	bool SaveSphlOBJ(const std::string &path, const std::string &name, const Color3f Kd, std::vector<Vector3f> &verts, std::vector<Vector3ui> &triangles);
-	
+
 	bool SaveSphlOBJ(const std::string &path, const std::string &name, const Color3f Kd, std::vector<Vector3f> &verts, std::vector<Vector3ui> &triangles)
 	{
 		std::vector<Vector3f> normals;
@@ -80,7 +80,12 @@ namespace Fluxions
 		if (fpi.DoesNotExist())
 			return false;
 
-		lightProbe.loadPPM(path);
+		if (fpi.ext == ".ppm")
+			lightProbe.loadPPM(path);
+		else if (fpi.ext == ".exr")
+			lightProbe.loadEXR(path);
+		else
+			hflog.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
 		lightProbe.convertRectToCubeMap();
 		return true;
 	}
@@ -91,13 +96,13 @@ namespace Fluxions
 
 		size_t maxDegree = sph[0].GetMaxDegree();
 		size_t numCoefs = sph[0].getMaxCoefficients();
-		for (int j = 0; j < 4; j++)
+		for (size_t j = 0; j < 4; j++)
 		{
-			for (int lm = 0; lm < numCoefs; lm++)
+			for (size_t lm = 0; lm < numCoefs; lm++)
 			{
 				v_coefs[j][lm] = sph[j][lm];
 			}
-			for (int lm = numCoefs; lm < 121; lm++)
+			for (size_t lm = numCoefs; lm < 121; lm++)
 			{
 				v_coefs[j][lm] = 0.0f;
 			}
@@ -119,10 +124,10 @@ namespace Fluxions
 					float theta = v.theta();
 					float phi = v.phi();
 
-					color.r = calc_spherical_harmonic<float>(maxDegree, v_coefs[0], theta, phi);
-					color.g = calc_spherical_harmonic<float>(maxDegree, v_coefs[1], theta, phi);
-					color.b = calc_spherical_harmonic<float>(maxDegree, v_coefs[2], theta, phi);
-					color.a = calc_spherical_harmonic<float>(maxDegree, v_coefs[3], theta, phi);
+					color.r = calc_spherical_harmonic<float>((int)maxDegree, v_coefs[0], theta, phi);
+					color.g = calc_spherical_harmonic<float>((int)maxDegree, v_coefs[1], theta, phi);
+					color.b = calc_spherical_harmonic<float>((int)maxDegree, v_coefs[2], theta, phi);
+					color.a = calc_spherical_harmonic<float>((int)maxDegree, v_coefs[3], theta, phi);
 
 					lightProbe.setPixelUnsafe(s, t, face, color);
 				}
@@ -136,7 +141,7 @@ namespace Fluxions
 		texture.Bind(0);
 		for (int i = 0; i < 6; i++)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, lightProbe.width(), lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
 		}
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		texture.Unbind();
@@ -207,7 +212,12 @@ namespace Fluxions
 		if (fpi.DoesNotExist())
 			return false;
 
-		lightProbe_corona.loadPPM(path);
+		if (fpi.ext == ".ppm")
+			lightProbe_corona.loadPPM(path);
+		else if (fpi.ext == ".exr")
+			lightProbe_corona.loadEXR(path);
+		else
+			hflog.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
 		lightProbe_corona.convertRectToCubeMap();
 		double intensity = lightProbe_corona.getIntensity();
 		double numPixels = lightProbe_corona.getNumPixels();
@@ -233,25 +243,46 @@ namespace Fluxions
 
 		SphToLightProbe(msph, lightProbe_sph);
 		lightProbe_sph.convertCubeMapToRect();
-		lightProbe_sph.savePPMi(path, 255.99f, 0, 255, 0, false);
+		if (fpi.ext == ".ppm")
+			lightProbe_sph.savePPMi(path, 255.99f, 0, 255, 0, false);
+		else if (fpi.ext == ".exr")
+			lightProbe_sph.saveEXR(path);
 
 		return false;
 	}
 
-	// Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
+	// Saves a JSON form of the multispectral (RGBI) of this SPH. I represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
 	bool SimpleSSPHHLight::SaveJsonSph(const std::string &path)
 	{
 		FilePathInfo fpi(path);
-		KASL::JSONPtr json = KASL::JSON::MakeObject({ {"maxDegree", KASL::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
-													 {"coefs", KASL::JSON::MakeArray()} });
+		KASL::JSONPtr json = KASL::JSON::MakeObject({
+			{"numChannels", KASL::JSON::MakeNumber(3)},
+			{"maxDegree", KASL::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
+			{"coefs", KASL::JSON::MakeArray()},
+			{"meta", KASL::JSON::MakeObject()}
+			});
 
 		auto coefs = json->getMember("coefs");
-		for (int j = 0; j < 4; j++)
+		for (size_t lm = 0; lm < msph->getMaxCoefficients(); lm++)
 		{
-			std::vector<float> coef_f = msph[j].getCoefficients();
-			KASL::JSONPtr jsonArray = KASL::JSON::MakeArray(coef_f);
-			coefs->PushBack(jsonArray);
+			float r = msph[0].getCoefficient(lm);
+			float g = msph[1].getCoefficient(lm);
+			float b = msph[2].getCoefficient(lm);
+			KASL::JSONPtr rgb = KASL::JSON::MakeArray({ r, g, b });
+			coefs->PushBack(rgb);
 		}
+
+		auto meta = json->getMember("meta");
+		KASL::JSONPtr m_meta = KASL::JSON::MakeObject({
+			{ "name", KASL::JSON::MakeString(name) },
+			{ "position", KASL::JSON::MakeArray({
+				position.x,
+				position.y,
+				position.z
+				})
+			}
+			});
+		meta->PushBack(m_meta);
 
 		std::ofstream fout(fpi.path);
 		fout << json->Serialize();
@@ -284,13 +315,16 @@ namespace Fluxions
 			return false;
 		}
 
-		if (json->IsObject() && json->getMember("maxDegree")->IsNumber() && json->getMember("coefs")->IsArray() && json->getMember("coefs")->Size() == 4 && json->getMember("coefs")->getElement(0)->IsArray() && json->getMember("coefs")->getElement(1)->IsArray() && json->getMember("coefs")->getElement(2)->IsArray() && json->getMember("coefs")->getElement(3)->IsArray())
+		if (json->IsObject() &&
+			json->getMember("numChannels")->IsNumber() &&
+			json->getMember("maxDegree")->IsNumber() &&
+			json->getMember("coefs")->IsArray())
 		{
 			// int jsonMaxDegree = json->getMember("maxDegree")->AsInt();
 			KASL::JSONPtr coefs = json->getMember("coefs");
 			for (size_t j = 0; j < 4; j++)
 			{
-				KASL::JSONPtr e = coefs->getElement(j);
+				KASL::JSONPtr e = coefs->getElement((int)j);
 				if (e->IsArray())
 				{
 					std::vector<float> coefJ;
@@ -298,10 +332,35 @@ namespace Fluxions
 				}
 			}
 		}
+
+		KASL::JSONPtr meta = json->getMember("meta");
+		if (meta->IsObject()) {
+			auto nameMember = meta->getMember("name");
+			if (nameMember->IsString()) {
+				name = nameMember->AsString();
+			}
+
+			auto m_position = meta->getMember("position");
+			if (m_position->IsArray()) {
+				std::vector<float> v = m_position->AsFloatArray();
+				if (v.size() >= 3) {
+					position.reset(v[0], v[1], v[2]);
+				}
+			}
+			else if (m_position->IsObject()) {
+				KASL::JSONPtr x = m_position->getMember("x");
+				KASL::JSONPtr y = m_position->getMember("y");
+				KASL::JSONPtr z = m_position->getMember("z");
+				if (x->IsNumber() && y->IsNumber() && z->IsNumber()) {
+					position.reset(x->AsFloat(), y->AsFloat(), z->AsFloat());
+				}
+			}
+		}
+
 		return false;
 	}
 
-	bool SimpleSSPHHLight::SaveOBJ(const std::string &path, const std::string &name)
+	bool SimpleSSPHHLight::SaveOBJ(const std::string &path, const std::string &gname)
 	{
 		FilePathInfo fpi(path);
 		static const char *icos_path = "resources/models/icos4.txt";
@@ -349,10 +408,10 @@ namespace Fluxions
 		for (size_t i = 0; i < 3; i++) {
 			if (msph[i].GetMaxDegree() < 5) {
 				msph[i].resize(5);
-			}
-			for (size_t lm = 0; lm < msph[i].getMaxCoefficients(); lm++) {
-				float x = 2.0f * (float)rand() / (float)RAND_MAX - 1.0f;
-				msph[i].setCoefficient(lm, x);
+				for (size_t lm = 0; lm < msph[i].getMaxCoefficients(); lm++) {
+					float x = 2.0f * (float)rand() / (float)RAND_MAX - 1.0f;
+					msph[i].setCoefficient(lm, x);
+				}
 			}
 		}
 
@@ -365,27 +424,27 @@ namespace Fluxions
 			float r = this->msph[0].calc(theta, phi);
 			float g = this->msph[1].calc(theta, phi);
 			float b = this->msph[2].calc(theta, phi);
-			float I = 0.333333 * (r + g + b);
-			float Y = 0.299 * r + 0.587 * g + 0.114 * b;
-			rgbiy[0][i] = (0.5 + 0.25 * r) * v;
-			rgbiy[1][i] = (0.5 + 0.25 * g) * v;
-			rgbiy[2][i] = (0.5 + 0.25 * b) * v;
-			rgbiy[3][i] = (0.5 + 0.25 * I) * v;
-			rgbiy[4][i] = (0.5 + 0.25 * Y) * v;
+			float I = 0.333333f * (r + g + b);
+			float Y = 0.299f * r + 0.587f * g + 0.114f * b;
+			rgbiy[0][i] = (0.5f + 0.25f * r) * v;
+			rgbiy[1][i] = (0.5f + 0.25f * g) * v;
+			rgbiy[2][i] = (0.5f + 0.25f * b) * v;
+			rgbiy[3][i] = (0.5f + 0.25f * I) * v;
+			rgbiy[4][i] = (0.5f + 0.25f * Y) * v;
 			if (i < 5) std::cout << r << std::endl;
 		}
-		const Color3f R(1.0, 0.0, 0.0);
-		const Color3f G(0.0, 1.0, 0.0);
-		const Color3f B(0.0, 0.0, 1.0);
-		const Color3f W(1.0, 1.0, 1.0);
+		const Color3f R(1.0f, 0.0f, 0.0f);
+		const Color3f G(0.0f, 1.0f, 0.0f);
+		const Color3f B(0.0f, 0.0f, 1.0f);
+		const Color3f W(1.0f, 1.0f, 1.0f);
 
 		// Try to save all the files; stop if one fails
 		bool result = true;
-		if (result) result = SaveSphlOBJ(path, name + "_sph_ch0_R", R, rgbiy[0], triangles);
-		if (result) result = SaveSphlOBJ(path, name + "_sph_ch1_G", G, rgbiy[1], triangles);
-		if (result) result = SaveSphlOBJ(path, name + "_sph_ch2_B", B, rgbiy[2], triangles);
-		if (result) result = SaveSphlOBJ(path, name + "_sph_ch3_I", W, rgbiy[3], triangles);
-		if (result) result = SaveSphlOBJ(path, name + "_sph_ch4_Y", W, rgbiy[4], triangles);
+		if (result) result = SaveSphlOBJ(path, gname + "_sph_ch0_R", R, rgbiy[0], triangles);
+		if (result) result = SaveSphlOBJ(path, gname + "_sph_ch1_G", G, rgbiy[1], triangles);
+		if (result) result = SaveSphlOBJ(path, gname + "_sph_ch2_B", B, rgbiy[2], triangles);
+		if (result) result = SaveSphlOBJ(path, gname + "_sph_ch3_I", W, rgbiy[3], triangles);
+		if (result) result = SaveSphlOBJ(path, gname + "_sph_ch4_Y", W, rgbiy[4], triangles);
 
 		return result;
 		//if (!__g_sphl_icos) {
@@ -582,7 +641,7 @@ namespace Fluxions
 		texture.Bind(0);
 		for (int i = 0; i < 6; i++)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, lightProbe.width(), lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
 		}
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		texture.Unbind();
@@ -603,7 +662,7 @@ namespace Fluxions
 		glutDebugBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 		for (int i = 0; i < 6; i++)
 		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, lightProbe.width(), lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
 		}
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		//texture.Unbind();
@@ -890,6 +949,7 @@ namespace Fluxions
 
 	void SimpleSSPHH::INIT(SimpleSceneGraph &ssg)
 	{
+		hflog.infofn(__FUNCTION__, "SSPHH INIT");
 		sceneName = ssg.name;
 		sphls_ = &ssg.ssphhLights;
 		size_ = sphls_->size();
@@ -915,7 +975,7 @@ namespace Fluxions
 		Q.resize(size_);
 		for (size_t i = 0; i < size_; i++)
 		{
-			Q[i].index = i;
+			Q[i].index = (int)i;
 		}
 		Qsorted.resize(size_);
 		Sprime.resize(size_);
@@ -939,7 +999,8 @@ namespace Fluxions
 	{
 		if (!sphls_)
 			return;
-		auto &sphls = *sphls_;
+		hflog.infofn(__FUNCTION__, "SSPHH GEN");
+		//auto &sphls = *sphls_;
 
 		int i = 0;
 		for (auto &sphl : *sphls_)
@@ -973,6 +1034,8 @@ namespace Fluxions
 	{
 		if (!sphls_)
 			return;
+		hflog.infofn(__FUNCTION__, "SSPHH VIZ");
+
 		auto &sphls = *sphls_;
 
 		for (size_t i = 0; i < size_; i++)
@@ -984,23 +1047,24 @@ namespace Fluxions
 					continue;
 				if (sphl.vizgenLightProbes.empty())
 				{
-					hflog.error("%s(): VIZ() called with no light probes!", __FUNCTION__);
+					hflog.errorfn(__FUNCTION__, "VIZ() called with no light probes!");
 					continue;
 				}
 
 				H[i][j].resize(sphl.maxDegree);
 				sphl.LightProbeToSph(sphl.vizgenLightProbes[j], H[i][j].msph);
 
-				std::string basename = CoronaJob::MakeVIZName(sceneName, i, j);
+				std::string basename = "output/" + CoronaJob::MakeVIZName(sceneName, (int)i, (int)j);
 				if (savePPMs)
 				{
 					Image4f lightProbe(32, 32, 6);
 					sphl.SphToLightProbe(H[i][j].msph, lightProbe);
 					lightProbe.convertCubeMapToRect();
 					lightProbe.savePPMi(basename + "_sph.ppm", 255.99f, 0, 255);
+					lightProbe.saveEXR(basename + "_sph.exr");
 				}
 				if (saveJSONs)
-					H[i][j].SaveJSON(basename + ".json");
+					H[i][j].SaveJSON(basename + ".json", basename, sphl.position.xyz());
 
 				// TODO: calculate visibility percentage
 				P[i][j] = 0.25f;
@@ -1020,7 +1084,7 @@ namespace Fluxions
 					lm2 = -1.0f;
 					lm3 = -1.0f;
 				}
-				hflog.info("%s(): (%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, j, lm0, lm1, lm2, lm3);
+				hflog.infofn(__FUNCTION__, "(%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", i, j, lm0, lm1, lm2, lm3);
 			}
 		}
 		return;
@@ -1030,12 +1094,14 @@ namespace Fluxions
 	{
 		if (!sphls_)
 			return;
+		hflog.infofn(__FUNCTION__, "SSPHH HIER");
+
 		auto &sphls = *sphls_;
 		for (size_t i = 0; i < size_; i++)
 		{
 			for (size_t j = 0; j < size_; j++)
 			{
-				Q[j].index = j;
+				Q[j].index = (int)j;
 				Q[j].p = P[i][j];
 			}
 			Qsorted = Q;
@@ -1090,7 +1156,7 @@ namespace Fluxions
 			sphls[i].SphToLightProbe(Sprime[i].msph, sphls[i].lightProbe_hier);
 			sphls[i].UploadLightProbe(sphls[i].lightProbe_hier, sphls[i].hierLightProbeTexture);
 
-			std::string base = CoronaJob::MakeHIERName(sceneName, i, MaxDegrees);
+			std::string base = "output/" + CoronaJob::MakeHIERName(sceneName, (int)i, (int)MaxDegrees);
 
 			if (savePPMs)
 			{
@@ -1098,9 +1164,12 @@ namespace Fluxions
 				sphls[i].SphToLightProbe(Sprime[i].msph, lightProbeSprime, MaxDegrees);
 				lightProbeSprime.convertCubeMapToRect();
 				lightProbeSprime.savePPMi(base + "_01_Sprime.ppm", 255.99f, 0, 0);
+				lightProbeSprime.saveEXR(base + "_01_Sprime.exr");
 			}
-			if (saveJSONs)
-				Sprime[i].SaveJSON(base + "_01_Sprime.json");
+			if (saveJSONs) {
+				std::string basename = base + "_01_Sprime";
+				Sprime[i].SaveJSON(base + "_01_Sprime.json", basename, sphls[i].position.xyz());
+			}
 
 			if (savePPMs)
 			{
@@ -1108,9 +1177,12 @@ namespace Fluxions
 				sphls[i].SphToLightProbe(self[i].msph, lightProbeSelf, MaxDegrees);
 				lightProbeSelf.convertCubeMapToRect();
 				lightProbeSelf.savePPMi(base + "_02_self.ppm", 255.99f, 0, 0);
+				lightProbeSelf.saveEXR(base + "_02_self.exr");
 			}
-			if (saveJSONs)
-				self[i].SaveJSON(base + "_02_self.json");
+			if (saveJSONs) {
+				std::string basename = base + "_02_self";
+				self[i].SaveJSON(base + "_02_self.json", basename, sphls[i].position.xyz());
+			}
 
 			if (savePPMs)
 			{
@@ -1118,9 +1190,12 @@ namespace Fluxions
 				sphls[i].SphToLightProbe(neighbor[i].msph, lightProbeNeighbor, MaxDegrees);
 				lightProbeNeighbor.convertCubeMapToRect();
 				lightProbeNeighbor.savePPMi(base + "_03_neighbor.ppm", 255.99f, 0, 0);
+				lightProbeNeighbor.saveEXR(base + "_03_neighbor.exr");
 			}
-			if (saveJSONs)
-				neighbor[i].SaveJSON(base + "_03_neighbor.json");
+			if (saveJSONs) {
+				std::string basename = base + "_03_neighbor";
+				neighbor[i].SaveJSON(base + "_03_neighbor.json", basename, sphls[i].position.xyz());
+			}
 
 			float lm0, lm1, lm2, lm3;
 			if (Sprime[i].a().GetMaxDegree() >= 1)
@@ -1137,7 +1212,7 @@ namespace Fluxions
 				lm2 = -1.0f;
 				lm3 = -1.0f;
 			}
-			hflog.info("%s(): S'_%d -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, lm0, lm1, lm2, lm3);
+			hflog.infofn(__FUNCTION__, "S'_%d -> [ %.2f, %.2f, %.2f, %.2f ]", i, lm0, lm1, lm2, lm3);
 		}
 		return;
 	}
