@@ -21,188 +21,184 @@
 
 namespace Fluxions
 {
-bool debugging = false;
-const std::string BlankString("");
-bool __checkedGLInfo = false;
-std::string gl_version;
-std::string gl_renderer;
-std::string gl_vendor;
+	bool debugging = false;
+	const std::string BlankString("");
+	bool __checkedGLInfo = false;
+	std::string gl_version;
+	std::string gl_renderer;
+	std::string gl_vendor;
 
-std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename)
-{
-	std::shared_ptr<SimpleShader> shader(new SimpleShader());
-	FilePathInfo fpi(filename);
-	const char *typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
-		(type == GL_FRAGMENT_SHADER) ? "fragment" :
-		(type == GL_GEOMETRY_SHADER) ? "geometry" :
-		"unknown";
-	hflog.infofn(__FUNCTION__, "loading %s shader `%s'", typeName, fpi.fullfname.c_str());
-	if (!fpi.IsFile())
+	std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename)
+	{
+		std::shared_ptr<SimpleShader> shader(new SimpleShader());
+		FilePathInfo fpi(filename);
+		const char *typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
+			(type == GL_FRAGMENT_SHADER) ? "fragment" :
+			(type == GL_GEOMETRY_SHADER) ? "geometry" :
+			"unknown";
+		hflog.infofn(__FUNCTION__, "loading %s shader `%s'", typeName, fpi.fullfname.c_str());
+		if (!fpi.IsFile())
+			return shader;
+
+		shader->Create(type);
+		shader->source = ReadTextFile(filename);
+		const GLchar *sourceString = shader->source.c_str();
+		const GLint length = (int)shader->source.size();
+		glShaderSource(shader->shader, 1, &sourceString, &length);
+		glCompileShader(shader->shader);
+		GLint ival = 0;
+		glGetShaderiv(shader->shader, GL_COMPILE_STATUS, &ival);
+		shader->didCompile = (ival == GL_TRUE);
+		shader->hadError = (ival != GL_TRUE);
+		glGetShaderiv(shader->shader, GL_INFO_LOG_LENGTH, &ival);
+		shader->infoLog.resize(ival);
+		GLchar *infoLog = &shader->infoLog[0];
+		glGetShaderInfoLog(shader->shader, ival, NULL, infoLog);
+		if (shader->hadError)
+		{
+			hflog.errorfn(__FUNCTION__, "shader %d compile error for %s\n%s", shader->shader, filename.c_str(), shader->infoLog.c_str());
+		}
+		if (shader->didCompile)
+		{
+			hflog.infofn(__FUNCTION__, "shader %d compiled", shader->shader);
+		}
+
 		return shader;
-
-	shader->Create(type);
-	shader->source = ReadTextFile(filename);
-	const GLchar *sourceString = shader->source.c_str();
-	const GLint length = (int)shader->source.size();
-	glShaderSource(shader->shader, 1, &sourceString, &length);
-	glCompileShader(shader->shader);
-	GLint ival = 0;
-	glGetShaderiv(shader->shader, GL_COMPILE_STATUS, &ival);
-	if (ival == GL_FALSE)
-	{
-		shader->didCompile = false;
-		shader->hadError = true;
-	}
-	else
-	{
-		shader->didCompile = true;
-		shader->hadError = false;
-	}
-	glGetShaderiv(shader->shader, GL_INFO_LOG_LENGTH, &ival);
-	shader->infoLog.resize(ival);
-	GLchar *infoLog = &shader->infoLog[0];
-	glGetShaderInfoLog(shader->shader, ival, NULL, infoLog);
-	if (shader->hadError)
-	{
-		hflog.errorfn(__FUNCTION__, "error compiling shader %s\n%s", filename.c_str(), shader->infoLog.c_str());
 	}
 
-	return shader;
-}
+	std::string FindFileIfExists(const std::string &filename, const std::vector<std::string> &pathsToTry)
+	{
+		std::string output;
 
-std::string FindFileIfExists(const std::string &filename, const std::vector<std::string> &pathsToTry)
-{
-	std::string output;
+		// Is there a file name to test?
+		FilePathInfo fpi(filename);
+		if (fpi.fullfname.empty())
+			return output;
 
-	// Is there a file name to test?
-	FilePathInfo fpi(filename);
-	if (fpi.fullfname.empty())
+		if (TestIfFileExists(filename))
+		{
+			output = filename;
+		}
+		else
+		{
+			for (auto testPathIt : pathsToTry)
+			{
+				std::string testPath = testPathIt + fpi.fullfname;
+				if (TestIfFileExists(testPath))
+				{
+					output = testPath;
+					break;
+				}
+			}
+		}
+
 		return output;
-
-	if (TestIfFileExists(filename))
-	{
-		output = filename;
-	}
-	else
-	{
-		for (auto testPathIt : pathsToTry)
-		{
-			std::string testPath = testPathIt + fpi.fullfname;
-			if (TestIfFileExists(testPath))
-			{
-				output = testPath;
-				break;
-			}
-		}
 	}
 
-	return output;
-}
-
-std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **argv)
-{
-	std::map<std::string, std::string> argv_options;
-	for (int i = 0; i < argc; i++)
+	std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **argv)
 	{
-		std::string option = argv[i];
-		hflog.info("%s(): Processing '%s'", __FUNCTION__, option.c_str());
-		std::regex dashequals("(^-+|=)",
-			std::regex_constants::ECMAScript);
-		std::sregex_token_iterator it(option.begin(),
-			option.end(),
-			dashequals,
-			-1);
-		std::sregex_token_iterator end;
-		size_t count = 0;
+		std::map<std::string, std::string> argv_options;
+		for (int i = 0; i < argc; i++)
+		{
+			std::string option = argv[i];
+			hflog.info("%s(): Processing '%s'", __FUNCTION__, option.c_str());
+			std::regex dashequals("(^-+|=)",
+				std::regex_constants::ECMAScript);
+			std::sregex_token_iterator it(option.begin(),
+				option.end(),
+				dashequals,
+				-1);
+			std::sregex_token_iterator end;
+			size_t count = 0;
 
-		std::string key = "";
-		std::string value = "";
-		for (; it != end; it++)
-		{
-			if (count == 1)
+			std::string key = "";
+			std::string value = "";
+			for (; it != end; it++)
 			{
-				key = *it;
+				if (count == 1)
+				{
+					key = *it;
+				}
+				else if (count == 2)
+				{
+					value = *it;
+				}
+				std::string token = *it;
+				hflog.info("%s(): token %d '%s'", __FUNCTION__, count, token.c_str());
+				count++;
 			}
-			else if (count == 2)
+			if (key.length() > 0)
 			{
-				value = *it;
+				argv_options.emplace(std::make_pair(key, value));
+				hflog.info("%s(): argv adding key '%s' = '%s'", __FUNCTION__, key.c_str(), value.c_str());
 			}
-			std::string token = *it;
-			hflog.info("%s(): token %d '%s'", __FUNCTION__, count, token.c_str());
-			count++;
 		}
-		if (key.length() > 0)
-		{
-			argv_options.emplace(std::make_pair(key, value));
-			hflog.info("%s(): argv adding key '%s' = '%s'", __FUNCTION__, key.c_str(), value.c_str());
-		}
+		return argv_options;
 	}
-	return argv_options;
-}
 
-void ReadGLInfo()
-{
-	__checkedGLInfo = true;
-	gl_version = (const char *)glGetString(GL_VERSION);
-	gl_vendor = (const char *)glGetString(GL_VENDOR);
-	gl_renderer = (const char *)glGetString(GL_RENDERER);
+	void ReadGLInfo()
+	{
+		__checkedGLInfo = true;
+		gl_version = (const char *)glGetString(GL_VERSION);
+		gl_vendor = (const char *)glGetString(GL_VENDOR);
+		gl_renderer = (const char *)glGetString(GL_RENDERER);
 
-	hflog.info("GL_RENDERER: %s\n", gl_renderer.c_str());
-	hflog.info("GL_VERSION:  %s\n", gl_version.c_str());
-	hflog.info("GL_VENDOR:   %s\n", gl_vendor.c_str());
-}
+		hflog.info("GL_RENDERER: %s\n", gl_renderer.c_str());
+		hflog.info("GL_VERSION:  %s\n", gl_version.c_str());
+		hflog.info("GL_VENDOR:   %s\n", gl_vendor.c_str());
+	}
 
-const std::string &GetRenderer()
-{
-	if (!__checkedGLInfo) ReadGLInfo();
-	return gl_renderer;
-}
+	const std::string &GetRenderer()
+	{
+		if (!__checkedGLInfo) ReadGLInfo();
+		return gl_renderer;
+	}
 
-const std::string &GetVendor()
-{
-	if (!__checkedGLInfo) ReadGLInfo();
-	return gl_vendor;
-}
+	const std::string &GetVendor()
+	{
+		if (!__checkedGLInfo) ReadGLInfo();
+		return gl_vendor;
+	}
 
-const std::string &GetVersion()
-{
-	if (!__checkedGLInfo) ReadGLInfo();
-	return gl_version;
-}
+	const std::string &GetVersion()
+	{
+		if (!__checkedGLInfo) ReadGLInfo();
+		return gl_version;
+	}
 
-void Init()
-{
-	// Perform any necessary initialization steps here
-	hflog.info("%s(): Initializing Fluxions", __FUNCTION__);
-	glewInit();
-	ReadGLInfo();
+	void Init()
+	{
+		// Perform any necessary initialization steps here
+		hflog.info("%s(): Initializing Fluxions", __FUNCTION__);
+		glewInit();
+		ReadGLInfo();
 
-	glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB, GL_NICEST);
+		glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB, GL_NICEST);
 
 #ifndef FLUXIONS_NO_SDL
-	hflog.infofn(__FUNCTION__, "Initializing SDL");
-	SDL_Init(SDL_INIT_EVERYTHING);
-	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+		hflog.infofn(__FUNCTION__, "Initializing SDL");
+		SDL_Init(SDL_INIT_EVERYTHING);
+		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 #endif
-}
+	}
 
-void Kill()
-{
+	void Kill()
+	{
 
-}
+	}
 
-void YieldThread()
-{
+	void YieldThread()
+	{
 #ifdef WIN32
-	INPUT input;
-	ZeroMemory(&input, sizeof(INPUT));
-	input.type = INPUT_MOUSE;
-	input.mi.dwFlags = MOUSEEVENTF_MOVE;
-	SendInput(1, &input, sizeof(INPUT));
-	Sleep(0);
+		INPUT input;
+		ZeroMemory(&input, sizeof(INPUT));
+		input.type = INPUT_MOUSE;
+		input.mi.dwFlags = MOUSEEVENTF_MOVE;
+		SendInput(1, &input, sizeof(INPUT));
+		Sleep(0);
 #elif _POSIX_VERSION
-	usleep(0);
+		usleep(0);
 #endif
-}
+	}
 
 } // namespace Fluxions

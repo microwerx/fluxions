@@ -241,24 +241,26 @@ namespace Fluxions
 
 	bool CoronaJob::Run()
 	{
-		std::string commandLine = MakeCoronaCommandLine();
-		const char *cmd = commandLine.c_str();
-
+		const char *pcmd = nullptr;
 		int retval = 0;
-		hflog.infofn(__FUNCTION__, "running %s", cmd);
-		retval = lastCoronaRetval = system(cmd);
-		if (retval != 0)
 		{
-			hflog.errorfn(__FUNCTION__, "unable to run corona");
-			return false;
-		}
-		//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
-		//if (retval != 0) return false;
+			std::string commandLine = MakeCoronaCommandLine();
+			pcmd = commandLine.c_str();
 
+			hflog.infofn(__FUNCTION__, "running %s", pcmd);
+			retval = lastCoronaRetval = system(pcmd);
+			if (retval != 0)
+			{
+				hflog.errorfn(__FUNCTION__, "unable to run corona");
+				return false;
+			}
+			//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
+			//if (retval != 0) return false;
+		}
 		{
 			std::ostringstream cmd;
 			cmd << "magick " << output_path_exr << " " << output_path_png;
-			const char *pcmd = cmd.str().c_str();
+			pcmd = cmd.str().c_str();
 			hflog.infofn(__FUNCTION__, "running %s", pcmd);
 			retval = lastConvertRetval = system(pcmd);
 			if (retval != 0)
@@ -270,7 +272,7 @@ namespace Fluxions
 		{
 			std::ostringstream cmd;
 			cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
-			const char *pcmd = cmd.str().c_str();
+			pcmd = cmd.str().c_str();
 			hflog.infofn(__FUNCTION__, "running %s", pcmd);
 			retval = lastConvertRetval = system(pcmd);
 			if (retval != 0)

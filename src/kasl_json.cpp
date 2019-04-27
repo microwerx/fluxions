@@ -255,7 +255,7 @@ namespace KASL
 			if (tokens[i].IsIntegerOrDouble())
 			{
 				*this = tokens[i].dval;
-				return i;
+				return (long)i;
 			}
 			else if (tokens[i].IsIdentifier())
 			{
@@ -267,12 +267,12 @@ namespace KASL
 					*this = false;
 				else
 					return -1;
-				return i;
+				return (long)i;
 			}
 			else if (tokens[i].IsString())
 			{
 				*this = tokens[i].sval;
-				return i;
+				return (long)i;
 			}
 			else if (tokens[i].IsType(TokenType::TT1_LBRACE))
 			{
@@ -327,7 +327,7 @@ namespace KASL
 				}
 				if (!tokens[i].IsType(TokenType::TT1_RBRACE))
 					return -1;
-				return i;
+				return (long)i;
 			}
 			else if (tokens[i].IsType(TokenType::TT1_LBRACKET))
 			{
@@ -362,7 +362,7 @@ namespace KASL
 				}
 				if (!tokens[i].IsType(TokenType::TT1_RBRACKET))
 					return -1;
-				return i;
+				return (long)i;
 			}
 			else
 			{

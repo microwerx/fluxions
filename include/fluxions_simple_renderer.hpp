@@ -488,14 +488,14 @@ struct SimpleShader
         source = "";
         didCompile = false;
         hadError = false;
-        hflog.info("%s(): shader %d created.", __FUNCTION__, shader);
+        hflog.infofn(__FUNCTION__, "shader %d created.", shader);
     }
 
     void Delete()
     {
         if (shader != 0)
         {
-            hflog.info("%s(): shader %d deleted.", __FUNCTION__, shader);
+            hflog.infofn(__FUNCTION__, "shader %d deleted.", shader);
             glDeleteShader(shader);
             shader = 0;
         }
@@ -531,13 +531,16 @@ class SimpleProgram
 {
   private:
     GLuint program = 0;
-    bool linked = false;
     std::vector<std::shared_ptr<SimpleShader>> shaders;
-    std::string infoLog;
-    GLint linkStatus_ = 0;
-    GLint validateStatus_ = 0;
+    
+	GLint linkStatus_ = 0;
+	bool linked = false;
+	std::string infoLog;
+	
+	GLint validateStatus_ = 0;
+	bool validated = false;
     std::string validateLog;
-    //uniformBlocks;
+	//uniformBlocks;
 
   public:
     struct AttribUniformInfo
@@ -564,7 +567,7 @@ class SimpleProgram
 
     void SetUniformBlock(const std::string &uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size);
 
-    bool IsLinked() { return linked; }
+    bool IsLinked() { return linkStatus_ != 0; }
     void Use();
     void ApplyUniforms(std::map<std::string, SimpleUniform> uniforms);
     bool ApplyUniform(const std::string &uniformName, SimpleUniform uniform);

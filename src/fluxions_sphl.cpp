@@ -104,7 +104,7 @@ void Sphl::copyCoefficients(const SimpleSSPHHLight &sphl, int maxDegrees, bool s
 
 	for (size_t j = 0; j < 4; j++)
 	{
-		int lmmax = GetMaxSphCoefficients(maxDegree);
+		size_t lmmax = GetMaxSphCoefficients(maxDegree);
 		for (size_t lm = 0; lm <= lmmax; lm++)
 		{
 			v_coefs[j][lm] = sphl.E0 * sphl.msph[j][lm];
@@ -214,9 +214,9 @@ void Sphl::createMesh(FxModel &model)
 			sph_model.GetVertex(v1).attribs[1] += N;
 			sph_model.GetVertex(v2).attribs[1] += N;
 
-			sph_model.AddIndex(k * (int)model.vertexCount + model.triangles[i].x);
-			sph_model.AddIndex(k * (int)model.vertexCount + model.triangles[i].y);
-			sph_model.AddIndex(k * (int)model.vertexCount + model.triangles[i].z);
+			sph_model.AddIndex((int)(k * model.vertexCount + model.triangles[i].x));
+			sph_model.AddIndex((int)(k * model.vertexCount + model.triangles[i].y));
+			sph_model.AddIndex((int)(k * model.vertexCount + model.triangles[i].z));
 		}
 		k++;
 	}
@@ -279,7 +279,7 @@ void Sphl::createLightProbe()
 	if (lightProbeTexIds[2] != 0)
 	{
 		glBindTexture(GL_TEXTURE_CUBE_MAP, lightProbeTexIds[2]);
-		for (size_t face = 0; face < lightProbe.depth(); face++)
+		for (int face = 0; face < (int)lightProbe.depth(); face++)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(face));
 		}

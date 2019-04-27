@@ -150,6 +150,28 @@ class TSphericalHarmonic
 		return *this;
 	}
 
+	constexpr TSphericalHarmonic<VectorType, ScalarType> &Accumulate(const TSphericalHarmonic<VectorType, ScalarType> &b, const TSphericalHarmonic<VectorType, ScalarType> &c, float d, int maxDegrees = -1) noexcept
+	{
+		size_t firstIndex = 0;
+		size_t lastDegree = maxDegree;
+		if (maxDegrees >= 0)
+		{
+			lastDegree = min3<size_t>(maxDegrees, maxDegree, b.maxDegree);
+		}
+		else
+		{
+			lastDegree = std::min(maxDegree, b.maxDegree);
+		}
+		size_t lastIndex = lastDegree * (lastDegree + 1);
+
+		for (size_t i = firstIndex; i < lastIndex; i++)
+		{
+			coefficients[i] += d * b.coefficients[i] * c.coefficients[i];
+		}
+
+		return *this;
+	}
+
 	constexpr const VectorType operator[](size_t i) const noexcept
 	{
 		if (i >= 0 && i < maxCoefficients)
@@ -234,7 +256,7 @@ class TSphericalHarmonic
 		return VectorType(1);
 	}
 
-	constexpr VectorType K(size_t l, int m) noexcept
+	constexpr VectorType K(int l, int m) noexcept
 	{
 		// ScalarType fourPi = (ScalarType)12.566370614359172953850573533118;
 		ScalarType invFourPi = (ScalarType)0.07957747154594766788444188168626;
@@ -488,6 +510,12 @@ struct Sph4f
 	{
 		for (int i = 0; i < 4; i++)
 			msph[i].Accumulate(b[i], c[i], maxDegrees);
+	}
+
+	inline void Accumulate(const Sph4f &b, const Sph4f &c, float d, int maxDegrees = -1)
+	{
+		for (int i = 0; i < 4; i++)
+			msph[i].Accumulate(b[i], c[i], d, maxDegrees);
 	}
 
 	void SaveJSON(const std::string &path, const std::string &name, const Vector3f &position);

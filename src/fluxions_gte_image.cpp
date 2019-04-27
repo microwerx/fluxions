@@ -669,18 +669,18 @@ void TImage<ColorType>::savePPM(const std::string &filename, size_t z, bool flip
     fout << imageHeight << " ";
     fout << maxColorFound << std::endl;
 
-    size_t y1 = 0;
-    size_t y2 = imageHeight;
+    int y1 = 0;
+    int y2 = (int)imageHeight;
     int dy = 1;
     if (flipy)
     {
-        y1 = imageHeight - 1;
+        y1 = (int)imageHeight - 1;
         y2 = -1;
         dy = -1;
     }
-    for (size_t y = y1; y != y2; y += dy)
+    for (int y = y1; y != y2; y += dy)
     {
-        for (size_t x = 0; x < imageWidth; x++)
+        for (int x = 0; x < imageWidth; x++)
         {
             ColorType c = getPixel(x, y, z);
             Color3i color(
@@ -709,18 +709,18 @@ void TImage<ColorType>::savePPMi(const std::string &filename, float scale, int m
     fout << imageHeight << " ";
     fout << maxValue << std::endl;
 
-    size_t y1 = 0;
-    size_t y2 = imageHeight;
+    int y1 = 0;
+    int y2 = (int)imageHeight;
     int dy = 1;
     if (flipy)
     {
-        y1 = imageHeight - 1;
+        y1 = (int)imageHeight - 1;
         y2 = -1;
         dy = -1;
     }
-    for (size_t y = y1; y != y2; y += dy)
+    for (int y = y1; y != y2; y += dy)
     {
-        for (size_t x = 0; x < imageWidth; x++)
+        for (int x = 0; x < imageWidth; x++)
         {
             Color4i color = ToColor4i(getPixel(x, y, z), scale, minValue, maxValue);
             fout << color.r << " " << color.g << " " << color.b << std::endl;
@@ -800,9 +800,9 @@ void TImage<ColorType>::saveEXR(const std::string &path)
 		Color3f color = ToColor3f(pixels[i]);
 		halfPixels[i] = Imf::Rgba(color.r, color.g, color.b);
 	}
-	Imf::RgbaOutputFile file(path.c_str(), imageWidth, imageHeight, Imf::WRITE_RGBA);
+	Imf::RgbaOutputFile file(path.c_str(), (int)imageWidth, (int)imageHeight, Imf::WRITE_RGBA);
 	file.setFrameBuffer(halfPixels.data(), 1, imageWidth);
-	file.writePixels(imageHeight);
+	file.writePixels((int)imageHeight);
 	t1 = hflog.getMillisecondsElapsed() - t1;
 	hflog.infofn("TImage<>::saveEXR", "Wrote %dx%d image to %s (%3f ms)", imageWidth, imageHeight, path.c_str(), t1);
 #endif
@@ -1042,7 +1042,7 @@ bool TImage<ColorType>::convertRectToCubeMap()
         1, // POSITIVE X
         0, // NEGATIVE X
     };
-    int size = imageHeight;
+    int size = (int)imageHeight;
     std::vector<ColorType> src = pixels;
     resize(size, size, 6);
 
@@ -1078,7 +1078,7 @@ bool TImage<ColorType>::convertCubeMapToRect()
     rotateLeft90(2);
     rotateRight90(3);
 
-    int size = imageWidth;
+    int size = (int)imageWidth;
     std::vector<ColorType> tmp = pixels;
     resize(size * 6, size, 1);
 

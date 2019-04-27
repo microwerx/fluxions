@@ -109,7 +109,7 @@ void SimpleEnvironment::Update(const BoundingBoxf &bbox)
         glBindTexture(GL_TEXTURE_CUBE_MAP, pbskyColorMapId);
         for (int i = 0; i < 6; i++)
         {
-            GLsizei size = pbsky.generatedCubeMap.width();
+            GLsizei size = (GLsizei)pbsky.generatedCubeMap.width();
             void *pixels = pbsky.generatedCubeMap.getPixels(i);
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA32F, size, size, 0, GL_RGBA, GL_FLOAT, pixels);
         }
@@ -1488,7 +1488,7 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration &rc)
         glPushMatrix();
         glLoadMatrixf(rc.cameraMatrix.const_ptr());
 
-        for (size_t i = 0; i < spheres.size(); i++)
+        for (unsigned i = 0; i < (unsigned)spheres.size(); i++)
         {
             glPushMatrix();
             glMultMatrixf(spheres[i].transform.const_ptr());

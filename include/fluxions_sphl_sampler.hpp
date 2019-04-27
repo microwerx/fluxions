@@ -45,7 +45,7 @@ class SphlSampler
 	std::vector<double> theta;
 	std::vector<double> phi;
 	std::vector<double> sph;
-	std::vector<int> debug_sides;
+	std::vector<size_t> debug_sides;
 };
 } // namespace Fluxions
 

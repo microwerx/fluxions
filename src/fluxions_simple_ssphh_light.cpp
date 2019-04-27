@@ -1025,6 +1025,19 @@ namespace Fluxions
 				lm2 = -1.0f;
 				lm3 = -1.0f;
 			}
+
+			std::string basename = "output/" + CoronaJob::MakeGENName(sceneName, (int)i);
+			if (savePPMs)
+			{
+				Image4f lightProbe(32, 32, 6);
+				sphl.SphToLightProbe(H[i][i].msph, lightProbe);
+				lightProbe.convertCubeMapToRect();
+				lightProbe.savePPMi(basename + "_sph.ppm", 255.99f, 0, 255);
+				lightProbe.saveEXR(basename + "_sph.exr");
+			}
+			if (saveJSONs) {
+				H[i][i].SaveJSON(basename + ".json", basename, sphl.position.xyz());
+			}
 			hflog.info("%s(): (%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, i, lm0, lm1, lm2, lm3);
 			i++;
 		}
@@ -1118,7 +1131,7 @@ namespace Fluxions
 				assert(Q[j].index >= 0);
 				size_t Qj_index = (size_t)Q[j].index;
 				if (includeNeighbor && Qj_index != i)
-					Sprime[i].Accumulate(H[i][j], S[Qj_index], MaxDegrees);
+					Sprime[i].Accumulate(H[i][j], S[Qj_index], VIZmix, MaxDegrees);
 				if (includeSelf && Qj_index == i)
 					Sprime[i].Accumulate(S[Qj_index], Q[j].p, MaxDegrees);
 
