@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #define FLUXIONS_NO_EXTERN_TEMPLATES
-#include "stdafx.h"
+#include "pch.h"
 #include <fluxions_gte_matrix_stack.hpp>
 
 namespace Fluxions

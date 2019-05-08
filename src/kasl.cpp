@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "kasl.hpp"
-#include "stdafx.h"
+#include "pch.h"
 
 #include <cctype>
 #include <fstream>

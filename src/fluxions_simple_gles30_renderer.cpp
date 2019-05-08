@@ -16,7 +16,7 @@
 // along with this program_.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "stdafx.h"
+#include "pch.h"
 #include <fluxions_simple_gles30_renderer.hpp>
 
 namespace Fluxions
