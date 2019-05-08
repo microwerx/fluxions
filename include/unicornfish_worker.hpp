@@ -36,7 +36,6 @@ namespace Uf
 		operator bool() const { return workerSocket; }
 
 		void Run();
-		virtual void OnProcessRequest(const Message &request, Message &reply);
 
 		bool ConnectToBroker(const char *endpoint, const char *service);
 		void Disconnect();
@@ -50,6 +49,8 @@ namespace Uf
 		Message &GetRequest() { return requestMessage; }
 		const Message &GetRequest() const { return requestMessage; }
 
+		/// Implementers will want to implement this method to process the incoming message
+		virtual void OnProcessRequest(const Message &request, Message &reply);
 	private:
 		Message requestMessage;
 		Message replyMessage;
@@ -59,9 +60,6 @@ namespace Uf
 		std::string brokerEndpoint;
 		std::string serviceName;
 		Socket workerSocket;
-
-		//string requestHeader;
-		//string requestCommand;
 
 		int64_t heartbeatTime;
 		size_t liveness = 3;
