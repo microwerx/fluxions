@@ -21,7 +21,8 @@ DEPOBJECTS = $(patsubst $(DEP_SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(DEPCXXSOURCES)) $(pa
 # DEPCOBJECTS= $(patsubst $(DEP_SRCDIR)/%.c,$(OBJDIR)/%.o,$(DEPCSOURCES))
 OBJECTS = $(SRCOBJECTS) $(DEPOBJECTS)
 TARGET = build/libfluxions.a
-GCH = $(SRCDIR)/stdafx.h.gch
+GCH = $(SRCDIR)/pch.h.gch
+GCH_SRC = $(SRCDIR)/pch.h
 
 MACINCDIRS = -I/usr/local/opt/mesa/include
 
@@ -48,7 +49,7 @@ cobjects: $(DEPCOBJECTS)
 $(TARGET): $(OBJECTS)
 	$(AR) cr $@ $(OBJECTS) 
 
-$(GCH): $(SRCDIR)/stdafx.h $(HEADERS)
+$(GCH): $(GCH_SRC) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # $(OBJDIR)/%.o: $(CXXSOURCES)/%.cpp $(GCH)
