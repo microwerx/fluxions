@@ -21,15 +21,13 @@
 #include <fluxions_gte_math.hpp>
 #include <random>
 
-using namespace std;
-
 namespace Fluxions
 {
-float randomSampler(float _min0, float _max0)
-{
-	static mt19937 s;
-	uniform_real_distribution<float> urd(_min0, _max0);
+	float randomSampler(float _min0, float _max0)
+	{
+		static std::mt19937 s;
+		std::uniform_real_distribution<float> urd(_min0, _max0);
 
-	return urd(s);
-}
+		return urd(s);
+	}
 } // namespace Fluxions
