@@ -42,6 +42,9 @@ namespace Fluxions
 			GEN
 		};
 
+		static Type TypeFromString(const std::string &str) noexcept;
+		static std::string & TypeToString(Type type, std::string & s_type) noexcept;
+
 		CoronaJob() {}
 		CoronaJob(const std::string &name, Type jobtype, int arg1 = 0, int arg2 = 0);
 		~CoronaJob();

@@ -35,12 +35,10 @@ namespace Fluxions
 	{
 		// evaluate an Associated Legendre Polynomial P(l,ptr,X) at X
 		double pmm = 1.0;
-		if (m > 0)
-		{
+		if (m > 0) {
 			double somx2 = sqrt((1.0 - x) * (1.0 + x));
 			double fact = 1.0;
-			for (int i = 1; i <= m; i++)
-			{
+			for (int i = 1; i <= m; i++) {
 				pmm *= (-fact) * somx2;
 				fact += 2.0;
 			}
@@ -51,8 +49,7 @@ namespace Fluxions
 		if (l == m + 1)
 			return pmmp1;
 		double pll = 0.0;
-		for (int ll = m + 2; ll <= l; ++ll)
-		{
+		for (int ll = m + 2; ll <= l; ++ll) {
 			pll = ((2.0 * ll - 1.0) * x * pmmp1 - (ll + m - 1.0) * pmm) / (ll - m);
 			pmm = pmmp1;
 			pmmp1 = pll;
@@ -65,58 +62,47 @@ namespace Fluxions
 		if (l < 0 || abs(m) > l || x < -1.0 || x > 1.0)
 			return 0.0;
 
-		if (l == 0)
-		{
+		if (l == 0) {
 			return 1.0;
 		}
-		else if (l == 1)
-		{
+		else if (l == 1) {
 			return x;
 		}
-		else if (l == 2)
-		{
+		else if (l == 2) {
 			double t1 = pow(x, 2.0);
 			return (8.0 * t1 + 4.0 * (t1 - 1.0)) / 8.0;
 		}
-		else if (l == 3)
-		{
+		else if (l == 3) {
 			return (48.0 * pow(x, 3.0) + 72.0 * x * (pow(x, 2.0) - 1.0)) / 48.0;
 		}
-		else if (l == 4)
-		{
+		else if (l == 4) {
 			double t1 = pow(x, 2.0);
 			double t2 = t1 - 1.0;
 			return (144.0 * pow(t2, 2.0) + 384.0 * pow(x, 4.0) + 1152.0 * t1 * t2) / 384.0;
 		}
-		else if (l == 5)
-		{
+		else if (l == 5) {
 			double t1 = pow(x, 2.0) - 1.0;
 			return (7200.0 * x * pow(t1, 2.0) + 3840.0 * pow(x, 5.0) + 19200.0 * pow(x, 3.0) * t1) / 3840.0;
 		}
-		else if (l == 6)
-		{
+		else if (l == 6) {
 			double t1 = pow(x, 2.0);
 			double t2 = t1 - 1.0;
 			return (14400.0 * pow(t2, 3.0) + 259200.0 * t1 * pow(t2, 2.0) + 46080.0 * pow(x, 6.0) + 345600.0 * pow(x, 4.0) * t2) / 46080.0;
 		}
-		else if (l == 7)
-		{
+		else if (l == 7) {
 			double t1 = pow(x, 2.0) - 1.0;
 			return (1411200.0 * x * pow(t1, 3.0) + 8467200.0 * pow(x, 3.0) * pow(t1, 2.0) + 645120.0 * pow(x, 7.0) + 6773760.0 * pow(x, 5.0) * t1) / 645120.0;
 		}
-		else if (l == 8)
-		{
+		else if (l == 8) {
 			double t1 = pow(x, 2.0);
 			double t2 = t1 - 1.0;
 			return (2822400.0 * pow(t2, 4.0) + 90316800.0 * t1 * pow(t2, 3.0) + 270950400.0 * pow(x, 4.0) * pow(t2, 2.0) + 10321920.0 * pow(x, 8.0) + 144506880.0 * pow(x, 6.0) * t2) / 10321920.0;
 		}
-		else if (l == 9)
-		{
+		else if (l == 9) {
 			double t1 = pow(x, 2.0) - 1.0;
 			return (457228800.0 * x * pow(t1, 4.0) + 4877107200.0 * pow(x, 3.0) * pow(t1, 3.0) + 8778792960.0 * pow(x, 5.0) * pow(t1, 2.0) + 185794560.0 * pow(x, 9.0) + 3344302080.0 * pow(x, 7.0) * t1) / 185794560.0;
 		}
-		else if (l == 10)
-		{
+		else if (l == 10) {
 			double t1 = pow(x, 2.0);
 			double t2 = t1 - 1.0;
 			return (914457600.0 * pow(t2, 5.0) + 45722880000.0 * t1 * pow(t2, 4.0) + 243855360000.0 * pow(x, 4.0) * pow(t2, 3.0) + 292626432000.0 * pow(x, 6.0) * pow(t2, 2.0) + 3715891200.0 * pow(x, 10.0) + 83607552000.0 * pow(x, 8.0) * t2) / 3715891200.0;
@@ -269,13 +255,11 @@ namespace Fluxions
 		double x = cos(theta);
 		if (m == 0)
 			return m0K[l] * _legendre_polynomial(l, m, x);
-		if (m < 0)
-		{
+		if (m < 0) {
 			m = -m;
 			sc = sin(m * phi);
 		}
-		else
-		{
+		else {
 			sc = cos(m * phi);
 		}
 
@@ -745,8 +729,7 @@ namespace Fluxions
 		{
 			const int l = 0;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -763,8 +746,7 @@ namespace Fluxions
 		{
 			const int l = 1;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -783,8 +765,7 @@ namespace Fluxions
 		{
 			const int l = 2;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -807,8 +788,7 @@ namespace Fluxions
 		{
 			const int l = 3;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -837,8 +817,7 @@ namespace Fluxions
 		{
 			const int l = 4;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -872,8 +851,7 @@ namespace Fluxions
 		{
 			const int l = 5;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -912,8 +890,7 @@ namespace Fluxions
 		{
 			const int l = 6;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -956,8 +933,7 @@ namespace Fluxions
 		{
 			const int l = 7;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -1004,8 +980,7 @@ namespace Fluxions
 		{
 			const int l = 8;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -1055,8 +1030,7 @@ namespace Fluxions
 		{
 			const int l = 9;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -1111,8 +1085,7 @@ namespace Fluxions
 		{
 			const int l = 10;
 			double accum = 0.0;
-			for (int m = -l; m <= l; m++)
-			{
+			for (int m = -l; m <= l; m++) {
 				const int lm = l * (l + 1) + m;
 				accum += a[lm] * spherical_harmonic(l, m, theta, phi);
 			}
@@ -1178,38 +1151,27 @@ namespace Fluxions
 	T calc_spherical_harmonic(int max_degree, const T *a, const T theta, const T phi)
 	{
 		T accum = 0;
-		if (max_degree >= 0)
-		{
+		if (max_degree >= 0) {
 			accum += calc_degree_0<T>(a, theta, phi);
-			if (max_degree >= 1)
-			{
+			if (max_degree >= 1) {
 				accum += calc_degree_1<T>(a, theta, phi);
-				if (max_degree >= 2)
-				{
+				if (max_degree >= 2) {
 					accum += calc_degree_2<T>(a, theta, phi);
-					if (max_degree >= 3)
-					{
+					if (max_degree >= 3) {
 						accum += calc_degree_3<T>(a, theta, phi);
-						if (max_degree >= 4)
-						{
+						if (max_degree >= 4) {
 							accum += calc_degree_4<T>(a, theta, phi);
-							if (max_degree >= 5)
-							{
+							if (max_degree >= 5) {
 								accum += calc_degree_5<T>(a, theta, phi);
-								if (max_degree >= 6)
-								{
+								if (max_degree >= 6) {
 									accum += calc_degree_6<T>(a, theta, phi);
-									if (max_degree >= 7)
-									{
+									if (max_degree >= 7) {
 										accum += calc_degree_7<T>(a, theta, phi);
-										if (max_degree >= 8)
-										{
+										if (max_degree >= 8) {
 											accum += calc_degree_8<T>(a, theta, phi);
-											if (max_degree >= 9)
-											{
+											if (max_degree >= 9) {
 												accum += calc_degree_9<T>(a, theta, phi);
-												if (max_degree >= 10)
-												{
+												if (max_degree >= 10) {
 													accum += calc_degree_10<T>(a, theta, phi);
 												}
 											}
@@ -1263,8 +1225,7 @@ namespace Fluxions
 			});
 
 		auto coefs = json->getMember("coefs");
-		for (size_t lm = 0; lm < msph->getMaxCoefficients(); lm++)
-		{
+		for (size_t lm = 0; lm < msph->getMaxCoefficients(); lm++) {
 			float r = msph[0].getCoefficient(lm);
 			float g = msph[1].getCoefficient(lm);
 			float b = msph[2].getCoefficient(lm);
@@ -1285,5 +1246,48 @@ namespace Fluxions
 		std::ofstream fout(fpi.path);
 		fout << json->Serialize();
 		fout.close();
+	}
+
+	bool Sph4f::fromVectorFormat(int maxDegrees, const std::vector<std::vector<float>> & v)
+	{
+		// do a sanity check on the incoming data
+		int lmCount = maxDegree * (maxDegree + 1) + maxDegree + 1;
+		if (lmCount != v.size()) return false;
+
+		// then attempt to resize to fit the incoming data
+		resize(maxDegrees);
+
+		// then ensure that we only copy the acceptable amount of data
+		maxDegrees = std::min(maxDegrees, maxDegree);
+		lmCount = maxDegree * (maxDegree + 1) + maxDegree + 1;
+
+		for (size_t lm = 0; lm < lmCount; lm++) {
+			auto & v_element = v[lm];
+			size_t c = v_element.size();
+			if (c >= 1) msph[0].setCoefficient(lm, v_element[0]);
+			else msph[0].setCoefficient(lm, 0.0f);
+			if (c >= 2) msph[1].setCoefficient(lm, v_element[1]);
+			else msph[0].setCoefficient(lm, 0.0f);
+			if (c >= 3) msph[2].setCoefficient(lm, v_element[2]);
+			else msph[0].setCoefficient(lm, 0.0f);
+			if (c >= 4) msph[3].setCoefficient(lm, v_element[3]);
+			else msph[0].setCoefficient(lm, 0.0f);
+		}
+		return true;
+	}
+
+	bool Sph4f::toVectorFormat(int numChannels, std::vector<std::vector<float>> & v)
+	{
+		if (numChannels < 1 || numChannels > 4) return false;
+		v.resize(size());
+		int lmCount = msph->getMaxCoefficients();
+		for (size_t lm = 0; lm < lmCount; lm++) {
+			auto & v_element = v[lm];
+			v_element.resize(numChannels);
+			for (int i = 0; i < numChannels; i++) {
+				v_element[i] = msph[i].getCoefficient(lm);
+			}
+		}
+		return true;
 	}
 } // namespace Fluxions

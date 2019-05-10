@@ -16,9 +16,6 @@
     <ClCompile Include="dep\src\imgui_widgets.cpp">
       <Filter>deps</Filter>
     </ClCompile>
-    <ClCompile Include="src\stdafx.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
@@ -232,6 +229,9 @@
     <ClCompile Include="src\unicornfish.cpp">
       <Filter>src\unicornfish</Filter>
     </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\include\ArHosekSkyModel.h">
@@ -266,9 +266,6 @@
     </ClInclude>
     <ClInclude Include="dep\include\imstb_truetype.h">
       <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stdafx.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions.hpp">
       <Filter>include\fluxions</Filter>
@@ -506,6 +503,9 @@
     </ClInclude>
     <ClInclude Include="include\viperfish_xinput.hpp">
       <Filter>include\viperfish</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

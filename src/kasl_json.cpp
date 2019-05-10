@@ -21,6 +21,8 @@
 
 namespace KASL
 {
+	const std::string JSON::NullString = "";
+
 	JSON::JSON(JSON::Type whichType)
 	{
 		type_ = whichType;

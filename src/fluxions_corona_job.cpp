@@ -287,27 +287,68 @@ namespace Fluxions
 	std::string CoronaJob::ToString() const
 	{
 		std::ostringstream ostr;
-		//ostr << imageWidth << std::endl;
-		//ostr << imageHeight << std::endl;
-		//ostr << ignoreCache << std::endl;
-		//ostr << maxRayDepth << std::endl;
-		//ostr << passLimit << std::endl;
-		//ostr << elapsedTime << std::endl;
-		//ostr << finished << std::endl;
-		//ostr << working << std::endl;
-		//ostr << isHQ << std::endl;
-		//ostr << isHDR << std::endl;
-		//ostr << sendLight << std::endl;
-		//ostr << recvLight << std::endl;
-		//ostr << (type == Type::VIZ ? "VIZ" : (type == Type::GEN ? "GEN" : "REF")) << std::endl;
-		//ostr << scene_name << std::endl;
-		//ostr << output_path_ppm << std::endl;
+		ostr << imageWidth << std::endl;
+		ostr << imageHeight << std::endl;
+		ostr << ignoreCache << std::endl;
+		ostr << maxRayDepth << std::endl;
+		ostr << passLimit << std::endl;
+		ostr << elapsedTime << std::endl;
+		ostr << finished << std::endl;
+		ostr << working << std::endl;
+		ostr << isHQ << std::endl;
+		ostr << isHDR << std::endl;
+		ostr << sendLight << std::endl;
+		ostr << recvLight << std::endl;
+		std::string s_type;
+		ostr << CoronaJob::TypeToString(type, s_type) << std::endl;
+		ostr << scene_name << std::endl;
+		ostr << output_path_exr << std::endl;
+		ostr << output_path_ppm << std::endl;
 
 		return ostr.str();
 	}
 
 	void CoronaJob::FromString(const std::string &str)
 	{
+		std::istringstream istr;
+		istr >> imageWidth;
+		istr >> imageHeight;
+		istr >> ignoreCache;
+		istr >> maxRayDepth;
+		istr >> passLimit;
+		istr >> elapsedTime;
+		istr >> finished;
+		istr >> working;
+		istr >> isHQ;
+		istr >> sendLight;
+		istr >> recvLight;
+		std::string s_type;
+		istr >> s_type;
+		type = CoronaJob::TypeFromString(s_type);
+		istr >> scene_name;
+		istr >> output_path_exr;
+		istr >> output_path_ppm;
+	}
+
+	std::string & CoronaJob::TypeToString(CoronaJob::Type type, std::string &s_type) noexcept
+	{
+		if (type == CoronaJob::Type::VIZ) s_type = "VIZ";
+		else if (type == CoronaJob::Type::GEN) s_type = "GEN";
+		else if (type == CoronaJob::Type::REF) s_type = "REF";
+		else if (type == CoronaJob::Type::REF_CubeMap) s_type = "REF_CubeMap";
+		else if (type == CoronaJob::Type::Sky) s_type = "Sky";
+		return s_type;
+	}
+
+	CoronaJob::Type CoronaJob::TypeFromString(const std::string &s_type) noexcept
+	{
+		Type type;
+		if (s_type == "VIZ") type = Type::VIZ;
+		else if (s_type == "GEN") type = Type::GEN;
+		else if (s_type == "REF") type = Type::REF;
+		else if (s_type == "REF_CubeMap") type = Type::REF_CubeMap;
+		else if (s_type == "Sky") type = Type::Sky;
+		return type;
 	}
 
 	//////////////////////////////////////////////////////////////////
