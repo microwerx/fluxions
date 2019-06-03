@@ -1,5 +1,5 @@
 # requires the following packages
-# libczmq-dev libzmq3-dev libcurl4-gnutls-dev libsodium-dev zlib1g-dev python3-dev freeglut3-dev libglew-dev
+# libczmq-dev libzmq3-dev libcurl4-gnutls-dev libsodium-dev zlib1g-dev python3-dev freeglut3-dev libglew-dev openexr-dev libopenimageio-dev
 # development packages
 # global
 

@@ -49,8 +49,8 @@ std::string Hatchetfish::makeDTG()
 	localtime_s(&newtime, &long_time);
 	strftime(msg, 50, "%Y%m%d%H%M%S", &newtime);
 #else
-	chrono::time_point<chrono::system_clock> tp = chrono::system_clock::now();
-	time_t t = chrono::system_clock::to_time_t(tp);
+	std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
+	time_t t = std::chrono::system_clock::to_time_t(tp);
 	tm *_Tm = nullptr;
 #ifdef WIN32
 	localtime_s(_Tm, &t);
@@ -73,8 +73,8 @@ std::string Hatchetfish::makeTimeStamp()
 	localtime_s(&newtime, &long_time);
 	strftime(msg, 50, "%T", &newtime);
 #else
-	chrono::time_point<chrono::system_clock> tp = chrono::system_clock::now();
-	time_t t = chrono::system_clock::to_time_t(tp);
+	std::chrono::time_point<std::chrono::system_clock> tp = std::chrono::system_clock::now();
+	time_t t = std::chrono::system_clock::to_time_t(tp);
 	struct tm _Tm;
 	memset(&_Tm, 0, sizeof(struct tm));
 

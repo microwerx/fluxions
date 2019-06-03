@@ -695,11 +695,11 @@ namespace Fluxions
 #else
 			// POSIX version does not exist
 			// So we will call system instead
-			std::string cp_args = mapIt.second + " " + corona_export_prefix + mapIt.first;
+			std::string cp_args = mapIt.second + " " + CoronaJob::exportPathPrefix + mapIt.first;
 			execl("/bin/cp", cp_args.c_str());
 #endif
 
-			//copy_file(mapIt.second, corona_export_prefix + mapIt.first);
+			//copy_file(mapIt.second, CoronaJob::exportPathPrefix + mapIt.first);
 		}
 		XmlEndTag(mtlxml_fout, "mtlLib");
 		mtlxml_fout.close();
