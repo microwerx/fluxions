@@ -351,10 +351,15 @@ void FilePathInfo::fill_stat_info()
             pathType = PathType::Directory;
             // we need to reset dir because it would contain the parent directory
             dir = testpath;
-        } else if (Stat.st_mode & bitIsRegularFile)
+        }
+        else if (Stat.st_mode & bitIsRegularFile)
+        {
             pathType = PathType::File;
+        }
         else
+        {
             pathType = PathType::Other;
+        }
         ctime = Stat.st_ctime;
         atime = Stat.st_atime;
     }

@@ -74,6 +74,7 @@ struct FilePathInfo
     bool Exists() const { return pathType != PathType::DoesNotExist; }
     bool IsDirectory() const { return pathType == PathType::Directory; }
     bool IsFile() const { return pathType == PathType::File; }
+    bool IsOther() const { return pathType == PathType::Other; }
     bool IsRelative() const { return relativePath == true; }
 };
 

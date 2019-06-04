@@ -343,7 +343,7 @@ namespace Fluxions
 		if (args[1].IsStringOrIdentifier())
 		{
 			FilePathInfo fpi(args[1].sval);
-			if (!fpi.IsRelative() && fpi.Exists() && fpi.IsDirectory())
+			if (!fpi.IsRelative() && fpi.IsDirectory())
 			{
 				hflog.infofn(__FUNCTION__, "Path added \"%s\"", fpi.path.c_str());
 				Paths.push_back(fpi.path);
@@ -352,7 +352,7 @@ namespace Fluxions
 			{
 				std::string testpath = basepath + "/" + args[1].sval;
 				fpi.Set(testpath);
-				if (fpi.Exists() && fpi.IsDirectory())
+				if (fpi.IsDirectory())
 				{
 					hflog.infofn(__FUNCTION__, "Path added \"%s\"", fpi.path.c_str());
 					Paths.push_back(fpi.path);
