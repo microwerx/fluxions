@@ -26,7 +26,7 @@
 #include <chrono>
 
 #define HFLOGINFO(...) hflog.infofn(__FUNCTION__, __VA_ARGS__)
-#define HFLOGWARN(...) hflog.warnfn(__FUNCTION__, VAR_ARGS__)
+#define HFLOGWARN(...) hflog.warningfn(__FUNCTION__, VAR_ARGS__)
 #define HFLOGERROR(...) hflog.errorfn(__FUNCTION__, __VA_ARGS__)
 
 class Hatchetfish
