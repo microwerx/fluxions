@@ -101,6 +101,7 @@ void FilePathInfo::Clear()
     fullfname.clear();
     fname.clear();
     ext.clear();
+    relativePath = false;
 }
 
 void FilePathInfo::Set(const std::string &_path)
@@ -110,6 +111,9 @@ void FilePathInfo::Set(const std::string &_path)
     std::regex path_replace("[/\\\\]+");
     std::string p = std::regex_replace(_path, path_replace, "/");
     origpath = p;
+
+    if (origpath[0] == '.' && origpath[1] == '/') relativePath = true;
+    if (origpath[0] == '.' && origpath[1] == '.' && origpath[2] == '/') relativePath = true;
 
     // updated to use realpath on POSIX
 #ifdef __unix__
@@ -125,7 +129,7 @@ void FilePathInfo::Set(const std::string &_path)
     char *dirnamePtr = dirname(pathcopy);
     if (dirnamePtr)
     {
-        path = dirnamePtr;
+        dir = dirnamePtr;
     }
     else
     {
@@ -146,8 +150,6 @@ void FilePathInfo::Set(const std::string &_path)
         fullfname = path;
     }
     delete[] pathcopy;
-
-    dir = path;
 
     std::string::size_type idx = fullfname.find_last_of(".");
     if (idx != std::string::npos)
@@ -278,17 +280,15 @@ bool FilePathInfo::TestIfFileExists(const std::string &filename)
         return false;
 }
 
-std::string FilePathInfo::FindFileIfExists(const std::vector<std::string> &pathsToTry)
+bool FilePathInfo::FindFileIfExists(const std::vector<std::string> &pathsToTry, std::string &output)
 {
-    std::string output;
-
     // Is there a file name to test?
     if (path.empty())
-        return output;
+        return false;
 
     if (TestIfFileExists(path))
     {
-        return path;
+        return true;
     }
     else
     {
@@ -309,11 +309,12 @@ std::string FilePathInfo::FindFileIfExists(const std::vector<std::string> &paths
             else
             {
                 // An error has occurred. The file does not exist.
+                return false;
             }
         }
     }
 
-    return output;
+    return true;
 }
 
 void FilePathInfo::fill_stat_info()

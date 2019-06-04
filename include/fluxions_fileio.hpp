@@ -55,6 +55,7 @@ struct FilePathInfo
     std::string ext;
     /// <summary>The full path name for the filename.</summary>
     std::string path;
+    bool relativePath;
 
     PathType pathType = PathType::DoesNotExist;
     TimeValue atime;
@@ -67,12 +68,13 @@ struct FilePathInfo
     std::string getFullPathName(const std::string &filename);
     std::string getCurrentDirectory();
     bool TestIfFileExists(const std::string &filename);
-    std::string FindFileIfExists(const std::vector<std::string> &pathsToTry);
+    bool FindFileIfExists(const std::vector<std::string> &pathsToTry, std::string &output);
     void fill_stat_info();
     bool DoesNotExist() const { return pathType == PathType::DoesNotExist; }
     bool Exists() const { return pathType != PathType::DoesNotExist; }
     bool IsDirectory() const { return pathType == PathType::Directory; }
     bool IsFile() const { return pathType == PathType::File; }
+    bool IsRelative() const { return relativePath == true; }
 };
 
 //inline std::string  GetFileDrive(const std::string  &filename) { FilePathInfo fpi(filename); return fpi.drive; }

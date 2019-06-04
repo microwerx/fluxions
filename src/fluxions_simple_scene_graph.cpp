@@ -289,7 +289,8 @@ namespace Fluxions
 			else if (str == "mtllib") {
 				std::string mtllibFilename = ReadString(istr);
 				FilePathInfo fpi(mtllibFilename);
-				std::string filenameToTry = fpi.FindFileIfExists(pathsToTry);
+				std::string filenameToTry;
+				fpi.FindFileIfExists(pathsToTry, filenameToTry);
 				if (filenameToTry.empty()) {
 					hflog.error("%s(): MTLLIB %s was not found.", __FUNCTION__, mtllibFilename.c_str());
 				}
@@ -305,7 +306,8 @@ namespace Fluxions
 			else if (str == "conffile") {
 				std::string confFilename = ReadString(istr);
 				FilePathInfo fpi(confFilename);
-				std::string filenameToTry = fpi.FindFileIfExists(pathsToTry);
+				std::string filenameToTry;
+				fpi.FindFileIfExists(pathsToTry, filenameToTry);
 				if (filenameToTry.empty()) {
 					hflog.error("%s(): CONF file %s was not found.", __FUNCTION__, confFilename.c_str());
 				}
@@ -319,12 +321,13 @@ namespace Fluxions
 			else if (str == "geometryGroup") {
 				std::string geoFilename = ReadString(istr);
 				FilePathInfo fpi(geoFilename);
-				std::string filenametoTry = fpi.FindFileIfExists(pathsToTry);
-				if (filenametoTry.empty()) {
-					hflog.error("%s(): OBJ file %s was not found.", __FUNCTION__, geoFilename.c_str());
+				std::string filenameToTry;
+				fpi.FindFileIfExists(pathsToTry, filenameToTry);
+				if (filenameToTry.empty()) {
+					hflog.errorfn(__FUNCTION__, "OBJ file %s was not found.", geoFilename.c_str());
 				}
 				else {
-					if (ReadObjFile(filenametoTry, fpi.fname)) {
+					if (ReadObjFile(filenameToTry, fpi.fname)) {
 						GLuint id = geometry.Create(fpi.fname);
 
 						SimpleGeometryGroup geometryGroup;
@@ -346,7 +349,7 @@ namespace Fluxions
 						boundingBox += tmaxBound.xyz();
 					}
 					else {
-						hflog.error("%s(): OBJ file %s had an error while loading", __FUNCTION__, geoFilename.c_str());
+						hflog.errorfn(__FUNCTION__, "OBJ file %s had an error while loading", geoFilename.c_str());
 					}
 				}
 			}
