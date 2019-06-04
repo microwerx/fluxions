@@ -153,7 +153,7 @@ namespace Fluxions
 			}
 
 			hflog.infofn(__FUNCTION__, "(Line: %03i) [%s] %s", lineno, KASL::TokenVectorJoin(tokens, " ").c_str(),
-				result ? "returned TRUE" : "returned FALSE");
+				result ? "" : "(FALSE)");
 		}
 
 		fin.close();
