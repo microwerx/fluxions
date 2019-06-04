@@ -138,12 +138,16 @@ namespace Fluxions
 				{
 					if (!tokens[0].sval.empty() && tokens[0].sval[0] == '@')
 					{
+						result = true;
 						if (tokens[1].IsInteger())
 							VarList.set_var(tokens[0].sval, tokens[1].ival);
-						if (tokens[1].IsDouble())
+						else if (tokens[1].IsDouble())
 							VarList.set_var(tokens[0].sval, tokens[1].dval);
-						if (tokens[1].IsStringOrIdentifier())
+						else if (tokens[1].IsStringOrIdentifier())
 							VarList.set_var(tokens[0].sval, tokens[1].sval);
+						else {
+							result = false;
+						}
 					}
 				}
 			}
