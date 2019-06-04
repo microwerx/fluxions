@@ -1,18 +1,20 @@
 {
-    "configurations": [{
-        "name": "Linux",
-        "includePath": [
-            "${workspaceFolder}/**",
-            "${workspaceFolder}/include",
-            "${workspaceFolder}/dep/include",
-            "${workspaceFolder}/../libs/include",
-            "/usr/include/python3.7m"
-        ],
-        "defines": [],
-        "compilerPath": "/usr/bin/gcc",
-        "cStandard": "c11",
-        "cppStandard": "c++17",
-        "intelliSenseMode": "gcc-x64"
-    }],
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/dep/include",
+                "${workspaceFolder}/../libs/include",
+                "/usr/include/python3.7m"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
     "version": 4
 }
