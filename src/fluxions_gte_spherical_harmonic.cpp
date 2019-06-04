@@ -1281,7 +1281,7 @@ namespace Fluxions
 		if (numChannels < 1 || numChannels > 4) return false;
 		v.resize(size());
 		int lmCount = msph->getMaxCoefficients();
-		for (size_t lm = 0; lm < lmCount; lm++) {
+		for (size_t lm = 0; lm < (size_t)lmCount; lm++) {
 			auto & v_element = v[lm];
 			v_element.resize(numChannels);
 			for (int i = 0; i < numChannels; i++) {

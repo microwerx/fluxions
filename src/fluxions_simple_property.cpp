@@ -23,6 +23,7 @@ template class std::shared_ptr<Fluxions::SimpleProperty>;
 template class std::unique_ptr<Fluxions::SimpleProperty>;
 template class std::map<std::string, int>;
 
+/*
 // #define DECLARE_PROPERTY_TYPE(ctype, type, TypeName)                         \
 // 	using TypeName##Property = Fluxions::TSimpleProperty<ctype>;             \
 // 	template class Fluxions::TSimpleProperty<ctype>;                         \
@@ -35,7 +36,7 @@ template class std::map<std::string, int>;
 // 	template Fluxions::CastAsPropertyTypeValuePtr<ctype>(ptr);               \
 // 	template Fluxions::DynamicSharedSimplePropertyCast<ctype>(ptr);          \
 // 	template Fluxions::StaticUniqueSimplePropertyCast<ctype>(ptr);           \
-
+*/
 // DECLARE_PROPERTY_TYPE(bool, BOOL, Bool)
 // DECLARE_PROPERTY_TYPE(int, INT, Int)
 // DECLARE_PROPERTY_TYPE(float, FLOAT, Float)
