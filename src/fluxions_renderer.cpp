@@ -138,17 +138,22 @@ namespace Fluxions
 				{
 					if (!tokens[0].sval.empty() && tokens[0].sval[0] == '@')
 					{
+						result = true;
 						if (tokens[1].IsInteger())
 							VarList.set_var(tokens[0].sval, tokens[1].ival);
-						if (tokens[1].IsDouble())
+						else if (tokens[1].IsDouble())
 							VarList.set_var(tokens[0].sval, tokens[1].dval);
-						if (tokens[1].IsStringOrIdentifier())
+						else if (tokens[1].IsStringOrIdentifier())
 							VarList.set_var(tokens[0].sval, tokens[1].sval);
+						else {
+							result = false;
+						}
 					}
 				}
 			}
 
-			hflog.infofn(__FUNCTION__, "(Line: %03i) [%s]", lineno, KASL::TokenVectorJoin(tokens, " ").c_str());
+			hflog.infofn(__FUNCTION__, "(Line: %03i) [%s] %s", lineno, KASL::TokenVectorJoin(tokens, " ").c_str(),
+				result ? "" : "(FALSE)");
 		}
 
 		fin.close();
@@ -343,21 +348,25 @@ namespace Fluxions
 		if (args[1].IsStringOrIdentifier())
 		{
 			FilePathInfo fpi(args[1].sval);
-			if (fpi.Exists() && fpi.IsDirectory())
+			if (!fpi.IsRelative() && fpi.IsDirectory())
 			{
 				hflog.infofn(__FUNCTION__, "Path added \"%s\"", fpi.path.c_str());
 				Paths.push_back(fpi.path);
 			}
 			else
 			{
-				fpi.Set(basepath + args[1].sval);
-				if (fpi.Exists() && fpi.IsDirectory())
+				std::string testpath = basepath + "/" + args[1].sval;
+				fpi.Set(testpath);
+				bool isdir = fpi.IsDirectory();
+				if (isdir)
 				{
 					hflog.infofn(__FUNCTION__, "Path added \"%s\"", fpi.path.c_str());
 					Paths.push_back(fpi.path);
 				}
 				else
+				{
 					return false;
+				}
 			}
 		}
 		return true;

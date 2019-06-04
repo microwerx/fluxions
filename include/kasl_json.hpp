@@ -368,7 +368,7 @@ namespace KASL
 			return nullptr;
 			// throw std::runtime_error("JSON object is not an object");
 		}
-		inline const JSONPtr &getMember(const std::string &key) const
+		inline const JSONPtr getMember(const std::string &key) const
 		{
 			if (IsObject() && Has(key))
 				return map_.at(key);

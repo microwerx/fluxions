@@ -31,14 +31,18 @@ namespace Fluxions
 	std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename)
 	{
 		std::shared_ptr<SimpleShader> shader(new SimpleShader());
+		if (shader->shader == 0)
+		{
+			return shader;
+		}
 		FilePathInfo fpi(filename);
 		const char *typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
 			(type == GL_FRAGMENT_SHADER) ? "fragment" :
 			(type == GL_GEOMETRY_SHADER) ? "geometry" :
 			"unknown";
-		hflog.infofn(__FUNCTION__, "loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 		if (!fpi.IsFile())
 			return shader;
+		hflog.infofn(__FUNCTION__, "loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 
 		shader->Create(type);
 		shader->source = ReadTextFile(filename);
@@ -143,9 +147,9 @@ namespace Fluxions
 		gl_vendor = (const char *)glGetString(GL_VENDOR);
 		gl_renderer = (const char *)glGetString(GL_RENDERER);
 
-		hflog.info("GL_RENDERER: %s\n", gl_renderer.c_str());
-		hflog.info("GL_VERSION:  %s\n", gl_version.c_str());
-		hflog.info("GL_VENDOR:   %s\n", gl_vendor.c_str());
+		HFLOGINFO("GL_RENDERER: %s", gl_renderer.c_str());
+		HFLOGINFO("GL_VERSION:  %s", gl_version.c_str());
+		HFLOGINFO("GL_VENDOR:   %s", gl_vendor.c_str());
 	}
 
 	const std::string &GetRenderer()
@@ -170,7 +174,10 @@ namespace Fluxions
 	{
 		// Perform any necessary initialization steps here
 		hflog.info("%s(): Initializing Fluxions", __FUNCTION__);
-		glewInit();
+		GLenum err = glewInit();
+		if (err != GLEW_OK) {
+			HFLOGERROR("glewInit() -> %s", glewGetErrorString(err));
+		}
 		ReadGLInfo();
 
 		glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB, GL_NICEST);

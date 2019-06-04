@@ -1251,7 +1251,7 @@ namespace Fluxions
 	bool Sph4f::fromVectorFormat(int maxDegrees, const std::vector<std::vector<float>> & v)
 	{
 		// do a sanity check on the incoming data
-		int lmCount = maxDegree * (maxDegree + 1) + maxDegree + 1;
+		size_t lmCount = maxDegree * (maxDegree + 1) + maxDegree + 1;
 		if (lmCount != v.size()) return false;
 
 		// then attempt to resize to fit the incoming data
@@ -1281,7 +1281,7 @@ namespace Fluxions
 		if (numChannels < 1 || numChannels > 4) return false;
 		v.resize(size());
 		int lmCount = msph->getMaxCoefficients();
-		for (size_t lm = 0; lm < lmCount; lm++) {
+		for (size_t lm = 0; lm < (size_t)lmCount; lm++) {
 			auto & v_element = v[lm];
 			v_element.resize(numChannels);
 			for (int i = 0; i < numChannels; i++) {

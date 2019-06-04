@@ -21,7 +21,9 @@
 #include <fstream>
 #include <fluxions_gte_image.hpp>
 #define _CRT_SECURE_NO_WARNINGS
+#ifdef WIN32
 #pragma warning(disable : 4996)
+#endif
 #define OPENEXR_DLL
 #include <OpenEXR/ImfRgbaFile.h>
 #undef _CRT_SECURE_NO_WARNINGS
@@ -663,7 +665,7 @@ namespace Fluxions
 			dy = -1;
 		}
 		for (int y = y1; y != y2; y += dy) {
-			for (int x = 0; x < imageWidth; x++) {
+			for (int x = 0; x < (int)imageWidth; x++) {
 				ColorType c = getPixel(x, y, z);
 				Color3i color(
 					clamp((int)(c.r * scale), 0, 255),
@@ -699,7 +701,7 @@ namespace Fluxions
 			dy = -1;
 		}
 		for (int y = y1; y != y2; y += dy) {
-			for (int x = 0; x < imageWidth; x++) {
+			for (int x = 0; x < (int)imageWidth; x++) {
 				Color4i color = ToColor4i(getPixel(x, y, z), scale, minValue, maxValue);
 				fout << color.r << " " << color.g << " " << color.b << std::endl;
 			}
@@ -748,8 +750,8 @@ namespace Fluxions
 		size_t addr = 0;
 		float minC = 1e6;
 		float maxC = -1e6;
-		for (auto j = 0; j < h; j++) {
-			for (auto i = 0; i < w; i++) {
+		for (size_t j = 0; j < h; j++) {
+			for (size_t i = 0; i < w; i++) {
 				Imf::Rgba rgba = filePixels[addr];
 				Color3f color(float(rgba.r), float(rgba.g), float(rgba.b));
 				minC = std::min(minC, color.minrgb());

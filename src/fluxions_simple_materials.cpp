@@ -104,6 +104,9 @@ bool SimpleMaterialSystem::Load(const std::string &mtllibName, const std::string
 {
     FilePathInfo mtllibfpi(filename);
     SimpleMaterialLibrary *pmtllib = CreateLibrary(mtllibName);
+    if (!pmtllib) {
+        return false;
+    }
     SetLibrary(mtllibName);
 
     pmtllib->fpi.Set(filename);

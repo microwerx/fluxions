@@ -42,7 +42,7 @@ namespace Viperfish
 	{
 		Widget::OnInit(args);
 
-		hflog.infofn(__FUNCTION__, "Creating ImGui Context");
+		hflog.infofn(__FUNCTION__, "Creating Dear ImGui Context");
 		pImGuiContext = ImGui::CreateContext();
 		pIO = &ImGui::GetIO();
 		pIO->DisplaySize.x = 640.0f;
@@ -52,6 +52,9 @@ namespace Viperfish
 		FilePathInfo urwdock("resources/fonts/dock-medium.otf");
 		if (urwdock.Exists()) {
 			ImFont *font = pIO->Fonts->AddFontFromFileTTF("resources/fonts/dock-medium.otf", 24.0f);
+			if (!font) {
+				HFLOGWARN("Dock Font cannot to be loaded");
+			}
 		}
 
 
@@ -81,7 +84,7 @@ namespace Viperfish
 	void DearImGuiWidget::OnKill()
 	{
 		InvalidateDeviceObjects();
-		hflog.infofn(__FUNCTION__, "Destroying ImGui Context");
+		hflog.infofn(__FUNCTION__, "Destroying Dear ImGui Context");
 		ImGui::DestroyContext(pImGuiContext);
 		pIO = nullptr;
 		pImGuiContext = nullptr;
@@ -147,7 +150,7 @@ namespace Viperfish
 
 	void DearImGuiWidget::OnUpdate(double timeStamp)
 	{
-		if (pIO != nullptr)
+		if (program && pIO != nullptr)
 		{
 			pIO->DisplaySize.x = (float)windowRect().w;
 			pIO->DisplaySize.y = (float)windowRect().h;
@@ -160,30 +163,42 @@ namespace Viperfish
 	void DearImGuiWidget::OnPreRender()
 	{
 		Widget::OnPreRender();
+		if (!program) return;
 		ImGui::NewFrame();
 	}
 
 	void DearImGuiWidget::OnPostRender()
 	{
 		Widget::OnPostRender();
+		if (!program) return;
 		ImGui::Render();
 		RenderDrawLists();
 	}
 
+	void DearImGuiWidget::OnRenderDearImGui()
+	{
+		if (!program) return;
+		Widget::OnRenderDearImGui();
+	}
+
 	bool DearImGuiWidget::CreateDeviceObjects()
 	{
-		hflog.infofn(__FUNCTION__, "Creating ImGui device objects...");
+		hflog.infofn(__FUNCTION__, "Creating Dear ImGui device objects...");
 		// Backup GL state
 		GLint last_texture, last_array_buffer, last_vertex_array;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
 		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
 		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
+		glGenTextures(1, &fontTextureId);
+		if (fontTextureId == 0) {
+			hflog.errorfn(__FUNCTION__, "Unable to create Dear ImGui font texture");
+			return false;
+		}
 		unsigned char *pixels;
 		int w;
 		int h;
 		pIO->Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
-		glGenTextures(1, &fontTextureId);
 		glBindTexture(GL_TEXTURE_2D, fontTextureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -225,7 +240,7 @@ namespace Viperfish
 		bool result = true;
 		if (program == 0 || vshader == 0 || fshader == 0)
 		{
-			hflog.errorfn(__FUNCTION__, "Unable to create IMGUI shader program and/or shaders");
+			hflog.errorfn(__FUNCTION__, "Unable to create Dear ImGui shader program and/or shaders");
 			return false;
 		}
 		glShaderSource(vshader, 1, &vertex_shader, 0);
@@ -241,7 +256,7 @@ namespace Viperfish
 			char *infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetShaderInfoLog(vshader, infoLogLength, NULL, infoLog);
-			hflog.errorfn(__FUNCTION__, "failed to compile ImGui vertex shader\n-----\n%s-----\n%s\n-----\n", infoLog, vertex_shader);
+			hflog.errorfn(__FUNCTION__, "failed to compile Dear ImGui vertex shader\n-----\n%s-----\n%s\n-----\n", infoLog, vertex_shader);
 			delete[] infoLog;
 			glDeleteShader(vshader);
 			vshader = 0;
@@ -257,7 +272,7 @@ namespace Viperfish
 			char *infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetShaderInfoLog(fshader, infoLogLength, NULL, infoLog);
-			hflog.errorfn(__FUNCTION__, "failed to compile ImGui fragment shader\n-----\n%s-----\n%s\n-----\n", infoLog, fragment_shader);
+			hflog.errorfn(__FUNCTION__, "failed to compile Dear ImGui fragment shader\n-----\n%s-----\n%s\n-----\n", infoLog, fragment_shader);
 			delete[] infoLog;
 			glDeleteShader(fshader);
 			fshader = 0;
@@ -282,7 +297,7 @@ namespace Viperfish
 			char *infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetProgramInfoLog(program, infoLogLength, NULL, infoLog);
-			hflog.error("%s(): failed to link ImGui program\n%s\n", infoLog);
+			hflog.error("%s(): failed to link Dear ImGui program\n%s\n", infoLog);
 			delete[] infoLog;
 		}
 
@@ -313,7 +328,7 @@ namespace Viperfish
 		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
 		glBindVertexArray(last_vertex_array);
 
-		hflog.infofn(__FUNCTION__, "ImGui Device Objects Created");
+		hflog.infofn(__FUNCTION__, "Dear ImGui Device Objects Created");
 		return true;
 	}
 
@@ -349,7 +364,7 @@ namespace Viperfish
 			ImGui::GetIO().Fonts->TexID = 0;
 			fontTextureId = 0;
 		}
-		hflog.infofn(__FUNCTION__, "ImGui Device Objects Invalidated");
+		hflog.infofn(__FUNCTION__, "Dear ImGui Device Objects Invalidated");
 	}
 
 	void DearImGuiWidget::RenderDrawLists()
