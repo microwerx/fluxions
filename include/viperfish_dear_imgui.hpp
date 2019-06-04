@@ -56,6 +56,7 @@ namespace Viperfish
 
 		virtual void OnPreRender() override;
 		virtual void OnPostRender() override;
+		virtual void OnRenderDearImGui() override;
 
 	protected:
 		GLuint fontTextureId = 0;

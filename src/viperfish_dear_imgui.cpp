@@ -150,7 +150,7 @@ namespace Viperfish
 
 	void DearImGuiWidget::OnUpdate(double timeStamp)
 	{
-		if (pIO != nullptr)
+		if (program && pIO != nullptr)
 		{
 			pIO->DisplaySize.x = (float)windowRect().w;
 			pIO->DisplaySize.y = (float)windowRect().h;
@@ -163,14 +163,22 @@ namespace Viperfish
 	void DearImGuiWidget::OnPreRender()
 	{
 		Widget::OnPreRender();
+		if (!program) return;
 		ImGui::NewFrame();
 	}
 
 	void DearImGuiWidget::OnPostRender()
 	{
 		Widget::OnPostRender();
+		if (!program) return;
 		ImGui::Render();
 		RenderDrawLists();
+	}
+
+	void DearImGuiWidget::OnRenderDearImGui()
+	{
+		if (!program) return;
+		Widget::OnRenderDearImGui();
 	}
 
 	bool DearImGuiWidget::CreateDeviceObjects()
