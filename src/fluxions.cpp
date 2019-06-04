@@ -174,7 +174,10 @@ namespace Fluxions
 	{
 		// Perform any necessary initialization steps here
 		hflog.info("%s(): Initializing Fluxions", __FUNCTION__);
-		glewInit();
+		GLenum err = glewInit();
+		if (err != GLEW_OK) {
+			HFLOGERROR("glewInit() -> %s", glewGetErrorString(err));
+		}
 		ReadGLInfo();
 
 		glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB, GL_NICEST);
