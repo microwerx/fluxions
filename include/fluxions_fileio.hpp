@@ -70,12 +70,18 @@ struct FilePathInfo
     bool TestIfFileExists(const std::string &filename);
     bool FindFileIfExists(const std::vector<std::string> &pathsToTry, std::string &output);
     void fill_stat_info();
-    bool DoesNotExist() const { return pathType == PathType::DoesNotExist; }
-    bool Exists() const { return pathType != PathType::DoesNotExist; }
-    bool IsDirectory() const { return pathType == PathType::Directory; }
-    bool IsFile() const { return pathType == PathType::File; }
-    bool IsOther() const { return pathType == PathType::Other; }
-    bool IsRelative() const { return relativePath == true; }
+    bool DoesNotExist() const;
+    bool Exists() const;
+    bool IsDirectory() const;
+    bool IsOther() const;
+    bool IsFile() const;
+    bool IsRelative() const;
+    // inline bool DoesNotExist() const { return pathType == PathType::DoesNotExist; }
+    // inline bool Exists() const { return pathType != PathType::DoesNotExist; }
+    // inline bool IsDirectory() const { return pathType == PathType::Directory; }
+    // inline bool IsFile() const { return pathType == PathType::File; }
+    // inline bool IsOther() const { return pathType == PathType::Other; }
+    // inline bool IsRelative() const { return relativePath == true; }
 };
 
 //inline std::string  GetFileDrive(const std::string  &filename) { FilePathInfo fpi(filename); return fpi.drive; }

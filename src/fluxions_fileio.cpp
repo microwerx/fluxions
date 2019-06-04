@@ -365,6 +365,13 @@ void FilePathInfo::fill_stat_info()
     }
 }
 
+bool FilePathInfo::DoesNotExist() const { return pathType == PathType::DoesNotExist; }
+bool FilePathInfo::Exists() const { return pathType != PathType::DoesNotExist; }
+bool FilePathInfo::IsDirectory() const { return pathType == PathType::Directory; }
+bool FilePathInfo::IsFile() const { return pathType == PathType::File; }
+bool FilePathInfo::IsOther() const { return pathType == PathType::Other; }
+bool FilePathInfo::IsRelative() const { return relativePath == true; }
+
 std::string ReadTextFile(const std::string &filename)
 {
     std::ifstream fin(filename.c_str());

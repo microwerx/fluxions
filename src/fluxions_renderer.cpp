@@ -352,13 +352,16 @@ namespace Fluxions
 			{
 				std::string testpath = basepath + "/" + args[1].sval;
 				fpi.Set(testpath);
-				if (fpi.IsDirectory())
+				bool isdir = fpi.IsDirectory();
+				if (isdir)
 				{
 					hflog.infofn(__FUNCTION__, "Path added \"%s\"", fpi.path.c_str());
 					Paths.push_back(fpi.path);
 				}
 				else
+				{
 					return false;
+				}
 			}
 		}
 		return true;
