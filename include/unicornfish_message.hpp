@@ -65,6 +65,10 @@ class Message
 	bool SetLastFrameData(const std::string &data);
 	bool SetLastFrameData(const char *data);
 
+	inline bool PushStr(const std::string &message) { return Push(message); }
+	inline bool PushMem(void *mem, size_t size) { return Push(mem, size); }
+	inline bool PushFrame(const Frame &frame) { return Push(frame); }
+
 	bool Push(const std::string &message);
 	bool Push(const char *message);
 	bool Push(const Majordomo::Command command);
