@@ -147,9 +147,9 @@ namespace Fluxions
 		gl_vendor = (const char *)glGetString(GL_VENDOR);
 		gl_renderer = (const char *)glGetString(GL_RENDERER);
 
-		hflog.info("GL_RENDERER: %s\n", gl_renderer.c_str());
-		hflog.info("GL_VERSION:  %s\n", gl_version.c_str());
-		hflog.info("GL_VENDOR:   %s\n", gl_vendor.c_str());
+		HFLOGINFO("GL_RENDERER: %s", gl_renderer.c_str());
+		HFLOGINFO("GL_VERSION:  %s", gl_version.c_str());
+		HFLOGINFO("GL_VENDOR:   %s", gl_vendor.c_str());
 	}
 
 	const std::string &GetRenderer()
