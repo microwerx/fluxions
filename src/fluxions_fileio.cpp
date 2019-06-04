@@ -365,12 +365,33 @@ void FilePathInfo::fill_stat_info()
     }
 }
 
-bool FilePathInfo::DoesNotExist() const { return pathType == PathType::DoesNotExist; }
-bool FilePathInfo::Exists() const { return pathType != PathType::DoesNotExist; }
-bool FilePathInfo::IsDirectory() const { return pathType == PathType::Directory; }
-bool FilePathInfo::IsFile() const { return pathType == PathType::File; }
-bool FilePathInfo::IsOther() const { return pathType == PathType::Other; }
-bool FilePathInfo::IsRelative() const { return relativePath == true; }
+bool FilePathInfo::DoesNotExist() const
+{
+    return pathType == PathType::DoesNotExist;
+}
+
+bool FilePathInfo::Exists() const
+{
+    return pathType != PathType::DoesNotExist;
+}
+
+bool FilePathInfo::IsDirectory() const {
+    return pathType == PathType::Directory;
+}
+
+bool FilePathInfo::IsFile() const {
+    return pathType == PathType::File;
+}
+
+bool FilePathInfo::IsOther() const
+{
+    return pathType == PathType::Other;
+}
+
+bool FilePathInfo::IsRelative() const
+{
+    return relativePath == true; 
+}
 
 std::string ReadTextFile(const std::string &filename)
 {
@@ -430,7 +451,7 @@ std::string FindPathIfExists(const std::string &path, const std::vector<std::str
     {
         for (auto testPathIt : pathsToTry)
         {
-            std::string testPath = testPathIt + fpi.fullfname;
+            std::string testPath = testPathIt + "/" + fpi.fullfname;
             if (TestIfFileExists(testPath))
             {
                 output = testPath;

@@ -379,6 +379,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
     {
         // Load Cache instead
         std::ifstream fin(cache_filename, std::ios::binary);
+        if (!fin) return false;
         long vertexCount = 0;
         long indexCount = 0;
         long surfaceCount = 0;

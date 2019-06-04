@@ -31,14 +31,18 @@ namespace Fluxions
 	std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename)
 	{
 		std::shared_ptr<SimpleShader> shader(new SimpleShader());
+		if (shader->shader == 0)
+		{
+			return shader;
+		}
 		FilePathInfo fpi(filename);
 		const char *typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
 			(type == GL_FRAGMENT_SHADER) ? "fragment" :
 			(type == GL_GEOMETRY_SHADER) ? "geometry" :
 			"unknown";
-		hflog.infofn(__FUNCTION__, "loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 		if (!fpi.IsFile())
 			return shader;
+		hflog.infofn(__FUNCTION__, "loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 
 		shader->Create(type);
 		shader->source = ReadTextFile(filename);
