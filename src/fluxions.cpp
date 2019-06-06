@@ -40,11 +40,11 @@ namespace Fluxions
 			return shader;
 		HFLOGINFO("loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 
+		shader->Create(type);
 		if (shader->shader == 0) {
 			HFLOGERROR("%s shader could not be created!", typeName);
 			return shader;
 		}
-		shader->Create(type);
 		shader->source = ReadTextFile(filename);
 		const GLchar *sourceString = shader->source.c_str();
 		const GLint length = (int)shader->source.size();

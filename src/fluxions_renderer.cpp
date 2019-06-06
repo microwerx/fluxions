@@ -265,8 +265,7 @@ namespace Fluxions
 				{
 					for (auto attrib : p.vertex_attribs)
 					{
-						std::cout << "    " << attrib.name << ": " << program->GetAttribLocation(attrib.name.c_str()) << std::endl;
-						hflog.infofn(__FUNCTION__, "attrib (%2d) %s", program->GetAttribLocation(attrib.name.c_str()), attrib.name.c_str());
+						hflog.infofn(__FUNCTION__, "attrib (%02d) %s", program->GetAttribLocation(attrib.name.c_str()), attrib.name.c_str());
 					}
 					p.program = program;
 				}

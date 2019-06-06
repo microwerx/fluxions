@@ -22,67 +22,75 @@
 #include <map>
 #include <vector>
 
+#define VF_SHIFT_MODIFIER		0x0001
+#define VF_CTRL_MODIFIER		0x0002
+#define VF_ALT_MODIFIER			0x0004
+#define VF_META_MODIFIER		0x0008
+#define VF_CAPSLOCK_MODIFIER	0x0010
+#define VF_NUMLOCK_MODIFIER		0x0020
+
 namespace Viperfish
 {
 
-struct KeyboardState
-{
-	//map<int, bool> keys;
-	//map<int, bool> modkeys;
-	std::map<std::string, int> keys;
-	int modifiers;
-
-	static const int ShiftKeyBit = 1;
-	static const int CtrlKeyBit = 2;
-	static const int AltKeyBit = 4;
-	static const int ShiftCtrlBits = 3;
-	static const int ShiftAltBits = 5;
-	static const int CtrlAltBits = 6;
-	static const int ShiftCtrlAltBits = 7;
-
-	inline bool ctrlKey() const { return modifiers & CtrlKeyBit; }
-	inline bool altKey() const { return modifiers & AltKeyBit; }
-	inline bool shiftKey() const { return modifiers & ShiftKeyBit; }
-	inline bool ctrlAlt() const { return modifiers & (CtrlKeyBit | AltKeyBit); }
-	inline bool shiftAlt() const { return modifiers & (ShiftKeyBit | AltKeyBit); }
-	inline bool shiftCtrlAlt() const { return modifiers & (ShiftKeyBit | CtrlKeyBit | AltKeyBit); }
-
-	inline void Clear()
+	struct KeyboardState
 	{
-		keys.clear();
-		modifiers = 0;
-	}
-	inline void Reset()
-	{
-		modifiers = 0;
-		for (auto &key : keys)
+		//map<int, bool> keys;
+		//map<int, bool> modkeys;
+		std::map<std::string, int> keys;
+		int modifiers;
+
+		static const int ShiftKeyBit = 1;
+		static const int CtrlKeyBit = 2;
+		static const int AltKeyBit = 4;
+		static const int ShiftCtrlBits = 3;
+		static const int ShiftAltBits = 5;
+		static const int CtrlAltBits = 6;
+		static const int ShiftCtrlAltBits = 7;
+
+		inline bool ctrlKey() const { return modifiers & CtrlKeyBit; }
+		inline bool altKey() const { return modifiers & AltKeyBit; }
+		inline bool shiftKey() const { return modifiers & ShiftKeyBit; }
+		inline bool ctrlAlt() const { return modifiers & (CtrlKeyBit | AltKeyBit); }
+		inline bool shiftAlt() const { return modifiers & (ShiftKeyBit | AltKeyBit); }
+		inline bool shiftCtrlAlt() const { return modifiers & (ShiftKeyBit | CtrlKeyBit | AltKeyBit); }
+
+		inline void Clear()
 		{
-			key.second = false;
+			keys.clear();
+			modifiers = 0;
 		}
-	}
-	inline void SetKey(const std::string &key, bool state) { keys[key] = state; }
-	inline void SetKey(const std::string &key, int keymod, bool state)
-	{
-		modifiers = keymod;
-		keys[key] = state;
-	}
-	void SetKey(unsigned char c, int keymod, bool state);
-	inline bool IsPressed(const std::string &key) const
-	{
-		std::map<std::string, int>::const_iterator it = keys.find(key);
-		if (it != keys.end())
-			return it->second;
-		return false;
-	}
-	inline bool IsPressed(const std::string &key, int keymod) const { return keymod == modifiers && IsPressed(key); }
-	bool CheckKeyPressed(std::vector<std::string> keys);
-	int CountKeysPressed(std::vector<std::string> keys);
-};
+		inline void Reset()
+		{
+			modifiers = 0;
+			for (auto &key : keys) {
+				key.second = false;
+			}
+		}
+		inline void SetKey(const std::string &key, bool state) { keys[key] = state; }
+		inline void SetKey(const std::string &key, int keymod, bool state)
+		{
+			modifiers = keymod;
+			keys[key] = state;
+		}
+		void SetKey(unsigned char c, int keymod, bool state);
+		inline bool IsPressed(const std::string &key) const
+		{
+			std::map<std::string, int>::const_iterator it = keys.find(key);
+			if (it != keys.end())
+				return it->second;
+			return false;
+		}
+		inline bool IsPressed(const std::string &key, int keymod) const { return keymod == modifiers && IsPressed(key); }
+		bool CheckKeyPressed(std::vector<std::string> keys);
+		int CountKeysPressed(std::vector<std::string> keys);
+	};
 
+	int GetKeyboardModifiers();
+	int SetKeyboardModifiers(bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, bool capsLock, bool numLock);
 
-const char *KeyToHTML5Name(char c);
-const char *SpecialKeyToHTML5Name(int key);
-int HTML5NameToKey(const std::string &key);
+	const char *KeyToHTML5Name(char c);
+	const char *SpecialKeyToHTML5Name(int key);
+	int HTML5NameToKey(const std::string &key);
 
 } // namespace Viperfish
 
