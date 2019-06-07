@@ -243,6 +243,7 @@ namespace Viperfish
 
 	void Widget::OnInit(const std::vector<std::string> &args)
 	{
+		leaveMainLoop_ = false;
 		if (decorateeWidget_)
 			decorateeWidget_->OnInit(args);
 		for (auto &w : children_)
@@ -625,12 +626,9 @@ namespace Viperfish
 
 	void Widget::OnLeaveMainLoop()
 	{
-		if (decorateeWidget_)
-			decorateeWidget_->OnLeaveMainLoop();
-		for (auto &w : children_)
-		{
-			w->OnLeaveMainLoop();
-		}
+		leaveMainLoop_ = true;
+		if (decoraterWidget_)
+			decoraterWidget_->OnLeaveMainLoop();
 	}
 
 

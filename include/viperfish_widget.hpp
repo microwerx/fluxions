@@ -104,6 +104,7 @@ namespace Viperfish
 		inline Recti &windowRect() { return windowRect_; }
 		inline bool isVisible() const { return visible_; }
 		inline bool isOrphan() const { return !parent_; }
+		inline bool leaveMainLoop() const { return leaveMainLoop_; }
 
 		inline double GetElapsedTime() const { return t1 - baseTime; }
 		inline double GetFrameTime() const { return t1 - t0; }
@@ -163,6 +164,8 @@ namespace Viperfish
 
 		std::string name_;
 		void common_constructor(const std::string &name) noexcept;
+
+		bool leaveMainLoop_ = false;
 
 		Recti windowRect_;
 		bool visible_ = true;

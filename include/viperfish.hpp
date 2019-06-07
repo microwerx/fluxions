@@ -36,9 +36,9 @@
 #include <viperfish_widget.hpp>
 #include <viperfish_dear_imgui.hpp>
 
-#define VF_MOUSE_BUTTON_LEFT	0x0001;
+#define VF_MOUSE_BUTTON_LEFT	0x0000;
+#define VF_MOUSE_BUTTON_MIDDLE	0x0001;
 #define VF_MOUSE_BUTTON_RIGHT	0x0002;
-#define VF_MOUSE_BUTTON_MIDDLE	0x0004;
 
 namespace Viperfish
 {

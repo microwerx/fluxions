@@ -59,15 +59,15 @@ namespace Viperfish
 
 
 		pIO->KeyMap[ImGuiKey_Tab] = 0x09; // Keyboard mapping. ImGui will use those indices to peek into the pIO.KeyDown[] array.
-		pIO->KeyMap[ImGuiKey_LeftArrow] = 0x100 + GLUT_KEY_LEFT;
-		pIO->KeyMap[ImGuiKey_RightArrow] = 0x100 + GLUT_KEY_RIGHT;
-		pIO->KeyMap[ImGuiKey_UpArrow] = 0x100 + GLUT_KEY_UP;
-		pIO->KeyMap[ImGuiKey_DownArrow] = 0x100 + GLUT_KEY_DOWN;
-		pIO->KeyMap[ImGuiKey_PageUp] = 0x100 + GLUT_KEY_PAGE_UP;
-		pIO->KeyMap[ImGuiKey_PageDown] = 0x100 + GLUT_KEY_PAGE_DOWN;
-		pIO->KeyMap[ImGuiKey_Home] = 0x100 + GLUT_KEY_HOME;
-		pIO->KeyMap[ImGuiKey_End] = 0x100 + GLUT_KEY_END;
-		pIO->KeyMap[ImGuiKey_Delete] = 0x100 + GLUT_KEY_DELETE;
+		pIO->KeyMap[ImGuiKey_LeftArrow] = VF_KEY_LEFT;
+		pIO->KeyMap[ImGuiKey_RightArrow] = VF_KEY_RIGHT;
+		pIO->KeyMap[ImGuiKey_UpArrow] = VF_KEY_UP;
+		pIO->KeyMap[ImGuiKey_DownArrow] = VF_KEY_DOWN;
+		pIO->KeyMap[ImGuiKey_PageUp] = VF_KEY_PAGE_UP;
+		pIO->KeyMap[ImGuiKey_PageDown] = VF_KEY_PAGE_DOWN;
+		pIO->KeyMap[ImGuiKey_Home] = VF_KEY_HOME;
+		pIO->KeyMap[ImGuiKey_End] = VF_KEY_END;
+		pIO->KeyMap[ImGuiKey_Delete] = VF_KEY_DELETE;
 		pIO->KeyMap[ImGuiKey_Backspace] = 0x08;
 		pIO->KeyMap[ImGuiKey_Enter] = 0x10;
 		pIO->KeyMap[ImGuiKey_Escape] = 0x27;
@@ -162,6 +162,8 @@ namespace Viperfish
 
 	void DearImGuiWidget::OnPreRender()
 	{
+		HFLOGDEBUGFIRSTRUN();
+
 		Widget::OnPreRender();
 		if (!program) return;
 		ImGui::NewFrame();
@@ -169,6 +171,8 @@ namespace Viperfish
 
 	void DearImGuiWidget::OnPostRender()
 	{
+		HFLOGDEBUGFIRSTRUN();
+
 		Widget::OnPostRender();
 		if (!program) return;
 		ImGui::Render();
@@ -177,13 +181,15 @@ namespace Viperfish
 
 	void DearImGuiWidget::OnRenderDearImGui()
 	{
+		HFLOGDEBUGFIRSTRUN();
+
 		if (!program) return;
 		Widget::OnRenderDearImGui();
 	}
 
 	bool DearImGuiWidget::CreateDeviceObjects()
 	{
-		hflog.infofn(__FUNCTION__, "Creating Dear ImGui device objects...");
+		HFLOGDEBUG("Creating Dear ImGui device objects...");
 		// Backup GL state
 		GLint last_texture, last_array_buffer, last_vertex_array;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
@@ -192,7 +198,7 @@ namespace Viperfish
 
 		glGenTextures(1, &fontTextureId);
 		if (fontTextureId == 0) {
-			hflog.errorfn(__FUNCTION__, "Unable to create Dear ImGui font texture");
+			HFLOGERROR("Unable to create Dear ImGui font texture");
 			return false;
 		}
 		unsigned char *pixels;
@@ -240,7 +246,7 @@ namespace Viperfish
 		bool result = true;
 		if (program == 0 || vshader == 0 || fshader == 0)
 		{
-			hflog.errorfn(__FUNCTION__, "Unable to create Dear ImGui shader program and/or shaders");
+			HFLOGERROR("Unable to create Dear ImGui shader program and/or shaders");
 			return false;
 		}
 		glShaderSource(vshader, 1, &vertex_shader, 0);
@@ -256,7 +262,7 @@ namespace Viperfish
 			char *infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetShaderInfoLog(vshader, infoLogLength, NULL, infoLog);
-			hflog.errorfn(__FUNCTION__, "failed to compile Dear ImGui vertex shader\n-----\n%s-----\n%s\n-----\n", infoLog, vertex_shader);
+			HFLOGERROR("failed to compile Dear ImGui vertex shader\n-----\n%s-----\n%s\n-----\n", infoLog, vertex_shader);
 			delete[] infoLog;
 			glDeleteShader(vshader);
 			vshader = 0;
@@ -272,7 +278,7 @@ namespace Viperfish
 			char *infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetShaderInfoLog(fshader, infoLogLength, NULL, infoLog);
-			hflog.errorfn(__FUNCTION__, "failed to compile Dear ImGui fragment shader\n-----\n%s-----\n%s\n-----\n", infoLog, fragment_shader);
+			HFLOGERROR("failed to compile Dear ImGui fragment shader\n-----\n%s-----\n%s\n-----\n", infoLog, fragment_shader);
 			delete[] infoLog;
 			glDeleteShader(fshader);
 			fshader = 0;
@@ -328,7 +334,7 @@ namespace Viperfish
 		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
 		glBindVertexArray(last_vertex_array);
 
-		hflog.infofn(__FUNCTION__, "Dear ImGui Device Objects Created");
+		HFLOGDEBUG("Dear ImGui Device Objects Created");
 		return true;
 	}
 

@@ -30,6 +30,7 @@
 #define HFLOGERROR(...) hflog.errorfn(__FUNCTION__, __VA_ARGS__)
 #define HFLOGDEBUG(...) hflog.debugfn(__FUNCTION__, __VA_ARGS__)
 #define HFLOG(...) hflog.logfn(__FUNCTION__, __VA_ARGS)
+#define HFLOGDEBUGFIRSTRUN() { static int firstRun = 1; if (firstRun) { firstRun = 0; HFLOGDEBUG(""); } }
 
 class Hatchetfish
 {
