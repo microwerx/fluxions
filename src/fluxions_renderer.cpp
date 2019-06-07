@@ -152,7 +152,7 @@ namespace Fluxions
 				}
 			}
 
-			hflog.infofn(__FUNCTION__, "(Line: %03i) [%s] %s", lineno, KASL::TokenVectorJoin(tokens, " ").c_str(),
+			HFLOGDEBUG("(Line: %03i) [%s] %s", lineno, KASL::TokenVectorJoin(tokens, " ").c_str(),
 				result ? "" : "(FALSE)");
 		}
 
@@ -212,12 +212,12 @@ namespace Fluxions
 
 		for (auto it = RenderConfigs.begin(); it != RenderConfigs.end(); it++)
 		{
-			hflog.infofn(__FUNCTION__, "loading renderconfig %s", it->first.c_str());
+			HFLOGINFO("loading renderconfig %s", it->first.c_str());
 			Renderer::RenderConfig &rc = it->second;
 
 			for (auto &p : rc.programs)
 			{
-				hflog.infofn(__FUNCTION__, "loading program %s", p.name.c_str());
+				HFLOGINFO("loading program %s", p.name.c_str());
 
 				std::string vspath = FindPathIfExists(p.vertshader, Paths);
 				std::string fspath = FindPathIfExists(p.fragshader, Paths);
@@ -225,12 +225,12 @@ namespace Fluxions
 
 				if (vspath.empty())
 				{
-					hflog.errorfn(__FUNCTION__, "vertex shader %s does not exist", p.vertshader.c_str());
+					HFLOGERROR("vertex shader %s does not exist", p.vertshader.c_str());
 				}
 
 				if (fspath.empty())
 				{
-					hflog.errorfn(__FUNCTION__, "fragment shader %s does not exist", p.fragshader.c_str());
+					HFLOGERROR("fragment shader %s does not exist", p.fragshader.c_str());
 				}
 				std::shared_ptr<Fluxions::SimpleShader> spVS = CompileShaderFromFile(GL_VERTEX_SHADER, vspath);
 				std::shared_ptr<Fluxions::SimpleShader> spFS = CompileShaderFromFile(GL_FRAGMENT_SHADER, fspath);
@@ -238,13 +238,13 @@ namespace Fluxions
 
 				if (!spVS->didCompile || !spFS->didCompile)
 				{
-					hflog.errorfn(__FUNCTION__, "failed to load program %s because the vertex/fragment shaders did not compile.", p.name.c_str());
+					HFLOGERROR("failed to load program %s because the vertex/fragment shaders did not compile.", p.name.c_str());
 					continue;
 				}
 
 				if (!gspath.empty() && !spGS->didCompile)
 				{
-					hflog.errorfn(__FUNCTION__, "failed to load program %s because the geometry shader did not compile.", p.name.c_str());
+					HFLOGERROR("failed to load program %s because the geometry shader did not compile.", p.name.c_str());
 				}
 
 				SimpleProgramPtr program = std::make_shared<SimpleProgram>();
@@ -265,7 +265,7 @@ namespace Fluxions
 				{
 					for (auto attrib : p.vertex_attribs)
 					{
-						hflog.infofn(__FUNCTION__, "attrib (%02d) %s", program->GetAttribLocation(attrib.name.c_str()), attrib.name.c_str());
+						HFLOGDEBUG("attrib (%02d) %s", program->GetAttribLocation(attrib.name.c_str()), attrib.name.c_str());
 					}
 					p.program = program;
 				}
@@ -349,7 +349,7 @@ namespace Fluxions
 			FilePathInfo fpi(args[1].sval);
 			if (!fpi.IsRelative() && fpi.IsDirectory())
 			{
-				hflog.infofn(__FUNCTION__, "Path added \"%s\"", fpi.path.c_str());
+				HFLOGDEBUG("Path added \"%s\"", fpi.path.c_str());
 				Paths.push_back(fpi.path);
 			}
 			else
@@ -359,7 +359,7 @@ namespace Fluxions
 				bool isdir = fpi.IsDirectory();
 				if (isdir)
 				{
-					hflog.infofn(__FUNCTION__, "Path added \"%s\"", fpi.path.c_str());
+					HFLOGDEBUG("Path added \"%s\"", fpi.path.c_str());
 					Paths.push_back(fpi.path);
 				}
 				else

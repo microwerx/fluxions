@@ -38,7 +38,7 @@ namespace Fluxions
 		FilePathInfo fpi(filename);
 		if (!fpi.IsFile())
 			return shader;
-		HFLOGINFO("loading %s shader `%s'", typeName, fpi.fullfname.c_str());
+		HFLOGDEBUG("loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 
 		shader->Create(type);
 		if (shader->shader == 0) {
@@ -60,11 +60,11 @@ namespace Fluxions
 		glGetShaderInfoLog(shader->shader, ival, NULL, infoLog);
 		if (shader->hadError)
 		{
-			hflog.errorfn(__FUNCTION__, "shader %d compile error for %s\n%s", shader->shader, filename.c_str(), shader->infoLog.c_str());
+			HFLOGERROR("shader %d compile error for %s\n%s", shader->shader, filename.c_str(), shader->infoLog.c_str());
 		}
 		if (shader->didCompile)
 		{
-			hflog.infofn(__FUNCTION__, "shader %d compiled", shader->shader);
+			HFLOGDEBUG("shader %d compiled", shader->shader);
 		}
 
 		return shader;
@@ -105,7 +105,7 @@ namespace Fluxions
 		for (int i = 0; i < argc; i++)
 		{
 			std::string option = argv[i];
-			hflog.info("%s(): Processing '%s'", __FUNCTION__, option.c_str());
+			HFLOGINFO("Processing '%s'", option.c_str());
 			std::regex dashequals("(^-+|=)",
 				std::regex_constants::ECMAScript);
 			std::sregex_token_iterator it(option.begin(),
@@ -128,13 +128,13 @@ namespace Fluxions
 					value = *it;
 				}
 				std::string token = *it;
-				hflog.info("%s(): token %d '%s'", __FUNCTION__, count, token.c_str());
+				HFLOGDEBUG("token %d '%s'", count, token.c_str());
 				count++;
 			}
 			if (key.length() > 0)
 			{
 				argv_options.emplace(std::make_pair(key, value));
-				hflog.info("%s(): argv adding key '%s' = '%s'", __FUNCTION__, key.c_str(), value.c_str());
+				HFLOGINFO("argv adding key '%s' = '%s'", key.c_str(), value.c_str());
 			}
 		}
 		return argv_options;
@@ -173,7 +173,7 @@ namespace Fluxions
 	void Init()
 	{
 		// Perform any necessary initialization steps here
-		hflog.info("%s(): Initializing Fluxions", __FUNCTION__);
+		HFLOGINFO("Initializing Fluxions");
 		GLenum err = glewInit();
 		if (err != GLEW_OK) {
 			HFLOGERROR("glewInit() -> %s", glewGetErrorString(err));
@@ -183,7 +183,7 @@ namespace Fluxions
 		glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB, GL_NICEST);
 
 #ifndef FLUXIONS_NO_SDL
-		hflog.infofn(__FUNCTION__, "Initializing SDL");
+		HFLOGINFO("Initializing SDL");
 		SDL_Init(SDL_INIT_EVERYTHING);
 		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 #endif
