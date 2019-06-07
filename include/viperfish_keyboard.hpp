@@ -29,6 +29,59 @@
 #define VF_CAPSLOCK_MODIFIER	0x0010
 #define VF_NUMLOCK_MODIFIER		0x0020
 
+#define VF_KEY_F1                       0x0101
+#define VF_KEY_F2                       0x0102
+#define VF_KEY_F3                       0x0103
+#define VF_KEY_F4                       0x0104
+#define VF_KEY_F5                       0x0105
+#define VF_KEY_F6                       0x0106
+#define VF_KEY_F7                       0x0107
+#define VF_KEY_F8                       0x0108
+#define VF_KEY_F9                       0x0109
+#define VF_KEY_F10                      0x010A
+#define VF_KEY_F11                      0x010B
+#define VF_KEY_F12                      0x010C
+#define VF_KEY_LEFT                     0x0164
+#define VF_KEY_UP                       0x0165
+#define VF_KEY_RIGHT                    0x0166
+#define VF_KEY_DOWN                     0x0167
+#define VF_KEY_PAGE_UP                  0x0168
+#define VF_KEY_PAGE_DOWN                0x0169
+#define VF_KEY_HOME                     0x016A
+#define VF_KEY_END                      0x016B
+#define VF_KEY_INSERT                   0x016C
+#define VF_KEY_NUM_LOCK					0x016D
+#define VF_KEY_BEGIN					0x016E
+#define VF_KEY_DELETE					0x016F
+#define VF_KEY_SHIFT_L					0x0170
+#define VF_KEY_SHIFT_R					0x0171
+#define VF_KEY_CTRL_L					0x0172
+#define VF_KEY_CTRL_R					0x0173
+#define VF_KEY_ALT_L					0x0174
+#define VF_KEY_ALT_R					0x0175
+#define VF_KEY_META_L					0x0176
+#define VF_KEY_META_R					0x0177
+#define VF_KEY_SUPER_L					0x0176
+#define VF_KEY_SUPER_R					0x0177
+#define VF_KEY_MENU						0x0178
+#define VF_KEY_KP_0						0x140
+#define VF_KEY_KP_1						0x141
+#define VF_KEY_KP_2						0x142
+#define VF_KEY_KP_3						0x143
+#define VF_KEY_KP_4						0x144
+#define VF_KEY_KP_5						0x145
+#define VF_KEY_KP_6						0x146
+#define VF_KEY_KP_7						0x147
+#define VF_KEY_KP_8						0x148
+#define VF_KEY_KP_9						0x149
+#define VF_KEY_KP_DECIMAL				0x150
+#define VF_KEY_KP_DIVIDE				0x151
+#define VF_KEY_KP_MULTIPLY				0x152
+#define VF_KEY_KP_SUBTRACT				0x153
+#define VF_KEY_KP_ADD					0x154
+#define VF_KEY_KP_ENTER					0x155
+#define VF_KEY_KP_EQUAL					0x156
+
 namespace Viperfish
 {
 

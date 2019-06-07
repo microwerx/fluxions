@@ -91,7 +91,19 @@ namespace Viperfish
 
 		int keymod = GetKeyboardModifiers();
 		if (keymod & VF_SHIFT_MODIFIER) {
+			char *lowers = "`1234567890-=[]\\;',./";
+			char *uppers = "~!@#$%^&*()_+{}|:\"<>?";
 			c = (char)toupper(c);
+			char *lc = lowers;
+			char *uc = uppers;
+			while (*lc != 0) {
+				if (c == *lc) {
+					c = *uc;
+					break;
+				}
+				lc++;
+				uc++;
+			}
 		}
 		else {
 			c = (char)tolower(c);
@@ -266,6 +278,16 @@ namespace Viperfish
 			break;
 		case 0x0075: // GLUT_KEY_ALT_R
 			return "Alt";
+			break;
+			// TODO CHECK THESE
+		case 0x0076:
+			return "Meta";
+			break;
+		case 0x077:
+			return "Meta";
+			break;
+		case 0x078:
+			return "Menu";
 			break;
 		}
 		return "Undefined";

@@ -157,7 +157,7 @@ void glutSetErrorMessage(const char *filename, int line, const char *format, ...
 	}
 	else if (numBytes < 4096)
 		buffer[numBytes] = '\0';
-	ostr << "File (" << filename << "), Line (" << line << "): \"" << buffer;
+	ostr << "File (" << filename << "), Line (" << line << "): \"" << buffer << "\"";
 	g_CurrentDebugMessage = ostr.str();
 }
 
@@ -274,7 +274,7 @@ bool glutDebugBindTexture(GLenum target, GLuint texture)
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &id1);
 		glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &id2);
 		GLint id3 = glIsTexture(texture);
-		hflog.error("%s(): could not bind %d to %s [2D: %d, CM: %d, is: %d]", __FUNCTION__, texture, Fluxions::glNameTranslator.GetString(target), id1, id2, id3);
+		HFLOGERROR("could not bind %d to %s [2D: %d, CM: %d, is: %d]", texture, Fluxions::glNameTranslator.GetString(target), id1, id2, id3);
 		return false;
 	}
 
