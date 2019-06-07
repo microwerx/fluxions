@@ -160,8 +160,8 @@ const std::string &Hatchetfish::makeMessagefn(const char *category, const char *
 
 void Hatchetfish::print(const char *color)
 {
-	if (logEnabled && colorsEnabled) {
-		fprintf(fout "%s%s%s\n", color, lastMessage.c_str(), ansi::normal);
+	if (logEnabled && colorEnabled) {
+		fprintf(fout, "%s%s%s\n", color, lastMessage.c_str(), ansi::normal);
 	}
 	else if (logEnabled) {
 		fprintf(fout, "%s\n", lastMessage.c_str());

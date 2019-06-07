@@ -43,7 +43,7 @@ class Hatchetfish
 	using TimePoint = std::chrono::time_point<SteadyClock>;
 	using Duration = std::chrono::duration<double>;
 
-	bool colorsEnabled = true;
+	bool colorEnabled = true;
 	bool logEnabled = true;
 	bool logInfoEnabled = true;
 	bool logWarningEnabled = true;
@@ -132,6 +132,11 @@ class Hatchetfish
 	void disableLog() { logEnabled = false; }
 	void toggleLog() { logEnabled = !logEnabled; }
 	bool isLogEnabled() { return logEnabled; }
+
+	void enableColor() { colorEnabled = true; }
+	void disableColor() { colorEnabled = false; }
+	void toggleColor() { colorEnabled = !colorEnabled; }
+	bool isColorEnabled() { return colorEnabled; }
 
 	void enableInfoLog() { logInfoEnabled = true; }
 	void disableInfoLog() { logInfoEnabled = false; }
