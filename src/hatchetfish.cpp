@@ -29,6 +29,26 @@
 
 Hatchetfish hflog;
 
+namespace ansi
+{
+	const char * black = "\033[0;31m";
+	const char * red = "\033[0;31m";
+	const char * green = "\033[0;32m";
+	const char * yellow = "\033[0;33m";
+	const char * blue = "\033[0;34m";
+	const char * magenta = "\033[0;35m";
+	const char * cyan = "\033[0;36m";
+	const char * white = "\033[0;37m";
+	const char * normal = "\033[0m";
+}
+
+namespace hf
+{
+	const char *info = "INFO";
+	const char *warning = "WARN";
+	const char *error = "ERROR";
+}
+
 Hatchetfish::Hatchetfish()
 {
 	fout = stdout;
@@ -138,15 +158,23 @@ const std::string &Hatchetfish::makeMessagefn(const char *category, const char *
 	return lastMessage;
 }
 
+void Hatchetfish::print(const char *color)
+{
+	if (logEnabled && colorsEnabled) {
+		fprintf(fout "%s%s%s\n", color, lastMessage.c_str(), ansi::normal);
+	}
+	else if (logEnabled) {
+		fprintf(fout, "%s\n", lastMessage.c_str());
+	}
+}
+
 void Hatchetfish::log(const char *category, const char *msg, ...)
 {
 	va_list args;
 	va_start(args, msg);
 	makeMessage(category, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::normal);
 }
 
 void Hatchetfish::logfn(const char *category, const char *fn, const char *msg, ...)
@@ -155,42 +183,34 @@ void Hatchetfish::logfn(const char *category, const char *fn, const char *msg, .
 	va_start(args, msg);
 	makeMessagefn(category, fn, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::normal);
 }
 
 void Hatchetfish::info(const char *msg, ...)
 {
 	va_list args;
 	va_start(args, msg);
-	makeMessage("INFO", msg, args);
+	makeMessage(hf::info, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::cyan);
 }
 
 void Hatchetfish::infofn(const char *fn, const char *msg, ...)
 {
 	va_list args;
 	va_start(args, msg);
-	makeMessagefn("INFO", fn, msg, args);
+	makeMessagefn(hf::info, fn, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::cyan);
 }
 
 void Hatchetfish::warning(const char *msg, ...)
 {
 	va_list args;
 	va_start(args, msg);
-	makeMessage("WARNING", msg, args);
+	makeMessage(hf::warning, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::yellow);
 }
 
 void Hatchetfish::warningfn(const char *fn, const char *msg, ...)
@@ -199,9 +219,7 @@ void Hatchetfish::warningfn(const char *fn, const char *msg, ...)
 	va_start(args, msg);
 	makeMessagefn("WARNING", fn, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::yellow);
 }
 
 void Hatchetfish::error(const char *msg, ...)
@@ -210,9 +228,7 @@ void Hatchetfish::error(const char *msg, ...)
 	va_start(args, msg);
 	makeMessage("ERROR", msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::red);
 }
 
 void Hatchetfish::errorfn(const char *fn, const char *msg, ...)
@@ -221,9 +237,7 @@ void Hatchetfish::errorfn(const char *fn, const char *msg, ...)
 	va_start(args, msg);
 	makeMessagefn("ERROR", fn, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::red);
 }
 
 void Hatchetfish::debug(const char *msg, ...)
@@ -232,9 +246,7 @@ void Hatchetfish::debug(const char *msg, ...)
 	va_start(args, msg);
 	makeMessage("DEBUG", msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::blue);
 }
 
 void Hatchetfish::debugfn(const char *fn, const char *msg, ...)
@@ -243,9 +255,7 @@ void Hatchetfish::debugfn(const char *fn, const char *msg, ...)
 	va_start(args, msg);
 	makeMessagefn("DEBUG", fn, msg, args);
 	va_end(args);
-
-	if (logEnabled)
-		fprintf(fout, "%s\n", lastMessage.c_str());
+	print(ansi::blue);
 }
 
 void Hatchetfish::flush()

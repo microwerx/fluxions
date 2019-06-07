@@ -28,6 +28,8 @@
 #define HFLOGINFO(...) hflog.infofn(__FUNCTION__, __VA_ARGS__)
 #define HFLOGWARN(...) hflog.warningfn(__FUNCTION__, __VA_ARGS__)
 #define HFLOGERROR(...) hflog.errorfn(__FUNCTION__, __VA_ARGS__)
+#define HFLOGDEBUG(...) hflog.debugfn(__FUNCTION__, __VA_ARGS__)
+#define HFLOG(...) hflog.logfn(__FUNCTION__, __VA_ARGS)
 
 class Hatchetfish
 {
@@ -41,6 +43,7 @@ class Hatchetfish
 	using TimePoint = std::chrono::time_point<SteadyClock>;
 	using Duration = std::chrono::duration<double>;
 
+	bool colorsEnabled = true;
 	bool logEnabled = true;
 	bool logInfoEnabled = true;
 	bool logWarningEnabled = true;
@@ -96,6 +99,8 @@ class Hatchetfish
 			ucl = xbar + 2.66 * rbar;
 		}
 	};
+
+	void print(const char *color);
 
   private:
 	std::map<std::string, TimeDataPoints> stats;
