@@ -30,4 +30,19 @@ namespace Fluxions
 		if (clearStencilBuffer) clearBits |= GL_STENCIL_BUFFER_BIT;
 		return clearBits;
 	}
+
+	bool SimpleRenderConfiguration::check() const
+	{
+		if (!zShaderProgram && !shaderProgram) {
+			return false;
+		}
+
+		if (zShaderProgram && !zShaderProgram->IsLinked()) {
+			return false;
+		}
+
+		if (shaderProgram && !shaderProgram->IsLinked()) {
+			return false;
+		}
+	}
 }

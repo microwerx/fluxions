@@ -94,6 +94,7 @@ namespace Fluxions
 		Vector4f cameraPosition; // the actual camera position used...
 
 		GLbitfield GetClearBits() const;
+		bool check() const;
 	};
 
 	struct SimpleGeometryGroup
