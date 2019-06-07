@@ -246,7 +246,7 @@ void Hatchetfish::debug(const char *msg, ...)
 	va_start(args, msg);
 	makeMessage("DEBUG", msg, args);
 	va_end(args);
-	print(ansi::blue);
+	print(ansi::magenta);
 }
 
 void Hatchetfish::debugfn(const char *fn, const char *msg, ...)
@@ -255,7 +255,7 @@ void Hatchetfish::debugfn(const char *fn, const char *msg, ...)
 	va_start(args, msg);
 	makeMessagefn("DEBUG", fn, msg, args);
 	va_end(args);
-	print(ansi::blue);
+	print(ansi::magenta);
 }
 
 void Hatchetfish::flush()

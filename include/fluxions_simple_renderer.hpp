@@ -488,14 +488,14 @@ struct SimpleShader
         source = "";
         didCompile = false;
         hadError = false;
-        hflog.infofn(__FUNCTION__, "shader %d created.", shader);
+		HFLOGDEBUG("shader %d created.", shader);
     }
 
     void Delete()
     {
         if (shader != 0)
         {
-            hflog.infofn(__FUNCTION__, "shader %d deleted.", shader);
+			HFLOGDEBUG("shader %d deleted.", shader);
             glDeleteShader(shader);
             shader = 0;
         }
