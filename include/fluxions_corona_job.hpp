@@ -163,7 +163,7 @@ namespace Fluxions
 		std::string conf_path;
 		std::string hq_conf_path;
 
-		float sph[121 * 4];
+		float sph[121 * 4] = { 0 };
 
 		int imageWidth = 1280;
 		int imageHeight = 720;

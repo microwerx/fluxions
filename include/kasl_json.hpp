@@ -590,7 +590,7 @@ namespace KASL
 		inline JSONPtr PopBack()
 		{
 			if (!IsArray())
-				std::runtime_error("JSON object is not an array");
+				throw std::runtime_error("JSON object is not an array");
 			if (array_.empty())
 				return JSONPtr();
 			JSONPtr json = array_.back();

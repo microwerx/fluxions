@@ -93,7 +93,7 @@ class Renderer : public IRenderer
         {
             struct VertexAttrib
             {
-                int index;
+                int index = 0;
                 std::string name;
 
                 VertexAttrib() {}

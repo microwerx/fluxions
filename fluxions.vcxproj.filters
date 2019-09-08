@@ -1,20 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="dep\src\ArHosekSkyModel.cpp">
-      <Filter>deps</Filter>
-    </ClCompile>
     <ClCompile Include="src\glut_extensions.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="dep\src\imgui.cpp">
-      <Filter>deps</Filter>
-    </ClCompile>
-    <ClCompile Include="dep\src\imgui_draw.cpp">
-      <Filter>deps</Filter>
-    </ClCompile>
-    <ClCompile Include="dep\src\imgui_widgets.cpp">
-      <Filter>deps</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions.cpp">
       <Filter>src\fluxions</Filter>
@@ -39,69 +27,6 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_fileio.cpp">
       <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_bounding_box.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_color3.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_color4.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_geometric_algebra.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_image.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_iostream.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_math.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix_extra.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix_stack.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix2.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix3.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix4.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_quaternion.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_ray.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_rect.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_scalar.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_spherical_harmonic.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_superquadric.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_vector2.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_vector3.cpp">
-      <Filter>src\gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_vector4.cpp">
-      <Filter>src\gte</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_multiple_render_target.cpp">
       <Filter>src\fluxions</Filter>
@@ -234,38 +159,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dep\include\ArHosekSkyModel.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\ArHosekSkyModelData_CIEXYZ.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\ArHosekSkyModelData_RGB.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\ArHosekSkyModelData_Spectral.h">
-      <Filter>deps</Filter>
-    </ClInclude>
     <ClInclude Include="include\glut_extensions.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\imconfig.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\imgui.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\imgui_internal.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\imstb_rectpack.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\imstb_textedit.h">
-      <Filter>deps</Filter>
-    </ClInclude>
-    <ClInclude Include="dep\include\imstb_truetype.h">
-      <Filter>deps</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions.hpp">
       <Filter>include\fluxions</Filter>
@@ -509,9 +404,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="deps">
-      <UniqueIdentifier>{2d859e6a-6968-49c4-94de-400e9c32e260}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{9a48d646-4749-406e-890e-c87c64dbae5c}</UniqueIdentifier>
     </Filter>

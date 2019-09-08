@@ -19,6 +19,7 @@
 #ifndef VIPERFISH_MOUSE_HPP
 #define VIPERFISH_MOUSE_HPP
 
+#include <map>
 #include <fluxions_gte.hpp>
 #include <viperfish_utilities.hpp>
 

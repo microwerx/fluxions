@@ -301,10 +301,10 @@ class AstroCalc
 
   private:
 	PA::CivilDateTime paTime;
-	Real JD;
-	Real UT;
-	Real LST;
-	Real GST;
+	Real JD = 0;
+	Real UT = 0;
+	Real LST = 0;
+	Real GST = 0;
 	void computeTimes();
 	void computeMatrices();
 	void computeTimesAndMatrices()
@@ -313,26 +313,26 @@ class AstroCalc
 		computeMatrices();
 	}
 
-	time_t gmt;
+	time_t gmt = 0;
 	struct tm gmt_tm;
-	time_t lct;
+	time_t lct = 0;
 	struct tm lct_tm;
-	long lct_ds;
-	long lct_zs;
-	Real g_ds;
-	Real g_zc;
-	time_t gmt_date;
-	time_t gmt_time;
-	Real gmt_time_fractSeconds;
+	long lct_ds = 0;
+	long lct_zs = 0;
+	Real g_ds = 0;
+	Real g_zc = 0;
+	time_t gmt_date = 0;
+	time_t gmt_time = 0;
+	Real gmt_time_fractSeconds = 0;
 	// Julian date
-	Real julian_date;
+	Real julian_date = 0;
 	// Julian time in hours
-	Real julian_time;
+	Real julian_time = 0;
 	// Julian date and time
-	Real julian_datetime;
-	Real geo_latitude;
-	Real geo_longitude;
-	Real obliquity_of_the_ecliptic;
+	Real julian_datetime = 0;
+	Real geo_latitude = 0;
+	Real geo_longitude = 0;
+	Real obliquity_of_the_ecliptic = 0;
 	// Real gst;
 	// Real lst;
 

@@ -50,24 +50,24 @@ struct SimpleMaterial
     float PBGGXgamma = 0.11f; // for GGX BRDF (0.0 - 1.0 maps to 1.0 to 10.0 in the shader)
     std::string PBmap;
 
-    float EmissionGlossiness;
-    float ReflectFresnel;
-    float RefractGlossiness;
-    float ReflectGlossiness;
-    float AnisotropyAmount;
-    float AnisotropyRotation;
+    float EmissionGlossiness = 0;
+    float ReflectFresnel = 0;
+    float RefractGlossiness = 0;
+    float ReflectGlossiness = 0;
+    float AnisotropyAmount = 0;
+    float AnisotropyRotation = 0;
     Color3f AttenuationColor;
-    float AttenuationDistance;
+    float AttenuationDistance = 0;
     Color3f ScatteringAlbedo;
-    float MeanCosine;
+    float MeanCosine = 0;
     std::vector<std::string> RefractMode;
     bool HasRoundedCorners = false;
-    float RoundedCorners;
+    float RoundedCorners = 0;
     bool IsPortal = false;
     bool HasIesProfile = false;
     std::string IesProfileFilename;
     Matrix4f IesProfileMatrix;
-    bool IesProfileKeepSharp;
+    bool IesProfileKeepSharp = false;
     std::vector<std::string> Invisible;
     std::string map_Ka;
     std::string map_Kd;
@@ -93,14 +93,14 @@ struct SimpleMaterial
 struct SimpleMap
 {
     std::string mapName;
-    GLuint mapId;
+    GLuint mapId = 0;
     std::string pathname;
     std::string shader;
-    GLuint textureId;
-    GLuint samplerId;
-    GLint unitId; // we're not using GLenum here because unitId can be < 0 and no overflow is expected.
-    GLint map_loc;
-    GLint map_mix_loc;
+    GLuint textureId = 0;
+    GLuint samplerId = 0;
+    GLint unitId = 0; // we're not using GLenum here because unitId can be < 0 and no overflow is expected.
+    GLint map_loc = 0;
+    GLint map_mix_loc = 0;
     SimpleTexture textureObject;
 };
 
