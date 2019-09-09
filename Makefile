@@ -3,6 +3,8 @@
 # development packages
 # global
 
+INCLUDE_PROJECTS = hatchetfish fluxions-deps fluxions-gte
+INCLUDES = $(patsubst %,-I../%/include,$(INCLUDE_PROJECTS))
 DEP_INCDIR = dep/include
 DEP_SRCDIR = dep/src
 SRCDIR = src
@@ -27,9 +29,9 @@ GCH_SRC = $(SRCDIR)/pch.h
 MACINCDIRS = -I/usr/local/opt/mesa/include
 
 CC = gcc
-CCFLAGS = -Wall -I$(INCDIR) -I$(DEP_INCDIR) $(MACINCDIRS) `python3-config --includes`
+CCFLAGS = -Wall -I$(INCDIR) -I../fluxions-gte/include -I../fluxions-deps/include -I$(DEP_INCDIR) $(MACINCDIRS) `python3-config --includes`
 CXX = g++
-CXXFLAGS = -std=c++14 -g -Wall -I$(INCDIR) -I$(DEP_INCDIR) $(MACINCDIRS) `python3-config --includes`
+CXXFLAGS = -std=c++14 -g -Wall -I$(INCDIR) $(INCLUDES) -I$(DEP_INCDIR) $(MACINCDIRS) `python3-config --includes`
 LDFLAGS = -LGLEW -LGL -LGLU -Lglut -lIlmImf
 
 .PHONY: all clean precompiled

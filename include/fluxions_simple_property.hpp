@@ -158,34 +158,34 @@ class TSimpleProperty : public SimpleProperty
 };
 
 template <typename T, typename... Args>
-constexpr std::unique_ptr<TSimpleProperty<T>>
+inline std::unique_ptr<TSimpleProperty<T>>
 MakeProperty(PropertyType propertyType, Args... args)
 {
 	return std::unique_ptr<TSimpleProperty<T>>(new TSimpleProperty<T>(propertyType, std::forward<Args>(args)...));
 }
 
 template <typename T, typename... Args>
-constexpr std::unique_ptr<TSimpleProperty<T>>
+inline std::unique_ptr<TSimpleProperty<T>>
 MakeUniqueProperty(PropertyType propertyType, Args... args)
 {
 	return std::unique_ptr<TSimpleProperty<T>>(new TSimpleProperty<T>(propertyType, std::forward<Args>(args)...));
 }
 
 template <typename T, typename... Args>
-constexpr std::shared_ptr<TSimpleProperty<T>>
+inline std::shared_ptr<TSimpleProperty<T>>
 MakeSharedProperty(PropertyType propertyType, Args... args)
 {
 	return std::make_shared<TSimpleProperty<T>>(propertyType, std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-constexpr UniqueSimplePropertyPtr MakeSimpleProperty(PropertyType propertyType, Args... args)
+inline UniqueSimplePropertyPtr MakeSimpleProperty(PropertyType propertyType, Args... args)
 {
 	return std::unique_ptr<SimpleProperty>(new TSimpleProperty<T>(propertyType, std::forward<Args>(args)...));
 }
 
 template <typename T, typename... Args>
-constexpr SharedSimplePropertyPtr MakeSharedSimpleProperty(PropertyType propertyType, Args... args)
+inline SharedSimplePropertyPtr MakeSharedSimpleProperty(PropertyType propertyType, Args... args)
 {
 	return std::shared_ptr<SimpleProperty>(new TSimpleProperty<T>(propertyType, std::forward<Args>(args)...));
 }
@@ -259,7 +259,7 @@ constexpr const T *CastAsPropertyTypeValuePtr(const SharedSimplePropertyPtr &ptr
 }
 
 template <typename T>
-constexpr std::shared_ptr<TSimpleProperty<T>> DynamicSharedSimplePropertyCast(const SharedSimplePropertyPtr &ptr)
+inline std::shared_ptr<TSimpleProperty<T>> DynamicSharedSimplePropertyCast(const SharedSimplePropertyPtr &ptr)
 {
 	if (!ptr || ptr->GetTypeID() != typeid(T))
 		return nullptr;
@@ -268,7 +268,7 @@ constexpr std::shared_ptr<TSimpleProperty<T>> DynamicSharedSimplePropertyCast(co
 }
 
 template <typename T>
-constexpr std::unique_ptr<TSimpleProperty<T>> StaticUniqueSimplePropertyCast(UniqueSimplePropertyPtr &ptr)
+inline std::unique_ptr<TSimpleProperty<T>> StaticUniqueSimplePropertyCast(UniqueSimplePropertyPtr &ptr)
 {
 	if (!ptr || ptr->GetTypeID() != typeid(T))
 		return nullptr;

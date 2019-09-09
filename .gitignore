@@ -352,3 +352,6 @@ MigrationBackup/
 .ionide/
 
 desktop.ini
+
+*.o
+*.a

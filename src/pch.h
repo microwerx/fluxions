@@ -147,6 +147,7 @@
 #include <unicornfish_message.hpp>
 #include <unicornfish_socket.hpp>
 #include <unicornfish_worker.hpp>
+/*
 #include <viperfish.hpp>
 #include <viperfish_gamepad.hpp>
 #include <viperfish_keyboard.hpp>
@@ -155,5 +156,6 @@
 #include <viperfish_utilities.hpp>
 #include <viperfish_widget.hpp>
 #include <viperfish_xinput.hpp>
+*/
 
 #endif
