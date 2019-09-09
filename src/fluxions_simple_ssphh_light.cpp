@@ -17,9 +17,10 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.h"
-#include <damselfish.hpp>
+#include <damselfish_json.hpp>
 #include <fluxions_simple_geometry_mesh.hpp>
 #include <fluxions_sphl_sampler.hpp>
+#include <fluxions_corona_job.hpp>
 
 namespace Fluxions
 {
