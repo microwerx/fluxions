@@ -22,6 +22,7 @@
 #include <fluxions_simple_scene_graph.hpp>
 #include <fluxions.hpp>
 #include <fluxions_fileio.hpp>
+#include <hatchetfish_stopwatch.hpp>
 
 #ifdef __APPLE__
 #define __unix__
@@ -35,7 +36,7 @@ namespace Fluxions
 
 	void async_pbsky_compute(Fluxions::PhysicallyBasedSky *pbsky, bool genCubeMap, bool genCylMap, bool *completed, double *timeElapsed = nullptr)
 	{
-		Viperfish::StopWatch stopwatch;
+		HatchetfishStopWatch stopwatch;
 
 		if (genCubeMap) {
 			pbsky->ComputeCubeMap(64, false, 1.0f);
