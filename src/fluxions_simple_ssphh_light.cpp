@@ -1,4 +1,4 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/KASL/GLUT Extensions
+// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
 // Copyright (C) 2017 Jonathan Metzgar
 // All rights reserved.
 //
@@ -256,11 +256,11 @@ namespace Fluxions
 	bool SimpleSSPHHLight::SaveJsonSph(const std::string &path)
 	{
 		FilePathInfo fpi(path);
-		KASL::JSONPtr json = KASL::JSON::MakeObject({
-			{"numChannels", KASL::JSON::MakeNumber(3)},
-			{"maxDegree", KASL::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
-			{"coefs", KASL::JSON::MakeArray()},
-			{"meta", KASL::JSON::MakeObject()}
+		Df::JSONPtr json = Df::JSON::MakeObject({
+			{"numChannels", Df::JSON::MakeNumber(3)},
+			{"maxDegree", Df::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
+			{"coefs", Df::JSON::MakeArray()},
+			{"meta", Df::JSON::MakeObject()}
 			});
 
 		auto coefs = json->getMember("coefs");
@@ -269,14 +269,14 @@ namespace Fluxions
 			float r = msph[0].getCoefficient(lm);
 			float g = msph[1].getCoefficient(lm);
 			float b = msph[2].getCoefficient(lm);
-			KASL::JSONPtr rgb = KASL::JSON::MakeArray({ r, g, b });
+			Df::JSONPtr rgb = Df::JSON::MakeArray({ r, g, b });
 			coefs->PushBack(rgb);
 		}
 
 		auto meta = json->getMember("meta");
-		KASL::JSONPtr m_meta = KASL::JSON::MakeObject({
-			{ "name", KASL::JSON::MakeString(name) },
-			{ "position", KASL::JSON::MakeArray({
+		Df::JSONPtr m_meta = Df::JSON::MakeObject({
+			{ "name", Df::JSON::MakeString(name) },
+			{ "position", Df::JSON::MakeArray({
 				position.x,
 				position.y,
 				position.z
@@ -309,7 +309,7 @@ namespace Fluxions
 		}
 		fin.close();
 
-		KASL::JSONPtr json = KASL::JSON::New();
+		Df::JSONPtr json = Df::JSON::New();
 		if (!json->Deserialize(buffer))
 		{
 			hflog.error("Unable to read JSON SPH");
@@ -322,10 +322,10 @@ namespace Fluxions
 			json->getMember("coefs")->IsArray())
 		{
 			// int jsonMaxDegree = json->getMember("maxDegree")->AsInt();
-			KASL::JSONPtr coefs = json->getMember("coefs");
+			Df::JSONPtr coefs = json->getMember("coefs");
 			for (size_t j = 0; j < 4; j++)
 			{
-				KASL::JSONPtr e = coefs->getElement((int)j);
+				Df::JSONPtr e = coefs->getElement((int)j);
 				if (e->IsArray())
 				{
 					std::vector<float> coefJ;
@@ -334,7 +334,7 @@ namespace Fluxions
 			}
 		}
 
-		KASL::JSONPtr meta = json->getMember("meta");
+		Df::JSONPtr meta = json->getMember("meta");
 		if (meta->IsObject()) {
 			auto nameMember = meta->getMember("name");
 			if (nameMember->IsString()) {
@@ -349,9 +349,9 @@ namespace Fluxions
 				}
 			}
 			else if (m_position->IsObject()) {
-				KASL::JSONPtr x = m_position->getMember("x");
-				KASL::JSONPtr y = m_position->getMember("y");
-				KASL::JSONPtr z = m_position->getMember("z");
+				Df::JSONPtr x = m_position->getMember("x");
+				Df::JSONPtr y = m_position->getMember("y");
+				Df::JSONPtr z = m_position->getMember("z");
 				if (x->IsNumber() && y->IsNumber() && z->IsNumber()) {
 					position.reset(x->AsFloat(), y->AsFloat(), z->AsFloat());
 				}

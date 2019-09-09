@@ -3,7 +3,7 @@
 # development packages
 # global
 
-INCLUDE_PROJECTS = hatchetfish fluxions-deps fluxions-gte
+INCLUDE_PROJECTS = hatchetfish fluxions-deps fluxions-gte damselfish
 INCLUDES = $(patsubst %,-I../%/include,$(INCLUDE_PROJECTS))
 DEP_INCDIR = dep/include
 DEP_SRCDIR = dep/src

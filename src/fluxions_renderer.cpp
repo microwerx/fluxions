@@ -1,4 +1,4 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/KASL/GLUT Extensions
+// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
 // Copyright (C) 2017 Jonathan Metzgar
 // All rights reserved.
 //
@@ -18,7 +18,7 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.h"
 #include <regex>
-#include <kasl.hpp>
+#include <damselfish.hpp>
 #include <fluxions_renderer.hpp>
 #include <fluxions_fileio.hpp>
 
@@ -55,7 +55,7 @@ namespace Fluxions
 			return false;
 
 		std::string line;
-		KASL::TokenVector tokens;
+		Df::TokenVector tokens;
 
 		std::map<std::string, int> quickLookup;
 		quickLookup["renderconfig"] = 1;
@@ -77,7 +77,7 @@ namespace Fluxions
 			lineno++;
 			std::getline(fin, line);
 
-			KASL::lex_quick_l3_parse(line, tokens);
+			Df::lex_quick_l3_parse(line, tokens);
 
 			if (tokens.empty())
 				continue;
@@ -152,7 +152,7 @@ namespace Fluxions
 				}
 			}
 
-			HFLOGDEBUG("(Line: %03i) [%s] %s", lineno, KASL::TokenVectorJoin(tokens, " ").c_str(),
+			HFLOGDEBUG("(Line: %03i) [%s] %s", lineno, Df::TokenVectorJoin(tokens, " ").c_str(),
 				result ? "" : "(FALSE)");
 		}
 
@@ -329,7 +329,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_renderconfig(const KASL::TokenVector &args)
+	bool Renderer::k_renderconfig(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "renderconfig")
@@ -339,7 +339,7 @@ namespace Fluxions
 		return false;
 	}
 
-	bool Renderer::k_path(const KASL::TokenVector &args)
+	bool Renderer::k_path(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "path")
@@ -371,7 +371,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_program(const KASL::TokenVector &args)
+	bool Renderer::k_program(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "program")
@@ -381,7 +381,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_vertshader(const KASL::TokenVector &args)
+	bool Renderer::k_vertshader(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "vertshader")
@@ -396,7 +396,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_fragshader(const KASL::TokenVector &args)
+	bool Renderer::k_fragshader(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "fragshader")
@@ -411,7 +411,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_geomshader(const KASL::TokenVector &args)
+	bool Renderer::k_geomshader(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "geomshader")
@@ -426,7 +426,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_vertattrib(const KASL::TokenVector &args)
+	bool Renderer::k_vertattrib(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 3 || args[0].sval != "vertattrib")
@@ -442,7 +442,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_sampler(const KASL::TokenVector &args)
+	bool Renderer::k_sampler(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "sampler")
@@ -471,7 +471,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_texture(const KASL::TokenVector &args)
+	bool Renderer::k_texture(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "texture")
@@ -528,7 +528,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_fbo(const KASL::TokenVector &args)
+	bool Renderer::k_fbo(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "fbo")
@@ -578,7 +578,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_renderbuffer(const KASL::TokenVector &args)
+	bool Renderer::k_renderbuffer(const Df::TokenVector &args)
 	{
 		size_t count = args.size();
 		if (count < 5 || args[0].sval != "renderbuffer")

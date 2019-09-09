@@ -1,4 +1,4 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/KASL/GLUT Extensions
+// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
 // Copyright (C) 2017 Jonathan Metzgar
 // All rights reserved.
 //
@@ -22,7 +22,7 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <kasl.hpp>
+#include <damselfish.hpp>
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
 
@@ -213,7 +213,7 @@ class Renderer : public IRenderer
     std::map<std::string, Framebuffer> Framebuffers;
     std::map<std::string, Renderbuffer> Renderbuffers;
     std::vector<std::string> Paths;
-    KASL::VariableList VarList;
+    Df::VariableList VarList;
 
     SimpleProgramPtr FindProgram(const std::string &renderConfigName, const std::string &name);
 
@@ -246,17 +246,17 @@ class Renderer : public IRenderer
     virtual bool new_program(const std::string &name);
     virtual bool use_program(const std::string &name);
 
-    bool k_renderconfig(const KASL::TokenVector &args);
-    bool k_path(const KASL::TokenVector &args);
-    bool k_program(const KASL::TokenVector &args);
-    bool k_vertshader(const KASL::TokenVector &args);
-    bool k_fragshader(const KASL::TokenVector &args);
-    bool k_geomshader(const KASL::TokenVector &args);
-    bool k_vertattrib(const KASL::TokenVector &args);
-    bool k_sampler(const KASL::TokenVector &args);
-    bool k_texture(const KASL::TokenVector &args);
-    bool k_fbo(const KASL::TokenVector &args);
-    bool k_renderbuffer(const KASL::TokenVector &args);
+    bool k_renderconfig(const Df::TokenVector &args);
+    bool k_path(const Df::TokenVector &args);
+    bool k_program(const Df::TokenVector &args);
+    bool k_vertshader(const Df::TokenVector &args);
+    bool k_fragshader(const Df::TokenVector &args);
+    bool k_geomshader(const Df::TokenVector &args);
+    bool k_vertattrib(const Df::TokenVector &args);
+    bool k_sampler(const Df::TokenVector &args);
+    bool k_texture(const Df::TokenVector &args);
+    bool k_fbo(const Df::TokenVector &args);
+    bool k_renderbuffer(const Df::TokenVector &args);
 };
 
 // INaivePathTracer

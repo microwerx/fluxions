@@ -1,4 +1,4 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/KASL/GLUT Extensions
+// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
 // Copyright (C) 2017 Jonathan Metzgar
 // All rights reserved.
 //
@@ -133,11 +133,11 @@
 #include <fluxions_xml.hpp>
 #include <glut_extensions.hpp>
 #include <hatchetfish.hpp>
-#include <kasl.hpp>
-#include <kasl_evaluator.hpp>
-#include <kasl_lexer.hpp>
-#include <kasl_python.hpp>
-#include <kasl_syntax_semantic_analyzer.hpp>
+#include <damselfish.hpp>
+#include <damselfish_evaluator.hpp>
+#include <damselfish_lexer.hpp>
+#include <damselfish_python.hpp>
+#include <damselfish_syntax_semantic_analyzer.hpp>
 #include <unicornfish.hpp>
 #include <unicornfish_broker.hpp>
 #include <unicornfish_client.hpp>
