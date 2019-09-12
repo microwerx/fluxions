@@ -82,75 +82,6 @@
     <ClCompile Include="src\fluxions_xml.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\hatchetfish.cpp">
-      <Filter>src\hatchetfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kasl.cpp">
-      <Filter>src\kasl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kasl_evaluator.cpp">
-      <Filter>src\kasl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kasl_json.cpp">
-      <Filter>src\kasl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kasl_lexer.cpp">
-      <Filter>src\kasl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\kasl_python.cpp">
-      <Filter>src\kasl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_broker.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_client.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_curl.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_frame.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_majordomo.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_message.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_socket.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish_worker.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_analog_bitset.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_dear_imgui.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_gamepad.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_keyboard.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_mouse.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_stopwatch.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_widget.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_xinput.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\unicornfish.cpp">
-      <Filter>src\unicornfish</Filter>
-    </ClCompile>
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -338,23 +269,8 @@
     <Filter Include="include\kasl">
       <UniqueIdentifier>{aa13a822-c6a2-4455-b952-373f27f26535}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\gte">
-      <UniqueIdentifier>{a28c929e-617c-4786-a556-ffe8e81e7d1a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\fluxions">
       <UniqueIdentifier>{4a372ef4-b120-45dd-b1b6-1a3b87f3501f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\hatchetfish">
-      <UniqueIdentifier>{99e6d14f-57af-444b-9f99-2334f5a74775}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\kasl">
-      <UniqueIdentifier>{a156018b-5497-4093-afa4-5e76d0e7d737}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\viperfish">
-      <UniqueIdentifier>{99e783b1-8dd8-48bb-956b-54d480183a79}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\unicornfish">
-      <UniqueIdentifier>{eb9f6347-9930-4cb6-8ee0-29c6e6c3b000}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
