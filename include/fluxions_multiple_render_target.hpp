@@ -19,73 +19,73 @@
 #ifndef FLUXIONS_MULTIPLE_RENDER_TARGETS_HPP
 #define FLUXIONS_MULTIPLE_RENDER_TARGETS_HPP
 
-// #include <fluxions_stdcxx.hpp>
+#include <string>
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
 
 namespace Fluxions
 {
-struct RenderTarget
-{
-	GLuint object;
-	GLenum target;
-	GLenum attachment;
-	GLenum internalformat;
-	GLsizei width;
-	GLsizei height;
-	GLint levels;
-	GLenum currentCubeFace;
-	bool useMultisamples;
-	GLsizei samples;
-	GLenum readBufferTarget;
-	bool generateMipmaps;
-	Matrix4f projectionViewMatrix;
-	GLuint unit;
-	GLuint sampler;
-};
+	struct RenderTarget
+	{
+		GLuint object = 0;
+		GLenum target = 0;
+		GLenum attachment = 0;
+		GLenum internalformat = 0;
+		GLsizei width = 0;
+		GLsizei height = 0;
+		GLint levels = 0;
+		GLenum currentCubeFace = 0;
+		bool useMultisamples = false;
+		GLsizei samples = 0;
+		GLenum readBufferTarget = 0;
+		bool generateMipmaps = false;
+		Matrix4f projectionViewMatrix;
+		GLuint unit = 0;
+		GLuint sampler = 0;
+	};
 
-class FramebufferObject
-{
-	GLint lastBoundUnit;
+	class FramebufferObject
+	{
+		GLint lastBoundUnit = 0;
 
-  public:
-	FramebufferObject();
-	~FramebufferObject();
+	public:
+		FramebufferObject();
+		~FramebufferObject();
 
-	void Delete();
-	void DeleteBuffers();
-	bool Make();
-	void UseForWriting();
-	void UseForReading();
-	void Use();
-	void GenerateMipmaps();
-	void RestoreGLState();
-	void BindTextures(int unit);
-	void UnbindTextures();
-	void SetDimensions(GLsizei newWidth, GLsizei newHeight);
-	void SetMultisamples(GLsizei newSamples, bool newUseMultisamples);
-	void SetProjectionViewMatrix(const Matrix4f &M);
-	void SetAllProjectionViewMatrices(const Matrix4f &M);
-	void SetCurrentCubeFace(GLenum face);
-	void AddRenderbuffer(GLenum attachment, GLenum internalformat);
-	void AddTexture2D(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
-	void AddTextureCubeMap(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
-	void Enable(GLenum target) { enables.push_back(target); }
+		void Delete();
+		void DeleteBuffers();
+		bool Make();
+		void UseForWriting();
+		void UseForReading();
+		void Use();
+		void GenerateMipmaps();
+		void RestoreGLState();
+		void BindTextures(int unit);
+		void UnbindTextures();
+		void SetDimensions(GLsizei newWidth, GLsizei newHeight);
+		void SetMultisamples(GLsizei newSamples, bool newUseMultisamples);
+		void SetProjectionViewMatrix(const Matrix4f& M);
+		void SetAllProjectionViewMatrices(const Matrix4f& M);
+		void SetCurrentCubeFace(GLenum face);
+		void AddRenderbuffer(GLenum attachment, GLenum internalformat);
+		void AddTexture2D(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
+		void AddTextureCubeMap(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
+		void Enable(GLenum target) noexcept { enables.push_back(target); }
 
-	bool dirty;
-	GLuint fbo;
-	GLint width;
-	GLint height;
-	GLsizei samples;
-	bool useMultisamples;
-	GLenum internalformat;
-	GLenum currentCubeFace;
-	Matrix4f projectionViewMatrix;
-	std::vector<std::pair<GLenum, RenderTarget>> renderTargets;
-	std::vector<GLenum> enables;
-};
+		bool dirty = false;
+		GLuint fbo = 0;
+		GLint width = 0;
+		GLint height = 0;
+		GLsizei samples = 0;
+		bool useMultisamples = false;
+		GLenum internalformat = 0;
+		GLenum currentCubeFace = 0;
+		Matrix4f projectionViewMatrix;
+		std::vector<std::pair<GLenum, RenderTarget>> renderTargets;
+		std::vector<GLenum> enables;
+	};
 
-std::string GetFramebufferStatusAsString(GLenum status);
+	std::string GetFramebufferStatusAsString(GLenum status);
 } // namespace Fluxions
 
 #endif

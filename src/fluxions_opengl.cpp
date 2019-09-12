@@ -17,6 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
+#include <sstream>
 #include <map>
 #include <string>
 #include <fluxions_opengl.hpp>
@@ -29,8 +30,7 @@ namespace Fluxions
 	// O p e n G L N a m e T r a n s l a t o r ///////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	OpenGLNameTranslator::OpenGLNameTranslator()
-	{
+	OpenGLNameTranslator::OpenGLNameTranslator() {
 		enums["GL_ZERO"] = 0;
 		enums["GL_FALSE"] = 0;
 		enums["GL_LOGIC_OP"] = 0x0BF1;
@@ -2166,8 +2166,7 @@ namespace Fluxions
 		enum_strings[0x8C2A] = "GL_TEXTURE_BUFFER_BINDING";
 	}
 
-	int OpenGLNameTranslator::GetEnum(const std::string &name) const noexcept
-	{
+	int OpenGLNameTranslator::GetEnum(const std::string& name) const noexcept {
 		std::map<std::string, int>::const_iterator it = enums.find(name);
 		if (it == enums.end())
 			it = enums.find(std::string("GL_") + name);
@@ -2176,8 +2175,7 @@ namespace Fluxions
 		return it->second;
 	}
 
-	const char *OpenGLNameTranslator::GetString(int id) const noexcept
-	{
+	const char* OpenGLNameTranslator::GetString(int id) const noexcept {
 		std::map<int, std::string>::const_iterator it = enum_strings.find(id);
 		if (it != enum_strings.end())
 			return it->second.c_str();
@@ -2188,13 +2186,11 @@ namespace Fluxions
 	// Q u i c k G L E r r o r C h e c k e r /////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	QuickGLErrorChecker::QuickGLErrorChecker()
-	{
+	QuickGLErrorChecker::QuickGLErrorChecker() {
 		e = glGetError();
 	}
 
-	bool QuickGLErrorChecker::IsError()
-	{
+	bool QuickGLErrorChecker::IsError() {
 		e = glGetError();
 		if (e != GL_NO_ERROR) {
 			Hf::Log.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
@@ -2203,8 +2199,7 @@ namespace Fluxions
 		return false;
 	}
 
-	void QuickGLErrorChecker::Reset()
-	{
+	void QuickGLErrorChecker::Reset() {
 		e = glGetError();
 	}
 
@@ -2212,8 +2207,7 @@ namespace Fluxions
 	// F l u x i o n s G L D e b u g F u n c /////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	void EnableGLDebugFunc()
-	{
+	void EnableGLDebugFunc() {
 		if (GLEW_ARB_debug_output) {
 			glDebugMessageCallback((GLDEBUGPROC)Fluxions::FluxionsGLDebugFunc, NULL);
 			glEnable(GL_DEBUG_OUTPUT);
@@ -2223,8 +2217,7 @@ namespace Fluxions
 		}
 	}
 
-	void APIENTRY FluxionsGLDebugFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam)
-	{
+	void APIENTRY FluxionsGLDebugFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam) {
 		if (id == 131185)
 			return;
 

@@ -25,6 +25,7 @@
 #include <damselfish.hpp>
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
+#include <fluxions_simple_renderer.hpp>
 
 namespace Fluxions
 {
