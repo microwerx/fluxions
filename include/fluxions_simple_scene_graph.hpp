@@ -21,6 +21,7 @@
 
 #include <fluxions_fileio.hpp>
 #include <fluxions_gte.hpp>
+#include <fluxions_gte_spherical_harmonic.hpp>
 #include <fluxions_multiple_render_target.hpp>
 #include <fluxions_opengl.hpp>
 #include <fluxions_pbsky.hpp>
