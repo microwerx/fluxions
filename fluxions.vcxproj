@@ -455,13 +455,6 @@
     <ClInclude Include="include\fluxions_utilities.hpp" />
     <ClInclude Include="include\fluxions_xml.hpp" />
     <ClInclude Include="include\fluxions_draw_gl1gl2.hpp" />
-    <ClInclude Include="include\hatchetfish.hpp" />
-    <ClInclude Include="include\kasl.hpp" />
-    <ClInclude Include="include\kasl_evaluator.hpp" />
-    <ClInclude Include="include\kasl_json.hpp" />
-    <ClInclude Include="include\kasl_lexer.hpp" />
-    <ClInclude Include="include\kasl_python.hpp" />
-    <ClInclude Include="include\kasl_syntax_semantic_analyzer.hpp" />
     <ClInclude Include="include\unicornfish.hpp" />
     <ClInclude Include="include\unicornfish_broker.hpp" />
     <ClInclude Include="include\unicornfish_client.hpp" />

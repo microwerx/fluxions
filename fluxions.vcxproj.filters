@@ -252,27 +252,6 @@
     <ClInclude Include="include\fluxions_xml.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\kasl.hpp">
-      <Filter>include\kasl</Filter>
-    </ClInclude>
-    <ClInclude Include="include\kasl_evaluator.hpp">
-      <Filter>include\kasl</Filter>
-    </ClInclude>
-    <ClInclude Include="include\kasl_json.hpp">
-      <Filter>include\kasl</Filter>
-    </ClInclude>
-    <ClInclude Include="include\kasl_lexer.hpp">
-      <Filter>include\kasl</Filter>
-    </ClInclude>
-    <ClInclude Include="include\kasl_python.hpp">
-      <Filter>include\kasl</Filter>
-    </ClInclude>
-    <ClInclude Include="include\kasl_syntax_semantic_analyzer.hpp">
-      <Filter>include\kasl</Filter>
-    </ClInclude>
-    <ClInclude Include="include\hatchetfish.hpp">
-      <Filter>include\hatchetfish</Filter>
-    </ClInclude>
     <ClInclude Include="include\unicornfish.hpp">
       <Filter>include\unicornfish</Filter>
     </ClInclude>
