@@ -17,6 +17,8 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
+#include <vector>
+#include <fstream>
 #include <fluxions_simple_geometry_mesh.hpp>
 
 template class std::vector<Fluxions::SimpleGeometryMesh::AttribInfo>;
@@ -112,7 +114,7 @@ bool SimpleGeometryMesh::SaveOBJ(const std::string &path, bool output_normals, b
 		mtlout << "\tNs   250.0" << std::endl;
 		mtlout << std::endl;
 
-		if (surface.type == GL_TRIANGLES)
+		if (surface.type == SurfaceType::Triangles)
 		{
 			for (int i = surface.first; i < surface.first + surface.count; i += 3)
 			{

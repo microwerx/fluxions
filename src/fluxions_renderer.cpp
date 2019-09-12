@@ -17,6 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
+#include <fstream>
 #include <regex>
 #include <damselfish.hpp>
 #include <fluxions_renderer.hpp>
@@ -41,6 +42,7 @@ namespace Fluxions
 
 	void Renderer::Render(const IScene *pScene)
 	{
+		if (!pScene) return;
 	}
 
 	bool Renderer::LoadConfig(const std::string &filename)

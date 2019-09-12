@@ -17,6 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
+#include <fstream>
 #include <fluxions_simple_renderer.hpp>
 #include <fluxions_simple_materials.hpp>
 
@@ -26,7 +27,11 @@ namespace Fluxions
 	// explicit template instantiation is after the implementation
 
 	template <typename IndexType, GLenum GLIndexType>
-	SimpleRenderer<IndexType, GLIndexType>::SimpleRenderer() {}
+	SimpleRenderer<IndexType, GLIndexType>::SimpleRenderer() {
+		memset(&currentFastVertex, 0, sizeof(SimpleFastVertex));
+		memset(&currentSlowVertex, 0, sizeof(SimpleSlowVertex));
+		memset(&bufferInfo, 0, sizeof(BUFFERINFO));
+	}
 
 	template <typename IndexType, GLenum GLIndexType>
 	SimpleRenderer<IndexType, GLIndexType>::~SimpleRenderer() {
