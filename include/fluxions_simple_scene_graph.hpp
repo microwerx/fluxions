@@ -258,13 +258,13 @@ namespace Fluxions
 				GLuint texture;
 				glGenTextures(1, &texture);
 				*texture_ = texture;
-				glutDebugBindTexture(target_, *texture_);
-				glutDebugBindTexture(target_, 0);
-				// hflog.info("%s(): Created texture %d", __FUNCTION__, *texture_);
+				FxDebugBindTexture(target_, *texture_);
+				FxDebugBindTexture(target_, 0);
+				// Hf::Log.info("%s(): Created texture %d", __FUNCTION__, *texture_);
 			}
 			catch (...)
 			{
-				// hflog.error("%s(): glGenTextures() failed", __FUNCTION__);
+				// Hf::Log.error("%s(): glGenTextures() failed", __FUNCTION__);
 			}
 		}
 
@@ -274,7 +274,7 @@ namespace Fluxions
 			{
 				GLuint texture = *texture_;
 				glDeleteTextures(1, &texture);
-				// hflog.info("%s(): Deleted texture %d", __FUNCTION__, *texture_);
+				// Hf::Log.info("%s(): Deleted texture %d", __FUNCTION__, *texture_);
 			}
 		}
 
@@ -285,7 +285,7 @@ namespace Fluxions
 			Unbind();
 			lastUnitBound_ = unit;
 			glActiveTexture(GL_TEXTURE0 + unit);
-			glutDebugBindTexture(target_, *texture_);
+			FxDebugBindTexture(target_, *texture_);
 		}
 
 		void Unbind()
@@ -730,7 +730,7 @@ namespace Fluxions
 		bool ReadConfFile(const std::string &filename);
 		bool ReadObjFile(const std::string &filename, const std::string &name);
 		bool ReadTexmap(const std::string &name, const std::string &texmap);
-		bool ReadCamera(const std::istream &istr);
+		bool ReadCamera(std::istream &istr);
 
 		// Rendering tools
 		void ApplySpheresToCurrentProgram();

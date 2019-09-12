@@ -147,7 +147,7 @@ bool SimpleMaterialSystem::Load(const std::string &mtllibName, const std::string
             std::string name = ReadString(istr);
             std::string shader = ReadString(istr);
             AddMapShader(name, shader);
-            hflog.info("%s(): newmap %s", __FUNCTION__, shader.c_str());
+            Hf::Log.info("%s(): newmap %s", __FUNCTION__, shader.c_str());
         }
         else if (str == "newmtl")
         {
@@ -155,7 +155,7 @@ bool SimpleMaterialSystem::Load(const std::string &mtllibName, const std::string
             CreateMaterial(name);
             SetMaterialDefaults(mtls[name]);
             curmtl = currentMtlPtr;
-            hflog.info("%s(): newmtl %s", __FUNCTION__, name.c_str());
+            Hf::Log.info("%s(): newmtl %s", __FUNCTION__, name.c_str());
         }
         else if (curmtl == nullptr)
         {
@@ -437,7 +437,7 @@ bool SimpleMaterialSystem::Load(const std::string &mtllibName, const std::string
         }
         else if (!str.empty())
         {
-            hflog.info("%s(): property %s not officially supported", __FUNCTION__, str.c_str());
+            Hf::Log.info("%s(): property %s not officially supported", __FUNCTION__, str.c_str());
         }
     }
 

@@ -87,7 +87,7 @@ namespace Fluxions
 		else if (fpi.ext == ".exr")
 			lightProbe.loadEXR(path);
 		else
-			hflog.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
+			Hf::Log.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
 		lightProbe.convertRectToCubeMap();
 		return true;
 	}
@@ -219,7 +219,7 @@ namespace Fluxions
 		else if (fpi.ext == ".exr")
 			lightProbe_corona.loadEXR(path);
 		else
-			hflog.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
+			Hf::Log.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
 		lightProbe_corona.convertRectToCubeMap();
 		double intensity = lightProbe_corona.getIntensity();
 		double numPixels = lightProbe_corona.getNumPixels();
@@ -313,7 +313,7 @@ namespace Fluxions
 		Df::JSONPtr json = Df::JSON::New();
 		if (!json->Deserialize(buffer))
 		{
-			hflog.error("Unable to read JSON SPH");
+			Hf::Log.error("Unable to read JSON SPH");
 			return false;
 		}
 
@@ -374,7 +374,7 @@ namespace Fluxions
 
 		if (!fpi.IsDirectory())
 		{
-			hflog.errorfn(__FUNCTION__, "Path %s is not a directory!", path.c_str());
+			Hf::Log.errorfn(__FUNCTION__, "Path %s is not a directory!", path.c_str());
 			return false;
 		}
 
@@ -382,7 +382,7 @@ namespace Fluxions
 			FilePathInfo geosphere(icos_path);
 
 			if (!geosphere.Exists()) {
-				hflog.errorfn(__FUNCTION__, "Icosahedron %s does not exist", icos_path);
+				Hf::Log.errorfn(__FUNCTION__, "Icosahedron %s does not exist", icos_path);
 				return false;
 			}
 			std::ifstream fin(icos_path);
@@ -661,7 +661,7 @@ namespace Fluxions
 		}
 		//texture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
 		//texture.Bind(0);
-		glutDebugBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+		FxDebugBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 		for (int i = 0; i < 6; i++)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
@@ -951,7 +951,7 @@ namespace Fluxions
 
 	void SimpleSSPHH::INIT(SimpleSceneGraph &ssg)
 	{
-		hflog.infofn(__FUNCTION__, "SSPHH INIT");
+		Hf::Log.infofn(__FUNCTION__, "SSPHH INIT");
 		sceneName = ssg.name;
 		sphls_ = &ssg.ssphhLights;
 		size_ = sphls_->size();
@@ -1001,7 +1001,7 @@ namespace Fluxions
 	{
 		if (!sphls_)
 			return;
-		hflog.infofn(__FUNCTION__, "SSPHH GEN");
+		Hf::Log.infofn(__FUNCTION__, "SSPHH GEN");
 		//auto &sphls = *sphls_;
 
 		int i = 0;
@@ -1040,7 +1040,7 @@ namespace Fluxions
 			if (saveJSONs) {
 				H[i][i].SaveJSON(basename + ".json", basename, sphl.position.xyz());
 			}
-			hflog.info("%s(): (%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, i, lm0, lm1, lm2, lm3);
+			Hf::Log.info("%s(): (%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, i, lm0, lm1, lm2, lm3);
 			i++;
 		}
 	}
@@ -1049,7 +1049,7 @@ namespace Fluxions
 	{
 		if (!sphls_)
 			return;
-		hflog.infofn(__FUNCTION__, "SSPHH VIZ");
+		Hf::Log.infofn(__FUNCTION__, "SSPHH VIZ");
 
 		auto &sphls = *sphls_;
 
@@ -1062,7 +1062,7 @@ namespace Fluxions
 					continue;
 				if (sphl.vizgenLightProbes.empty())
 				{
-					hflog.errorfn(__FUNCTION__, "VIZ() called with no light probes!");
+					Hf::Log.errorfn(__FUNCTION__, "VIZ() called with no light probes!");
 					continue;
 				}
 
@@ -1099,7 +1099,7 @@ namespace Fluxions
 					lm2 = -1.0f;
 					lm3 = -1.0f;
 				}
-				hflog.infofn(__FUNCTION__, "(%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", i, j, lm0, lm1, lm2, lm3);
+				Hf::Log.infofn(__FUNCTION__, "(%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", i, j, lm0, lm1, lm2, lm3);
 			}
 		}
 		return;
@@ -1109,7 +1109,7 @@ namespace Fluxions
 	{
 		if (!sphls_)
 			return;
-		hflog.infofn(__FUNCTION__, "SSPHH HIER");
+		Hf::Log.infofn(__FUNCTION__, "SSPHH HIER");
 
 		auto &sphls = *sphls_;
 		for (size_t i = 0; i < size_; i++)
@@ -1160,7 +1160,7 @@ namespace Fluxions
 					lm2 = -1.0f;
 					lm3 = -1.0f;
 				}
-				// hflog.info("%s(): (%d, %d) S' += H * %.2f -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, j, Q[j].p, lm0, lm1, lm2, lm3);
+				// Hf::Log.info("%s(): (%d, %d) S' += H * %.2f -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, j, Q[j].p, lm0, lm1, lm2, lm3);
 			}
 		}
 
@@ -1227,7 +1227,7 @@ namespace Fluxions
 				lm2 = -1.0f;
 				lm3 = -1.0f;
 			}
-			hflog.infofn(__FUNCTION__, "S'_%d -> [ %.2f, %.2f, %.2f, %.2f ]", i, lm0, lm1, lm2, lm3);
+			Hf::Log.infofn(__FUNCTION__, "S'_%d -> [ %.2f, %.2f, %.2f, %.2f ]", i, lm0, lm1, lm2, lm3);
 		}
 		return;
 	}

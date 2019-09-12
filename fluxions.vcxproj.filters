@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\glut_extensions.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
@@ -157,11 +154,11 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_draw_gl1gl2.cpp">
+      <Filter>src\fluxions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\glut_extensions.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
@@ -255,75 +252,6 @@
     <ClInclude Include="include\fluxions_xml.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_gte.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_bounding_box.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_color3.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_color4.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_geometric_algebra.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_image.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_iostream.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_math.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix_extra.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix_stack.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix2.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix3.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix4.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_plane.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_quaternion.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_ray.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_rect.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_scalar.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_spherical_harmonic.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_superquadric.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_vector2.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_vector3.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_vector4.hpp">
-      <Filter>include\gte</Filter>
-    </ClInclude>
     <ClInclude Include="include\kasl.hpp">
       <Filter>include\kasl</Filter>
     </ClInclude>
@@ -401,6 +329,9 @@
     </ClInclude>
     <ClInclude Include="src\pch.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_draw_gl1gl2.hpp">
+      <Filter>include\fluxions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -96,13 +96,13 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
         else
         {
             cacheDoesNotExist = false;
-            hflog.info("%s(): loading cached OBJ %s", __FUNCTION__, fpi.fname.c_str());
+            Hf::Log.info("%s(): loading cached OBJ %s", __FUNCTION__, fpi.fname.c_str());
         }
     }
 
     if (cacheDoesNotExist)
     {
-        hflog.info("%s(): loading OBJ %s", __FUNCTION__, fpi_orig.fname.c_str());
+        Hf::Log.info("%s(): loading OBJ %s", __FUNCTION__, fpi_orig.fname.c_str());
         int curSurface = 0;
         std::string surfaceName;
         std::string objectName;
@@ -148,7 +148,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
                 {
                     Surfaces[curSurface].count = (int)faceList.size() * 3;
 
-                    hflog.info("%s(): %s ... adding %d new faces starting at %d to %s", __FUNCTION__, fpi.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
+                    Hf::Log.info("%s(): %s ... adding %d new faces starting at %d to %s", __FUNCTION__, fpi.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
 
                     // 2. add indices (triangles)
                     for (auto it = faceList.begin(); it != faceList.end(); it++)
@@ -170,13 +170,13 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
             {
                 linecount = 0;
                 istr >> objectName;
-                hflog.info("%s(): %s ... adding new object %s", __FUNCTION__, fpi_orig.fname.c_str(), objectName.c_str());
+                Hf::Log.info("%s(): %s ... adding new object %s", __FUNCTION__, fpi_orig.fname.c_str(), objectName.c_str());
             }
             else if (str == "g")
             {
                 linecount = 0;
                 istr >> surfaceName;
-                hflog.info("%s(): %s ... changing surface name to %s", __FUNCTION__, fpi_orig.fname.c_str(), surfaceName.c_str());
+                Hf::Log.info("%s(): %s ... changing surface name to %s", __FUNCTION__, fpi_orig.fname.c_str(), surfaceName.c_str());
                 Surfaces[curSurface].surfaceName = surfaceName;
             }
             else if (str == "usemtl")
@@ -188,7 +188,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
                 {
                     Surfaces[curSurface].count = (int)faceList.size() * 3;
 
-                    hflog.info("%s(): %s ... adding %d new faces startnig at %d to %s", __FUNCTION__, fpi_orig.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
+                    Hf::Log.info("%s(): %s ... adding %d new faces startnig at %d to %s", __FUNCTION__, fpi_orig.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
 
                     // 2. add indices (triangles)
                     for (auto it = faceList.begin(); it != faceList.end(); it++)
@@ -214,12 +214,12 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
 
                 istr >> str;
                 Surfaces[curSurface].materialName = str;
-                hflog.info("%s(): %s ... using material %s", __FUNCTION__, fpi_orig.fname.c_str(), str.c_str());
+                Hf::Log.info("%s(): %s ... using material %s", __FUNCTION__, fpi_orig.fname.c_str(), str.c_str());
             }
             else if (str == "mtllib")
             {
                 istr >> materialLibrary;
-                hflog.info("%s(): %s ... ignoring mtllib %s", __FUNCTION__, fpi_orig.fname.c_str(), materialLibrary.c_str());
+                Hf::Log.info("%s(): %s ... ignoring mtllib %s", __FUNCTION__, fpi_orig.fname.c_str(), materialLibrary.c_str());
             }
             else if (str == "v")
             {
@@ -343,7 +343,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
         if (size < 0)
             scale = (float)(-2 * size / BoundingBox.MaxSize());
 
-        hflog.info("%s(): %s ... scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), scale);
+        Hf::Log.info("%s(): %s ... scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), scale);
         for (auto it = vertexMap.begin(); it != vertexMap.end(); it++)
         {
             if (size < 0)
@@ -371,7 +371,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
 
             Vertices.push_back(it->second);
         }
-        hflog.info("%s(): %s ... max uniform scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), BoundingBox.MaxSize());
+        Hf::Log.info("%s(): %s ... max uniform scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), BoundingBox.MaxSize());
 
         ComputeTangentVectors();
     }
@@ -434,7 +434,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
     if (cacheDoesNotExist)
     {
         // save a cache
-		hflog.infofn(__FUNCTION__, "Writing cache %s", cache_filename.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing cache %s", cache_filename.c_str());
 
         std::ofstream fout(cache_filename, std::ios::binary);
 
@@ -469,7 +469,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
         }
 
         fout.close();
-        hflog.info("%s(): %s is finished loading.", __FUNCTION__, fpi_orig.fname.c_str());
+        Hf::Log.info("%s(): %s is finished loading.", __FUNCTION__, fpi_orig.fname.c_str());
     }
 
     return true;
@@ -477,7 +477,7 @@ bool OBJStaticModel::LoadOBJ(const std::string &filename)
 
 bool OBJStaticModel::SaveOBJ(const std::string &filename)
 {
-	hflog.infofn(__FUNCTION__, "Writing OBJ %s", filename.c_str());
+	Hf::Log.infofn(__FUNCTION__, "Writing OBJ %s", filename.c_str());
 
     std::ofstream fout(filename.c_str());
     // 1. Output Vertices
@@ -521,7 +521,7 @@ bool OBJStaticModel::SaveOBJ(const std::string &filename)
 
 void OBJStaticModel::SavePrecompiled(const std::string &filename, const std::string objname)
 {
-	hflog.infofn(__FUNCTION__, "Writing precompiled %s", filename.c_str());
+	Hf::Log.infofn(__FUNCTION__, "Writing precompiled %s", filename.c_str());
 
     std::string outFilename = filename + ".cpp";
     std::ofstream fout(outFilename.c_str());

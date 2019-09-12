@@ -22,10 +22,10 @@
 #define NOMINMAX
 #define GLEW_NO_GLU
 #include <GL/glew.h>
-#ifndef FLUXIONS_NO_FREEGLUT
+#ifdef FLUXIONS_USE_FREEGLUT
 #include <GL/freeglut.h>
 #endif
-#include <glut_extensions.hpp>
+#include <fluxions_draw_gl1gl2.hpp>
 #include <map>
 #include <string>
 #include <hatchetfish.hpp>

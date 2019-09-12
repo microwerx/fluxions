@@ -76,7 +76,7 @@ namespace Fluxions
 			0.0, 0.0, 0.0, 1.0);
 		cameraMatrix = ssg.camera.actualViewMatrix;
 
-		hflog.infofn(__FUNCTION__, "Writing Regular scene %s", filename.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing Regular scene %s", filename.c_str());
 		std::ofstream fout(filename);
 		if (!fout)
 			return;
@@ -113,7 +113,7 @@ namespace Fluxions
 	{
 		SetCubeMapCamera(cameraPosition, cameraPosition + Vector3f(0.0f, 0.0f, -1.0f), Vector3f(0.0f, 1.0f, 0.0f));
 
-		hflog.infofn(__FUNCTION__, "Writing Cube Map SCN scene %s", filename.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing Cube Map SCN scene %s", filename.c_str());
 		std::ofstream fout(filename);
 		if (!fout)
 			return;
@@ -136,7 +136,7 @@ namespace Fluxions
 
 	void CoronaSceneFile::WriteSkySCN(const std::string &filename, const SimpleSceneGraph &ssg)
 	{
-		hflog.infofn(__FUNCTION__, "Writing Sky scene %s", filename.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing Sky scene %s", filename.c_str());
 		std::ofstream fout(filename);
 		if (!fout)
 			return;
@@ -160,7 +160,7 @@ namespace Fluxions
 			return false;
 		}
 
-		hflog.infofn(__FUNCTION__, "Writing VIZ scene %s", filename.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing VIZ scene %s", filename.c_str());
 		std::ofstream fout(filename);
 		if (!fout)
 			return false;
@@ -202,7 +202,7 @@ namespace Fluxions
 				0.0f, 0.0f, 0.0f, 1.0f);
 			FilePathInfo fpi(CoronaJob::exportPathPrefix + "sphlviz.mtl");
 			if (!fpi.Exists()) {
-				hflog.infofn(__FUNCTION__, "Writing out sphlviz.mtl");
+				Hf::Log.infofn(__FUNCTION__, "Writing out sphlviz.mtl");
 				std::ofstream svout(CoronaJob::exportPathPrefix + "sphlviz.mtl");
 				svout << "<mtlLib>"
 					"<materialDefinition name = \"sphlSphereLight\">"
@@ -316,7 +316,7 @@ namespace Fluxions
 		// Generate lights MTLLIB
 
 		std::string lights_mtllib_path = CoronaJob::exportPathPrefix + lights_mtllib;
-		hflog.infofn(__FUNCTION__, "Writing lights_mtllib %s", lights_mtllib_path.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing lights_mtllib %s", lights_mtllib_path.c_str());
 		std::ofstream fout(lights_mtllib_path);
 		XmlBeginTag(fout, "mtlLib") << std::endl;
 		XmlBeginTag(fout, "mapDefinition", "name", "Skylight_environment", 1) << std::endl;
@@ -358,8 +358,8 @@ namespace Fluxions
 
 			std::string MTLpath = CoronaJob::exportPathPrefix + "materials.mtl";
 			std::string CoronaMTLpath = CoronaJob::exportPathPrefix + "materials_corona.mtl";
-			hflog.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
-			hflog.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
+			Hf::Log.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
+			Hf::Log.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
 			std::ofstream mtl_fout(MTLpath);
 			std::ofstream mtlxml_fout(CoronaMTLpath);
 			XmlBeginTag(mtlxml_fout, "mtlLib") << std::endl;
@@ -381,7 +381,7 @@ namespace Fluxions
 					std::ostringstream obj_pathname;
 					obj_pathname << "object_" << std::setw(3) << std::setfill('0') << obj_count << "_" << sgo.objectName << ".obj";
 					std::string OBJpath = CoronaJob::exportPathPrefix + obj_pathname.str();
-					hflog.infofn(__FUNCTION__, "Writing out %s", OBJpath.c_str());
+					Hf::Log.infofn(__FUNCTION__, "Writing out %s", OBJpath.c_str());
 					std::ofstream obj_fout(OBJpath);
 
 					mtl_name = sgo.objectName + "_" + surface.materialName;
@@ -570,8 +570,8 @@ namespace Fluxions
 
 		std::string MTLpath = CoronaJob::exportPathPrefix + "materials.mtl";
 		std::string CoronaMTLpath = CoronaJob::exportPathPrefix + "materials_corona.mtl";
-		hflog.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
-		hflog.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
+		Hf::Log.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
 		std::ofstream mtl_fout(MTLpath);
 		std::ofstream mtlxml_fout(CoronaMTLpath);
 		XmlBeginTag(mtlxml_fout, "mtlLib") << std::endl;
@@ -803,7 +803,7 @@ namespace Fluxions
 //			{
 //				tonemap = 0.0f;
 //			}
-//			hflog.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
+//			Hf::Log.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
 //
 //			std::ofstream fout(tonemapconf);
 //			fout << "Float colorMap.simpleExposure = " << tonemap << std::endl;
@@ -825,7 +825,7 @@ namespace Fluxions
 //			fout.close();
 //		}
 //
-//		double t0 = hflog.getSecondsElapsed();
+//		double t0 = Hf::Log.getSecondsElapsed();
 //		state = State::Running;
 //		bool result = true;
 //		switch (type)
@@ -853,7 +853,7 @@ namespace Fluxions
 //		default:
 //			break;
 //		}
-//		elapsedTime = hflog.getSecondsElapsed() - t0;
+//		elapsedTime = Hf::Log.getSecondsElapsed() - t0;
 //		state = result ? State::Finished : State::Error;
 //
 //#ifdef WIN32
@@ -916,7 +916,7 @@ namespace Fluxions
 //
 //		cmd << " -c " << corona_export_prefix + scene_name << "_tonemap.conf";
 //
-//		hflog.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
+//		Hf::Log.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
 //
 //		return cmd.str();
 //	}
@@ -941,7 +941,7 @@ namespace Fluxions
 //		retval = lastCoronaRetval = system(MakeCoronaCommandLine().c_str());
 //		if (retval != 0)
 //		{
-//			hflog.errorfn(__FUNCTION__, "unable to run corona");
+//			Hf::Log.errorfn(__FUNCTION__, "unable to run corona");
 //			return false;
 //		}
 //		//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
@@ -953,7 +953,7 @@ namespace Fluxions
 //			retval = lastConvertRetval = system(cmd.str().c_str());
 //			if (retval != 0)
 //			{
-//				hflog.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
+//				Hf::Log.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
 //				return false;
 //			}
 //		}
@@ -963,7 +963,7 @@ namespace Fluxions
 //			retval = lastConvertRetval = system(cmd.str().c_str());
 //			if (retval != 0)
 //			{
-//				hflog.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
+//				Hf::Log.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
 //				return false;
 //			}
 //		}

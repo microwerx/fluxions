@@ -18,7 +18,9 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.h"
 #include <future>
-#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <cstdio>
 #include <fluxions_simple_scene_graph.hpp>
 #include <fluxions.hpp>
 #include <fluxions_fileio.hpp>
@@ -34,9 +36,9 @@ namespace Fluxions
 	auto sprintf_s = sprintf;
 #endif
 
-	void async_pbsky_compute(Fluxions::PhysicallyBasedSky *pbsky, bool genCubeMap, bool genCylMap, bool *completed, double *timeElapsed = nullptr)
+	void async_pbsky_compute(Fluxions::PhysicallyBasedSky* pbsky, bool genCubeMap, bool genCylMap, bool* completed, double* timeElapsed = nullptr)
 	{
-		HatchetfishStopWatch stopwatch;
+		Hf::StopWatch stopwatch;
 
 		if (genCubeMap) {
 			pbsky->ComputeCubeMap(64, false, 1.0f);
@@ -55,7 +57,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleEnvironment::Update(const BoundingBoxf &bbox)
+	void SimpleEnvironment::Update(const BoundingBoxf& bbox)
 	{
 		pbsky.ComputeSunGroundRadiances();
 		curSunDirTo = pbsky.GetSunVector();
@@ -97,11 +99,11 @@ namespace Fluxions
 		sunShadowInverseViewMatrix = sunShadowViewMatrix.AsInverse();
 
 		if (isSkyComputed && pbskyColorMapId != 0) {
-			glutSetErrorMessage(__FILE__, __LINE__, "%s", __FUNCTION__);
+			FxSetErrorMessage(__FILE__, __LINE__, "%s", __FUNCTION__);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, pbskyColorMapId);
 			for (int i = 0; i < 6; i++) {
 				GLsizei size = (GLsizei)pbsky.generatedCubeMap.width();
-				void *pixels = pbsky.generatedCubeMap.getPixels(i);
+				void* pixels = pbsky.generatedCubeMap.getPixels(i);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA32F, size, size, 0, GL_RGBA, GL_FLOAT, pixels);
 			}
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -183,7 +185,7 @@ namespace Fluxions
 		std::string uniformBufferName;
 		GLuint blockBinding;
 
-		SimpleUniformBuffer(const std::string &name, GLuint blockBinding)
+		SimpleUniformBuffer(const std::string& name, GLuint blockBinding)
 			: uniformBufferName(name), blockBinding(blockBinding)
 		{
 		}
@@ -221,7 +223,7 @@ namespace Fluxions
 		//geometry.Clear();
 	}
 
-	bool SimpleSceneGraph::Load(const std::string &filename)
+	bool SimpleSceneGraph::Load(const std::string& filename)
 	{
 		// Use this as a template
 		//ifstream fin(filename.c_str());
@@ -293,14 +295,14 @@ namespace Fluxions
 				std::string filenameToTry;
 				fpi.FindFileIfExists(pathsToTry, filenameToTry);
 				if (filenameToTry.empty()) {
-					hflog.error("%s(): MTLLIB %s was not found.", __FUNCTION__, mtllibFilename.c_str());
+					Hf::Log.error("%s(): MTLLIB %s was not found.", __FUNCTION__, mtllibFilename.c_str());
 				}
 				else {
 					if (materials.Load(fpi.fname, filenameToTry)) {
-						hflog.info("%s(): MTLLIB %s loaded.", __FUNCTION__, mtllibFilename.c_str());
+						Hf::Log.info("%s(): MTLLIB %s loaded.", __FUNCTION__, mtllibFilename.c_str());
 					}
 					else {
-						hflog.error("%s(): MTLLIB %s had an error while loading.", __FUNCTION__, mtllibFilename.c_str());
+						Hf::Log.error("%s(): MTLLIB %s had an error while loading.", __FUNCTION__, mtllibFilename.c_str());
 					}
 				}
 			}
@@ -310,13 +312,13 @@ namespace Fluxions
 				std::string filenameToTry;
 				fpi.FindFileIfExists(pathsToTry, filenameToTry);
 				if (filenameToTry.empty()) {
-					hflog.error("%s(): CONF file %s was not found.", __FUNCTION__, confFilename.c_str());
+					Hf::Log.error("%s(): CONF file %s was not found.", __FUNCTION__, confFilename.c_str());
 				}
 				else {
 					if (ReadConfFile(filenameToTry))
-						hflog.info("%s(): CONF file %s loaded.", __FUNCTION__, confFilename.c_str());
+						Hf::Log.info("%s(): CONF file %s loaded.", __FUNCTION__, confFilename.c_str());
 					else
-						hflog.error("%s(): CONF file %s had an error while loading.", __FUNCTION__, confFilename.c_str());
+						Hf::Log.error("%s(): CONF file %s had an error while loading.", __FUNCTION__, confFilename.c_str());
 				}
 			}
 			else if (str == "geometryGroup") {
@@ -325,7 +327,7 @@ namespace Fluxions
 				std::string filenameToTry;
 				fpi.FindFileIfExists(pathsToTry, filenameToTry);
 				if (filenameToTry.empty()) {
-					hflog.errorfn(__FUNCTION__, "OBJ file %s was not found.", geoFilename.c_str());
+					Hf::Log.errorfn(__FUNCTION__, "OBJ file %s was not found.", geoFilename.c_str());
 				}
 				else {
 					if (ReadObjFile(filenameToTry, fpi.fname)) {
@@ -340,7 +342,7 @@ namespace Fluxions
 						geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
 
 						geometry[id] = geometryGroup;
-						hflog.info("%s(): OBJ file %s loaded.", __FUNCTION__, fpi.fname.c_str());
+						Hf::Log.info("%s(): OBJ file %s loaded.", __FUNCTION__, fpi.fname.c_str());
 
 						// Transform the bounding box of the model into world coordinates
 						Vector4f tminBound = geometryGroup.transform * Vector4f(geometryGroup.bbox.minBounds, 1.0f);
@@ -350,7 +352,7 @@ namespace Fluxions
 						boundingBox += tmaxBound.xyz();
 					}
 					else {
-						hflog.errorfn(__FUNCTION__, "OBJ file %s had an error while loading", geoFilename.c_str());
+						Hf::Log.errorfn(__FUNCTION__, "OBJ file %s had an error while loading", geoFilename.c_str());
 					}
 				}
 			}
@@ -463,7 +465,7 @@ namespace Fluxions
 					// TODO (projection matrix)
 				}
 				else {
-					hflog.error("%s(): unsupported camera format %s.", __FUNCTION__, type.c_str());
+					Hf::Log.error("%s(): unsupported camera format %s.", __FUNCTION__, type.c_str());
 				}
 				if (!isBadCamera) {
 					float fstop = 16.0f;
@@ -592,7 +594,7 @@ namespace Fluxions
 			}
 			else if (str == "sphl") {
 				ssphhLights.resize(ssphhLights.size() + 1);
-				SimpleSSPHHLight &sphl = ssphhLights.back();
+				SimpleSSPHHLight& sphl = ssphhLights.back();
 				sphl.name = ReadString(istr);
 				sphl.index = (int)ssphhLights.size() - 1;
 				sphl.E0 = ReadFloat(istr);
@@ -611,7 +613,7 @@ namespace Fluxions
 		return false;
 	}
 
-	bool SimpleSceneGraph::Save(const std::string &filename)
+	bool SimpleSceneGraph::Save(const std::string& filename)
 	{
 		FilePathInfo fpi(filename);
 
@@ -665,7 +667,7 @@ namespace Fluxions
 
 		// 4. Spheres
 		for (auto it = spheres.begin(); it != spheres.end(); it++) {
-			SimpleSphere &sphere = it->second;
+			SimpleSphere& sphere = it->second;
 			if (materials.GetLibraryId() != sphere.mtllibId) {
 				materials.SetLibrary(sphere.mtllibName);
 
@@ -681,7 +683,7 @@ namespace Fluxions
 
 		// 5. Geometry Groups
 		for (auto it = geometry.begin(); it != geometry.end(); it++) {
-			SimpleGeometryGroup &geo = it->second;
+			SimpleGeometryGroup& geo = it->second;
 			if (materials.GetLibraryId() != geo.mtllibId) {
 				materials.SetLibrary(geo.mtllibName);
 
@@ -696,7 +698,7 @@ namespace Fluxions
 
 		// 6. Output geometry files
 		for (auto it = geometry.begin(); it != geometry.end(); it++) {
-			SimpleGeometryGroup &geo = it->second;
+			SimpleGeometryGroup& geo = it->second;
 			geometryObjects[geo.objectId].SaveOBJ(geo.objectName);
 		}
 
@@ -706,12 +708,12 @@ namespace Fluxions
 		return true;
 	}
 
-	const BoundingBoxf &SimpleSceneGraph::GetBoundingBox()
+	const BoundingBoxf& SimpleSceneGraph::GetBoundingBox()
 	{
 		return boundingBox;
 	}
 
-	bool SimpleSceneGraph::ReadMtlLibFile(const std::string &filename)
+	bool SimpleSceneGraph::ReadMtlLibFile(const std::string& filename)
 	{
 		// Use this as a template
 		//ifstream fin(filename.c_str());
@@ -740,12 +742,12 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSceneGraph::ReadConfFile(const std::string &filename)
+	bool SimpleSceneGraph::ReadConfFile(const std::string& filename)
 	{
 		return false;
 	}
 
-	bool SimpleSceneGraph::ReadObjFile(const std::string &filename, const std::string &geometryName)
+	bool SimpleSceneGraph::ReadObjFile(const std::string& filename, const std::string& geometryName)
 	{
 		if (geometryObjects.IsAHandle(filename))
 			return true;
@@ -760,13 +762,16 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSceneGraph::ReadTexmap(const std::string &texmapName, const std::string &texmap)
+	bool SimpleSceneGraph::ReadTexmap(const std::string& texmapName, const std::string& texmap)
 	{
 		return false;
 	}
 
-	bool SimpleSceneGraph::ReadCamera(const std::istream &istr)
+	bool SimpleSceneGraph::ReadCamera(std::istream& istr)
 	{
+		std::string cameraType;
+		istr >> cameraType;
+		if (cameraType != "camera") return false;
 		return false;
 	}
 
@@ -791,7 +796,7 @@ namespace Fluxions
 		InitTexUnits();
 		renderer.Reset();
 		for (auto it = geometry.begin(); it != geometry.end(); it++) {
-			SimpleGeometryGroup &geo = it->second;
+			SimpleGeometryGroup& geo = it->second;
 			renderer.SetCurrentObjectId(geo.objectId);
 			renderer.SetCurrentMtlLibId(geo.mtllibId);
 			renderer.SetCurrentObjectName(geo.objectName);
@@ -803,7 +808,7 @@ namespace Fluxions
 		renderer.SetCurrentMtlLibName("");
 		renderer.SetCurrentMtlLibId(0);
 
-		hflog.infofn(__FUNCTION__, "number of vertices: %d  -- number of triangles: %d", renderer.vertexCount, renderer.triangleCount);
+		Hf::Log.infofn(__FUNCTION__, "number of vertices: %d  -- number of triangles: %d", renderer.vertexCount, renderer.triangleCount);
 
 		environment.enviroColorMapUnit = GetTexUnit();
 		environment.sunColorMapUnit = GetTexUnit();
@@ -824,7 +829,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::Render(SimpleProgram &program)
+	void SimpleSceneGraph::Render(SimpleProgram& program)
 	{
 		SimpleUniform InverseCameraMatrix;
 		SimpleUniform CameraMatrix;
@@ -851,7 +856,7 @@ namespace Fluxions
 		program.ApplyUniform("NewCameraMatrix", CameraMatrix);
 
 		if (debugging)
-			hflog.info("%s(): Starting Render", __FUNCTION__);
+			Hf::Log.info("%s(): Starting Render", __FUNCTION__);
 
 		GLuint objectId = 0;
 		GLuint groupId = 0;
@@ -922,7 +927,7 @@ namespace Fluxions
 
 		// apply each material separately
 		for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
-			SimpleMaterialLibrary &mtllib = libIt->second;
+			SimpleMaterialLibrary& mtllib = libIt->second;
 			mtllibName = mtllib.name;
 			mtllibId = materials.GetLibraryId(mtllib.name);
 			materials.SetLibrary(mtllib.name);
@@ -934,13 +939,13 @@ namespace Fluxions
 				mtlName = materials.GetMaterialName(mtlId);
 				while (mtlName.back() == '\0')
 					mtlName.resize(mtlName.size() - 1);
-				SimpleMaterial &mtl = mtlIt->second;
+				SimpleMaterial& mtl = mtlIt->second;
 				materials.SetMaterial(mtlName);
 
 				if (debugging)
 					std::cout << "SimpleSceneGraph::Render() -- using mtl " << mtlId << std::endl;
 
-				std::map<std::string, SimpleMap *> textures;
+				std::map<std::string, SimpleMap*> textures;
 				GLuint unit = 0;
 				if (!mtl.map_Ka.empty())
 					textures["map_Ka"] = materials.GetTextureMap(mtl.map_Ka);
@@ -977,7 +982,7 @@ namespace Fluxions
 					glUniform1f(program_loc_map_Tr_mix, 0.0f);
 
 				for (auto tmapIt = textures.begin(); tmapIt != textures.end(); tmapIt++) {
-					SimpleMap *pMap = tmapIt->second;
+					SimpleMap* pMap = tmapIt->second;
 					if (pMap) {
 						pMap->unitId = 0; // unit;
 						pMap->samplerId = pMap->textureObject.samplerObject.GetId();
@@ -1006,7 +1011,7 @@ namespace Fluxions
 				glUniform1fv(program_loc_Tf, 1, &mtl.Tr);
 
 				for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
-					SimpleGeometryGroup &geo = geoIt->second;
+					SimpleGeometryGroup& geo = geoIt->second;
 					if (debugging)
 						std::cout << "SimpleSceneGraph::Render() -- using OBJ " << geo.objectName << std::endl;
 					objectId = geo.objectId;
@@ -1026,9 +1031,9 @@ namespace Fluxions
 
 				// Turn off textures
 				for (auto tmapIt = textures.begin(); tmapIt != textures.end(); tmapIt++) {
-					SimpleMap *pMap = tmapIt->second;
+					SimpleMap* pMap = tmapIt->second;
 					if (pMap) {
-						glutBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
+						FxBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
 
 						GLint program_loc = program.GetUniformLocation(tmapIt->first.c_str());
 						if (program_loc >= 0)
@@ -1038,7 +1043,7 @@ namespace Fluxions
 						glUniform1f(program_loc, 0.0f);
 					}
 				}
-				glutSetActiveTexture(GL_TEXTURE0);
+				FxSetActiveTexture(GL_TEXTURE0);
 			}
 		}
 
@@ -1046,7 +1051,7 @@ namespace Fluxions
 			std::cout << "SimpleSceneGraph::Render() -- END\n";
 	}
 
-	void SimpleSceneGraph::RenderZOnly(SimpleProgram &program)
+	void SimpleSceneGraph::RenderZOnly(SimpleProgram& program)
 	{
 		// Render a bare bones, basic Z only version of this scene
 		SimpleUniform InverseCameraMatrix;
@@ -1078,7 +1083,7 @@ namespace Fluxions
 
 		// apply each material separately
 		for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
-			SimpleMaterialLibrary &mtllib = libIt->second;
+			SimpleMaterialLibrary& mtllib = libIt->second;
 			mtllibName = mtllib.name;
 			mtllibId = materials.GetLibraryId(mtllib.name);
 			materials.SetLibrary(mtllib.name);
@@ -1088,14 +1093,14 @@ namespace Fluxions
 				mtlName = materials.GetMaterialName(mtlId);
 				while (mtlName.back() == '\0')
 					mtlName.resize(mtlName.size() - 1);
-				SimpleMaterial &mtl = mtlIt->second;
+				SimpleMaterial& mtl = mtlIt->second;
 				materials.SetMaterial(mtlName);
 
 				// Apply Diffuse Uniforms to the program shader
 				glUniform3fv(program_loc_Kd, 1, mtl.Kd.const_ptr());
 
 				for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
-					SimpleGeometryGroup &geo = geoIt->second;
+					SimpleGeometryGroup& geo = geoIt->second;
 					objectId = geo.objectId;
 					groupId = 0;
 
@@ -1113,7 +1118,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::Render(SimpleProgram &program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix, Matrix4f &cameraMatrix)
+	void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix)
 	{
 		Matrix4f inverseCameraMatrix = cameraMatrix.AsInverse();
 		Vector4f cameraPosition(0, 0, 0, 1);
@@ -1126,8 +1131,8 @@ namespace Fluxions
 		SimpleUniform ProjectionMatrix = projectionMatrix;
 		SimpleUniform CameraPosition = cameraPosition;
 
-		glutBindTextureAndSampler(environment.enviroColorMapUnit, GL_TEXTURE_CUBE_MAP, environment.enviroColorMapId, environment.enviroColorMapSamplerId);
-		glutBindTextureAndSampler(environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, environment.pbskyColorMapId, environment.pbskyColorMapSamplerId);
+		FxBindTextureAndSampler(environment.enviroColorMapUnit, GL_TEXTURE_CUBE_MAP, environment.enviroColorMapId, environment.enviroColorMapSamplerId);
+		FxBindTextureAndSampler(environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, environment.pbskyColorMapId, environment.pbskyColorMapSamplerId);
 
 		program.ApplyUniform("UScreenWidth", SimpleUniform((GLfloat)camera.imageWidth));
 		program.ApplyUniform("UScreenHeight", SimpleUniform((GLfloat)camera.imageHeight));
@@ -1144,7 +1149,7 @@ namespace Fluxions
 
 		// apply each material separately (use the idea that material state changes are worse than geometry ones
 		for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
-			SimpleMaterialLibrary &mtllib = libIt->second;
+			SimpleMaterialLibrary& mtllib = libIt->second;
 			std::string mtllibName = mtllib.name;
 			GLuint mtllibId = materials.GetLibraryId(mtllib.name);
 			materials.SetLibrary(mtllib.name);
@@ -1153,7 +1158,7 @@ namespace Fluxions
 			for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++) {
 				GLuint mtlId = mtlIt->first;
 				std::string mtlName = materials.GetMaterialName(mtlId);
-				SimpleMaterial &mtl = mtlIt->second;
+				SimpleMaterial& mtl = mtlIt->second;
 				materials.SetMaterial(mtlName);
 
 				if (useMaterials)
@@ -1161,7 +1166,7 @@ namespace Fluxions
 
 				// loop through each geometry object
 				for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
-					SimpleGeometryGroup &geo = geoIt->second;
+					SimpleGeometryGroup& geo = geoIt->second;
 					GLuint objectId = geo.objectId;
 					GLuint groupId = 0;
 					renderer.ApplyIdToMtlNames(mtlName, mtlIt->first);
@@ -1181,11 +1186,11 @@ namespace Fluxions
 			}
 		}
 
-		glutBindTextureAndSampler(environment.enviroColorMapUnit, GL_TEXTURE_CUBE_MAP, 0, 0);
-		glutBindTextureAndSampler(environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, 0, 0);
+		FxBindTextureAndSampler(environment.enviroColorMapUnit, GL_TEXTURE_CUBE_MAP, 0, 0);
+		FxBindTextureAndSampler(environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, 0, 0);
 	}
 
-	void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration &rc)
+	void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
 	{
 		//double sceneMaxSize = boundingBox.MaxSize();
 		//double sceneDiagonal = ceil(sqrtf(2.0 * sceneMaxSize * sceneMaxSize));
@@ -1321,11 +1326,11 @@ namespace Fluxions
 				}
 			}
 			else {
-				glutBindTextureAndSampler(environment.sunColorMapUnit, GL_TEXTURE_2D, environment.sunColorMapId, environment.sunColorMapSamplerId);
-				glutBindTextureAndSampler(environment.sunDepthMapUnit, GL_TEXTURE_2D, environment.sunDepthMapId, environment.sunDepthMapSamplerId);
+				FxBindTextureAndSampler(environment.sunColorMapUnit, GL_TEXTURE_2D, environment.sunColorMapId, environment.sunColorMapSamplerId);
+				FxBindTextureAndSampler(environment.sunDepthMapUnit, GL_TEXTURE_2D, environment.sunDepthMapId, environment.sunDepthMapSamplerId);
 				Render(*program, rc.useMaterials, rc.useMaps, rc.useZOnly, projectionMatrix, cameraMatrix);
-				glutBindTextureAndSampler(environment.sunColorMapUnit, GL_TEXTURE_2D, 0, 0);
-				glutBindTextureAndSampler(environment.sunDepthMapUnit, GL_TEXTURE_2D, 0, 0);
+				FxBindTextureAndSampler(environment.sunColorMapUnit, GL_TEXTURE_2D, 0, 0);
+				FxBindTextureAndSampler(environment.sunDepthMapUnit, GL_TEXTURE_2D, 0, 0);
 			}
 			if (rc.enableSRGB) {
 				glDisable(GL_FRAMEBUFFER_SRGB);
@@ -1382,21 +1387,21 @@ namespace Fluxions
 				glPushMatrix();
 				glMultMatrixf(spheres[i].transform.const_ptr());
 				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-				glutSolidSphere(0.5, 16, 16);
+				FxDrawGL1Superquadric(0.5, 16, 16);
 				glPopMatrix();
 			}
 
 			for (size_t i = 0; i < pointLights.size(); i++) {
 				glPushMatrix();
-				const float *v = pointLights[i].position.const_ptr();
+				const float* v = pointLights[i].position.const_ptr();
 				glTranslatef(v[0], v[1], v[2]);
 				float E0 = pointLights[i].E0;
 				glColor4f(E0, E0, E0, 1.0f);
-				glutSolidSphere(0.1, 16, 8);
+				FxDrawGL1Superquadric(0.5, 16, 16);
 				glPopMatrix();
 			}
 
-			glutCamera(camera.fov, 1.0f, 1.0f, 1.0f, camera.imageFarZ, camera.viewMatrix.AsInverse().const_ptr(), rc.projectionMatrix.const_ptr());
+			FxDrawGL1Camera(camera.fov, 1.0f, 1.0f, 1.0f, camera.imageFarZ, camera.viewMatrix.AsInverse().const_ptr(), rc.projectionMatrix.const_ptr());
 
 			glLineWidth(4.0f);
 			glBegin(GL_LINES);
@@ -1426,9 +1431,12 @@ namespace Fluxions
 			//glutWireCone(correctBase, correctHeight, 16, 1);
 
 			float radius = 0.5f * (environment.sunShadowMapFarZ - environment.sunShadowMapNearZ);
-			glutWireSphere(radius, 32, 16);
-			glutWireCone(base, height, 16, 1);
-			glutWireCube(boundingBox.MaxSize());
+			//glutWireSphere(radius, 32, 16);
+			//glutWireCone(base, height, 16, 1);
+			//glutWireCube(boundingBox.MaxSize());
+			FxDrawGL1WireSphere(radius, 32, 16);
+			FxDrawGL1WireCone(base, height, 16, 1);
+			FxDrawGL1WireCube(boundingBox.MaxSize());
 			glPopMatrix();
 
 			glPushMatrix();
@@ -1438,11 +1446,11 @@ namespace Fluxions
 
 			glPushMatrix();
 			glTranslatef(v3.x, v3.y, v3.z);
-			glutSolidCube(0.25);
+			FxDrawGL1SolidCube(0.25f);
 			glPopMatrix();
 			glPushMatrix();
 			glTranslatef(v4.x, v4.y, v4.z);
-			glutSolidCube(0.25);
+			FxDrawGL1SolidCube(0.25f);
 			glPopMatrix();
 
 			glColor3f(1.0f, 1.0f, 1.0f);
@@ -1474,7 +1482,7 @@ namespace Fluxions
 		glUseProgram(0);
 	}
 
-	void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration &rc) const
+	void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) const
 	{
 		if (!rc.useZOnly)
 			return;
@@ -1557,14 +1565,14 @@ namespace Fluxions
 		glUseProgram(0);
 	}
 
-	void SimpleSceneGraph::RenderZOnly(SimpleProgramPtr &program) const
+	void SimpleSceneGraph::RenderZOnly(SimpleProgramPtr& program) const
 	{
 		if (!program)
 			return;
 
 		// loop through each geometry object
 		for (auto geoIt = geometry.cbegin(); geoIt != geometry.cend(); geoIt++) {
-			const SimpleGeometryGroup &geo = geoIt->second;
+			const SimpleGeometryGroup& geo = geoIt->second;
 
 			// Apply object specific uniforms like transformation matrices
 			SimpleUniform ModelViewMatrix = geo.transform * geo.addlTransform;
@@ -1600,7 +1608,7 @@ namespace Fluxions
 			glUniform1f(locs.toneMapGamma, environment.toneMapGamma);
 	}
 
-	void SimpleSceneGraph::SetUniforms(SimpleProgramPtr &program)
+	void SimpleSceneGraph::SetUniforms(SimpleProgramPtr& program)
 	{
 		if (!program)
 			return;
@@ -1648,7 +1656,7 @@ namespace Fluxions
 			radius = radius - pos;
 			float length = radius.length();
 			pos.w = length;
-			SimpleMaterial *mtl = materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
+			SimpleMaterial* mtl = materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
 			// only push spheres that are emissive...
 			if (mtl) {
 				spherePositions.push_back(pos.x);
@@ -1697,13 +1705,13 @@ namespace Fluxions
 				v_Position[i] = ssphhLights[i].position.xyz();
 				v_LightProbeCubeMapTexId[i] = ssphhLights[i].hierLightProbeTexture.GetTexture();
 				v_LightProbeCubeMapUnit[i] = ssphhLights[i].colorSphlMap.unit = GetTexUnit();
-				glutBindTexture(v_LightProbeCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_LightProbeCubeMapTexId[i]);
+				FxBindTexture(v_LightProbeCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_LightProbeCubeMapTexId[i]);
 				v_EnvironmentCubeMapTexId[i] = ssphhLights[i].coronaLightProbeTexture.GetTexture();
 				v_EnvironmentCubeMapUnit[i] = ssphhLights[i].environmentLightProbeMap.unit = GetTexUnit();
-				glutBindTexture(v_EnvironmentCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_EnvironmentCubeMapTexId[i]);
+				FxBindTexture(v_EnvironmentCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_EnvironmentCubeMapTexId[i]);
 				v_DepthShadowCubeMapTexId[i] = ssphhLights[i].depthSphlMap.texture.GetTexture();
 				v_DepthShadowCubeMapUnit[i] = ssphhLights[i].depthSphlMap.unit = GetTexUnit();
-				glutBindTexture(v_DepthShadowCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_DepthShadowCubeMapTexId[i]);
+				FxBindTexture(v_DepthShadowCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_DepthShadowCubeMapTexId[i]);
 				v_DepthShadowZFar[i] = ssphhLights[i].depthSphlMap.zfar;
 				for (int sph = 0; sph < 9; sph++) {
 					v_sph[i * 9 + sph].x = ssphhLights[i].msph[0].getCoefficient(sph);
@@ -1737,7 +1745,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial &mtl, bool useMaps)
+	void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps)
 	{
 		GLuint unit = 1;
 
@@ -1778,7 +1786,7 @@ namespace Fluxions
 			//if (mtl.map_normal.empty()) glUniform1f(locs.map_normal_mix, 0.0f);
 
 			for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
-				SimpleMap *pMap = tmapIt->second;
+				SimpleMap* pMap = tmapIt->second;
 				if (pMap) {
 					if (pMap->unitId <= 0)
 						pMap->unitId = GetTexUnit();
@@ -1843,7 +1851,7 @@ namespace Fluxions
 					}
 
 					if (pMap->unitId < 0 || pMap->unitId >= g_MaxCombinedTextureUnits) {
-						hflog.error("%s(): pMap->unitId (%d) is out of range.", __FUNCTION__, pMap->unitId);
+						Hf::Log.error("%s(): pMap->unitId (%d) is out of range.", __FUNCTION__, pMap->unitId);
 					}
 					else {
 						if (pMap->map_loc >= 0)
@@ -1898,9 +1906,9 @@ namespace Fluxions
 	{
 		// Turn off textures and reset program unit bindings to 0
 		for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
-			SimpleMap *pMap = tmapIt->second;
+			SimpleMap* pMap = tmapIt->second;
 			if (pMap) {
-				glutBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
+				FxBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
 
 				glUniform1i(pMap->map_loc, 0);
 				glUniform1f(pMap->map_mix_loc, 0.0f);
@@ -1910,14 +1918,14 @@ namespace Fluxions
 				}
 			}
 		}
-		glutSetActiveTexture(GL_TEXTURE0);
+		FxSetActiveTexture(GL_TEXTURE0);
 
 		currentTextures.clear();
 	}
 
 	//
 
-	void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram &program)
+	void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram& program)
 	{
 		locations.clear();
 		locations["Ka"] = Ka = program.GetUniformLocation("Ka");
@@ -2035,14 +2043,14 @@ namespace Fluxions
 		}
 	}
 
-	void RenderCubeShadowMap(const SimpleSceneGraph &ssg, SimpleCubeTexture &scs, const SimpleRenderConfiguration &rc)
+	void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc)
 	{
-		glutSetErrorMessage("fluxions_simple_scene_graph.cpp", __LINE__, __FUNCTION__);
+		FxSetErrorMessage("fluxions_simple_scene_graph.cpp", __LINE__, __FUNCTION__);
 
 		if (!scs.dirty)
 			return;
 
-		double t0 = hflog.getSecondsElapsed();
+		double t0 = Hf::Log.getSecondsElapsed();
 
 		scs.texture.CreateTextureShadowCube(rc.viewportRect.w);
 
@@ -2068,7 +2076,7 @@ namespace Fluxions
 
 		if (!fboComplete) {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			hflog.error("%s(): Framebuffer not complete!", __FUNCTION__);
+			Hf::Log.error("%s(): Framebuffer not complete!", __FUNCTION__);
 			scs.buildTime = -1.0;
 			scs.dirty = false;
 			return;
@@ -2084,7 +2092,7 @@ namespace Fluxions
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &cubeShadowFbo);
 
-		double dt = hflog.getSecondsElapsed() - t0;
+		double dt = Hf::Log.getSecondsElapsed() - t0;
 		scs.buildTime = dt * 1000.0;
 		scs.dirty = false;
 	}

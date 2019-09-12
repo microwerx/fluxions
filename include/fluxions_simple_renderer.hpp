@@ -385,9 +385,9 @@ class SimpleUniform
             location = -1;
         }
         type = newType;
-        baseType = glutGetBaseType(newType);
-        components = glutGetTypeComponents(newType);
-        sizeOfType = glutGetSizeOfType(newType);
+        baseType = FxGetBaseType(newType);
+        components = FxGetTypeComponents(newType);
+        sizeOfType = FxGetSizeOfType(newType);
         sizeInBytes = newCount * sizeOfType;
         count = newCount;
         transpose = newTranspose;

@@ -69,7 +69,7 @@
 #include <Python.h>
 
 #include <GL/glew.h>
-#ifndef FLUXIONS_NO_FREEGLUT
+#ifdef FLUXIONS_USE_FREEGLUT
 #include <GL/freeglut.h>
 #endif
 
@@ -131,7 +131,7 @@
 #include <fluxions_uniform_library.hpp>
 #include <fluxions_utilities.hpp>
 #include <fluxions_xml.hpp>
-#include <glut_extensions.hpp>
+#include <fluxions_draw_gl1gl2.hpp>
 #include <hatchetfish.hpp>
 #include <damselfish.hpp>
 #include <damselfish_evaluator.hpp>

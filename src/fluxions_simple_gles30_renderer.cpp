@@ -244,7 +244,7 @@ class VertexArrayObject
                     GLint loc = glGetAttribLocation(program, name);
                     if (loc < 0)
                     {
-                        //hflog.warning("%s(): Program %i does not have attrib %s", __FUNCTION__, program_, name);
+                        //Hf::Log.warning("%s(): Program %i does not have attrib %s", __FUNCTION__, program_, name);
                         continue;
                     }
                     glVertexAttribPointer(loc, 4, GL_FLOAT, mesh.IsAttribNormalized(i), sizeof(SimpleGeometryMesh::Vertex), cast_to_pointer(mesh.GetVertexOffset(i)));
@@ -679,7 +679,7 @@ void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial &mtl, bo
 
                 if (pMap->unitId < 0 || pMap->unitId >= g_MaxCombinedTextureUnits)
                 {
-                    hflog.error("%s(): pMap->unitId (%d) is out of range.", __FUNCTION__, pMap->unitId);
+                    Hf::Log.error("%s(): pMap->unitId (%d) is out of range.", __FUNCTION__, pMap->unitId);
                 }
                 else
                 {
@@ -740,7 +740,7 @@ void SimpleGLES30Renderer::DisableCurrentTextures()
         SimpleMap *pMap = tmapIt->second;
         if (pMap)
         {
-            glutBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
+            FxBindTexture(pMap->unitId, pMap->textureObject.GetTarget(), 0);
 
             glUniform1i(pMap->map_loc, 0);
             glUniform1f(pMap->map_mix_loc, 0.0f);
@@ -752,7 +752,7 @@ void SimpleGLES30Renderer::DisableCurrentTextures()
             }
         }
     }
-    glutSetActiveTexture(GL_TEXTURE0);
+    FxSetActiveTexture(GL_TEXTURE0);
 
     currentTextures.clear();
 }
@@ -857,7 +857,7 @@ void SimpleGLES30Renderer::RenderSkyBox()
     glUseProgram(programId);
     if (uCubeTexture >= 0)
     {
-        glutBindTextureAndSampler(ssg.environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, ssg.environment.pbskyColorMapId, ssg.environment.pbskyColorMapSamplerId);
+        FxBindTextureAndSampler(ssg.environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, ssg.environment.pbskyColorMapId, ssg.environment.pbskyColorMapSamplerId);
         glUniform1i(uCubeTexture, ssg.environment.pbskyColorMapUnit);
     }
     if (uProjectionMatrix >= 0)

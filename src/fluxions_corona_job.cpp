@@ -107,7 +107,7 @@ namespace Fluxions
 			{
 				tonemap = 0.0f;
 			}
-			hflog.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
+			Hf::Log.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
 
 			std::ofstream fout(tonemapconf);
 			fout << "Float colorMap.simpleExposure = " << tonemap << std::endl;
@@ -129,7 +129,7 @@ namespace Fluxions
 			fout.close();
 		}
 
-		double t0 = hflog.getSecondsElapsed();
+		double t0 = Hf::Log.getSecondsElapsed();
 		state = State::Running;
 		bool result = true;
 		switch (type)
@@ -157,7 +157,7 @@ namespace Fluxions
 		default:
 			break;
 		}
-		elapsedTime = hflog.getSecondsElapsed() - t0;
+		elapsedTime = Hf::Log.getSecondsElapsed() - t0;
 		state = result ? State::Finished : State::Error;
 
 #ifdef WIN32
@@ -220,7 +220,7 @@ namespace Fluxions
 
 		cmd << " -c " << exportPathPrefix + scene_name << "_tonemap.conf";
 
-		hflog.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
+		Hf::Log.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
 
 		return cmd.str();
 	}
@@ -247,11 +247,11 @@ namespace Fluxions
 			std::string commandLine = MakeCoronaCommandLine();
 			pcmd = commandLine.c_str();
 
-			hflog.infofn(__FUNCTION__, "running %s", pcmd);
+			Hf::Log.infofn(__FUNCTION__, "running %s", pcmd);
 			retval = lastCoronaRetval = system(pcmd);
 			if (retval != 0)
 			{
-				hflog.errorfn(__FUNCTION__, "unable to run corona");
+				Hf::Log.errorfn(__FUNCTION__, "unable to run corona");
 				return false;
 			}
 			//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
@@ -261,11 +261,11 @@ namespace Fluxions
 			std::ostringstream cmd;
 			cmd << "magick " << output_path_exr << " " << output_path_png;
 			pcmd = cmd.str().c_str();
-			hflog.infofn(__FUNCTION__, "running %s", pcmd);
+			Hf::Log.infofn(__FUNCTION__, "running %s", pcmd);
 			retval = lastConvertRetval = system(pcmd);
 			if (retval != 0)
 			{
-				hflog.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
+				Hf::Log.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
 				return false;
 			}
 		}
@@ -273,11 +273,11 @@ namespace Fluxions
 			std::ostringstream cmd;
 			cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
 			pcmd = cmd.str().c_str();
-			hflog.infofn(__FUNCTION__, "running %s", pcmd);
+			Hf::Log.infofn(__FUNCTION__, "running %s", pcmd);
 			retval = lastConvertRetval = system(pcmd);
 			if (retval != 0)
 			{
-				hflog.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
+				Hf::Log.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
 				return false;
 			}
 		}
@@ -310,7 +310,7 @@ namespace Fluxions
 
 	void CoronaJob::FromString(const std::string &str)
 	{
-		std::istringstream istr;
+		std::istringstream istr(str);
 		istr >> imageWidth;
 		istr >> imageHeight;
 		istr >> ignoreCache;
@@ -342,7 +342,7 @@ namespace Fluxions
 
 	CoronaJob::Type CoronaJob::TypeFromString(const std::string &s_type) noexcept
 	{
-		Type type;
+		Type type = Type::GEN;
 		if (s_type == "VIZ") type = Type::VIZ;
 		else if (s_type == "GEN") type = Type::GEN;
 		else if (s_type == "REF") type = Type::REF;

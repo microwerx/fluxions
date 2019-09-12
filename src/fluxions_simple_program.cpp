@@ -153,14 +153,14 @@ namespace Fluxions
 		if (program)
 			return;
 		program = glCreateProgram();
-		hflog.info("%s(): program %d created.", __FUNCTION__, program);
+		Hf::Log.info("%s(): program %d created.", __FUNCTION__, program);
 	}
 
 	void SimpleProgram::Delete()
 	{
 		if (program)
 		{
-			hflog.info("%s(): program %d deleted.", __FUNCTION__, program);
+			Hf::Log.info("%s(): program %d deleted.", __FUNCTION__, program);
 			glDeleteProgram(program);
 			program = 0;
 		}
@@ -215,7 +215,7 @@ namespace Fluxions
 		}
 		else
 		{
-			// hflog.warning("%s(): Program %i tried to set invalid/unused uniform %s", __FUNCTION__, program, uniformName.c_str());
+			// Hf::Log.warning("%s(): Program %i tried to set invalid/unused uniform %s", __FUNCTION__, program, uniformName.c_str());
 			return false;
 		}
 	}
@@ -233,7 +233,7 @@ namespace Fluxions
 			}
 			else
 			{
-				hflog.info("%s(): unable to set uniform %s (%d) for program %d.", __FUNCTION__, it->first.c_str(), loc, program);
+				Hf::Log.info("%s(): unable to set uniform %s (%d) for program %d.", __FUNCTION__, it->first.c_str(), loc, program);
 			}
 		}
 	}
@@ -258,7 +258,7 @@ namespace Fluxions
 		GLenum glerror = glGetError();
 		if (glerror != 0)
 		{
-			hflog.errorfn(__FUNCTION__, "GL Error: %s", (const char *)glewGetErrorString(glerror));
+			Hf::Log.errorfn(__FUNCTION__, "GL Error: %s", (const char *)glewGetErrorString(glerror));
 		}
 	}
 
@@ -266,7 +266,7 @@ namespace Fluxions
 	{
 		if (program == 0 || !glIsProgram(program))
 		{
-			hflog.errorfn(__FUNCTION__, "program %d does not exist", program);
+			Hf::Log.errorfn(__FUNCTION__, "program %d does not exist", program);
 			return false;
 		}
 
@@ -278,12 +278,12 @@ namespace Fluxions
 		GLint bufSize;
 
 		try {
-			hflog.infofn(__FUNCTION__, "Trying to link program %d", program);
+			Hf::Log.infofn(__FUNCTION__, "Trying to link program %d", program);
 			glLinkProgram(program);
-			hflog.infofn(__FUNCTION__, "Program %d glLinkProgram() completed", program);
+			Hf::Log.infofn(__FUNCTION__, "Program %d glLinkProgram() completed", program);
 		}
 		catch (...) {
-			hflog.errorfn(__FUNCTION__, "Unknown error linking program %d", program);
+			Hf::Log.errorfn(__FUNCTION__, "Unknown error linking program %d", program);
 		}
 
 		linkStatus_ = 0;
@@ -294,7 +294,7 @@ namespace Fluxions
 		if (bufSize > 0)
 		{
 			glGetProgramInfoLog(program, bufSize, NULL, &infoLog[0]);
-			hflog.errorfn(__FUNCTION__, "Program link error:\n%s", infoLog.c_str());
+			Hf::Log.errorfn(__FUNCTION__, "Program link error:\n%s", infoLog.c_str());
 		}
 
 		validateStatus_ = 0;
@@ -306,7 +306,7 @@ namespace Fluxions
 		if (bufSize > 0)
 		{
 			glGetProgramInfoLog(program, 0, NULL, &validateLog[0]);
-			hflog.errorfn(__FUNCTION__, "Program validation error:\n%s", validateLog.c_str());
+			Hf::Log.errorfn(__FUNCTION__, "Program validation error:\n%s", validateLog.c_str());
 		}
 
 		activeAttributes.clear();
@@ -335,7 +335,7 @@ namespace Fluxions
 				activeUniforms[name].index = glGetUniformLocation(program, buffer);
 				activeUniforms[name].size = size;
 				activeUniforms[name].type = type;
-				hflog.infofn(__FUNCTION__, "uniform (%02d) %20s %s", activeUniforms[name].index, activeUniforms[name].GetNameOfType(), name.c_str());
+				Hf::Log.infofn(__FUNCTION__, "uniform (%02d) %20s %s", activeUniforms[name].index, activeUniforms[name].GetNameOfType(), name.c_str());
 			}
 
 			for (int i = 0; i < numAttribs; i++)
@@ -345,10 +345,10 @@ namespace Fluxions
 				activeAttributes[name].index = glGetAttribLocation(program, buffer);
 				activeAttributes[name].size = size;
 				activeAttributes[name].type = type;
-				hflog.infofn(__FUNCTION__, "attrib  (%02d) %20s %s", activeAttributes[name].index, activeAttributes[name].GetNameOfType(), name.c_str());
+				Hf::Log.infofn(__FUNCTION__, "attrib  (%02d) %20s %s", activeAttributes[name].index, activeAttributes[name].GetNameOfType(), name.c_str());
 			}
 
-			hflog.infofn(__FUNCTION__, "program %d linked.", program);
+			Hf::Log.infofn(__FUNCTION__, "program %d linked.", program);
 		}
 
 		return linked;
@@ -384,7 +384,7 @@ namespace Fluxions
 		buffer.resize(totalMemory);
 		blockIndexId = blockIndex;
 		glGenBuffers(1, &uniformBlockBufferId);
-		hflog.info("%s(): uniform block %d created.", __FUNCTION__, uniformBlockBufferId);
+		Hf::Log.info("%s(): uniform block %d created.", __FUNCTION__, uniformBlockBufferId);
 		glBindBuffer(GL_UNIFORM_BUFFER, uniformBlockBufferId);
 		glBufferData(GL_UNIFORM_BUFFER, buffer.size(), buffer.data(), GL_DYNAMIC_DRAW);
 		glBindBufferBase(GL_UNIFORM_BUFFER, blockIndexId, uniformBlockBufferId);
@@ -395,7 +395,7 @@ namespace Fluxions
 	{
 		if (uniformBlockBufferId != 0)
 		{
-			hflog.info("%s(): uniform block %d deleted.", __FUNCTION__, uniformBlockBufferId);
+			Hf::Log.info("%s(): uniform block %d deleted.", __FUNCTION__, uniformBlockBufferId);
 			glDeleteBuffers(1, &uniformBlockBufferId);
 			uniformBlockBufferId = 0;
 			blockIndexId = 0;

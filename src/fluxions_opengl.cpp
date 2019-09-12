@@ -2197,7 +2197,7 @@ namespace Fluxions
 	{
 		e = glGetError();
 		if (e != GL_NO_ERROR) {
-			hflog.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
+			Hf::Log.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
 			return true;
 		}
 		return false;
@@ -2219,7 +2219,7 @@ namespace Fluxions
 			glEnable(GL_DEBUG_OUTPUT);
 		}
 		else {
-			hflog.warningfn(__FUNCTION__, "No glDebugMessageCallback");
+			Hf::Log.warningfn(__FUNCTION__, "No glDebugMessageCallback");
 		}
 	}
 
@@ -2312,12 +2312,12 @@ namespace Fluxions
 			break;
 		}
 
-		hflog.info("%s", ostr.str().c_str());
+		Hf::Log.info("%s", ostr.str().c_str());
 		std::string m = message;
 		std::istringstream istr(m);
 		std::string line;
 		while (getline(istr, line)) {
-			hflog.info("> %s", line.c_str());
+			Hf::Log.info("> %s", line.c_str());
 		}
 	}
 

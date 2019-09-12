@@ -441,13 +441,13 @@ class SimpleAssociativePropertyList
 		SharedSimplePropertyPtr ptr = Get(name);
 		if (!ptr)
 		{
-			hflog.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid", __FUNCTION__);
+			Hf::Log.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid", __FUNCTION__);
 			throw std::bad_cast();
 		}
 
 		if (ptr->GetTypeID() != typeid(T))
 		{
-			hflog.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible", __FUNCTION__);
+			Hf::Log.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible", __FUNCTION__);
 			throw std::bad_cast();
 		}
 

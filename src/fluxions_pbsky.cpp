@@ -150,7 +150,7 @@ void HosekWilkiePBSky::Delete()
     }
     catch (...)
     {
-        hflog.error("%s(): unknown error freeing memory.", __FUNCTION__);
+        Hf::Log.error("%s(): unknown error freeing memory.", __FUNCTION__);
     }
 }
 

@@ -90,7 +90,7 @@ namespace Fluxions
 	{
 		if (id == 0 || unit == 0 || (int)unit > g_MaxCombinedTextureUnits)
 			return;
-		glutBindSampler(unit, id);
+		FxBindSampler(unit, id);
 		lastBoundUnit = unit;
 	}
 
@@ -205,7 +205,7 @@ namespace Fluxions
 
 	void SamplerObject::ApplySettings(GLuint unit, GLuint texture, GLenum target)
 	{
-		if (!glutBindTexture(unit, target, texture))
+		if (!FxBindTexture(unit, target, texture))
 			return;
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapS);
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, wrapT);
@@ -216,12 +216,12 @@ namespace Fluxions
 		glTexParameterf(target, GL_TEXTURE_MAX_LOD, maxLOD);
 		glTexParameteri(target, GL_TEXTURE_COMPARE_FUNC, compareFunc);
 		glTexParameteri(target, GL_TEXTURE_COMPARE_MODE, compareMode);
-		glutBindTexture(0, target, 0);
+		FxBindTexture(0, target, 0);
 	}
 
 	void SamplerObject::Use(GLenum unit, GLuint texture, GLenum target)
 	{
-		if (!glutBindTexture(unit, target, texture))
+		if (!FxBindTexture(unit, target, texture))
 			return;
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapS);
 		glTexParameteri(target, GL_TEXTURE_WRAP_T, wrapT);
@@ -232,7 +232,7 @@ namespace Fluxions
 		glTexParameterf(target, GL_TEXTURE_MAX_LOD, maxLOD);
 		glTexParameteri(target, GL_TEXTURE_COMPARE_FUNC, compareFunc);
 		glTexParameteri(target, GL_TEXTURE_COMPARE_MODE, compareMode);
-		glutSetActiveTexture(GL_TEXTURE0);
+		FxSetActiveTexture(GL_TEXTURE0);
 	}
 
 	// class Fluxions::Texture ///////////////////////////////////////
@@ -265,7 +265,7 @@ namespace Fluxions
 
 	void SimpleTexture::Bind(GLuint unit, bool applySamplerObjectSettings)
 	{
-		if (id == 0 || !glutBindTexture(unit, target, id))
+		if (id == 0 || !FxBindTexture(unit, target, id))
 			return;
 
 		lastBoundUnit = unit;
@@ -276,17 +276,17 @@ namespace Fluxions
 			didApplySamplerSettings = true;
 		}
 
-		glutSetActiveTexture(GL_TEXTURE0);
+		FxSetActiveTexture(GL_TEXTURE0);
 	}
 
 	void SimpleTexture::Unbind()
 	{
 		if (lastBoundUnit > 0) {
 			// GLuint sampler = didApplySamplerSettings ? samplerObject.GetId() : 0;
-			glutBindTextureAndSampler(lastBoundUnit, target, 0, 0);
+			FxBindTextureAndSampler(lastBoundUnit, target, 0, 0);
 			lastBoundUnit = 0;
 			didApplySamplerSettings = false;
-			glutSetActiveTexture(GL_TEXTURE0);
+			FxSetActiveTexture(GL_TEXTURE0);
 		}
 	}
 
@@ -294,18 +294,18 @@ namespace Fluxions
 	{
 		if (unit < GL_TEXTURE0)
 			unit += GL_TEXTURE0;
-		glutSetActiveTexture(unit);
+		FxSetActiveTexture(unit);
 		glEnable(target);
-		glutSetActiveTexture(GL_TEXTURE0);
+		FxSetActiveTexture(GL_TEXTURE0);
 	}
 
 	void SimpleTexture::Disable(GLuint unit)
 	{
 		if (unit < GL_TEXTURE0)
 			unit += GL_TEXTURE0;
-		glutSetActiveTexture(unit);
+		FxSetActiveTexture(unit);
 		glDisable(target);
-		glutSetActiveTexture(GL_TEXTURE0);
+		FxSetActiveTexture(GL_TEXTURE0);
 	}
 
 	void SimpleTexture::GenerateMipmaps()
@@ -319,14 +319,14 @@ namespace Fluxions
 			Bind(GL_TEXTURE0, false);
 		}
 		else {
-			glutSetActiveTexture(lastBoundUnit);
+			FxSetActiveTexture(lastBoundUnit);
 		}
 		glGenerateMipmap(target);
 		if (didBindUnit) {
 			Unbind();
 		}
 		else {
-			glutSetActiveTexture(GL_TEXTURE0);
+			FxSetActiveTexture(GL_TEXTURE0);
 		}
 	}
 
@@ -348,7 +348,7 @@ namespace Fluxions
 
 		Bind(0);
 		SetTexture1D(format, GL_UNSIGNED_BYTE, width, data, genMipMap);
-		glutBindDefaultTextureAndSampler(target);
+		FxBindDefaultTextureAndSampler(target);
 		SDL_FreeSurface(imageSurface);
 		return true;
 	}
@@ -376,7 +376,7 @@ namespace Fluxions
 		this->image.setImageData(format, GL_UNSIGNED_BYTE, width, height, 1, data);
 
 		glGenTextures(1, &id);
-		glutBindTexture(0, target, id);
+		FxBindTexture(0, target, id);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, type, data);
 		if (genMipMap != false) {
 			glGenerateMipmap(target);
@@ -385,7 +385,7 @@ namespace Fluxions
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glutBindDefaultTextureAndSampler(target);
+		FxBindDefaultTextureAndSampler(target);
 		SDL_FreeSurface(imageSurface);
 		return true;
 	}
@@ -409,7 +409,7 @@ namespace Fluxions
 
 		Bind(0);
 		SetTexture2D(format, GL_UNSIGNED_BYTE, width, height, data, genMipMap);
-		glutBindDefaultTextureAndSampler(target);
+		FxBindDefaultTextureAndSampler(target);
 		return true;
 	}
 
@@ -421,7 +421,7 @@ namespace Fluxions
 		if (genMipMap != false) {
 			GenerateMipmaps();
 		}
-		glutBindDefaultTextureAndSampler(target);
+		FxBindDefaultTextureAndSampler(target);
 		return true;
 	}
 
@@ -478,7 +478,7 @@ namespace Fluxions
 
 		Bind(0);
 		SetTexture3D(format, GL_UNSIGNED_BYTE, width, height, count, data, genMipMap);
-		glutBindDefaultTextureAndSampler(target);
+		FxBindDefaultTextureAndSampler(target);
 		return true;
 	}
 
@@ -501,7 +501,7 @@ namespace Fluxions
 
 		Bind(0);
 		SetTexture3D(format, GL_UNSIGNED_BYTE, width, height, count, data, genMipMap);
-		glutBindDefaultTextureAndSampler(target);
+		FxBindDefaultTextureAndSampler(target);
 		return true;
 	}
 
@@ -564,7 +564,7 @@ namespace Fluxions
 		Create();
 		Bind(0);
 		SetTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, data, genMipMap);
-		glutBindDefaultTextureAndSampler(target);
+		FxBindDefaultTextureAndSampler(target);
 		for (int i = 0; i < 6; i++) {
 			SDL_FreeSurface(images[i]);
 		}
@@ -728,7 +728,7 @@ namespace Fluxions
 			Create();
 			Bind(0);
 			SetTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, (void **)data, genMipMap);
-			glutBindDefaultTextureAndSampler(target);
+			FxBindDefaultTextureAndSampler(target);
 			std::vector<unsigned char> _data;
 			_data.resize(width * height * bytesPerPixel * 6);
 			for (int i = 0; i < 6; i++) {

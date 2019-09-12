@@ -116,7 +116,7 @@ bool FramebufferObject::Make()
 		else
 		{
 			glGenTextures(1, &rt.object);
-			glutBindTexture(0, rt.target, rt.object);
+			FxBindTexture(0, rt.target, rt.object);
 			if (rt.target == GL_TEXTURE_CUBE_MAP)
 			{
 				GLenum format = GL_RGBA;
@@ -162,7 +162,7 @@ bool FramebufferObject::Make()
 				//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 				//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 			}
-			glutBindDefaultTextureAndSampler(rt.target);
+			FxBindDefaultTextureAndSampler(rt.target);
 			if (rt.target == GL_TEXTURE_CUBE_MAP)
 			{
 				glFramebufferTexture(GL_FRAMEBUFFER, rt.attachment, rt.object, 0);
@@ -184,7 +184,7 @@ bool FramebufferObject::Make()
 
 	if (!result)
 	{
-		hflog.error("%s(): Framebuffer is not complete!", __FUNCTION__);
+		Hf::Log.error("%s(): Framebuffer is not complete!", __FUNCTION__);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -210,11 +210,11 @@ void FramebufferObject::Use()
 
 void FramebufferObject::RestoreGLState()
 {
-	glutSetErrorMessage(__FILE__, __LINE__, "RestoreGLState()");
+	FxSetErrorMessage(__FILE__, __LINE__, "RestoreGLState()");
 	// GLenum defaultBuffer = GL_BACK;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glDrawBuffer(GL_BACK);// glDrawBuffers(1, &defaultBuffer);
-	glutSetDefaultErrorMessage();
+	FxSetDefaultErrorMessage();
 }
 
 void FramebufferObject::GenerateMipmaps()
@@ -225,9 +225,9 @@ void FramebufferObject::GenerateMipmaps()
 		if (rt.target == GL_RENDERBUFFER)
 			continue;
 
-		glutBindTexture(0, rt.target, rt.object);
+		FxBindTexture(0, rt.target, rt.object);
 		glGenerateMipmap(rt.target);
-		glutBindDefaultTextureAndSampler(rt.target);
+		FxBindDefaultTextureAndSampler(rt.target);
 	}
 }
 
@@ -239,7 +239,7 @@ void FramebufferObject::BindTextures(int unit)
 		RenderTarget &rt = it->second;
 		if (rt.target == GL_RENDERBUFFER)
 			continue;
-		glutBindTexture(unit, rt.target, rt.object);
+		FxBindTexture(unit, rt.target, rt.object);
 		unit++;
 	}
 }
@@ -252,7 +252,7 @@ void FramebufferObject::UnbindTextures()
 		RenderTarget &rt = it->second;
 		if (rt.target == GL_RENDERBUFFER)
 			continue;
-		glutBindTexture(unit, rt.target, 0);
+		FxBindTexture(unit, rt.target, 0);
 		unit++;
 	}
 }
