@@ -80,7 +80,7 @@
 //#include <GL/glew.h>
 
 #ifdef FLUXIONS_USE_FREEGLUT
-#include <GL/freeglut.h>
+//#include <GL/freeglut.h>
 #endif
 
 #ifndef FLUXIONS_NO_OPENEXR

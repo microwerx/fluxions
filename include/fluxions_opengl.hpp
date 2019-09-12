@@ -38,6 +38,10 @@
 #pragma comment (lib, "user32.lib")   // Windows User library
 #endif
 
+// GLEW must be included before gl.h
+#define GLEW_NO_GLU
+#include <GL/glew.h>
+
 #ifdef FLUXIONS_USE_GLES
 #include <EGL/egl.h>
 #include <GLES/gl.h>
@@ -49,9 +53,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
-
-#define GLEW_NO_GLU
-#include <GL/glew.h>
 
 #ifdef FLUXIONS_USE_FREEGLUT
 #include <GL/freeglut.h>
