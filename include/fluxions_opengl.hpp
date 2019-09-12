@@ -58,6 +58,16 @@
 #include <GL/freeglut.h>
 #endif
 
+#ifndef FLUXIONS_NO_SDL2
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+#ifdef _WIN32
+#pragma comment (lib, "SDL2.lib")		// SDL2 library
+#pragma comment (lib, "SDL2_image.lib")	// SDL2 Image library
+#endif
+#endif
+
 #include <fluxions_draw_gl1gl2.hpp>
 #include <map>
 #include <string>

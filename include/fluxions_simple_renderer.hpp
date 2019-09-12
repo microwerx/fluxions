@@ -23,14 +23,14 @@
 //#include <iterator>
 //#include <map>
 //#include <memory.h>
-//#include <memory>
 //#include <vector>
 //#include <fluxions_gte.hpp>
-//#include <fluxions_simple_materials.hpp>
 //#include <hatchetfish.hpp>
 
+#include <memory>
 #include <fluxions_gte.hpp>
 #include <fluxions_opengl.hpp>
+#include <fluxions_simple_materials.hpp>
 
 namespace Fluxions
 {
