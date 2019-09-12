@@ -713,6 +713,7 @@ namespace Fluxions
 		TResourceManager<std::string> shaderMaps;
 		TResourceManager<SimpleSphere> spheres;
 		TResourceManager<SimpleGeometryGroup> geometry;
+		// TODO: Change OBJStaticModel to SimpleGeometryMesh
 		TResourceManager<OBJStaticModel> geometryObjects;
 		std::vector<SimpleSSPHHLight> ssphhLights;
 		std::vector<SimplePointLight> pointLights;

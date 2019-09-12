@@ -98,8 +98,8 @@ class SimpleGeometryMesh
 	{
 		std::string materialName;
 		SurfaceType type = SurfaceType::Triangles;
-		int first;
-		int count;
+		unsigned first = 0;
+		unsigned count = 0;
 	};
 
 	using VertexPtr = Vertex *;

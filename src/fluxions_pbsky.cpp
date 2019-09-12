@@ -656,7 +656,7 @@ namespace Fluxions
 		}
 
 		return Vector3f(x, y, z);
-		
+
 		// TODO: Move this to a separate test
 
 		//if ((rand() % 400) != 1)
@@ -743,18 +743,12 @@ namespace Fluxions
 		sunVector = Vector3f(static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z));
 	}
 
-	void PhysicallyBasedSky::ComputeSunFromLocale() {
+	void PhysicallyBasedSky::ComputeSunFromLocale() noexcept {
 		double sunLong = wrap(astroCalc.getSun().lambda, 360.0);
 		SetSunPosition(sunLong);
 	}
 
-	void PhysicallyBasedSky::SetGroundAlbedo(float r, float g, float b) {
-		groundAlbedo.r = r;
-		groundAlbedo.g = g;
-		groundAlbedo.b = b;
-	}
-
-	void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sampleScale, bool flipY) {
+	void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sampleScale, bool flipY) noexcept {
 		prepareForCompute();
 		generatedCubeMap.resize(resolution, resolution, 6);
 
@@ -855,7 +849,7 @@ namespace Fluxions
 		maxRgbValue = pbsky.maxValue;
 	}
 
-	void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normalize, float sampleScale) {
+	void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normalize, float sampleScale) noexcept {
 		prepareForCompute();
 		generatedCylMap.resize(width, height);
 
@@ -932,13 +926,13 @@ namespace Fluxions
 	//{
 	//}
 
-	void PhysicallyBasedSky::ComputeSunGroundRadiances() {
+	void PhysicallyBasedSky::ComputeSunGroundRadiances() noexcept {
 		prepareForCompute(false);
 		sunDiskRadiance = pbsky.GetSunDiskRadiance();
 		groundRadiance = pbsky.GetGroundRadiance();
 	}
 
-	void PhysicallyBasedSky::prepareForCompute(bool resetStats) {
+	void PhysicallyBasedSky::prepareForCompute(bool resetStats) noexcept {
 		minRgbValue = FLT_MAX;
 		maxRgbValue = -FLT_MAX;
 		pbsky.Init(turbidity, groundAlbedo, static_cast<float>(sunPosition.a), static_cast<float>(sunPosition.A));

@@ -235,6 +235,10 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\fluxions_obj_static_model.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="src\fluxions_simple_texture.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -295,6 +299,7 @@
     <ClInclude Include="include\fluxions_simple_property.hpp" />
     <ClInclude Include="include\fluxions_simple_renderer.hpp" />
     <ClInclude Include="include\fluxions_simple_scene_graph.hpp" />
+    <ClInclude Include="include\fluxions_obj_static_model.hpp" />
     <ClInclude Include="include\fluxions_simple_texture.hpp" />
     <ClInclude Include="include\fluxions_sphl.hpp" />
     <ClInclude Include="include\fluxions_sphl_sampler.hpp" />

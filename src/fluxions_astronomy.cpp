@@ -17,6 +17,8 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 
+#pragma warning(disable:26451)
+
 #include "pch.hpp"
 #include <math.h>
 #include <assert.h>

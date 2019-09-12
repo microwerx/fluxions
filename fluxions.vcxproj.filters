@@ -79,6 +79,9 @@
     <ClCompile Include="src\fluxions_fileio_iostream.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_obj_static_model.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -169,6 +172,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_fileio_iostream.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_obj_static_model.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2305,7 +2305,8 @@ namespace Fluxions
 			break;
 		}
 
-		Hf::Log.info("%s", ostr.str().c_str());
+		unsigned up = ((unsigned long long)(userParam) & 0xFFFFFFFF);
+		HFLOGINFO("(%i, %#010X) %s", length, up, ostr.str().c_str());
 		std::string m = message;
 		std::istringstream istr(m);
 		std::string line;

@@ -1,7 +1,12 @@
 #include "pch.hpp"
+#include <fstream>
+#include <sstream>
 #include <hatchetfish.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_simple_static_mesh.hpp>
+#include <fluxions_fileio_iostream.hpp>
+#include <iomanip>
+#include <fluxions_precompiled_models.hpp>
 
 namespace Fluxions
 {
@@ -126,7 +131,7 @@ namespace Fluxions
 						// create new surface
 						Surface surface;
 						surface.first = first;
-						surface.mode = GL_TRIANGLES;
+						surface.mode = SurfaceType::Triangles;
 						Surfaces.push_back(surface);
 						curSurface = (int)Surfaces.size() - 1;
 					}
@@ -279,13 +284,13 @@ namespace Fluxions
 			// Load Cache instead
 			std::ifstream fin(cache_filename, std::ios::binary);
 			if (!fin) return false;
-			long vertexCount = 0;
-			long indexCount = 0;
-			long surfaceCount = 0;
+			unsigned vertexCount = 0;
+			unsigned indexCount = 0;
+			unsigned surfaceCount = 0;
 
-			fin.read(reinterpret_cast<char*>(&vertexCount), sizeof(long));
-			fin.read(reinterpret_cast<char*>(&indexCount), sizeof(long));
-			fin.read(reinterpret_cast<char*>(&surfaceCount), sizeof(long));
+			fin.read(reinterpret_cast<char*>(&vertexCount), sizeof(unsigned));
+			fin.read(reinterpret_cast<char*>(&indexCount), sizeof(unsigned));
+			fin.read(reinterpret_cast<char*>(&surfaceCount), sizeof(unsigned));
 
 			Vertices.resize(vertexCount);
 			Indices.resize(indexCount);
@@ -293,7 +298,7 @@ namespace Fluxions
 			BoundingBox.Reset();
 
 			fin.read(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex) * vertexCount);
-			fin.read(reinterpret_cast<char*>(&Indices[0]), sizeof(GLuint) * indexCount);
+			fin.read(reinterpret_cast<char*>(&Indices[0]), sizeof(unsigned) * indexCount);
 
 			for (int i = 0; i < surfaceCount; i++) {
 				long mode = 0;
@@ -334,16 +339,16 @@ namespace Fluxions
 
 			std::ofstream fout(cache_filename, std::ios::binary);
 
-			long vertexCount = (long)Vertices.size();
-			long indexCount = (long)Indices.size();
-			long surfaceCount = (long)Surfaces.size();
+			unsigned vertexCount = (unsigned)Vertices.size();
+			unsigned indexCount = (unsigned)Indices.size();
+			unsigned surfaceCount = (unsigned)Surfaces.size();
 
-			fout.write(reinterpret_cast<char*>(&vertexCount), sizeof(long));
-			fout.write(reinterpret_cast<char*>(&indexCount), sizeof(long));
-			fout.write(reinterpret_cast<char*>(&surfaceCount), sizeof(long));
+			fout.write(reinterpret_cast<char*>(&vertexCount), sizeof(unsigned));
+			fout.write(reinterpret_cast<char*>(&indexCount), sizeof(unsigned));
+			fout.write(reinterpret_cast<char*>(&surfaceCount), sizeof(unsigned));
 
 			fout.write(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex) * vertexCount);
-			fout.write(reinterpret_cast<char*>(&Indices[0]), sizeof(GLuint) * indexCount);
+			fout.write(reinterpret_cast<char*>(&Indices[0]), sizeof(unsigned) * indexCount);
 
 			for (int i = 0; i < surfaceCount; i++) {
 				long mode = Surfaces[i].mode;
@@ -662,7 +667,7 @@ namespace Fluxions
 		renderer.SetCurrentMtlName("");
 	}
 
-	void OBJStaticModel::RenderGL11() {
+	void OBJStaticModel::RenderGL1() {
 		std::vector<Surface>::iterator surfIt;
 		for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++) {
 			//renderer.SetCurrentMtlName(surfIt->materialName);

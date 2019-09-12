@@ -22,6 +22,7 @@
 #include <ArHosekSkyModel.h>
 #include <fluxions_astronomy.hpp>
 #include <fluxions_gte.hpp>
+#include <fluxions_gte_image.hpp>
 
 namespace Fluxions
 {
