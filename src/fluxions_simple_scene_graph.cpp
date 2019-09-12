@@ -1,5 +1,5 @@
 // SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
+// Copyright (C) 2017-2019 Jonathan Metzgar
 // All rights reserved.
 //
 // This program is free software : you can redistribute it and/or modify
@@ -1706,7 +1706,7 @@ namespace Fluxions
 				v_LightProbeCubeMapTexId[i] = ssphhLights[i].hierLightProbeTexture.GetTexture();
 				v_LightProbeCubeMapUnit[i] = ssphhLights[i].colorSphlMap.unit = GetTexUnit();
 				FxBindTexture(v_LightProbeCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_LightProbeCubeMapTexId[i]);
-				v_EnvironmentCubeMapTexId[i] = ssphhLights[i].coronaLightProbeTexture.GetTexture();
+				v_EnvironmentCubeMapTexId[i] = ssphhLights[i].ptrcLightProbeTexture.GetTexture();
 				v_EnvironmentCubeMapUnit[i] = ssphhLights[i].environmentLightProbeMap.unit = GetTexUnit();
 				FxBindTexture(v_EnvironmentCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_EnvironmentCubeMapTexId[i]);
 				v_DepthShadowCubeMapTexId[i] = ssphhLights[i].depthSphlMap.texture.GetTexture();

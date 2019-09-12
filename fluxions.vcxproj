@@ -147,22 +147,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_corona.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_corona_job.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_corona_scene_file.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
     <ClCompile Include="src\fluxions_es2_renderer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -297,9 +281,6 @@
     <ClInclude Include="include\fluxions_astronomy.hpp" />
     <ClInclude Include="include\fluxions_bbox.hpp" />
     <ClInclude Include="include\fluxions_config.hpp" />
-    <ClInclude Include="include\fluxions_corona.hpp" />
-    <ClInclude Include="include\fluxions_corona_job.hpp" />
-    <ClInclude Include="include\fluxions_corona_scene_file.hpp" />
     <ClInclude Include="include\fluxions_es2_renderer.hpp" />
     <ClInclude Include="include\fluxions_es2_state_info.hpp" />
     <ClInclude Include="include\fluxions_fileio.hpp" />

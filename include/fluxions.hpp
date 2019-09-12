@@ -1,5 +1,5 @@
 // SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
+// Copyright (C) 2017-2019 Jonathan Metzgar
 // All rights reserved.
 //
 // This program is free software : you can redistribute it and/or modify
@@ -53,7 +53,6 @@
 #include <fluxions_simple_geometry_mesh.hpp>
 #include <fluxions_simple_gles30_renderer.hpp>
 #include <fluxions_multiple_render_target.hpp>
-#include <fluxions_corona.hpp>
 
 namespace Fluxions
 {

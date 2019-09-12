@@ -1,5 +1,5 @@
 // SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
+// Copyright (C) 2017-2019 Jonathan Metzgar
 // All rights reserved.
 //
 // This program is free software : you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 #ifndef FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 #define FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 
-#include <fluxions_corona.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_multiple_render_target.hpp>
@@ -485,22 +484,19 @@ namespace Fluxions
 		int index = -1;
 		int maxDegree = DefaultSphlDegree;
 
-		// This holds a cubemap representation of a loaded Corona 3D light probe
-		Image4f lightProbe_corona;
-		SimpleGpuTexture coronaLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
-		//GLuint coroneLightProbeTexture = 0;
-		float coronaLightProbePercent = 0.0f;
+		// This holds a cubemap representation of the path traced (ptrc) 3D light probe
+		Image4f ptrcLightProbeImage;
+		SimpleGpuTexture ptrcLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
+		float ptrcLightProbePercent = 0.0f;
 
 		// This holds a cube map representation of the msph for this SPHL
-		Image4f lightProbe_sph;
-		SimpleGpuTexture sphLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
-		//GLuint sphLightProbeTexture = 0;
+		Image4f msphLightProbeImage;
+		SimpleGpuTexture msphLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
 
 		// This holds the finalized SELF + NEIGHBOR light probe
 		//SSPHHLightHierarchy hierSph;
-		Image4f lightProbe_hier;
+		Image4f hierLightProbeImage;
 		SimpleGpuTexture hierLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
-		//GLuint hierLightProbeTexture = 0;
 
 		SimpleCubeTexture depthSphlMap;
 		SimpleCubeTexture colorSphlMap;
@@ -509,10 +505,10 @@ namespace Fluxions
 		SimpleSSPHHLight();
 		~SimpleSSPHHLight();
 
-		// Reads from a Corona Light Probe (a cube map stored images from left to right in a single image).
-		bool ReadCoronaLightProbe(const std::string &path);
-		// Saves to a Corona Light Probe (a cube map with cube faces stored from left to right in a single image).
-		bool SaveCoronaLightProbe(const std::string &path);
+		// Reads from a Path Traced Light Probe (a cube map stored images from left to right in a single image).
+		bool ReadPtrcLightProbe(const std::string &path);
+		// Saves to a Path Traced Light Probe (a cube map with cube faces stored from left to right in a single image).
+		bool SavePtrcLightProbe(const std::string &path);
 
 		// Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
 		bool SaveJsonSph(const std::string &path);

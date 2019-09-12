@@ -1,5 +1,5 @@
 // SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
+// Copyright (C) 2017-2019 Jonathan Metzgar
 // All rights reserved.
 //
 // This program is free software : you can redistribute it and/or modify
@@ -99,9 +99,6 @@
 #include <fluxions_astronomy.hpp>
 #include <fluxions_bbox.hpp>
 #include <fluxions_config.hpp>
-#include <fluxions_corona.hpp>
-#include <fluxions_corona_job.hpp>
-#include <fluxions_corona_scene_file.hpp>
 #include <fluxions_es2_renderer.hpp>
 #include <fluxions_es2_state_info.hpp>
 #include <fluxions_fileio.hpp>
@@ -146,6 +143,9 @@
 #include <unicornfish_message.hpp>
 #include <unicornfish_socket.hpp>
 #include <unicornfish_worker.hpp>
+#include <unicornfish_corona.hpp>
+#include <unicornfish_corona_job.hpp>
+#include <unicornfish_corona_scene_file.hpp>
 
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_bounding_box.hpp>

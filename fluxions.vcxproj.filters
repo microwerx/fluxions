@@ -16,15 +16,6 @@
     <ClCompile Include="src\fluxions_bbox.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_corona.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_corona_job.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_corona_scene_file.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_draw_gl1gl2.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -103,15 +94,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_config.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_corona.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_corona_job.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_corona_scene_file.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_draw_gl1gl2.hpp">

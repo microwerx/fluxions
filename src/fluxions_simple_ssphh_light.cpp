@@ -1,5 +1,5 @@
 // SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
+// Copyright (C) 2017-2019 Jonathan Metzgar
 // All rights reserved.
 //
 // This program is free software : you can redistribute it and/or modify
@@ -20,20 +20,19 @@
 #include <damselfish_json.hpp>
 #include <fluxions_simple_geometry_mesh.hpp>
 #include <fluxions_sphl_sampler.hpp>
-#include <fluxions_corona_job.hpp>
 
 namespace Fluxions
 {
-	bool SaveSphlOBJ(const std::string &path, const std::string &name, const Color3f Kd, std::vector<Vector3f> &verts, std::vector<Vector3ui> &triangles);
+	bool SaveSphlOBJ(const std::string& path, const std::string& name, const Color3f Kd, std::vector<Vector3f>& verts, std::vector<Vector3ui>& triangles);
 
-	bool SaveSphlOBJ(const std::string &path, const std::string &name, const Color3f Kd, std::vector<Vector3f> &verts, std::vector<Vector3ui> &triangles)
+	bool SaveSphlOBJ(const std::string& path, const std::string& name, const Color3f Kd, std::vector<Vector3f>& verts, std::vector<Vector3ui>& triangles)
 	{
 		std::vector<Vector3f> normals;
 		normals.resize(verts.size());
-		for (auto &n : normals) {
+		for (auto& n : normals) {
 			n.reset();
 		}
-		for (auto &tri : triangles) {
+		for (auto& tri : triangles) {
 			Vector3f a = verts[tri.y] - verts[tri.x];
 			Vector3f b = verts[tri.z] - verts[tri.x];
 			Vector3f c = a.cross(b).normalize();
@@ -45,18 +44,18 @@ namespace Fluxions
 		fout.open(path + "/" + name + ".obj");
 		fout << "mtllib " << name << ".mtl\n";
 		// output vertices
-		for (const Vector3f &v : verts) {
+		for (const Vector3f& v : verts) {
 			fout << "v " << v.x << " " << v.y << " " << v.z << "\n";
 		}
 		fout << "\n";
-		for (Vector3f &n : normals) {
+		for (Vector3f& n : normals) {
 			n.normalize();
 			fout << "vn " << n.x << " " << n.y << " " << n.z << "\n";
 		}
 		fout << "\n\ng " << name << "\n";
 		fout << "usemtl " << name << "\n";
 		// output faces
-		for (const Vector3ui &t : triangles) {
+		for (const Vector3ui& t : triangles) {
 			fout << "f ";
 			fout << (t.x + 1) << "//" << (t.x + 1) << " ";
 			fout << (t.y + 1) << "//" << (t.y + 1) << " ";
@@ -76,7 +75,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SphlImageTexture::LoadLightProbe(const std::string &path)
+	bool SphlImageTexture::LoadLightProbe(const std::string& path)
 	{
 		FilePathInfo fpi(path);
 		if (fpi.DoesNotExist())
@@ -92,7 +91,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SphlImageTexture::SphToLightProbe(const MultispectralSph4f &sph)
+	bool SphlImageTexture::SphToLightProbe(const MultispectralSph4f& sph)
 	{
 		float v_coefs[4][121];
 
@@ -152,7 +151,7 @@ namespace Fluxions
 
 	SimpleSSPHHLight::SimpleSSPHHLight()
 	{
-		//lightProbe_hier.resize(32, 32, 6);
+		//hierLightProbeImage.resize(32, 32, 6);
 	}
 
 	SimpleSSPHHLight::~SimpleSSPHHLight()
@@ -207,54 +206,54 @@ namespace Fluxions
 		MakeDirty();
 	}
 
-	// Reads from a Corona Light Probe (a cube map stored images from left to right in a single image).
-	bool SimpleSSPHHLight::ReadCoronaLightProbe(const std::string &path)
+	// Reads from a Path Traced Light Probe (a cube map stored images from left to right in a single image).
+	bool SimpleSSPHHLight::ReadPtrcLightProbe(const std::string& path)
 	{
 		FilePathInfo fpi(path);
 		if (fpi.DoesNotExist())
 			return false;
 
 		if (fpi.ext == ".ppm")
-			lightProbe_corona.loadPPM(path);
+			ptrcLightProbeImage.loadPPM(path);
 		else if (fpi.ext == ".exr")
-			lightProbe_corona.loadEXR(path);
+			ptrcLightProbeImage.loadEXR(path);
 		else
 			Hf::Log.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
-		lightProbe_corona.convertRectToCubeMap();
-		double intensity = lightProbe_corona.getIntensity();
-		double numPixels = lightProbe_corona.getNumPixels();
-		coronaLightProbePercent = (float)(intensity / numPixels);
+		ptrcLightProbeImage.convertRectToCubeMap();
+		double intensity = ptrcLightProbeImage.getIntensity();
+		double numPixels = ptrcLightProbeImage.getNumPixels();
+		ptrcLightProbePercent = (float)(intensity / numPixels);
 		ChangeDegrees(MaxSphlDegree);
 
-		LightProbeToSph(lightProbe_corona, msph);
-		SphToLightProbe(msph, lightProbe_sph);
+		LightProbeToSph(ptrcLightProbeImage, msph);
+		SphToLightProbe(msph, msphLightProbeImage);
 
-		UploadLightProbe(lightProbe_corona, coronaLightProbeTexture);
-		UploadLightProbe(lightProbe_sph, sphLightProbeTexture);
-		// UploadLightProbe(lightProbe_hier, hierLightProbeTexture);
+		UploadLightProbe(ptrcLightProbeImage, ptrcLightProbeTexture);
+		UploadLightProbe(msphLightProbeImage, msphLightProbeTexture);
+		// UploadLightProbe(hierLightProbeImage, hierLightProbeTexture);
 
 		dirty = true;
 
 		return true;
 	}
 
-	// Saves to a Corona Light Probe (a cube map with cube faces stored from left to right in a single image).
-	bool SimpleSSPHHLight::SaveCoronaLightProbe(const std::string &path)
+	// Saves to a Path Traced Light Probe (a cube map with cube faces stored from left to right in a single image).
+	bool SimpleSSPHHLight::SavePtrcLightProbe(const std::string& path)
 	{
 		FilePathInfo fpi(path);
 
-		SphToLightProbe(msph, lightProbe_sph);
-		lightProbe_sph.convertCubeMapToRect();
+		SphToLightProbe(msph, msphLightProbeImage);
+		msphLightProbeImage.convertCubeMapToRect();
 		if (fpi.ext == ".ppm")
-			lightProbe_sph.savePPMi(path, 255.99f, 0, 255, 0, false);
+			msphLightProbeImage.savePPMi(path, 255.99f, 0, 255, 0, false);
 		else if (fpi.ext == ".exr")
-			lightProbe_sph.saveEXR(path);
+			msphLightProbeImage.saveEXR(path);
 
 		return false;
 	}
 
 	// Saves a JSON form of the multispectral (RGBI) of this SPH. I represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-	bool SimpleSSPHHLight::SaveJsonSph(const std::string &path)
+	bool SimpleSSPHHLight::SaveJsonSph(const std::string& path)
 	{
 		FilePathInfo fpi(path);
 		Df::JSONPtr json = Df::JSON::MakeObject({
@@ -294,7 +293,7 @@ namespace Fluxions
 	}
 
 	// Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-	bool SimpleSSPHHLight::ReadJsonSph(const std::string &path)
+	bool SimpleSSPHHLight::ReadJsonSph(const std::string& path)
 	{
 		FilePathInfo fpi(path);
 		if (fpi.DoesNotExist())
@@ -362,10 +361,10 @@ namespace Fluxions
 		return false;
 	}
 
-	bool SimpleSSPHHLight::SaveOBJ(const std::string &path, const std::string &gname)
+	bool SimpleSSPHHLight::SaveOBJ(const std::string& path, const std::string& gname)
 	{
 		FilePathInfo fpi(path);
-		static const char *icos_path = "resources/models/icos4.txt";
+		static const char* icos_path = "resources/models/icos4.txt";
 		static size_t numVertices = 0;
 		static size_t numTriangles = 0;
 		static std::vector<Vector3f> vertices;
@@ -388,7 +387,7 @@ namespace Fluxions
 			std::ifstream fin(icos_path);
 			fin >> numVertices;
 			vertices.resize(numVertices);
-			for (Vector3f &v : vertices) {
+			for (Vector3f& v : vertices) {
 				fin >> v.x;
 				fin >> v.y;
 				fin >> v.z;
@@ -396,14 +395,14 @@ namespace Fluxions
 			}
 			fin >> numTriangles;
 			triangles.resize(numTriangles);
-			for (Vector3ui &t : triangles) {
+			for (Vector3ui& t : triangles) {
 				fin >> t.x >> t.y >> t.z;
 			}
 			fin.close();
 		}
 
 		// Make sure new RGBIY vertices are the right size
-		for (auto &x : rgbiy) {
+		for (auto& x : rgbiy) {
 			x.resize(vertices.size());
 		}
 
@@ -420,7 +419,7 @@ namespace Fluxions
 		// Calculate the 3D positions for the red, green,
 		// blue, intensity, and luma Y' channels
 		for (size_t i = 0; i < vertices.size(); i++) {
-			Vector3f &v = vertices[i];
+			Vector3f& v = vertices[i];
 			float theta = v.theta();
 			float phi = v.phi();
 			float r = this->msph[0].calc(theta, phi);
@@ -535,7 +534,7 @@ namespace Fluxions
 		*/
 	}
 
-	bool SimpleSSPHHLight::LightProbeToSph(const Image4f &lightProbe, MultispectralSph4f &sph)
+	bool SimpleSSPHHLight::LightProbeToSph(const Image4f& lightProbe, MultispectralSph4f& sph)
 	{
 		SphlSampler sphlSampler;
 		sphlSampler.resize(64, 32);
@@ -544,7 +543,7 @@ namespace Fluxions
 		return false;
 	}
 
-	bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe)
+	bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe)
 	{
 		float v_coefs[4][121];
 
@@ -588,7 +587,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe, int maxDegree_)
+	bool SimpleSSPHHLight::SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe, int maxDegree_)
 	{
 		float v_coefs[4][121];
 
@@ -634,7 +633,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSSPHHLight::UploadLightProbe(Image4f &lightProbe, SimpleGpuTexture &texture)
+	bool SimpleSSPHHLight::UploadLightProbe(Image4f& lightProbe, SimpleGpuTexture& texture)
 	{
 		if (lightProbe.empty())
 			lightProbe.resize(32, 32, 6);
@@ -650,7 +649,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSSPHHLight::UploadLightProbe(Image4f &lightProbe, GLuint &texture)
+	bool SimpleSSPHHLight::UploadLightProbe(Image4f& lightProbe, GLuint& texture)
 	{
 		if (lightProbe.empty())
 			lightProbe.resize(32, 32, 6);
@@ -889,7 +888,7 @@ namespace Fluxions
 		//hier_description = ostr.str();
 	}
 
-	bool MakeStandardizedSph(SphericalHarmonicf &sph, MultispectralSph4f &msph)
+	bool MakeStandardizedSph(SphericalHarmonicf& sph, MultispectralSph4f& msph)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -909,7 +908,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool MakeIntensityChannel4f(MultispectralSph4f &msph)
+	bool MakeIntensityChannel4f(MultispectralSph4f& msph)
 	{
 		size_t lmmax = msph[0].getMaxCoefficients();
 
@@ -923,7 +922,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool MakeLuminanceChannel4f(MultispectralSph4f &msph)
+	bool MakeLuminanceChannel4f(MultispectralSph4f& msph)
 	{
 		size_t lmmax = msph[0].getMaxCoefficients();
 
@@ -949,28 +948,28 @@ namespace Fluxions
 	{
 	}
 
-	void SimpleSSPHH::INIT(SimpleSceneGraph &ssg)
+	void SimpleSSPHH::INIT(SimpleSceneGraph& ssg)
 	{
 		Hf::Log.infofn(__FUNCTION__, "SSPHH INIT");
 		sceneName = ssg.name;
 		sphls_ = &ssg.ssphhLights;
 		size_ = sphls_->size();
 		S.resize(size_);
-		for (auto &S_i : S)
+		for (auto& S_i : S)
 		{
 			S_i.resize(MaxSphlDegree, 0.0f);
 		}
 		H.resize(size_);
-		for (auto &h_i : H)
+		for (auto& h_i : H)
 		{
 			h_i.resize(size_);
-			for (auto &h_ij : h_i)
+			for (auto& h_ij : h_i)
 			{
 				h_ij.resize(MaxSphlDegree, 0.0f);
 			}
 		}
 		P.resize(size_);
-		for (auto &p : P)
+		for (auto& p : P)
 		{
 			p.resize(size_, 0.0f);
 		}
@@ -981,17 +980,17 @@ namespace Fluxions
 		}
 		Qsorted.resize(size_);
 		Sprime.resize(size_);
-		for (auto &S_i : Sprime)
+		for (auto& S_i : Sprime)
 		{
 			S_i.resize(MaxSphlDegree);
 		}
 		self.resize(size_);
-		for (auto &s : self)
+		for (auto& s : self)
 		{
 			s.resize(MaxSphlDegree);
 		}
 		neighbor.resize(size_);
-		for (auto &n : neighbor)
+		for (auto& n : neighbor)
 		{
 			n.resize(MaxSphlDegree);
 		}
@@ -1005,7 +1004,7 @@ namespace Fluxions
 		//auto &sphls = *sphls_;
 
 		int i = 0;
-		for (auto &sphl : *sphls_)
+		for (auto& sphl : *sphls_)
 		{
 			S[i].resize(sphl.maxDegree);
 			sphl.LightProbeToSph(sphl.vizgenLightProbes[i], S[i].msph);
@@ -1051,11 +1050,11 @@ namespace Fluxions
 			return;
 		Hf::Log.infofn(__FUNCTION__, "SSPHH VIZ");
 
-		auto &sphls = *sphls_;
+		auto& sphls = *sphls_;
 
 		for (size_t i = 0; i < size_; i++)
 		{
-			auto &sphl = sphls[i];
+			auto& sphl = sphls[i];
 			for (size_t j = 0; j < size_; j++)
 			{
 				if (i == j)
@@ -1111,7 +1110,7 @@ namespace Fluxions
 			return;
 		Hf::Log.infofn(__FUNCTION__, "SSPHH HIER");
 
-		auto &sphls = *sphls_;
+		auto& sphls = *sphls_;
 		for (size_t i = 0; i < size_; i++)
 		{
 			for (size_t j = 0; j < size_; j++)
@@ -1120,11 +1119,11 @@ namespace Fluxions
 				Q[j].p = P[i][j];
 			}
 			Qsorted = Q;
-			sort(Qsorted.begin(), Qsorted.end(), [](Qpair &a, Qpair &b) {
+			sort(Qsorted.begin(), Qsorted.end(), [](Qpair& a, Qpair& b) {
 				if (a.p > b.p)
 					return true;
 				return false;
-			});
+				});
 			Sprime[i].reset();
 			self[i].reset();
 			neighbor[i].reset();
@@ -1168,8 +1167,8 @@ namespace Fluxions
 		{
 			sphls[i].self = self[i];
 			sphls[i].neighbor = neighbor[i];
-			sphls[i].SphToLightProbe(Sprime[i].msph, sphls[i].lightProbe_hier);
-			sphls[i].UploadLightProbe(sphls[i].lightProbe_hier, sphls[i].hierLightProbeTexture);
+			sphls[i].SphToLightProbe(Sprime[i].msph, sphls[i].hierLightProbeImage);
+			sphls[i].UploadLightProbe(sphls[i].hierLightProbeImage, sphls[i].hierLightProbeTexture);
 
 			std::string base = "output/" + CoronaJob::MakeHIERName(sceneName, (int)i, (int)MaxDegrees);
 

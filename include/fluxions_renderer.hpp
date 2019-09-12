@@ -1,5 +1,5 @@
 // SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
+// Copyright (C) 2017-2019 Jonathan Metzgar
 // All rights reserved.
 //
 // This program is free software : you can redistribute it and/or modify
@@ -28,259 +28,224 @@
 
 namespace Fluxions
 {
+	// SCENE INTERFACE
 
-struct CoronaScene
-{
-    struct Camera
-    {
-    };
+	class IScene
+	{
+	public:
+		virtual bool Load(const char* filename) = 0;
+		virtual bool Save(const char* filename) = 0;
 
-    struct Sphere
-    {
-    };
-};
+		struct Light
+		{
+		};
 
-// SCENE INTERFACE
+		struct Camera
+		{
+		};
 
-class IScene
-{
-  public:
-    virtual bool Load(const char *filename) = 0;
-    virtual bool Save(const char *filename) = 0;
+		struct Mesh
+		{
+		};
 
-    struct Light
-    {
-    };
+		struct MtlLib
+		{
+		};
 
-    struct Camera
-    {
-    };
+		std::vector<Camera> Cameras;
+		std::vector<Mesh> Meshes;
+		std::vector<MtlLib> MtlLibs;
+	};
 
-    struct Mesh
-    {
-    };
+	// RENDERER INTERFACE
 
-    struct MtlLib
-    {
-    };
+	class IRenderer
+	{
+	public:
+		virtual bool UploadCompileLink() = 0;
+		virtual void Render(const IScene* pScene) = 0;
+		virtual void Reset() = 0;
 
-    std::vector<CoronaScene> Scenes;
-    std::vector<Camera> Cameras;
-    std::vector<Mesh> Meshes;
-    std::vector<MtlLib> MtlLibs;
-};
+		virtual bool IsConfig(const std::string& name) const = 0;
+		virtual bool UseConfig(const std::string& name) = 0;
+		virtual bool LoadConfig(const std::string& filename) = 0;
+	};
 
-// RENDERER INTERFACE
+	class Renderer : public IRenderer
+	{
+	public:
+		struct RenderConfig
+		{
+			struct Program
+			{
+				struct VertexAttrib
+				{
+					int index = 0;
+					std::string name;
 
-class IRenderer
-{
-  public:
-    virtual bool UploadCompileLink() = 0;
-    virtual void Render(const IScene *pScene) = 0;
-    virtual void Reset() = 0;
+					VertexAttrib() {}
+					VertexAttrib(int _index, const std::string& _name) : index(_index), name(_name) {}
+				};
 
-    virtual bool IsConfig(const std::string &name) const = 0;
-    virtual bool UseConfig(const std::string &name) = 0;
-    virtual bool LoadConfig(const std::string &filename) = 0;
-};
+				std::string name;
+				std::string vertshader;
+				std::string geomshader;
+				std::string fragshader;
+				std::vector<VertexAttrib> vertex_attribs;
 
-class Renderer : public IRenderer
-{
-  public:
-    struct RenderConfig
-    {
-        struct Program
-        {
-            struct VertexAttrib
-            {
-                int index = 0;
-                std::string name;
+				SimpleProgramPtr program;
 
-                VertexAttrib() {}
-                VertexAttrib(int _index, const std::string &_name) : index(_index), name(_name) {}
-            };
+				Program() {}
+				Program(const std::string& _name) : name(_name) {}
+			};
 
-            std::string name;
-            std::string vertshader;
-            std::string geomshader;
-            std::string fragshader;
-            std::vector<VertexAttrib> vertex_attribs;
+			std::string name;
+			std::vector<Program> programs;
 
-            SimpleProgramPtr program;
+			RenderConfig() {};
+			RenderConfig(const std::string& _name) : name(_name) {}
+		};
 
-            Program() {}
-            Program(const std::string &_name) : name(_name) {}
-        };
+		using RenderConfigPtr = RenderConfig *;
 
-        std::string name;
-        std::vector<Program> programs;
+		struct Texture
+		{
+			std::string name;
+			std::vector<std::pair<GLenum, std::string>> files;
+			GLenum target;
+			int level;
+			GLenum internalformat;
+			int width;
+			int height;
+			GLenum format;
+			GLenum type;
+			bool genmipmap;
+		};
 
-        RenderConfig(){};
-        RenderConfig(const std::string &_name) : name(_name) {}
-    };
+		struct Sampler
+		{
+			std::string name;
+			std::vector<std::pair<GLenum, GLenum>> parameters;
+		};
 
-    using RenderConfigPtr = RenderConfig *;
+		struct Renderbuffer
+		{
+			std::string name;
+			GLenum internalformat;
+			int width;
+			int height;
+			int samples;
+		};
 
-    struct Texture
-    {
-        std::string name;
-        std::vector<std::pair<GLenum, std::string>> files;
-        GLenum target;
-        int level;
-        GLenum internalformat;
-        int width;
-        int height;
-        GLenum format;
-        GLenum type;
-        bool genmipmap;
-    };
+		struct Framebuffer
+		{
+			std::string name;
+			// attachment, renderbuffer
+			std::vector<std::tuple<GLenum, std::string>> renderbuffers;
+			// attachment, target, texture_, level
+			std::vector<std::tuple<GLenum, GLenum, std::string, int>> textures;
+		};
 
-    struct Sampler
-    {
-        std::string name;
-        std::vector<std::pair<GLenum, GLenum>> parameters;
-    };
+		Renderer();
+		virtual ~Renderer();
 
-    struct Renderbuffer
-    {
-        std::string name;
-        GLenum internalformat;
-        int width;
-        int height;
-        int samples;
-    };
+		virtual bool UploadCompileLink();
+		virtual void Render(const IScene* pScene);
+		virtual void Reset();
 
-    struct Framebuffer
-    {
-        std::string name;
-        // attachment, renderbuffer
-        std::vector<std::tuple<GLenum, std::string>> renderbuffers;
-        // attachment, target, texture_, level
-        std::vector<std::tuple<GLenum, GLenum, std::string, int>> textures;
-    };
+		virtual void LoadShaders();
 
-    Renderer();
-    virtual ~Renderer();
+		// Render Configurations
+		virtual bool LoadConfig(const std::string& filename);
+		virtual bool IsConfig(const std::string& name) const { return RenderConfigs.find(name) != RenderConfigs.end(); }
+		virtual bool UseConfig(const std::string& name) { return use_renderconfig(name); }
+		virtual RenderConfigPtr GetConfig(const std::string& name) { return IsConfig(name) ? &RenderConfigs.find(name)->second : nullptr; }
 
-    virtual bool UploadCompileLink();
-    virtual void Render(const IScene *pScene);
-    virtual void Reset();
+		// G-Buffer and Deferred Renderers
+		virtual bool SetGbufferRenderConfig(const std::string& name)
+		{
+			gbufferConfig = GetConfig(name);
+			return gbufferConfig != nullptr;
+		}
+		virtual RenderConfigPtr GetGbufferRenderConfig() { return gbufferConfig; }
+		virtual SimpleProgramPtr GetGbufferProgram() { return gbufferProgram; }
+		virtual void RenderGbuffer();
 
-    virtual void LoadShaders();
+		using Quadrant = Recti::Quadrant;
 
-    // Render Configurations
-    virtual bool LoadConfig(const std::string &filename);
-    virtual bool IsConfig(const std::string &name) const { return RenderConfigs.find(name) != RenderConfigs.end(); }
-    virtual bool UseConfig(const std::string &name) { return use_renderconfig(name); }
-    virtual RenderConfigPtr GetConfig(const std::string &name) { return IsConfig(name) ? &RenderConfigs.find(name)->second : nullptr; }
+		virtual bool SetDeferredRenderConfig(Quadrant quadrant, const std::string& rc, const std::string& program)
+		{
+			deferredConfigs[quadrant] = GetConfig(rc);
+			deferredPrograms[quadrant] = FindProgram(rc, program);
+			return deferredConfigs[quadrant] != nullptr && deferredPrograms[quadrant] != nullptr;
+		}
+		virtual RenderConfigPtr GetDeferredRenderConfig(Quadrant quadrant) { return deferredConfigs[quadrant]; }
+		virtual SimpleProgramPtr GetDeferredProgram(Quadrant quadrant) { return deferredPrograms[quadrant]; }
+		virtual void SetDeferredRect(const Recti& rect)
+		{
+			deferredRect = rect;
+			deferredSplitPoint = deferredRect.Clamp(deferredSplitPoint);
+		}
+		virtual void SetDeferredSplit(const Vector2i& position) { deferredSplitPoint = deferredRect.Clamp(position); }
+		virtual void SetDeferredSplitPercent(const Vector2f& pct) { deferredSplitPoint = deferredRect.percent(pct); }
+		virtual const Vector2i& GetDeferredSplitPoint() const { return deferredSplitPoint; }
+		virtual const Recti& GetDeferredRect() const { return deferredRect; }
+		virtual void RenderDeferred(Quadrant quadrant = Recti::UpperLeft);
 
-    // G-Buffer and Deferred Renderers
-    virtual bool SetGbufferRenderConfig(const std::string &name)
-    {
-        gbufferConfig = GetConfig(name);
-        return gbufferConfig != nullptr;
-    }
-    virtual RenderConfigPtr GetGbufferRenderConfig() { return gbufferConfig; }
-    virtual SimpleProgramPtr GetGbufferProgram() { return gbufferProgram; }
-    virtual void RenderGbuffer();
+		std::vector<SimpleProgramPtr> Programs;
 
-    using Quadrant = Recti::Quadrant;
+		std::map<std::string, RenderConfig> RenderConfigs;
+		std::map<std::string, Texture> Textures;
+		std::map<std::string, Sampler> Samplers;
+		std::map<std::string, Framebuffer> Framebuffers;
+		std::map<std::string, Renderbuffer> Renderbuffers;
+		std::vector<std::string> Paths;
+		Df::VariableList VarList;
 
-    virtual bool SetDeferredRenderConfig(Quadrant quadrant, const std::string &rc, const std::string &program)
-    {
-        deferredConfigs[quadrant] = GetConfig(rc);
-        deferredPrograms[quadrant] = FindProgram(rc, program);
-        return deferredConfigs[quadrant] != nullptr && deferredPrograms[quadrant] != nullptr;
-    }
-    virtual RenderConfigPtr GetDeferredRenderConfig(Quadrant quadrant) { return deferredConfigs[quadrant]; }
-    virtual SimpleProgramPtr GetDeferredProgram(Quadrant quadrant) { return deferredPrograms[quadrant]; }
-    virtual void SetDeferredRect(const Recti &rect)
-    {
-        deferredRect = rect;
-        deferredSplitPoint = deferredRect.Clamp(deferredSplitPoint);
-    }
-    virtual void SetDeferredSplit(const Vector2i &position) { deferredSplitPoint = deferredRect.Clamp(position); }
-    virtual void SetDeferredSplitPercent(const Vector2f &pct) { deferredSplitPoint = deferredRect.percent(pct); }
-    virtual const Vector2i &GetDeferredSplitPoint() const { return deferredSplitPoint; }
-    virtual const Recti &GetDeferredRect() const { return deferredRect; }
-    virtual void RenderDeferred(Quadrant quadrant = Recti::UpperLeft);
+		SimpleProgramPtr FindProgram(const std::string& renderConfigName, const std::string& name);
 
-    std::vector<SimpleProgramPtr> Programs;
+	private:
+		TSimpleResourceManager<GLuint> textureUnits;
+		void InitTexUnits();
+		void KillTexUnits();
 
-    std::map<std::string, RenderConfig> RenderConfigs;
-    std::map<std::string, Texture> Textures;
-    std::map<std::string, Sampler> Samplers;
-    std::map<std::string, Framebuffer> Framebuffers;
-    std::map<std::string, Renderbuffer> Renderbuffers;
-    std::vector<std::string> Paths;
-    Df::VariableList VarList;
+	public:
+		GLuint GetTexUnit() { return textureUnits.Create(); }
+		void FreeTexUnit(GLuint id) { textureUnits.Delete(id); }
 
-    SimpleProgramPtr FindProgram(const std::string &renderConfigName, const std::string &name);
+	private:
+		RenderConfigPtr gbufferConfig = nullptr;
+		SimpleProgramPtr gbufferProgram = nullptr;
+		RenderConfigPtr deferredConfigs[4] = { nullptr, nullptr, nullptr, nullptr };
+		SimpleProgramPtr deferredPrograms[4] = { nullptr, nullptr, nullptr, nullptr };
+		Vector2i deferredSplitPoint = Vector2i(0, 0);
+		Recti deferredRect = Recti(0, 0, 0, 0);
 
-  private:
-    TSimpleResourceManager<GLuint> textureUnits;
-    void InitTexUnits();
-    void KillTexUnits();
+		std::string basepath;
+		RenderConfig* pcur_renderconfig;
+		RenderConfig::Program* pcur_program;
+		std::string cur_sampler;
+		std::string cur_texture;
+		Framebuffer* pcur_fbo;
 
-  public:
-    GLuint GetTexUnit() { return textureUnits.Create(); }
-    void FreeTexUnit(GLuint id) { textureUnits.Delete(id); }
+		virtual bool new_renderconfig(const std::string& name);
+		virtual bool use_renderconfig(const std::string& name);
+		virtual bool new_program(const std::string& name);
+		virtual bool use_program(const std::string& name);
 
-  private:
-    RenderConfigPtr gbufferConfig = nullptr;
-    SimpleProgramPtr gbufferProgram = nullptr;
-    RenderConfigPtr deferredConfigs[4] = {nullptr, nullptr, nullptr, nullptr};
-    SimpleProgramPtr deferredPrograms[4] = {nullptr, nullptr, nullptr, nullptr};
-    Vector2i deferredSplitPoint = Vector2i(0, 0);
-    Recti deferredRect = Recti(0, 0, 0, 0);
+		bool k_renderconfig(const Df::TokenVector& args);
+		bool k_path(const Df::TokenVector& args);
+		bool k_program(const Df::TokenVector& args);
+		bool k_vertshader(const Df::TokenVector& args);
+		bool k_fragshader(const Df::TokenVector& args);
+		bool k_geomshader(const Df::TokenVector& args);
+		bool k_vertattrib(const Df::TokenVector& args);
+		bool k_sampler(const Df::TokenVector& args);
+		bool k_texture(const Df::TokenVector& args);
+		bool k_fbo(const Df::TokenVector& args);
+		bool k_renderbuffer(const Df::TokenVector& args);
+	};
 
-    std::string basepath;
-    RenderConfig *pcur_renderconfig;
-    RenderConfig::Program *pcur_program;
-    std::string cur_sampler;
-    std::string cur_texture;
-    Framebuffer *pcur_fbo;
-
-    virtual bool new_renderconfig(const std::string &name);
-    virtual bool use_renderconfig(const std::string &name);
-    virtual bool new_program(const std::string &name);
-    virtual bool use_program(const std::string &name);
-
-    bool k_renderconfig(const Df::TokenVector &args);
-    bool k_path(const Df::TokenVector &args);
-    bool k_program(const Df::TokenVector &args);
-    bool k_vertshader(const Df::TokenVector &args);
-    bool k_fragshader(const Df::TokenVector &args);
-    bool k_geomshader(const Df::TokenVector &args);
-    bool k_vertattrib(const Df::TokenVector &args);
-    bool k_sampler(const Df::TokenVector &args);
-    bool k_texture(const Df::TokenVector &args);
-    bool k_fbo(const Df::TokenVector &args);
-    bool k_renderbuffer(const Df::TokenVector &args);
-};
-
-// INaivePathTracer
-/*
-class INaivePathTracer
-{
-public:
-struct Ray
-{
-Vector3f origin;
-Vector3f dir;
-};
-
-struct Intersection
-{
-Vector3f position;
-};
-
-public:
-virtual ~INaivePathTracer() = 0;
-
-virtual Intersection Evaluate(Ray &ray, const IScene &scene) = 0;
-};
-*/
 } // namespace Fluxions
 
 #endif
