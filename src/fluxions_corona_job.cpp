@@ -16,7 +16,7 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.h"
+#include "pch.hpp"
 #include <fluxions_corona_scene_file.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_xml.hpp>
@@ -160,7 +160,7 @@ namespace Fluxions
 		elapsedTime = Hf::Log.getSecondsElapsed() - t0;
 		state = result ? State::Finished : State::Error;
 
-#ifdef WIN32
+#ifdef _WIN32
 		DeleteFile(tonemapconf.c_str());
 		DeleteFile(scene_path.c_str());
 #else

@@ -22,22 +22,20 @@
 // are changed infrequently
 //
 
-#ifndef FLUXIONS_STDAFX_H
-#define FLUXIONS_STDAFX_H
+#ifndef FLUXIONS_PCH_HPP
+#define FLUXIONS_PCH_HPP
 
-#define NOMINMAX
 #define _USE_MATH_DEFINES
+
 #ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 #define FLUXIONS_NO_EXTERN_TEMPLATES
 #endif
 
-#ifdef WIN32
-#include "targetver.h"
+//////////////////////////////////////////////////////////////////////
+// C + +   S t a n d a r d   T e m p l a t e   L i b r a r y /////////
+//////////////////////////////////////////////////////////////////////
 
-#include <stdio.h>
-#include <tchar.h>
-#endif
-
+/*
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -53,35 +51,50 @@
 #include <numeric>
 #include <functional>
 #include <thread>
+*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <inttypes.h>
+//////////////////////////////////////////////////////////////////////
+// C   S t a n d a r d   L i b r a r y ///////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+/*
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+#include <cinttypes>
+*/
+
+//////////////////////////////////////////////////////////////////////
+// E X T E R N A L   D E P E N D E N C I E S /////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 #ifndef FLUXIONS_NO_SDL
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+//#include <SDL2/SDL.h>
+//#include <SDL2/SDL_image.h>
 #endif
-#include <sodium.h>
-#include <curl/curl.h>
-#include <Python.h>
 
-#include <GL/glew.h>
+//#include <sodium.h>
+//#include <curl/curl.h>
+//#include <Python.h>
+//#include <GL/glew.h>
+
 #ifdef FLUXIONS_USE_FREEGLUT
 #include <GL/freeglut.h>
 #endif
 
 #ifndef FLUXIONS_NO_OPENEXR
-#ifdef WIN32
+#ifdef _WIN32
 #define OPENEXR_DLL
 #endif
-#include <OpenEXR/ImfRgbaFile.h>
+//#include <OpenEXR/ImfRgbaFile.h>
 #endif
 
-// TODO: reference additional headers your program requires here
-#include <ArHosekSkyModel.h>
+//////////////////////////////////////////////////////////////////////
+// INTERNAL HEADERS //////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+/*
 #include <fluxions.hpp>
 #include <fluxions_astronomy.hpp>
 #include <fluxions_bbox.hpp>
@@ -92,6 +105,48 @@
 #include <fluxions_es2_renderer.hpp>
 #include <fluxions_es2_state_info.hpp>
 #include <fluxions_fileio.hpp>
+#include <fluxions_multiple_render_target.hpp>
+#include <fluxions_opengl.hpp>
+#include <fluxions_pbsky.hpp>
+#include <fluxions_precompiled_models.hpp>
+#include <fluxions_renderer.hpp>
+#include <fluxions_resource_manager.hpp>
+#include <fluxions_simple_gles30_renderer.hpp>
+#include <fluxions_simple_materials.hpp>
+#include <fluxions_simple_property.hpp>
+#include <fluxions_simple_renderer.hpp>
+#include <fluxions_simple_scene_graph.hpp>
+#include <fluxions_simple_texture.hpp>
+#include <fluxions_ssphh.hpp>
+#include <fluxions_stdcxx.hpp>
+#include <fluxions_types.hpp>
+#include <fluxions_uniform_library.hpp>
+#include <fluxions_utilities.hpp>
+#include <fluxions_xml.hpp>
+#include <fluxions_draw_gl1gl2.hpp>
+*/
+
+/*
+#include <ArHosekSkyModel.h>
+
+#include <hatchetfish.hpp>
+
+#include <damselfish.hpp>
+#include <damselfish_evaluator.hpp>
+#include <damselfish_lexer.hpp>
+#include <damselfish_python.hpp>
+#include <damselfish_syntax_semantic_analyzer.hpp>
+
+#include <unicornfish.hpp>
+#include <unicornfish_broker.hpp>
+#include <unicornfish_client.hpp>
+#include <unicornfish_curl.hpp>
+#include <unicornfish_frame.hpp>
+#include <unicornfish_majordomo.hpp>
+#include <unicornfish_message.hpp>
+#include <unicornfish_socket.hpp>
+#include <unicornfish_worker.hpp>
+
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_bounding_box.hpp>
 #include <fluxions_gte_color3.hpp>
@@ -113,41 +168,7 @@
 #include <fluxions_gte_vector3.hpp>
 #include <fluxions_gte_vector4.hpp>
 #include <fluxions_gte_image.hpp>
-#include <fluxions_multiple_render_target.hpp>
-#include <fluxions_opengl.hpp>
-#include <fluxions_pbsky.hpp>
-#include <fluxions_precompiled_models.hpp>
-#include <fluxions_renderer.hpp>
-#include <fluxions_resource_manager.hpp>
-#include <fluxions_simple_gles30_renderer.hpp>
-#include <fluxions_simple_materials.hpp>
-#include <fluxions_simple_property.hpp>
-#include <fluxions_simple_renderer.hpp>
-#include <fluxions_simple_scene_graph.hpp>
-#include <fluxions_simple_texture.hpp>
-#include <fluxions_ssphh.hpp>
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_types.hpp>
-#include <fluxions_uniform_library.hpp>
-#include <fluxions_utilities.hpp>
-#include <fluxions_xml.hpp>
-#include <fluxions_draw_gl1gl2.hpp>
-#include <hatchetfish.hpp>
-#include <damselfish.hpp>
-#include <damselfish_evaluator.hpp>
-#include <damselfish_lexer.hpp>
-#include <damselfish_python.hpp>
-#include <damselfish_syntax_semantic_analyzer.hpp>
-#include <unicornfish.hpp>
-#include <unicornfish_broker.hpp>
-#include <unicornfish_client.hpp>
-#include <unicornfish_curl.hpp>
-#include <unicornfish_frame.hpp>
-#include <unicornfish_majordomo.hpp>
-#include <unicornfish_message.hpp>
-#include <unicornfish_socket.hpp>
-#include <unicornfish_worker.hpp>
-/*
+
 #include <viperfish.hpp>
 #include <viperfish_gamepad.hpp>
 #include <viperfish_keyboard.hpp>

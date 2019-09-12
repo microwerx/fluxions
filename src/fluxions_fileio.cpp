@@ -16,14 +16,14 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.h"
+#include "pch.hpp"
 #include <fluxions_fileio.hpp>
 
 #ifdef __APPLE__
 #define __unix__ 1
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <Windows.h>
 #elif __unix__
 #include <libgen.h> // for dirname() and basename()
@@ -41,7 +41,7 @@
 
 namespace Fluxions
 {
-#ifdef WIN32
+#ifdef _WIN32
 const int bitIsDirectory = _S_IFDIR;
 const int bitIsRegularFile = _S_IFREG;
 #elif __unix__
@@ -68,13 +68,13 @@ const int bitIsRegularFile = S_IFREG;
 
 int stat_with_errno(const std::string &path, void *Stat)
 {
-#ifdef WIN32
+#ifdef _WIN32
     _set_errno(0);
 #elif __unix__
     errno = 0;
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
     return _stat(path.c_str(), (struct _stat *)Stat);
 #elif __unix__
     return stat(path.c_str(), (struct stat *)Stat);
@@ -268,7 +268,7 @@ std::string FilePathInfo::getCurrentDirectory()
 
 bool FilePathInfo::TestIfFileExists(const std::string &filename)
 {
-#ifdef WIN32
+#ifdef _WIN32
     struct _stat Stat;
 #elif __unix__
     struct stat Stat;
@@ -332,7 +332,7 @@ void FilePathInfo::fill_stat_info()
     else
         testpath = path;
 
-#ifdef WIN32
+#ifdef _WIN32
     struct _stat Stat;
 #define S_IF
 #elif __unix__
@@ -487,7 +487,7 @@ std::string NormalizePathName(const std::string &basepath, const std::string &pa
 
 PathType GetPathType(const std::string &path)
 {
-#ifdef WIN32
+#ifdef _WIN32
     struct _stat Stat;
 #elif __unix__
     struct stat Stat;
@@ -507,7 +507,7 @@ PathType GetPathType(const std::string &path)
 
 TimeValue GetPathCreationTime(const std::string &path)
 {
-#ifdef WIN32
+#ifdef _WIN32
     struct _stat Stat;
 #elif __unix__
     struct stat Stat;
@@ -538,7 +538,7 @@ TimeValue GetPathCreationTime(const std::string &path)
 
 TimeValue GetPathAccessTime(const std::string &path)
 {
-#ifdef WIN32
+#ifdef _WIN32
     struct _stat Stat;
 #elif __unix__
     struct stat Stat;

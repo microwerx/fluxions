@@ -16,7 +16,7 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.h"
+#include "pch.hpp"
 #include <fluxions.hpp>
 
 namespace Fluxions
@@ -196,7 +196,7 @@ namespace Fluxions
 
 	void YieldThread()
 	{
-#ifdef WIN32
+#ifdef _WIN32
 		INPUT input;
 		ZeroMemory(&input, sizeof(INPUT));
 		input.type = INPUT_MOUSE;

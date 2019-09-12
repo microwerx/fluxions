@@ -16,8 +16,8 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.h"
-#ifdef WIN32
+#include "pch.hpp"
+#ifdef _WIN32
 #include <SDL2/SDL_image.h>
 #else
 #include <SDL2/SDL_image.h>
@@ -33,7 +33,7 @@ namespace Fluxions
 	std::wstring StringToWString(const std::string &str)
 	{
 		std::wstring output;
-#ifdef WIN32
+#ifdef _WIN32
 		size_t strSize = strlen(str.c_str()) + 1;
 		size_t convertedChars = 0;
 		wchar_t *wcstring = new wchar_t[strSize];

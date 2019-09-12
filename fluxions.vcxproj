@@ -480,7 +480,7 @@
     <ClInclude Include="include\viperfish_utilities.hpp" />
     <ClInclude Include="include\viperfish_widget.hpp" />
     <ClInclude Include="include\viperfish_xinput.hpp" />
-    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\pch.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

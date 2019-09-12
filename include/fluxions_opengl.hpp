@@ -19,12 +19,44 @@
 #ifndef FLUXIONS_OPENGL_HPP
 #define FLUXIONS_OPENGL_HPP
 
+#ifdef _WIN32
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1
+#endif
+
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
+
+#include <Windows.h>
+
+#pragma comment (lib, "glu32.lib")    // OpenGL Utility library
+#pragma comment (lib, "opengl32.lib") // Microsoft OpenGL library
+#pragma comment (lib, "gdi32.lib")    // Windows GDI library
+#pragma comment (lib, "winmm.lib")    // Windows MultiMedia library
+#pragma comment (lib, "user32.lib")   // Windows User library
+#endif
+
+#ifdef FLUXIONS_USE_GLES
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+#include <GLES2/gl2.h>
+#elif __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 #define GLEW_NO_GLU
 #include <GL/glew.h>
+
 #ifdef FLUXIONS_USE_FREEGLUT
 #include <GL/freeglut.h>
 #endif
+
 #include <fluxions_draw_gl1gl2.hpp>
 #include <map>
 #include <string>
@@ -56,7 +88,7 @@ namespace Fluxions
 		GLenum e;
 	};
 
-#ifndef WIN32
+#ifndef _WIN32
 #define APIENTRY
 #endif
 	void EnableGLDebugFunc();

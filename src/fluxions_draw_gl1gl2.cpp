@@ -16,7 +16,7 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.h"
+#include "pch.hpp"
 #include <cstdarg>
 #include <cstdio>
 #include <sstream>
@@ -142,7 +142,7 @@ GLTypeInfo glutTypeInfo[] = {
 	{GL_UNSIGNED_INT_ATOMIC_COUNTER, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
 	{0xffff, 0, 0, 0} };
 
-void FxSetErrorMessage(const char *filename, int line, const char *format, ...)
+void FxSetErrorMessage(const char* filename, int line, const char* format, ...)
 {
 	std::ostringstream ostr;
 	char buffer[4096];
@@ -313,7 +313,7 @@ void FxGlutTestLitSolidTeapotScene(double fovy, double aspect)
 	glDisable(GL_DEPTH_TEST);
 }
 
-void FxGlutBitmapString(void *font, const char *str)
+void FxGlutBitmapString(void* font, const char* str)
 {
 	int len = (int)strlen(str);
 	int i = 0;
@@ -323,7 +323,7 @@ void FxGlutBitmapString(void *font, const char *str)
 	}
 }
 
-void FxGlutStrokeString(void *font, const char *str)
+void FxGlutStrokeString(void* font, const char* str)
 {
 	int len = (int)strlen(str);
 	int i = 0;
@@ -333,7 +333,7 @@ void FxGlutStrokeString(void *font, const char *str)
 	}
 }
 
-void FxGlutPrintString9x15(double x, double y, double screenWidth, int justification, const char *format, ...)
+void FxGlutPrintString9x15(double x, double y, double screenWidth, int justification, const char* format, ...)
 {
 	char buffer[256];
 
@@ -349,7 +349,7 @@ void FxGlutPrintString9x15(double x, double y, double screenWidth, int justifica
 	FxGlutPrintBitmapStringJustified(x, y, screenWidth, justification, GLUT_BITMAP_9_BY_15, buffer);
 }
 
-void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void *font, const char *format, ...)
+void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...)
 {
 	char buffer[256];
 	int pixelWidthOfString;
@@ -363,7 +363,7 @@ void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, in
 #endif
 	va_end(va);
 
-	pixelWidthOfString = glutBitmapLength(font, (const unsigned char *)buffer);
+	pixelWidthOfString = glutBitmapLength(font, (const unsigned char*)buffer);
 
 	if (justification == LEFT) {
 		// left justified
@@ -380,7 +380,7 @@ void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, in
 	FxGlutBitmapString(font, buffer);
 }
 
-void FxGlutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void *font, const char *format, ...)
+void FxGlutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...)
 {
 	char buffer[2048];
 	int pixelWidthOfString;
@@ -394,7 +394,7 @@ void FxGlutPrintStrokeStringJustified(double x, double y, double screenWidth, in
 #endif
 	va_end(va);
 
-	pixelWidthOfString = glutStrokeLength(font, (const unsigned char *)buffer);
+	pixelWidthOfString = glutStrokeLength(font, (const unsigned char*)buffer);
 
 	if (justification == LEFT) {
 		// left justified
@@ -452,7 +452,7 @@ void FxDrawGL1ThreeAxis(float length)
 	glColorPointer(3, GL_FLOAT, 0, 0);
 }
 
-void FxDrawGL1Camera(double fov, float r, float g, float b, float zfar, const float *inverseCameraMatrix, const float *projectionMatrix)
+void FxDrawGL1Camera(double fov, float r, float g, float b, float zfar, const float* inverseCameraMatrix, const float* projectionMatrix)
 {
 	glPushMatrix(); // for camera viz
 	glMultMatrixf(inverseCameraMatrix);
@@ -521,7 +521,7 @@ void FxDrawGL1SixAxis(float length)
 	glColorPointer(3, GL_FLOAT, 0, 0);
 }
 
-void FxDrawGL1WireFrustumd(const double *m)
+void FxDrawGL1WireFrustumd(const double* m)
 {
 	float f32m[16];
 	for (int i = 0; i < 16; i++) {
@@ -562,7 +562,7 @@ struct Vector
 		return out;
 	}
 
-	Vector cross3(const Vector &V) const
+	Vector cross3(const Vector& V) const
 	{
 		Vector out;
 		out.x = y * V.z - z * V.y;
@@ -572,7 +572,7 @@ struct Vector
 		return out;
 	}
 
-	float dot3(const Vector &V) const
+	float dot3(const Vector& V) const
 	{
 		return x * V.x + y * V.y + z * V.z;
 	}
@@ -646,7 +646,7 @@ Vector ThreePlaneIntersection(Plane A, Plane B, Plane C)
 	return out;
 }
 
-void FxDrawGL1WireFrustumf(const float *m, float scale)
+void FxDrawGL1WireFrustumf(const float* m, float scale)
 {
 	Matrix M;
 	memcpy(&M, m, sizeof(float) * 16);
@@ -1028,8 +1028,8 @@ void FxDrawGL2UnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLin
 
 	glBindBuffer(GL_ARRAY_BUFFER, abo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-	glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)0);
-	glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)12);
+	glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
+	glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
 	if (vloc >= 0)
 		glEnableVertexAttribArray(vloc);
 	if (tloc >= 0)
@@ -1217,8 +1217,8 @@ void FxDrawGL2CubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint v
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
 	//glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)0);
 	//glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void *)12);
-	const unsigned char *vptr = (unsigned char *)buffer;
-	const unsigned char *tptr = vptr + 12;
+	const unsigned char* vptr = (unsigned char*)buffer;
+	const unsigned char* tptr = vptr + 12;
 	glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, vptr);
 	glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, tptr);
 	if (vloc >= 0)
@@ -1247,32 +1247,47 @@ void FxDrawGL1WireSphere(float radius, unsigned slices, unsigned stacks)
 
 void FxDrawGL1WireCone(float base, float height, unsigned slices, unsigned stacks)
 {
-
+#ifdef FLUXIONS_USE_FREEGLUT
+	glutWireCone(base, height, slices, stacks);
+#endif
 }
 
 void FxDrawGL1WireCube(float size)
 {
-
+#ifdef FLUXIONS_USE_FREEGLUT
+	glutWireCube(size);
+#endif
 }
 
 void FxDrawGL1SolidCube(float size)
 {
+#ifdef FLUXIONS_USE_FREEGLUT
+	glutSolidCube(size);
+#endif
 
 }
 
 void FxDrawGL1SolidSphere(float radius, unsigned slices, unsigned stacks)
 {
+#ifdef FLUXIONS_USE_FREEGLUT
+	glutSolidSphere(radius, slices, stacks);
+#endif
 
 }
 
 void FxDrawGL1SolidCone(float base, float height, unsigned slices, unsigned stacks)
 {
+#ifdef FLUXIONS_USE_FREEGLUT
+	glutSolidCone(base, height, slices, stacks);
+#endif
 
 }
 
 void FxDrawGL1SolidTeapot(float size)
 {
-
+#ifdef FLUXIONS_USE_FREEGLUT
+	glutSolidTeapot(size);
+#endif
 }
 
 void FxDrawGL1Superquadric(float radius, unsigned slices, unsigned stacks, float n, float e)
