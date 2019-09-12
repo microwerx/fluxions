@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)..\damselfish\include;$(ProjectDir)..\hatchetfish\include;$(ProjectDir)..\libs\include;$(ProjectDir)include;$(ProjectDir)dep\include;C:\Program Files\Python36\include;C:\Program Files\Python37\include;$(WindowsSDK_IncludePath);$(VC_IncludePath);$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)../fluxions-gte/include;$(ProjectDir)../fluxions-deps/include</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)..\damselfish\include;$(ProjectDir)..\hatchetfish\include;$(ProjectDir)..\libs\include;$(ProjectDir)dep\include;C:\Program Files\Python36\include;C:\Program Files\Python37\include;$(WindowsSDK_IncludePath);$(VC_IncludePath);$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)../fluxions-gte/include;$(ProjectDir)../fluxions-deps/include</IncludePath>
     <LibraryPath>$(ProjectDir)..\libs\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)..\damselfish\include;$(ProjectDir)..\hatchetfish\include;$(ProjectDir)..\libs\include;$(ProjectDir)include;$(ProjectDir)dep\include;C:\Program Files\Python36\include;C:\Program Files\Python37\include;$(ProjectDir)include;$(ProjectDir)..\libs\include;C:\Program Files\Python37\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)../fluxions-gte/include;$(ProjectDir)../fluxions-deps/include</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)..\damselfish\include;$(ProjectDir)..\hatchetfish\include;$(ProjectDir)..\libs\include;$(ProjectDir)dep\include;C:\Program Files\Python36\include;C:\Program Files\Python37\include;$(ProjectDir)include;$(ProjectDir)..\libs\include;C:\Program Files\Python37\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)../fluxions-gte/include;$(ProjectDir)../fluxions-deps/include</IncludePath>
     <LibraryPath>$(ProjectDir)..\libs\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -156,6 +156,10 @@
     <ClCompile Include="src\fluxions_fileio.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_fileio_iostream.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
@@ -278,6 +282,7 @@
     <ClInclude Include="include\fluxions_es2_renderer.hpp" />
     <ClInclude Include="include\fluxions_es2_state_info.hpp" />
     <ClInclude Include="include\fluxions_fileio.hpp" />
+    <ClInclude Include="include\fluxions_fileio_iostream.hpp" />
     <ClInclude Include="include\fluxions_multiple_render_target.hpp" />
     <ClInclude Include="include\fluxions_opengl.hpp" />
     <ClInclude Include="include\fluxions_pbsky.hpp" />

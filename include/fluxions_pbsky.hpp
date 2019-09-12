@@ -87,35 +87,31 @@ namespace Fluxions
 		void SetTime(time_t t, float fractSeconds = 0.0f);
 		void SetLocalDate(int day, int month, int year, bool isdst, int timeOffset);
 		void SetLocalTime(int hh, int mm, int ss, float ss_frac);
-		void SetTurbidity(float T) { turbidity = T; }
-		float GetTurbidity() const { return turbidity; }
-		void SetSunPosition(double azimuth, double altitude)
-		{
-			sunPosition.A = azimuth;
-			sunPosition.a = altitude;
-		}
+		void SetTurbidity(float T) noexcept;
+		float GetTurbidity() const noexcept;
+		void SetSunPosition(double azimuth, double altitude) noexcept;
 		void SetSunPosition(double sunLong);
-		float GetAverageRadiance() const { return pbsky.totalValue / pbsky.nSamples; }
-		float GetSunAzimuth() const { return static_cast<float>(sunPosition.A); }
-		float GetSunAltitude() const { return static_cast<float>(sunPosition.a); }
-		const Vector3f& GetSunVector() const { return sunVector; }
-		void SetGroundAlbedo(float r, float g, float b);
-		const Color4f& GetGroundAlbedo() const { return groundAlbedo; }
-		void SetNumSamples(int samples) { nSamples = clamp(samples, 1, 16); }
-		int GetNumSamples() const { return nSamples; }
-		void ComputeSunFromLocale();
-		void ComputeCubeMap(int resolution, bool normalize = false, float sampleScale = 8.0f, bool flipY = false);
+		float GetAverageRadiance() const noexcept { return pbsky.totalValue / pbsky.nSamples; }
+		float GetSunAzimuth() const noexcept { return static_cast<float>(sunPosition.A); }
+		float GetSunAltitude() const noexcept { return static_cast<float>(sunPosition.a); }
+		const Vector3f& GetSunVector() const noexcept { return sunVector; }
+		void SetGroundAlbedo(float r, float g, float b) noexcept { groundAlbedo.reset(r, g, b); };
+		const Color4f& GetGroundAlbedo() const noexcept { return groundAlbedo; }
+		void SetNumSamples(int samples) noexcept { nSamples = clamp(samples, 1, 16); }
+		int GetNumSamples() const noexcept { return nSamples; }
+		void ComputeSunFromLocale() noexcept;
+		void ComputeCubeMap(int resolution, bool normalize = false, float sampleScale = 8.0f, bool flipY = false) noexcept;
 		// not implemented
-		void ComputeCylinderMap(int width, int height, bool normalize = false, float sampleScale = 8.0f);
+		void ComputeCylinderMap(int width, int height, bool normalize = false, float sampleScale = 8.0f) noexcept;
 		// not implemented
-		//void ComputeSphereMap(int width, int height, bool normalize = false, float sampleScale = 8.0f);
+		//void ComputeSphereMap(int width, int height, bool normalize = false, float sampleScale = 8.0f) noexcept;
 
-		void ComputeSunGroundRadiances();
-		Color4f GetSunDiskRadiance() const { return sunDiskRadiance; }
-		Color4f GetGroundRadiance() const { return groundRadiance; }
+		void ComputeSunGroundRadiances() noexcept;
+		Color4f GetSunDiskRadiance() const noexcept { return sunDiskRadiance; }
+		Color4f GetGroundRadiance() const noexcept { return groundRadiance; }
 
-		float getMinRgbValue() const { return minRgbValue; }
-		float getMaxRgbValue() const { return maxRgbValue; }
+		float getMinRgbValue() const noexcept { return minRgbValue; }
+		float getMaxRgbValue() const noexcept { return maxRgbValue; }
 
 		Image4f generatedCubeMap;
 		// unused
@@ -123,14 +119,14 @@ namespace Fluxions
 		// unused
 		Image4f generatedCylMap;
 
-		int getDay() { return astroCalc.GetDateTime().day; }
-		int getMonth() { return astroCalc.GetDateTime().month; }
-		int getYear() { return astroCalc.GetDateTime().year; }
-		int getHour() { return astroCalc.GetDateTime().hh; }
-		int getMin() { return astroCalc.GetDateTime().mm; }
-		int getSec() { return astroCalc.GetDateTime().ss; }
-		double getSecFract() { return astroCalc.GetDateTime().ss_frac; }
-		double getLST() { return astroCalc.getLST(); }
+		int getDay() const noexcept { return astroCalc.GetDateTime().day; }
+		int getMonth() const noexcept { return astroCalc.GetDateTime().month; }
+		int getYear() const noexcept { return astroCalc.GetDateTime().year; }
+		int getHour() const noexcept { return astroCalc.GetDateTime().hh; }
+		int getMin() const noexcept { return astroCalc.GetDateTime().mm; }
+		int getSec() const noexcept { return astroCalc.GetDateTime().ss; }
+		double getSecFract() const noexcept { return astroCalc.GetDateTime().ss_frac; }
+		double getLST() const noexcept { return astroCalc.getLST(); }
 
 	private:
 		Astronomy::AstroCalc astroCalc;
@@ -145,7 +141,7 @@ namespace Fluxions
 		float maxRgbValue;
 		HosekWilkiePBSky pbsky;
 
-		void prepareForCompute(bool resetStats = true);
+		void prepareForCompute(bool resetStats = true) noexcept;
 	};
 } // namespace Fluxions
 

@@ -18,7 +18,7 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
 
-#include <iostream>
+#include <hatchetfish.hpp>
 #include <fluxions_pbsky.hpp>
 
 //#include <ArHosekSkyModel.h>
@@ -143,7 +143,7 @@ namespace Fluxions
 			//}
 		}
 		catch (...) {
-			Hf::Log.error("%s(): unknown error freeing memory.", __FUNCTION__);
+			HFLOGERROR("unknown error freeing memory.");
 		}
 	}
 
@@ -655,31 +655,35 @@ namespace Fluxions
 			break;
 		}
 
-		if ((rand() % 400) != 1)
-			return Vector3f(x, y, z);
-
-		// Test this by going the other way...
-		float scheck, tcheck;
-		int whichFace;
-		makeST(x, y, z, &scheck, &tcheck, &whichFace);
-
-		// check if face maps out. =^)
-		whichFace = classifyCubeFaceFromVector(x, y, z);
-
-		std::cout << std::setprecision(2) << std::left;
-		std::cout << "S: " << std::setw(5) << s << " T: " << std::setw(5) << t << " ";
-		std::cout << "S: " << std::setw(5) << scheck << " T: " << std::setw(5) << tcheck << " ";
-		std::cout << "Face: " << face << " ";
-		if (whichFace >= 0)
-			std::cout << "<--> " << whichFace << " ";
-		else
-			std::cout << "<--> X ";
-		std::cout << std::showpos << std::left << std::showpoint;
-		std::cout << "(" << std::setw(7) << x << ", " << std::setw(7) << y << ", " << z << ") ";
-		std::cout << std::noshowpos;
-		std::cout << std::endl;
-
 		return Vector3f(x, y, z);
+		
+		// TODO: Move this to a separate test
+
+		//if ((rand() % 400) != 1)
+		//	return Vector3f(x, y, z);
+
+		//// Test this by going the other way...
+		//float scheck, tcheck;
+		//int whichFace;
+		//makeST(x, y, z, &scheck, &tcheck, &whichFace);
+
+		//// check if face maps out. =^)
+		//whichFace = classifyCubeFaceFromVector(x, y, z);
+
+		//std::cout << std::setprecision(2) << std::left;
+		//std::cout << "S: " << std::setw(5) << s << " T: " << std::setw(5) << t << " ";
+		//std::cout << "S: " << std::setw(5) << scheck << " T: " << std::setw(5) << tcheck << " ";
+		//std::cout << "Face: " << face << " ";
+		//if (whichFace >= 0)
+		//	std::cout << "<--> " << whichFace << " ";
+		//else
+		//	std::cout << "<--> X ";
+		//std::cout << std::showpos << std::left << std::showpoint;
+		//std::cout << "(" << std::setw(7) << x << ", " << std::setw(7) << y << ", " << z << ") ";
+		//std::cout << std::noshowpos;
+		//std::cout << std::endl;
+
+		//return Vector3f(x, y, z);
 	}
 
 	/////////////////////////////////////////////////////////////////////
