@@ -17,7 +17,9 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
+#include <iostream>
 #include <fluxions_fileio.hpp>
+#include <fluxions_types.hpp>
 
 #ifdef __APPLE__
 #define __unix__ 1
@@ -465,6 +467,9 @@ std::string FindPathIfExists(const std::string &path, const std::vector<std::str
 
 std::string NormalizePathName(const std::string &basepath, const std::string &path)
 {
+	static std::string BlankString;
+	BlankString = "";
+
     FilePathInfo p1(basepath + "/" + path);
     FilePathInfo p2(path);
 

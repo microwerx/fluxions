@@ -76,9 +76,6 @@
     <ClCompile Include="src\fluxions_sphl_sampler.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_ssphh.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -151,9 +148,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_sphl_sampler.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssphh.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_stdcxx.hpp">

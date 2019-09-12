@@ -55,11 +55,12 @@ struct FilePathInfo
     std::string ext;
     /// <summary>The full path name for the filename.</summary>
     std::string path;
-    bool relativePath;
+    
+	bool relativePath = false;
 
     PathType pathType = PathType::DoesNotExist;
-    TimeValue atime;
-    TimeValue ctime;
+    TimeValue atime = 0;
+    TimeValue ctime = 0;
 
     FilePathInfo();
     FilePathInfo(const std::string &filename);

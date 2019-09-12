@@ -53,12 +53,12 @@ class SimpleUniform
     SimpleUniform(GLenum newType, GLint newCount, GLboolean newTranspose, const GLfloat *newData) { ChangeType(newType, newCount, newTranspose, reinterpret_cast<const GLubyte *>(newData)); }
 
     GLint location = -1;
-    GLenum type;
-    GLenum baseType;
-    GLsizei count;
-    GLsizei sizeOfType;
-    GLsizei sizeInBytes;
-    GLboolean transpose;
+    GLenum type = 0;
+    GLenum baseType = 0;
+    GLsizei count = 0;
+    GLsizei sizeOfType = 0;
+    GLsizei sizeInBytes = 0;
+    GLboolean transpose = 0;
     GLint components = 1;
 
     std::vector<GLubyte> buffer;
@@ -107,11 +107,13 @@ class SimpleUniform
         Uniform2fv(v.const_ptr());
         return *this;
     }
+
     inline SimpleUniform &operator=(const TVector3<GLfloat> &v)
     {
         Uniform3fv(v.const_ptr());
         return *this;
     }
+
     inline SimpleUniform &operator=(const TVector4<GLfloat> &v)
     {
         Uniform4fv(v.const_ptr());
@@ -127,11 +129,13 @@ class SimpleUniform
         Uniform2iv(v.const_ptr());
         return *this;
     }
+
     inline SimpleUniform &operator=(const TVector3<GLint> &v)
     {
         Uniform3iv(v.const_ptr());
         return *this;
     }
+
     inline SimpleUniform &operator=(const TVector4<GLint> &v)
     {
         Uniform4iv(v.const_ptr());
@@ -143,11 +147,13 @@ class SimpleUniform
         Uniform2uiv(v.const_ptr());
         return *this;
     }
+
     inline SimpleUniform &operator=(const TVector3<GLuint> &v)
     {
         Uniform3uiv(v.const_ptr());
         return *this;
     }
+
     inline SimpleUniform &operator=(const TVector4<GLuint> &v)
     {
         Uniform4uiv(v.const_ptr());
@@ -186,11 +192,13 @@ class SimpleUniform
         TVector2<float> u = (TVector2<float>)v;
         Uniform2fv(&u.x);
     }
+
     SimpleUniform(const TVector3<double> &v)
     {
         TVector3<float> u = (TVector3<float>)v;
         Uniform2fv(&u.x);
     }
+
     SimpleUniform(const TVector4<double> &v)
     {
         TVector4<float> u = (TVector4<float>)v;
@@ -611,11 +619,11 @@ struct SimpleZVertex
 // 32 bytes/vertex
 struct SimpleFastVertex
 {
-    GLshort position[4];
-    GLshort normal[4];
-    GLshort texCoord[2];
-    GLubyte color[4];
-    GLshort attrib[4];
+	GLshort position[4] = { 0, 0, 0, 0 };
+	GLshort normal[4] = { 0, 0, 0, 0 };
+	GLshort texCoord[2] = { 0, 0 };
+	GLubyte color[4] = { 0, 0, 0, 0 };
+	GLshort attrib[4] = { 0, 0, 0, 0 };
 };
 
 // new type 48 bytes/vertex
@@ -630,7 +638,7 @@ struct SimpleVertex
 // 128 bytes/vertex
 struct SimpleSlowVertex
 {
-    GLfloat attrib[8][4];
+	GLfloat attrib[8][4] = { 0.0f };
 };
 
 /// <summary>SimpleSurface is a class representing a drawable object</summary>
@@ -703,21 +711,22 @@ class SimpleRenderer
 
     struct BUFFERINFO
     {
-        GLsizei zVertexOffset;
-        GLsizei zVertexSize;
-        GLsizei fastVertexOffset;
-        GLsizei fastVertexSize;
-        GLsizei slowVertexOffset;
-        GLsizei slowVertexSize;
+        GLsizei zVertexOffset = 0;
+        GLsizei zVertexSize = 0;
+        GLsizei fastVertexOffset = 0;
+        GLsizei fastVertexSize = 0;
+        GLsizei slowVertexOffset = 0;
+        GLsizei slowVertexSize = 0;
 
-        GLsizei zIndexOffset;
-        GLsizei zIndexSize;
-        GLsizei IndexOffset;
-        GLsizei IndexSize;
+        GLsizei zIndexOffset = 0;
+        GLsizei zIndexSize = 0;
+        GLsizei IndexOffset = 0;
+        GLsizei IndexSize = 0;
 
-        GLsizei vertexBufferSizeInBytes;
-        GLsizei indexBufferSizeInBytes;
+        GLsizei vertexBufferSizeInBytes = 0;
+        GLsizei indexBufferSizeInBytes = 0;
     };
+
     BUFFERINFO bufferInfo;
 
     SimpleFastVertex currentFastVertex;
