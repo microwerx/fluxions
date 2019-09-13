@@ -20,6 +20,7 @@
 
 #include <hatchetfish.hpp>
 #include <fluxions_pbsky.hpp>
+#include <ArHosekSkyModel.h>
 
 //#include <ArHosekSkyModel.h>
 //#include <fluxions_astronomy.hpp>
@@ -63,6 +64,51 @@ namespace Fluxions
 			return x;
 		return 0.0;
 	}
+
+	class HosekWilkiePBSky
+	{
+	public:
+		using Real = float;
+		ArHosekSkyModelState* rgbRadianceState[3];
+		ArHosekSkyModelState* sunRadianceState; // 320nm to 720nm in steps of 40nm for wavelength
+
+		volatile Real minValue;
+		volatile Real maxValue;
+		volatile Real totalValue;
+		volatile int nSamples;
+
+		Real sunAltitude;
+		Real sunInclination;
+		Real sunAzimuth;
+		Real sun[3];
+		Real sunTheta;
+		Real sunGamma;
+		Real sunTurbidity = 1.0f;
+		Real sunElevation = 0.0f;
+		Color4f albedo;
+
+		HosekWilkiePBSky();
+		HosekWilkiePBSky(Real turbidity, Color4f albedo, Real elevation, Real azimuth);
+		~HosekWilkiePBSky();
+		void Init(Real turbidity, Color4f albedo, Real elevation, Real azimuth);
+		void Delete();
+		void resetStatisticSamples();
+		void addStatisticSample(Real amount);
+		void ComputeThetaGamma(Real inclination, Real azimuth, Real* outTheta, Real* outGamma) const;
+		void ComputeThetaGamma(Real x, Real y, Real z, Real* outTheta, Real* outGamma) const;
+		Real Compute(Real theta, Real gamma, int index);
+		void ComputeSunRadiance(Real theta, Real gamma, Color4f& output) const;
+		Real ComputeSunRadiance2(Real theta, Real gamma, int index);
+		// 11 band Solar Radiance
+		void ComputeSunRadiance3(Real theta, Real gamma, Color4f& output);
+		// 3 band RGB Radiance
+		void ComputeSunRadiance4(Real theta, Real gamma, Color4f& output);
+		void ComputeSunRadiance4_NoStatistics(Real theta, Real gamma, Color4f& output) const;
+
+		Color4f GetSunDiskRadiance() const;
+		Color4f GetGroundRadiance() const;
+	};
+
 
 	HosekWilkiePBSky::HosekWilkiePBSky() {
 		for (int i = 0; i < 3; i++)
@@ -690,7 +736,9 @@ namespace Fluxions
 	// P H Y S I C A L L Y   B A S E D   S K Y //////////////////////////
 	/////////////////////////////////////////////////////////////////////
 
-	PhysicallyBasedSky::PhysicallyBasedSky() {}
+	PhysicallyBasedSky::PhysicallyBasedSky() {
+		hwpbsky = std::make_unique<HosekWilkiePBSky>();
+	}
 
 	PhysicallyBasedSky::~PhysicallyBasedSky() {}
 
@@ -743,6 +791,10 @@ namespace Fluxions
 		sunVector = Vector3f(static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z));
 	}
 
+	float PhysicallyBasedSky::GetAverageRadiance() const noexcept {
+		return hwpbsky->totalValue / hwpbsky->nSamples;
+	}
+
 	void PhysicallyBasedSky::ComputeSunFromLocale() noexcept {
 		double sunLong = wrap(astroCalc.getSun().lambda, 360.0);
 		SetSunPosition(sunLong);
@@ -779,18 +831,18 @@ namespace Fluxions
 
 						float theta;
 						float gamma;
-						pbsky.ComputeThetaGamma(v.x, -v.z, v.y, &theta, &gamma);
+						hwpbsky->ComputeThetaGamma(v.x, -v.z, v.y, &theta, &gamma);
 
 						if (theta >= 0.0f) {
-							pbsky.ComputeSunRadiance4(theta, gamma, sampleColor);
+							hwpbsky->ComputeSunRadiance4(theta, gamma, sampleColor);
 
 							sampleColor.r = flterrzero(sampleColor.r * sampleScale);
 							sampleColor.g = flterrzero(sampleColor.g * sampleScale);
 							sampleColor.b = flterrzero(sampleColor.b * sampleScale);
 
-							//float r = pbsky.ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
-							//float g = pbsky.ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
-							//float b = pbsky.ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
+							//float r = hwpbsky->ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
+							//float g = hwpbsky->ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
+							//float b = hwpbsky->ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
 
 							//if (isfinite(r) && isfinite(g) && isfinite(b))
 							//{
@@ -831,22 +883,22 @@ namespace Fluxions
 		}
 
 		if (normalize) {
-			//float average = pbsky.totalValue / pbsky.nSamples;
-			float invScale = 1.0f / (sampleScale * pbsky.maxValue);
+			//float average = hwpbsky->totalValue / hwpbsky->nSamples;
+			float invScale = 1.0f / (sampleScale * hwpbsky->maxValue);
 			//generatedCubeMap.scaleColors(invScale);
-			invScale = 1.0f / pbsky.GetSunDiskRadiance().ToVector3().length();
+			invScale = 1.0f / hwpbsky->GetSunDiskRadiance().ToVector3().length();
 			generatedCubeMap.scaleColors(invScale);
 		}
 		else {
-			// float average = pbsky.totalValue / pbsky.nSamples;
-			// float invScale = 1.0f / (sampleScale * pbsky.maxValue);
+			// float average = hwpbsky->totalValue / hwpbsky->nSamples;
+			// float invScale = 1.0f / (sampleScale * hwpbsky->maxValue);
 			// generatedCubeMap.scaleColors(invScale);
-			// invScale = 1.0f / pbsky.GetSunDiskRadiance().ToVector3().length();
+			// invScale = 1.0f / hwpbsky->GetSunDiskRadiance().ToVector3().length();
 			// generatedCubeMap.scaleColors(2.5f * powf(2.0f, -6.0f));
 		}
 
-		minRgbValue = pbsky.minValue;
-		maxRgbValue = pbsky.maxValue;
+		minRgbValue = hwpbsky->minValue;
+		maxRgbValue = hwpbsky->maxValue;
 	}
 
 	void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normalize, float sampleScale) noexcept {
@@ -883,14 +935,14 @@ namespace Fluxions
 
 					float theta;
 					float gamma;
-					pbsky.ComputeThetaGamma(inclination, azimuth, &theta, &gamma);
+					hwpbsky->ComputeThetaGamma(inclination, azimuth, &theta, &gamma);
 
 					if (theta >= 0.0f) {
-						//sampleColor.r = pbsky.ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
-						//sampleColor.g = pbsky.ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
-						//sampleColor.b = pbsky.ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
+						//sampleColor.r = hwpbsky->ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
+						//sampleColor.g = hwpbsky->ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
+						//sampleColor.b = hwpbsky->ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
 
-						pbsky.ComputeSunRadiance4(theta, gamma, sampleColor);
+						hwpbsky->ComputeSunRadiance4(theta, gamma, sampleColor);
 
 						sampleColor.r = flterrzero(sampleColor.r * sampleScale);
 						sampleColor.g = flterrzero(sampleColor.g * sampleScale);
@@ -909,7 +961,7 @@ namespace Fluxions
 		}
 
 		if (normalize) {
-			float invScale = 1.0f / pbsky.maxValue;
+			float invScale = 1.0f / hwpbsky->maxValue;
 			for (i = 0; i < width; i++) {
 				for (j = 0; j < height; j++) {
 					Color4f color = generatedCylMap.getPixel(i, j);
@@ -918,8 +970,8 @@ namespace Fluxions
 			}
 		}
 
-		minRgbValue = pbsky.minValue;
-		maxRgbValue = pbsky.maxValue;
+		minRgbValue = hwpbsky->minValue;
+		maxRgbValue = hwpbsky->maxValue;
 	}
 
 	//void PhysicallyBasedSky::ComputeSphereMap(int width, int height, bool normalize, float sampleScale)
@@ -928,16 +980,16 @@ namespace Fluxions
 
 	void PhysicallyBasedSky::ComputeSunGroundRadiances() noexcept {
 		prepareForCompute(false);
-		sunDiskRadiance = pbsky.GetSunDiskRadiance();
-		groundRadiance = pbsky.GetGroundRadiance();
+		sunDiskRadiance = hwpbsky->GetSunDiskRadiance();
+		groundRadiance = hwpbsky->GetGroundRadiance();
 	}
 
 	void PhysicallyBasedSky::prepareForCompute(bool resetStats) noexcept {
 		minRgbValue = FLT_MAX;
 		maxRgbValue = -FLT_MAX;
-		pbsky.Init(turbidity, groundAlbedo, static_cast<float>(sunPosition.a), static_cast<float>(sunPosition.A));
+		hwpbsky->Init(turbidity, groundAlbedo, static_cast<float>(sunPosition.a), static_cast<float>(sunPosition.A));
 		if (resetStats)
-			pbsky.resetStatisticSamples();
+			hwpbsky->resetStatisticSamples();
 	}
 
 } // namespace Fluxions

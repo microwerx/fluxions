@@ -19,7 +19,7 @@
 #ifndef FLUXIONS_PBSKY_HPP
 #define FLUXIONS_PBSKY_HPP
 
-#include <ArHosekSkyModel.h>
+#include <memory>
 #include <fluxions_astronomy.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_image.hpp>
@@ -30,48 +30,7 @@ namespace Fluxions
 	// P H Y S I C A L L Y   B A S E D   S K Y //////////////////////////
 	/////////////////////////////////////////////////////////////////////
 
-	struct HosekWilkiePBSky
-	{
-		using Real = float;
-		ArHosekSkyModelState* rgbRadianceState[3];
-		ArHosekSkyModelState* sunRadianceState; // 320nm to 720nm in steps of 40nm for wavelength
-
-		volatile Real minValue;
-		volatile Real maxValue;
-		volatile Real totalValue;
-		volatile int nSamples;
-
-		Real sunAltitude;
-		Real sunInclination;
-		Real sunAzimuth;
-		Real sun[3];
-		Real sunTheta;
-		Real sunGamma;
-		Real sunTurbidity = 1.0f;
-		Real sunElevation = 0.0f;
-		Color4f albedo;
-
-		HosekWilkiePBSky();
-		HosekWilkiePBSky(Real turbidity, Color4f albedo, Real elevation, Real azimuth);
-		~HosekWilkiePBSky();
-		void Init(Real turbidity, Color4f albedo, Real elevation, Real azimuth);
-		void Delete();
-		void resetStatisticSamples();
-		void addStatisticSample(Real amount);
-		void ComputeThetaGamma(Real inclination, Real azimuth, Real* outTheta, Real* outGamma) const;
-		void ComputeThetaGamma(Real x, Real y, Real z, Real* outTheta, Real* outGamma) const;
-		Real Compute(Real theta, Real gamma, int index);
-		void ComputeSunRadiance(Real theta, Real gamma, Color4f& output) const;
-		Real ComputeSunRadiance2(Real theta, Real gamma, int index);
-		// 11 band Solar Radiance
-		void ComputeSunRadiance3(Real theta, Real gamma, Color4f& output);
-		// 3 band RGB Radiance
-		void ComputeSunRadiance4(Real theta, Real gamma, Color4f& output);
-		void ComputeSunRadiance4_NoStatistics(Real theta, Real gamma, Color4f& output) const;
-
-		Color4f GetSunDiskRadiance() const;
-		Color4f GetGroundRadiance() const;
-	};
+	class HosekWilkiePBSky;
 
 	class PhysicallyBasedSky
 	{
@@ -92,7 +51,7 @@ namespace Fluxions
 		float GetTurbidity() const noexcept;
 		void SetSunPosition(double azimuth, double altitude) noexcept;
 		void SetSunPosition(double sunLong);
-		float GetAverageRadiance() const noexcept { return pbsky.totalValue / pbsky.nSamples; }
+		float GetAverageRadiance() const noexcept;
 		float GetSunAzimuth() const noexcept { return static_cast<float>(sunPosition.A); }
 		float GetSunAltitude() const noexcept { return static_cast<float>(sunPosition.a); }
 		const Vector3f& GetSunVector() const noexcept { return sunVector; }
@@ -140,7 +99,7 @@ namespace Fluxions
 		int nSamples;
 		float minRgbValue;
 		float maxRgbValue;
-		HosekWilkiePBSky pbsky;
+		std::unique_ptr<HosekWilkiePBSky> hwpbsky;
 
 		void prepareForCompute(bool resetStats = true) noexcept;
 	};
