@@ -207,7 +207,7 @@ struct ColorBlendStateInfo
 							blendFuncSourceAlpha(GL_ONE),
 							blendFuncDestRGB(GL_ZERO),
 							blendFuncDestAlpha(GL_ZERO),
-							blendColor(0, 0, 0, 0)
+							blendColor(0.0f, 0.0f, 0.0f, 0.0f)
 	{
 	}
 

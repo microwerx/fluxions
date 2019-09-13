@@ -3,7 +3,7 @@
 #include <sstream>
 #include <hatchetfish.hpp>
 #include <fluxions_fileio.hpp>
-#include <fluxions_simple_static_mesh.hpp>
+#include <fluxions_obj_static_model.hpp>
 #include <fluxions_fileio_iostream.hpp>
 #include <iomanip>
 #include <fluxions_precompiled_models.hpp>
@@ -54,7 +54,7 @@ namespace Fluxions
 			int first = 0;
 			// int count = 0;
 			int firstVertex = 0;
-			const double size = 1.0;
+			double size = 1.0;
 
 			bool optimizeIndexing = false;
 
@@ -300,14 +300,14 @@ namespace Fluxions
 			fin.read(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex) * vertexCount);
 			fin.read(reinterpret_cast<char*>(&Indices[0]), sizeof(unsigned) * indexCount);
 
-			for (int i = 0; i < surfaceCount; i++) {
-				long mode = 0;
-				long first = 0;
-				long count = 0;
+			for (unsigned i = 0; i < surfaceCount; i++) {
+				unsigned mode = 0;
+				unsigned first = 0;
+				unsigned count = 0;
 				std::string mtlName;
 				std::string surfaceName;
-				long mtlNameSize = 0;
-				long surfaceNameSize = 0;
+				unsigned mtlNameSize = 0;
+				unsigned surfaceNameSize = 0;
 
 				fin.read(reinterpret_cast<char*>(&mode), sizeof(long));
 				fin.read(reinterpret_cast<char*>(&first), sizeof(long));
@@ -350,10 +350,10 @@ namespace Fluxions
 			fout.write(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex) * vertexCount);
 			fout.write(reinterpret_cast<char*>(&Indices[0]), sizeof(unsigned) * indexCount);
 
-			for (int i = 0; i < surfaceCount; i++) {
-				long mode = Surfaces[i].mode;
-				long first = Surfaces[i].first;
-				long count = Surfaces[i].count;
+			for (unsigned i = 0; i < surfaceCount; i++) {
+				unsigned mode = Surfaces[i].mode;
+				unsigned first = Surfaces[i].first;
+				unsigned count = Surfaces[i].count;
 				size_t mtlNameSize = Surfaces[i].materialName.size();
 				const char* mtlName = Surfaces[i].materialName.c_str();
 				size_t surfaceNameSize = Surfaces[i].surfaceName.size();
@@ -396,7 +396,7 @@ namespace Fluxions
 		for (auto it = Surfaces.begin(); it != Surfaces.end(); it++) {
 			fout << "usemtl " << it->materialName << std::endl;
 			int triangle = 2;
-			for (int i = 0; i < it->count; i++) {
+			for (unsigned i = 0; i < it->count; i++) {
 				if (++triangle == 3) {
 					fout << std::endl;
 					if (it->count - i >= 3)
@@ -659,7 +659,7 @@ namespace Fluxions
 			renderer.triangleCount += surfIt->count / 3;
 			renderer.SetCurrentMtlName(surfIt->materialName);
 			renderer.Begin(GL_TRIANGLES, true);
-			for (int i = surfIt->first; i < surfIt->first + surfIt->count; i++) {
+			for (unsigned i = surfIt->first; i < surfIt->first + surfIt->count; i++) {
 				renderer.Index(Indices[i]);
 			}
 			renderer.End();
@@ -672,7 +672,7 @@ namespace Fluxions
 		for (surfIt = Surfaces.begin(); surfIt != Surfaces.end(); surfIt++) {
 			//renderer.SetCurrentMtlName(surfIt->materialName);
 			glBegin(GL_TRIANGLES);
-			for (int i = surfIt->first; i < surfIt->first + surfIt->count; i++) {
+			for (unsigned i = surfIt->first; i < surfIt->first + surfIt->count; i++) {
 				int curIndex = Indices[i];
 				glTexCoord2f(Vertices[curIndex].texcoord.x, Vertices[curIndex].texcoord.y);
 				glNormal3f(Vertices[curIndex].normal.x, Vertices[curIndex].normal.y, Vertices[curIndex].normal.z);

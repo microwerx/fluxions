@@ -175,17 +175,6 @@ namespace Fluxions
 		}
 	};
 
-	struct SimpleUniformBuffer
-	{
-		std::string uniformBufferName;
-		GLuint blockBinding;
-
-		SimpleUniformBuffer(const std::string& name, GLuint blockBinding)
-			: uniformBufferName(name), blockBinding(blockBinding) {}
-
-		virtual GLint GetSize() const { return 0; }
-	};
-
 	SimpleSceneGraph::SimpleSceneGraph() {}
 
 	SimpleSceneGraph::~SimpleSceneGraph() {}

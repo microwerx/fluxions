@@ -26,27 +26,27 @@
 
 namespace Fluxions
 {
-class SphlSampler
-{
-  public:
-	SphlSampler();
+	class SphlSampler
+	{
+	public:
+		SphlSampler();
 
-	void resize(size_t samplesX, size_t samplesY);
-	void saveSampleMap(const std::string &path, int pxscale);
-	void sampleCubeMap(const Image4f &cubeMap, MultispectralSph4f &msph);
+		void resize(size_t samplesX, size_t samplesY);
+		void saveSampleMap(const std::string& path, int pxscale);
+		void sampleCubeMap(const Image4f& cubeMap, MultispectralSph4f& msph);
 
-  private:
-	const size_t pxscale = 4;
-	Image3i sampleMap;
-	size_t ix = 128;
-	size_t iy = 64;
-	size_t numSamples = 0;
-	std::vector<Vector3f> randomVectors;
-	std::vector<double> theta;
-	std::vector<double> phi;
-	std::vector<double> sph;
-	std::vector<size_t> debug_sides;
-};
+	private:
+		const size_t pxscale = 4;
+		Image3i sampleMap;
+		size_t ix = 128;
+		size_t iy = 64;
+		size_t numSamples = 0;
+		std::vector<Vector3f> randomVectors;
+		std::vector<double> theta;
+		std::vector<double> phi;
+		std::vector<double> sph;
+		std::vector<size_t> debug_sides;
+	};
 } // namespace Fluxions
 
 #endif

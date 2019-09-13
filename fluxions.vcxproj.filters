@@ -67,9 +67,6 @@
     <ClCompile Include="src\fluxions_simple_texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_uniform_buffer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_sphl.cpp">
       <Filter>src</Filter>
     </ClCompile>
