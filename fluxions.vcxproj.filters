@@ -61,9 +61,6 @@
     <ClCompile Include="src\fluxions_simple_scene_graph.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_ssphh_light.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_simple_texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
