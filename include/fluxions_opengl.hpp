@@ -59,6 +59,7 @@
 #endif
 
 #ifndef FLUXIONS_NO_SDL2
+#define HAVE_M_PI
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 

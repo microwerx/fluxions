@@ -179,7 +179,7 @@ namespace Fluxions
 		float sunShadowMapFarZ = 100.0f;
 		float sunShadowMapTime = 0.0;
 
-		PhysicallyBasedSky hwpbsky;
+		PhysicallyBasedSky pbsky;
 		Astronomy::PA::CivilDateTime pbsky_dtg;
 		bool pbskyGenCubeMap = true;
 		bool pbskyGenCylMap = false;
