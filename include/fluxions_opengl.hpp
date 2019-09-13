@@ -31,11 +31,12 @@
 
 #include <Windows.h>
 
-#pragma comment (lib, "glu32.lib")    // OpenGL Utility library
-#pragma comment (lib, "opengl32.lib") // Microsoft OpenGL library
-#pragma comment (lib, "gdi32.lib")    // Windows GDI library
-#pragma comment (lib, "winmm.lib")    // Windows MultiMedia library
-#pragma comment (lib, "user32.lib")   // Windows User library
+#pragma comment (lib, "glu32.lib")		// OpenGL Utility library
+#pragma comment (lib, "opengl32.lib")	// Microsoft OpenGL library
+#pragma comment (lib, "gdi32.lib")		// Windows GDI library
+#pragma comment (lib, "winmm.lib")		// Windows MultiMedia library
+#pragma comment (lib, "user32.lib")		// Windows User library
+#pragma comment (lib, "glew32s.lib")		// GL Extension Wrangler library
 #endif
 
 // GLEW must be included before gl.h
@@ -61,6 +62,7 @@
 
 #ifndef FLUXIONS_NO_SDL2
 #define HAVE_M_PI
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
