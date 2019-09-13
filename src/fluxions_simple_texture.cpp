@@ -17,12 +17,6 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#ifdef _WIN32
-#include <SDL2/SDL_image.h>
-#else
-#include <SDL2/SDL_image.h>
-#endif
-#include <fluxions_opengl.hpp>
 #include <fluxions_simple_texture.hpp>
 
 namespace Fluxions
@@ -30,20 +24,19 @@ namespace Fluxions
 	SamplerObject DefaultSamplerObject;
 	SimpleTexture DefaultTextureObject;
 
-	std::wstring StringToWString(const std::string &str)
-	{
+	std::wstring StringToWString(const std::string& str) {
 		std::wstring output;
 #ifdef _WIN32
 		size_t strSize = strlen(str.c_str()) + 1;
 		size_t convertedChars = 0;
-		wchar_t *wcstring = new wchar_t[strSize];
+		wchar_t* wcstring = new wchar_t[strSize];
 		mbstowcs_s(&convertedChars, wcstring, strSize, str.c_str(), _TRUNCATE);
 		output = wcstring;
 		delete[] wcstring;
 #else
 		size_t neededSize = mbstowcs(NULL, str.c_str(), 0) + 1;
 		if (neededSize > 0) {
-			wchar_t *wcstring = new wchar_t[neededSize];
+			wchar_t* wcstring = new wchar_t[neededSize];
 			mbstowcs(wcstring, str.c_str(), neededSize);
 			output = wcstring;
 			delete[] wcstring;
@@ -52,8 +45,7 @@ namespace Fluxions
 		return output;
 	}
 
-	SamplerObject::SamplerObject()
-	{
+	SamplerObject::SamplerObject() {
 		wrapS = GL_REPEAT;
 		wrapT = GL_REPEAT;
 		wrapR = GL_REPEAT;
@@ -66,64 +58,54 @@ namespace Fluxions
 		id = 0;
 	}
 
-	SamplerObject::~SamplerObject()
-	{
-	}
+	SamplerObject::~SamplerObject() {}
 
-	void SamplerObject::Create()
-	{
+	void SamplerObject::Create() {
 		if (id != 0) {
 			Delete();
 		}
 		glGenSamplers(1, &id);
 	}
 
-	void SamplerObject::Delete()
-	{
+	void SamplerObject::Delete() {
 		if (id != 0) {
 			glDeleteSamplers(1, &id);
 			id = 0;
 		}
 	}
 
-	void SamplerObject::Bind(GLuint unit)
-	{
+	void SamplerObject::Bind(GLuint unit) {
 		if (id == 0 || unit == 0 || (int)unit > g_MaxCombinedTextureUnits)
 			return;
 		FxBindSampler(unit, id);
 		lastBoundUnit = unit;
 	}
 
-	void SamplerObject::Unbind()
-	{
+	void SamplerObject::Unbind() {
 		if (lastBoundUnit > 0)
 			glBindSampler(lastBoundUnit, 0);
 		lastBoundUnit = 0;
 	}
 
-	void SamplerObject::SetWrapS(GLint param)
-	{
+	void SamplerObject::SetWrapS(GLint param) {
 		wrapS = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_S, param);
 	}
 
-	void SamplerObject::SetWrapT(GLint param)
-	{
+	void SamplerObject::SetWrapT(GLint param) {
 		wrapT = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_T, param);
 	}
 
-	void SamplerObject::SetWrapR(GLint param)
-	{
+	void SamplerObject::SetWrapR(GLint param) {
 		wrapR = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_R, param);
 	}
 
-	void SamplerObject::SetWrapST(GLint S, GLint T)
-	{
+	void SamplerObject::SetWrapST(GLint S, GLint T) {
 		wrapS = S;
 		wrapT = T;
 		if (id != 0)
@@ -132,8 +114,7 @@ namespace Fluxions
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_T, T);
 	}
 
-	void SamplerObject::SetWrapTR(GLint T, GLint R)
-	{
+	void SamplerObject::SetWrapTR(GLint T, GLint R) {
 		wrapT = T;
 		wrapR = R;
 		if (id != 0)
@@ -142,8 +123,7 @@ namespace Fluxions
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_R, R);
 	}
 
-	void SamplerObject::SetWrapSTR(GLint S, GLint T, GLint R)
-	{
+	void SamplerObject::SetWrapSTR(GLint S, GLint T, GLint R) {
 		wrapS = S;
 		wrapT = T;
 		wrapR = R;
@@ -155,56 +135,48 @@ namespace Fluxions
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_R, R);
 	}
 
-	void SamplerObject::SetMinFilter(GLint param)
-	{
+	void SamplerObject::SetMinFilter(GLint param) {
 		minFilter = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, minFilter);
 	}
 
-	void SamplerObject::SetMagFilter(GLint param)
-	{
+	void SamplerObject::SetMagFilter(GLint param) {
 		magFilter = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, param);
 	}
 
-	void SamplerObject::SetMinMagFilters(GLint newMinFilter, GLint newMagFilter)
-	{
+	void SamplerObject::SetMinMagFilters(GLint newMinFilter, GLint newMagFilter) {
 		SetMinFilter(newMinFilter);
 		SetMagFilter(newMagFilter);
 	}
 
-	void SamplerObject::SetCompareFunction(GLint func)
-	{
+	void SamplerObject::SetCompareFunction(GLint func) {
 		compareFunc = func;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, func);
 	}
 
-	void SamplerObject::SetCompareMode(GLint mode)
-	{
+	void SamplerObject::SetCompareMode(GLint mode) {
 		compareMode = mode;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, mode);
 	}
 
-	void SamplerObject::SetMinLOD(GLfloat lod)
-	{
+	void SamplerObject::SetMinLOD(GLfloat lod) {
 		minLOD = lod;
 		if (id != 0)
 			glSamplerParameterf(id, GL_TEXTURE_MIN_LOD, lod);
 	}
 
-	void SamplerObject::SetMaxLOD(GLfloat lod)
-	{
+	void SamplerObject::SetMaxLOD(GLfloat lod) {
 		maxLOD = lod;
 		if (id != 0)
 			glSamplerParameterf(id, GL_TEXTURE_MAX_LOD, lod);
 	}
 
-	void SamplerObject::ApplySettings(GLuint unit, GLuint texture, GLenum target)
-	{
+	void SamplerObject::ApplySettings(GLuint unit, GLuint texture, GLenum target) {
 		if (!FxBindTexture(unit, target, texture))
 			return;
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapS);
@@ -219,8 +191,7 @@ namespace Fluxions
 		FxBindTexture(0, target, 0);
 	}
 
-	void SamplerObject::Use(GLenum unit, GLuint texture, GLenum target)
-	{
+	void SamplerObject::Use(GLenum unit, GLuint texture, GLenum target) {
 		if (!FxBindTexture(unit, target, texture))
 			return;
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapS);
@@ -237,34 +208,29 @@ namespace Fluxions
 
 	// class Fluxions::Texture ///////////////////////////////////////
 
-	SimpleTexture::SimpleTexture(GLenum whichTarget)
-	{
+	SimpleTexture::SimpleTexture(GLenum whichTarget) {
 		id = 0;
 		target = whichTarget;
 	}
 
-	SimpleTexture::~SimpleTexture()
-	{
+	SimpleTexture::~SimpleTexture() {
 		Delete();
 	}
 
-	void SimpleTexture::Create()
-	{
+	void SimpleTexture::Create() {
 		if (id != 0)
 			Delete();
 		glGenTextures(1, &id);
 	}
 
-	void SimpleTexture::Delete()
-	{
+	void SimpleTexture::Delete() {
 		if (id != 0) {
 			glDeleteTextures(1, &id);
 		}
 		id = 0;
 	}
 
-	void SimpleTexture::Bind(GLuint unit, bool applySamplerObjectSettings)
-	{
+	void SimpleTexture::Bind(GLuint unit, bool applySamplerObjectSettings) {
 		if (id == 0 || !FxBindTexture(unit, target, id))
 			return;
 
@@ -279,8 +245,7 @@ namespace Fluxions
 		FxSetActiveTexture(GL_TEXTURE0);
 	}
 
-	void SimpleTexture::Unbind()
-	{
+	void SimpleTexture::Unbind() {
 		if (lastBoundUnit > 0) {
 			// GLuint sampler = didApplySamplerSettings ? samplerObject.GetId() : 0;
 			FxBindTextureAndSampler(lastBoundUnit, target, 0, 0);
@@ -290,8 +255,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleTexture::Enable(GLuint unit)
-	{
+	void SimpleTexture::Enable(GLuint unit) {
 		if (unit < GL_TEXTURE0)
 			unit += GL_TEXTURE0;
 		FxSetActiveTexture(unit);
@@ -299,8 +263,7 @@ namespace Fluxions
 		FxSetActiveTexture(GL_TEXTURE0);
 	}
 
-	void SimpleTexture::Disable(GLuint unit)
-	{
+	void SimpleTexture::Disable(GLuint unit) {
 		if (unit < GL_TEXTURE0)
 			unit += GL_TEXTURE0;
 		FxSetActiveTexture(unit);
@@ -308,8 +271,7 @@ namespace Fluxions
 		FxSetActiveTexture(GL_TEXTURE0);
 	}
 
-	void SimpleTexture::GenerateMipmaps()
-	{
+	void SimpleTexture::GenerateMipmaps() {
 		if (id == 0)
 			return;
 
@@ -330,16 +292,15 @@ namespace Fluxions
 		}
 	}
 
-	bool SimpleTexture::LoadTexture1D(const std::string &filename, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTexture1D(const std::string& filename, bool genMipMap) {
 		target = GL_TEXTURE_1D;
 
-		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		SDL_Surface* imageSurface = IMG_Load(filename.c_str());
 		if (imageSurface == nullptr)
 			return false;
 
 		int width = imageSurface->w;
-		void *data = imageSurface->pixels;
+		void* data = imageSurface->pixels;
 		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 		if (format == 0)
 			return false;
@@ -353,19 +314,18 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleTexture::LoadTexture2D(const std::string &filename, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTexture2D(const std::string& filename, bool genMipMap) {
 		target = GL_TEXTURE_2D;
 
-		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		SDL_Surface* imageSurface = IMG_Load(filename.c_str());
 		if (imageSurface == NULL) {
-			std::cout << "IMG_GetError() reports: " << IMG_GetError() << std::endl;
+			HFLOGERROR("IMG_GetError() reports: %s", IMG_GetError());
 			return false;
 		}
 
 		int width = imageSurface->w;
 		int height = imageSurface->h;
-		void *data = imageSurface->pixels;
+		void* data = imageSurface->pixels;
 		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 		//int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA8 : 0;
 		// int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_SRGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_SRGB_ALPHA : 0;
@@ -390,17 +350,16 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleTexture::LoadTexture1DArray(const std::string &filename, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTexture1DArray(const std::string& filename, bool genMipMap) {
 		target = GL_TEXTURE_1D_ARRAY;
 
-		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		SDL_Surface* imageSurface = IMG_Load(filename.c_str());
 		if (imageSurface == nullptr)
 			return false;
 
 		int width = imageSurface->w;
 		int height = imageSurface->h;
-		void *data = imageSurface->pixels;
+		void* data = imageSurface->pixels;
 		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 		if (format == 0)
 			return false;
@@ -413,23 +372,26 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleTexture::LoadTexture2DArray(const std::string &filename, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTexture2DArray(const std::string& filename, bool genMipMap) {
+		if (filename.empty()) {
+			return false;
+		}
+
 		target = GL_TEXTURE_2D_ARRAY;
 		Bind(0);
 
 		if (genMipMap != false) {
 			GenerateMipmaps();
 		}
+
 		FxBindDefaultTextureAndSampler(target);
 		return true;
 	}
 
-	bool SimpleTexture::LoadTexture2DArray(const std::vector<std::string> &filenames, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTexture2DArray(const std::vector<std::string>& filenames, bool genMipMap) {
 		target = GL_TEXTURE_2D_ARRAY;
 
-		unsigned char *data = nullptr;
+		unsigned char* data = nullptr;
 		int count = (int)filenames.size();
 		int width = 0;
 		int height = 0;
@@ -438,7 +400,7 @@ namespace Fluxions
 		bool badData = false;
 
 		for (int i = 0; i < count; i++) {
-			SDL_Surface *imageSurface = IMG_Load(filenames[i].c_str());
+			SDL_Surface* imageSurface = IMG_Load(filenames[i].c_str());
 			if (imageSurface == nullptr) {
 				badData = true;
 				continue;
@@ -482,17 +444,16 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleTexture::LoadTexture3D(const std::string &filename, int count, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTexture3D(const std::string& filename, int count, bool genMipMap) {
 		target = GL_TEXTURE_3D;
 
-		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		SDL_Surface* imageSurface = IMG_Load(filename.c_str());
 		if (imageSurface == nullptr)
 			return false;
 
 		int width = imageSurface->w;
 		int height = imageSurface->h / count;
-		void *data = imageSurface->pixels;
+		void* data = imageSurface->pixels;
 		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA : 0;
 		if (format == 0)
 			return false;
@@ -506,14 +467,13 @@ namespace Fluxions
 	}
 
 	bool Fluxions::SimpleTexture::LoadTextureCubeMap(
-		const std::string &filename_pos_x,
-		const std::string &filename_pos_y,
-		const std::string &filename_pos_z,
-		const std::string &filename_neg_x,
-		const std::string &filename_neg_y,
-		const std::string &filename_neg_z,
-		bool genMipMap)
-	{
+		const std::string& filename_pos_x,
+		const std::string& filename_pos_y,
+		const std::string& filename_pos_z,
+		const std::string& filename_neg_x,
+		const std::string& filename_neg_y,
+		const std::string& filename_neg_z,
+		bool genMipMap) {
 		std::vector<std::string> filenames;
 		filenames.push_back(filename_pos_x);
 		filenames.push_back(filename_pos_y);
@@ -524,16 +484,15 @@ namespace Fluxions
 		return LoadTextureCubeMap(filenames, genMipMap);
 	}
 
-	bool SimpleTexture::LoadTextureCubeMap(const std::vector<std::string> &filenames, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTextureCubeMap(const std::vector<std::string>& filenames, bool genMipMap) {
 		target = GL_TEXTURE_CUBE_MAP;
 
-		SDL_Surface *images[6] = { nullptr };
+		SDL_Surface* images[6] = { nullptr };
 		int width = 0;
 		int height = 0;
 		int format = 0;
 		int imageFormat;
-		void *data[6] = { nullptr };
+		void* data[6] = { nullptr };
 		bool badData = false;
 		for (int i = 0; i < 6; i++) {
 			images[i] = IMG_Load(filenames[i].c_str());
@@ -573,10 +532,9 @@ namespace Fluxions
 		return true;
 	}
 
-	void Rotate90Right(unsigned char *pixels, size_t bytesPerPixel, size_t size)
-	{
-		unsigned char *src = (unsigned char *)pixels;
-		unsigned char *dst = new unsigned char[bytesPerPixel * size * size];
+	void Rotate90Right(unsigned char* pixels, size_t bytesPerPixel, size_t size) {
+		unsigned char* src = (unsigned char*)pixels;
+		unsigned char* dst = new unsigned char[bytesPerPixel * size * size];
 
 		for (size_t x = 0; x < size; x++) {
 			for (size_t y = 0; y < size; y++) {
@@ -591,10 +549,9 @@ namespace Fluxions
 		delete[] dst;
 	}
 
-	void Rotate90Left(unsigned char *pixels, size_t bytesPerPixel, size_t size)
-	{
-		unsigned char *src = (unsigned char *)pixels;
-		unsigned char *dst = new unsigned char[bytesPerPixel * size * size];
+	void Rotate90Left(unsigned char* pixels, size_t bytesPerPixel, size_t size) {
+		unsigned char* src = (unsigned char*)pixels;
+		unsigned char* dst = new unsigned char[bytesPerPixel * size * size];
 
 		for (size_t x = 0; x < size; x++) {
 			for (size_t y = 0; y < size; y++) {
@@ -609,10 +566,9 @@ namespace Fluxions
 		delete[] dst;
 	}
 
-	void FlipX(unsigned char *pixels, size_t bytesPerPixel, size_t size)
-	{
-		unsigned char *src = (unsigned char *)pixels;
-		unsigned char *dst = new unsigned char[bytesPerPixel * size * size];
+	void FlipX(unsigned char* pixels, size_t bytesPerPixel, size_t size) {
+		unsigned char* src = (unsigned char*)pixels;
+		unsigned char* dst = new unsigned char[bytesPerPixel * size * size];
 
 		for (size_t x = 0; x < size; x++) {
 			for (size_t y = 0; y < size; y++) {
@@ -627,10 +583,9 @@ namespace Fluxions
 		delete[] dst;
 	}
 
-	void FlipY(unsigned char *pixels, size_t bytesPerPixel, size_t size)
-	{
-		unsigned char *src = (unsigned char *)pixels;
-		unsigned char *dst = new unsigned char[bytesPerPixel * size * size];
+	void FlipY(unsigned char* pixels, size_t bytesPerPixel, size_t size) {
+		unsigned char* src = (unsigned char*)pixels;
+		unsigned char* dst = new unsigned char[bytesPerPixel * size * size];
 
 		for (size_t x = 0; x < size; x++) {
 			for (size_t y = 0; y < size; y++) {
@@ -645,8 +600,7 @@ namespace Fluxions
 		delete[] dst;
 	}
 
-	bool SimpleTexture::LoadTextureCoronaCubeMap(const std::string &filename, bool genMipMap)
-	{
+	bool SimpleTexture::LoadTextureCoronaCubeMap(const std::string& filename, bool genMipMap) {
 		target = GL_TEXTURE_CUBE_MAP;
 
 		int width;
@@ -662,9 +616,9 @@ namespace Fluxions
 			1, // POSITIVE X
 			0, // NEGATIVE X
 		};
-		unsigned char *data[6];
+		unsigned char* data[6];
 		bool badData = false;
-		SDL_Surface *imageSurface = IMG_Load(filename.c_str());
+		SDL_Surface* imageSurface = IMG_Load(filename.c_str());
 
 		if (!imageSurface)
 			return false;
@@ -685,8 +639,8 @@ namespace Fluxions
 				width = height;
 				// demultiplex the data
 				data[k] = new unsigned char[bytesPerPixel * width * width];
-				unsigned char *dst_pixels = (unsigned char *)data[k];
-				unsigned char *src_pixels = (unsigned char *)imageSurface->pixels;
+				unsigned char* dst_pixels = (unsigned char*)data[k];
+				unsigned char* src_pixels = (unsigned char*)imageSurface->pixels;
 				size_t rowLength = width * bytesPerPixel;
 				size_t dst_offset = 0;
 				size_t src_offset = i * rowLength;
@@ -697,8 +651,8 @@ namespace Fluxions
 				}
 			}
 
-			Rotate90Right((unsigned char *)data[2], bytesPerPixel, width);
-			Rotate90Left((unsigned char *)data[3], bytesPerPixel, width);
+			Rotate90Right((unsigned char*)data[2], bytesPerPixel, width);
+			Rotate90Left((unsigned char*)data[3], bytesPerPixel, width);
 			//Rotate90Right((unsigned char *)data[3], bytesPerPixel, width);
 			//FlipY((unsigned char *)data[3], bytesPerPixel, width);
 
@@ -727,7 +681,7 @@ namespace Fluxions
 
 			Create();
 			Bind(0);
-			SetTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, (void **)data, genMipMap);
+			SetTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, (void**)data, genMipMap);
 			FxBindDefaultTextureAndSampler(target);
 			std::vector<unsigned char> _data;
 			_data.resize(width * height * bytesPerPixel * 6);
@@ -752,55 +706,49 @@ namespace Fluxions
 		return true;
 	}
 
-	void SimpleTexture::SetTexture1D(GLenum format, GLenum type, int width, void *data, bool genMipMap)
-	{
+	void SimpleTexture::SetTexture1D(GLenum format, GLenum type, int width, void* data, bool genMipMap) {
 		glTexImage1D(target, 0, format, width, 0, format, type, data);
 		if (genMipMap != false) {
 			GenerateMipmaps();
 		}
 	}
 
-	void SimpleTexture::SetTexture2D(GLenum format, GLenum type, int width, int height, void *data, bool genMipMap)
-	{
+	void SimpleTexture::SetTexture2D(GLenum format, GLenum type, int width, int height, void* data, bool genMipMap) {
 		glTexImage2D(target, 0, format, width, height, 0, format, type, data);
 		if (genMipMap != false) {
 			GenerateMipmaps();
 		}
 	}
 
-	void SimpleTexture::SetTexture3D(GLenum format, GLenum type, int width, int height, int depth, void *data, bool genMipMap)
-	{
+	void SimpleTexture::SetTexture3D(GLenum format, GLenum type, int width, int height, int depth, void* data, bool genMipMap) {
 		glTexImage3D(target, 0, format, width, height, depth, 0, format, type, data);
 		if (genMipMap != false) {
 			GenerateMipmaps();
 		}
 	}
 
-	void SimpleTexture::SetTexture1DArray(GLenum format, GLenum type, int width, int count, void *data, bool genMipMap)
-	{
+	void SimpleTexture::SetTexture1DArray(GLenum format, GLenum type, int width, int count, void* data, bool genMipMap) {
 		glTexImage2D(target, 0, 0, width, count, 0, format, type, data);
 		if (genMipMap != false) {
 			GenerateMipmaps();
 		}
 	}
 
-	void SimpleTexture::SetTexture2DArray(GLenum format, GLenum type, int width, int height, int count, void *data, bool genMipMap)
-	{
+	void SimpleTexture::SetTexture2DArray(GLenum format, GLenum type, int width, int height, int count, void* data, bool genMipMap) {
 		glTexImage3D(target, 0, format, width, height, count, 0, format, type, data);
 		if (genMipMap != false) {
 			GenerateMipmaps();
 		}
 	}
 
-	void SimpleTexture::SetTextureCubeMap(GLenum format, GLenum type, int width, int height, void **data, bool genMipMap)
-	{
+	void SimpleTexture::SetTextureCubeMap(GLenum format, GLenum type, int width, int height, void** data, bool genMipMap) {
 		if (data == nullptr) {
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, width, height, 0, format, type, (const void *)0);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, width, height, 0, format, type, (const void *)0);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, width, height, 0, format, type, (const void *)0);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, format, width, height, 0, format, type, (const void *)0);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, width, height, 0, format, type, (const void *)0);
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, width, height, 0, format, type, (const void *)0);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, width, height, 0, format, type, (const void*)0);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, width, height, 0, format, type, (const void*)0);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, width, height, 0, format, type, (const void*)0);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, format, width, height, 0, format, type, (const void*)0);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, width, height, 0, format, type, (const void*)0);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, width, height, 0, format, type, (const void*)0);
 		}
 		else {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, width, height, 0, format, type, data[0]);
@@ -815,8 +763,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleTexture::SetTextureCubeMap(GLenum format, GLenum type, int width, int height, void *posxData, void *posyData, void *poszData, void *negxData, void *negyData, void *negzData, bool genMipMap)
-	{
+	void SimpleTexture::SetTextureCubeMap(GLenum format, GLenum type, int width, int height, void* posxData, void* posyData, void* poszData, void* negxData, void* negyData, void* negzData, bool genMipMap) {
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, width, height, 0, format, type, posxData);
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, width, height, 0, format, type, posyData);
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, width, height, 0, format, type, poszData);

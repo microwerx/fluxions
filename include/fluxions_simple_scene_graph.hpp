@@ -28,6 +28,7 @@
 #include <fluxions_resource_manager.hpp>
 #include <fluxions_simple_materials.hpp>
 #include <fluxions_stdcxx.hpp>
+#include <fluxions_obj_static_model.hpp>
 
 namespace Fluxions
 {
