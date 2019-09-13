@@ -23,7 +23,7 @@
 #include <string>
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
-#include <fluxions_gte_math.hpp>
+#include <fluxions_gte_scalar_math.hpp>
 #include <fluxions_draw_gl1gl2.hpp>
 
 GLint g_MaxCombinedTextureUnits = 0;

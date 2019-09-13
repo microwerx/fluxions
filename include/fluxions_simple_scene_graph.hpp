@@ -442,152 +442,6 @@ namespace Fluxions
 		bool dirty = true;
 	};
 
-	class SimpleSSPHHLight
-	{
-	public:
-		bool enabled = true;
-		float E0 = 1.0f;
-		float falloffRadius = 100.0f;
-		Vector4f position = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-		Quaternionf orientation;
-		MultispectralSph4f msph;
-
-		//vector<SSPHHLightHierarchy> hierarchies;
-
-		std::vector<Image4f> vizgenLightProbes;
-		Sph4f self;
-		Sph4f neighbor;
-
-		std::string hier_description;
-
-		bool dirty = true;
-		bool randomize = false;
-		bool randomizePosition = false;
-		std::string name;
-		int index = -1;
-		int maxDegree = DefaultSphlDegree;
-
-		// This holds a cubemap representation of the path traced (ptrc) 3D light probe
-		Image4f ptrcLightProbeImage;
-		SimpleGpuTexture ptrcLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
-		float ptrcLightProbePercent = 0.0f;
-
-		// This holds a cube map representation of the msph for this SPHL
-		Image4f msphLightProbeImage;
-		SimpleGpuTexture msphLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
-
-		// This holds the finalized SELF + NEIGHBOR light probe
-		//SSPHHLightHierarchy hierSph;
-		Image4f hierLightProbeImage;
-		SimpleGpuTexture hierLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
-
-		SimpleCubeTexture depthSphlMap;
-		SimpleCubeTexture colorSphlMap;
-		SimpleCubeTexture environmentLightProbeMap;
-
-		SimpleSSPHHLight();
-		~SimpleSSPHHLight();
-
-		// Reads from a Path Traced Light Probe (a cube map stored images from left to right in a single image).
-		bool ReadPtrcLightProbe(const std::string& path);
-		// Saves to a Path Traced Light Probe (a cube map with cube faces stored from left to right in a single image).
-		bool SavePtrcLightProbe(const std::string& path);
-
-		// Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-		bool SaveJsonSph(const std::string& path);
-		// Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-		bool ReadJsonSph(const std::string& path);
-
-		// Writes name.obj and name.mtl to the path
-		bool SaveOBJ(const std::string& path, const std::string& name);
-
-		bool LightProbeToSph(const Image4f& lightProbe, MultispectralSph4f& sph);
-		bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe);
-		bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe, int maxDegree);
-		bool UploadLightProbe(Image4f& lightProbe, SimpleGpuTexture& texture);
-		bool UploadLightProbe(Image4f& lightProbe, GLuint& texture);
-
-		Color3f GetCoefficientColor(int l, int m) const;
-		float GetCoefficient(int j, int l, int m) const;
-		float GetCoefficient(int j, int lm) const;
-		void ZeroCoefficients();
-		void IsolateCoefficient(int j, int l, int m);
-		void SetCoefficient(int j, int l, int m, float value);
-		void RandomizeCoefficient(int j, int l, int m, float minValue, float maxValue);
-		inline void Standardize() { MakeIntensityChannel4f(msph); }
-		void Randomize(float size = 1.0f);
-
-		void ChangeDegrees(int degrees);
-		inline void IncDegrees() { ChangeDegrees(maxDegree + 1); }
-		inline void DecDegrees() { ChangeDegrees(maxDegree - 1); }
-
-		void ResizeHierarchies(int size);
-
-		void MakeDirty();
-
-		inline bool IsDirty() { return dirty; }
-		inline int GetMaxCoefficients() const { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
-		inline int GetMaxCoefficients(int degree) { return degree * (degree + 1) + degree + 1; }
-		inline void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
-		inline void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
-
-		// Hierarchies
-		void SortHierarchiesByPercent();
-		void SortHierarchiesByIndex();
-		void CopySphlToHierarchies();
-
-		void SetHierarchyDescriptionToIndex();
-		void SetHierarchyDescriptionToPercent();
-		void SetHierarchyDescription();
-	};
-
-	class SimpleSceneGraph;
-	class SimpleSSPHH
-	{
-	public:
-		SimpleSSPHH();
-		~SimpleSSPHH();
-
-		void INIT(SimpleSceneGraph& ssg);
-		void GEN();
-		void VIZ();
-		void HIER(bool includeSelf = true, bool includeNeighbor = true, int maxDegrees = -1);
-
-		bool saveJSONs = false;
-		bool savePPMs = false;
-		bool convToPNG = false;
-
-		float VIZmix = 1.0;
-
-	private:
-		/// A pair (int index, float p)
-		struct Qpair
-		{
-			int index = -1;
-			float p = 0.0f;
-		};
-
-		std::string sceneName;
-		std::vector<SimpleSSPHHLight>* sphls_ = nullptr;
-		size_t size_ = 0; // The number of SPHLs
-
-		// GEN creates this light probe
-		std::vector<Sph4f> S;
-		// VIZ generates these visibility spherical harmonics. Index i is S
-		std::vector<std::vector<Sph4f>> H;
-		// VIZ generates visibility probability for each H.
-		std::vector<std::vector<float>> P;
-		// HIER creates Q from index and P;
-		std::vector<Qpair> Q;
-		// HIER sorts Q
-		std::vector<Qpair> Qsorted;
-		// HIER generates this finalized light probe
-		std::vector<Sph4f> Sprime;
-
-		std::vector<Sph4f> self;
-		std::vector<Sph4f> neighbor;
-	};
-
 	struct SimplePointLight
 	{
 		std::string name;
@@ -645,15 +499,15 @@ namespace Fluxions
 		GLint sphere_count = -1;
 		GLint sphere_Ke = -1;
 
-		GLint sphl_light_count = -1;
-		GLint sphl_lights_enabled[16] = { -1 };
-		GLint sphl_lights_position[16] = { -1 };
-		GLint sphl_lights_E0[16] = { -1 };
-		GLint sphl_lights_lightProbeCubeMap[16] = { -1 };
-		GLint sphl_lights_environmentCubeMap[16] = { -1 };
-		GLint sphl_lights_depthShadowCubeMap[16] = { -1 };
-		GLint sphl_lights_depthShadowZFar[16] = { -1 };
-		GLint sphl_lights_sph[16][9] = { {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1} };
+		//GLint sphl_light_count = -1;
+		//GLint sphl_lights_enabled[16] = { -1 };
+		//GLint sphl_lights_position[16] = { -1 };
+		//GLint sphl_lights_E0[16] = { -1 };
+		//GLint sphl_lights_lightProbeCubeMap[16] = { -1 };
+		//GLint sphl_lights_environmentCubeMap[16] = { -1 };
+		//GLint sphl_lights_depthShadowCubeMap[16] = { -1 };
+		//GLint sphl_lights_depthShadowZFar[16] = { -1 };
+		//GLint sphl_lights_sph[16][9] = { {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1}, {-1} };
 
 		GLint toneMapScale = -1;
 		GLint toneMapExposure = -1;
@@ -680,6 +534,24 @@ namespace Fluxions
 		void GetMaterialProgramLocations(SimpleProgram& program);
 	};
 
+	class SimpleSceneGraph;
+
+	class ISimpleRendererPlugin
+	{
+	public:
+		ISimpleRendererPlugin(SimpleSceneGraph* pointerToSSG);
+
+		virtual bool Reset() = 0;
+		virtual bool Init() = 0;
+		virtual bool Redo() = 0;
+		virtual bool Read(const std::string& cmd, std::istringstream& istr) = 0;
+		virtual bool ReadUniformLocs(SimpleProgram& program) = 0;
+		virtual bool Prog() = 0;
+		virtual bool Draw() = 0;
+
+		SimpleSceneGraph* pssg;
+	};
+
 	class SimpleSceneGraph
 	{
 	public:
@@ -697,14 +569,14 @@ namespace Fluxions
 		TResourceManager<SimpleGeometryGroup> geometry;
 		// TODO: Change OBJStaticModel to SimpleGeometryMesh
 		TResourceManager<OBJStaticModel> geometryObjects;
-		std::vector<SimpleSSPHHLight> ssphhLights;
 		std::vector<SimplePointLight> pointLights;
 
 		SimpleMaterialSystem materials;
 		mutable SimpleRenderer_GLuint renderer;
 		__ShaderProgramLocations locs;
 		std::map<std::string, SimpleMap*> currentTextures;
-		SimpleSSPHH ssphh;
+
+		ISimpleRendererPlugin* userdata = nullptr;
 
 		//bool ReadMtlLibFile(const std::string &filename);
 		//bool ReadConfFile(const std::string &filename);
@@ -766,8 +638,8 @@ namespace Fluxions
 
 		void SetUniforms(SimpleProgramPtr& shader);
 
-		void InitSphls();
-		void MakeSphlsUnclean();
+		//void InitSphls();
+		//void MakeSphlsUnclean();
 	};
 
 	void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc);

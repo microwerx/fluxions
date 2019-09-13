@@ -24,7 +24,7 @@
 #include <assert.h>
 #include <memory.h>
 #include <cmath>
-#include <fluxions_gte_math.hpp>
+#include <fluxions_gte_scalar_math.hpp>
 #include <fluxions_astronomy.hpp>
 
 namespace Fluxions
