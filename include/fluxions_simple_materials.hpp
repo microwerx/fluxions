@@ -60,13 +60,13 @@ namespace Fluxions
 		Color3f ScatteringAlbedo;
 		float MeanCosine = 0;
 		std::vector<std::string> RefractMode;
-		bool HasRoundedCorners = false;
-		float RoundedCorners = 0;
-		bool IsPortal = false;
-		bool HasIesProfile = false;
-		std::string IesProfileFilename;
-		Matrix4f IesProfileMatrix;
-		bool IesProfileKeepSharp = false;
+		//bool HasRoundedCorners = false;
+		//float RoundedCorners = 0;
+		//bool IsPortal = false;
+		//bool HasIesProfile = false;
+		//std::string IesProfileFilename;
+		//Matrix4f IesProfileMatrix;
+		//bool IesProfileKeepSharp = false;
 		std::vector<std::string> Invisible;
 		std::string map_Ka;
 		std::string map_Kd;
@@ -104,7 +104,6 @@ namespace Fluxions
 	};
 
 	std::ostream& WriteMaterial(std::ostream& ostr, const SimpleMaterial& mtl);
-	std::istream& ReadMaterial(std::istream& istr, SimpleMaterial& mtl);
 	void SetMaterialDefaults(SimpleMaterial& mtl);
 
 	struct SimpleMaterialLibrary

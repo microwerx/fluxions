@@ -23,10 +23,8 @@
 namespace Fluxions
 {
 
-	const char *SimpleProgram::AttribUniformInfo::GetNameOfType()
-	{
-		switch (type)
-		{
+	const char* SimpleProgram::AttribUniformInfo::GetNameOfType() {
+		switch (type) {
 		case GL_INT:
 			return "GL_INT";
 		case GL_INT_VEC2:
@@ -139,35 +137,28 @@ namespace Fluxions
 		return "UNKNOWN";
 	}
 
-	SimpleProgram::SimpleProgram()
-	{
-	}
+	SimpleProgram::SimpleProgram() {}
 
-	SimpleProgram::~SimpleProgram()
-	{
+	SimpleProgram::~SimpleProgram() {
 		Delete();
 	}
 
-	void SimpleProgram::Create()
-	{
+	void SimpleProgram::Create() {
 		if (program)
 			return;
 		program = glCreateProgram();
 		Hf::Log.info("%s(): program %d created.", __FUNCTION__, program);
 	}
 
-	void SimpleProgram::Delete()
-	{
-		if (program)
-		{
+	void SimpleProgram::Delete() {
+		if (program) {
 			Hf::Log.info("%s(): program %d deleted.", __FUNCTION__, program);
 			glDeleteProgram(program);
 			program = 0;
 		}
 	}
 
-	GLint SimpleProgram::GetAttribLocation(const char *name)
-	{
+	GLint SimpleProgram::GetAttribLocation(const char* name) {
 		if (!linked)
 			return -1;
 		auto it = activeAttributes.find(name);
@@ -176,8 +167,7 @@ namespace Fluxions
 		return it->second.index;
 	}
 
-	GLint SimpleProgram::GetUniformLocation(const char *name)
-	{
+	GLint SimpleProgram::GetUniformLocation(const char* name) {
 		if (!linked)
 			return -1;
 		auto it = activeUniforms.find(name);
@@ -186,15 +176,13 @@ namespace Fluxions
 		return it->second.index;
 	}
 
-	GLint SimpleProgram::GetUniformBlockIndex(const char *name)
-	{
+	GLint SimpleProgram::GetUniformBlockIndex(const char* name) {
 		if (!linked)
 			return -1;
 		return glGetUniformBlockIndex(program, name);
 	}
 
-	void SimpleProgram::Use()
-	{
+	void SimpleProgram::Use() {
 		if (!linked)
 			Link();
 		if (!linked)
@@ -202,44 +190,36 @@ namespace Fluxions
 		glUseProgram(program);
 	}
 
-	bool SimpleProgram::ApplyUniform(const std::string &uniformName, SimpleUniform uniform)
-	{
+	bool SimpleProgram::ApplyUniform(const std::string& uniformName, SimpleUniform uniform) {
 		if (!linked)
 			return false;
 		GLint loc = GetUniformLocation(uniformName.c_str());
-		if (loc >= 0)
-		{
+		if (loc >= 0) {
 			//uniform.location = loc;
 			uniform.SetProgramUniform(loc);
 			return true;
 		}
-		else
-		{
+		else {
 			// Hf::Log.warning("%s(): Program %i tried to set invalid/unused uniform %s", __FUNCTION__, program, uniformName.c_str());
 			return false;
 		}
 	}
 
-	void SimpleProgram::ApplyUniforms(std::map<std::string, SimpleUniform> uniforms)
-	{
+	void SimpleProgram::ApplyUniforms(std::map<std::string, SimpleUniform> uniforms) {
 		if (!linked)
 			return;
-		for (auto it = uniforms.begin(); it != uniforms.end(); ++it)
-		{
+		for (auto it = uniforms.begin(); it != uniforms.end(); ++it) {
 			GLint loc = GetUniformLocation(it->first.c_str());
-			if (loc >= 0)
-			{
+			if (loc >= 0) {
 				it->second.SetProgramUniform(loc);
 			}
-			else
-			{
+			else {
 				Hf::Log.info("%s(): unable to set uniform %s (%d) for program %d.", __FUNCTION__, it->first.c_str(), loc, program);
 			}
 		}
 	}
 
-	void SimpleProgram::AttachShaders(std::shared_ptr<SimpleShader> &shaderPtr)
-	{
+	void SimpleProgram::AttachShaders(std::shared_ptr<SimpleShader>& shaderPtr) {
 		if (!shaderPtr)
 			return;
 		if (!shaderPtr->didCompile)
@@ -248,30 +228,25 @@ namespace Fluxions
 		linked = false;
 	}
 
-	void SimpleProgram::BindAttribLocation(GLuint index, const char *name)
-	{
+	void SimpleProgram::BindAttribLocation(GLuint index, const char* name) {
 		glBindAttribLocation(program, index, name);
 		linked = false;
 	}
 
 	void LogGLEWError() {
 		GLenum glerror = glGetError();
-		if (glerror != 0)
-		{
-			Hf::Log.errorfn(__FUNCTION__, "GL Error: %s", (const char *)glewGetErrorString(glerror));
+		if (glerror != 0) {
+			Hf::Log.errorfn(__FUNCTION__, "GL Error: %s", (const char*)glewGetErrorString(glerror));
 		}
 	}
 
-	bool SimpleProgram::Link()
-	{
-		if (program == 0 || !glIsProgram(program))
-		{
+	bool SimpleProgram::Link() {
+		if (program == 0 || !glIsProgram(program)) {
 			Hf::Log.errorfn(__FUNCTION__, "program %d does not exist", program);
 			return false;
 		}
 
-		for (auto &shaderIt : shaders)
-		{
+		for (auto& shaderIt : shaders) {
 			glAttachShader(program, shaderIt->shader);
 		}
 
@@ -291,8 +266,7 @@ namespace Fluxions
 		linked = (linkStatus_ == GL_TRUE);
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufSize);
 		infoLog.resize(bufSize);
-		if (bufSize > 0)
-		{
+		if (bufSize > 0) {
 			glGetProgramInfoLog(program, bufSize, NULL, &infoLog[0]);
 			Hf::Log.errorfn(__FUNCTION__, "Program link error:\n%s", infoLog.c_str());
 		}
@@ -303,16 +277,14 @@ namespace Fluxions
 		validated = (validateStatus_ == GL_TRUE);
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufSize);
 		validateLog.resize(bufSize);
-		if (bufSize > 0)
-		{
+		if (bufSize > 0) {
 			glGetProgramInfoLog(program, 0, NULL, &validateLog[0]);
 			Hf::Log.errorfn(__FUNCTION__, "Program validation error:\n%s", validateLog.c_str());
 		}
 
 		activeAttributes.clear();
 		activeUniforms.clear();
-		if (linked)
-		{
+		if (linked) {
 			// get list of active attributes/uniforms
 			char buffer[4096];
 			int length;
@@ -328,8 +300,7 @@ namespace Fluxions
 			glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribLength);
 			glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttribs);
 
-			for (int i = 0; i < numUniforms; i++)
-			{
+			for (int i = 0; i < numUniforms; i++) {
 				glGetActiveUniform(program, i, maxUniformLength, &length, &size, &type, buffer);
 				std::string name = buffer;
 				activeUniforms[name].index = glGetUniformLocation(program, buffer);
@@ -338,8 +309,7 @@ namespace Fluxions
 				Hf::Log.infofn(__FUNCTION__, "uniform (%02d) %20s %s", activeUniforms[name].index, activeUniforms[name].GetNameOfType(), name.c_str());
 			}
 
-			for (int i = 0; i < numAttribs; i++)
-			{
+			for (int i = 0; i < numAttribs; i++) {
 				glGetActiveAttrib(program, i, maxAttribLength, &length, &size, &type, buffer);
 				std::string name = buffer;
 				activeAttributes[name].index = glGetAttribLocation(program, buffer);
@@ -354,13 +324,11 @@ namespace Fluxions
 		return linked;
 	}
 
-	const std::string &SimpleProgram::GetInfoLog()
-	{
+	const std::string& SimpleProgram::GetInfoLog() {
 		return infoLog;
 	}
 
-	void SimpleProgram::SetUniformBlock(const std::string &uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size)
-	{
+	void SimpleProgram::SetUniformBlock(const std::string& uniformBlockName, GLuint buffer, GLuint blockBindingIndex, GLintptr offset, GLsizei size) {
 		GLuint blockIndex = glGetUniformBlockIndex(program, uniformBlockName.c_str());
 		glUniformBlockBinding(program, blockIndex, blockBindingIndex);
 		glBindBufferRange(GL_UNIFORM_BUFFER, blockBindingIndex, buffer, offset, size);
@@ -368,17 +336,13 @@ namespace Fluxions
 
 	// SIMPLEBLOCKUNIFORMSYSTEM
 
-	SimpleUniformBlockSystem::SimpleUniformBlockSystem()
-	{
-	}
+	SimpleUniformBlockSystem::SimpleUniformBlockSystem() {}
 
-	SimpleUniformBlockSystem::~SimpleUniformBlockSystem()
-	{
+	SimpleUniformBlockSystem::~SimpleUniformBlockSystem() {
 		Delete();
 	}
 
-	void SimpleUniformBlockSystem::Create(GLsizei totalMemory, GLuint blockIndex)
-	{
+	void SimpleUniformBlockSystem::Create(GLsizei totalMemory, GLuint blockIndex) {
 		if (uniformBlockBufferId != 0)
 			Delete();
 		buffer.resize(totalMemory);
@@ -391,10 +355,8 @@ namespace Fluxions
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
-	void SimpleUniformBlockSystem::Delete()
-	{
-		if (uniformBlockBufferId != 0)
-		{
+	void SimpleUniformBlockSystem::Delete() {
+		if (uniformBlockBufferId != 0) {
 			Hf::Log.info("%s(): uniform block %d deleted.", __FUNCTION__, uniformBlockBufferId);
 			glDeleteBuffers(1, &uniformBlockBufferId);
 			uniformBlockBufferId = 0;
@@ -402,15 +364,13 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleUniformBlockSystem::Update()
-	{
+	void SimpleUniformBlockSystem::Update() {
 		glBindBuffer(GL_UNIFORM_BUFFER, uniformBlockBufferId);
 		glBufferData(GL_UNIFORM_BUFFER, buffer.size(), buffer.data(), GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
-	void SimpleUniformBlockSystem::UpdateSubData(GLsizei offset, GLsizei size, GLbyte *data)
-	{
+	void SimpleUniformBlockSystem::UpdateSubData(GLsizei offset, GLsizei size, GLbyte* data) {
 		glBindBuffer(GL_UNIFORM_BUFFER, uniformBlockBufferId);
 		glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);

@@ -22,8 +22,7 @@
 
 namespace Fluxions
 {
-	GLbitfield SimpleRenderConfiguration::GetClearBits() const
-	{
+	GLbitfield SimpleRenderConfiguration::GetClearBits() const {
 		GLbitfield clearBits = 0;
 		if (clearDepthBuffer) clearBits |= GL_DEPTH_BUFFER_BIT;
 		if (clearColorBuffer) clearBits |= GL_COLOR_BUFFER_BIT;
@@ -31,8 +30,7 @@ namespace Fluxions
 		return clearBits;
 	}
 
-	bool SimpleRenderConfiguration::check() const
-	{
+	bool SimpleRenderConfiguration::check() const {
 		if (!zShaderProgram && !shaderProgram) {
 			return false;
 		}

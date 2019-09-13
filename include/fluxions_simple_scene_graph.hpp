@@ -140,8 +140,7 @@ namespace Fluxions
 		float imageNearZ = 0.1f;
 		float imageFarZ = 1000.0f;
 
-		void SetImageParameters(float screenWidth, float screenHeight, float znear, float zfar)
-		{
+		void SetImageParameters(float screenWidth, float screenHeight, float znear, float zfar) {
 			imageWidth = screenWidth;
 			imageHeight = screenHeight;
 			imageAspect = screenWidth / screenHeight;
@@ -206,7 +205,7 @@ namespace Fluxions
 		GLuint pbskyColorMapId = 0;
 		GLuint pbskyColorMapSamplerId = 0;
 
-		void Update(const BoundingBoxf &bbox);
+		void Update(const BoundingBoxf& bbox);
 		void ComputePBSky();
 		bool IsSkyComputed() const { return isSkyComputed; }
 		double LastSkyGenTime() const { return lastSkyGenTime; }
@@ -247,14 +246,12 @@ namespace Fluxions
 		//SimpleGpuTexture(SimpleGpuTexture &&) = default;
 		//SimpleGpuTexture & operator = (SimpleGpuTexture &&) = default;
 
-		SimpleGpuTexture(GLenum target)
-		{
+		SimpleGpuTexture(GLenum target) {
 			if (target != GL_TEXTURE_CUBE_MAP && target != GL_TEXTURE_2D)
 				throw "Unsupported Texture Target";
 
 			target_ = target;
-			try
-			{
+			try {
 				texture_ = std::make_shared<GLuint>(0);
 				GLuint texture;
 				glGenTextures(1, &texture);
@@ -263,24 +260,20 @@ namespace Fluxions
 				FxDebugBindTexture(target_, 0);
 				// Hf::Log.info("%s(): Created texture %d", __FUNCTION__, *texture_);
 			}
-			catch (...)
-			{
+			catch (...) {
 				// Hf::Log.error("%s(): glGenTextures() failed", __FUNCTION__);
 			}
 		}
 
-		~SimpleGpuTexture()
-		{
-			if (texture_.use_count() == 1)
-			{
+		~SimpleGpuTexture() {
+			if (texture_.use_count() == 1) {
 				GLuint texture = *texture_;
 				glDeleteTextures(1, &texture);
 				// Hf::Log.info("%s(): Deleted texture %d", __FUNCTION__, *texture_);
 			}
 		}
 
-		void Bind(int unit)
-		{
+		void Bind(int unit) {
 			if (!texture_)
 				return;
 			Unbind();
@@ -289,8 +282,7 @@ namespace Fluxions
 			FxDebugBindTexture(target_, *texture_);
 		}
 
-		void Unbind()
-		{
+		void Unbind() {
 			if (!texture_ || lastUnitBound_ < 0)
 				return;
 
@@ -300,55 +292,46 @@ namespace Fluxions
 			lastUnitBound_ = -1;
 		}
 
-		void CreateStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type)
-		{
+		void CreateStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type) {
 			if (!texture_)
 				return;
-			if (target_ == GL_TEXTURE_2D)
-			{
+			if (target_ == GL_TEXTURE_2D) {
 				created_ = true;
 				Bind(0);
 				glTexImage2D(target_, 0, internalformat, width, height, 0, format, type, nullptr);
 				Unbind();
 			}
-			else if (target_ == GL_TEXTURE_CUBE_MAP)
-			{
+			else if (target_ == GL_TEXTURE_CUBE_MAP) {
 				created_ = true;
 				Bind(0);
-				for (int i = 0; i < 6; i++)
-				{
+				for (int i = 0; i < 6; i++) {
 					glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalformat, width, height, 0, format, type, nullptr);
 				}
 				Unbind();
 			}
 		}
 
-		void CreateTexture2D(GLsizei width = 64, GLsizei height = 64)
-		{
+		void CreateTexture2D(GLsizei width = 64, GLsizei height = 64) {
 			CreateStorage(GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE);
 			SetDefaultParameters(GL_LINEAR, GL_LINEAR, GL_REPEAT);
 		}
 
-		void CreateTextureShadow2D(GLsizei width = 64, GLsizei height = 64)
-		{
+		void CreateTextureShadow2D(GLsizei width = 64, GLsizei height = 64) {
 			CreateStorage(GL_DEPTH_COMPONENT, width, height, GL_DEPTH_COMPONENT, GL_FLOAT);
 			SetDefaultParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
 		}
 
-		void CreateTextureCube(GLsizei size = 64)
-		{
+		void CreateTextureCube(GLsizei size = 64) {
 			CreateStorage(GL_RGB, size, size, GL_RGB, GL_UNSIGNED_BYTE);
 			SetDefaultParameters(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE);
 		}
 
-		void CreateTextureShadowCube(GLsizei size = 64)
-		{
+		void CreateTextureShadowCube(GLsizei size = 64) {
 			CreateStorage(GL_DEPTH_COMPONENT, size, size, GL_DEPTH_COMPONENT, GL_FLOAT);
 			SetDefaultParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
 		}
 
-		void SetDefaultParameters(GLenum minFilter = GL_NEAREST, GLenum magFilter = GL_NEAREST, GLenum wrapMode = GL_CLAMP_TO_EDGE)
-		{
+		void SetDefaultParameters(GLenum minFilter = GL_NEAREST, GLenum magFilter = GL_NEAREST, GLenum wrapMode = GL_CLAMP_TO_EDGE) {
 			if (!texture_)
 				return;
 			Bind(0);
@@ -360,8 +343,7 @@ namespace Fluxions
 			Unbind();
 		}
 
-		void GenerateMipmap()
-		{
+		void GenerateMipmap() {
 			if (!texture_)
 				return;
 			Bind(0);
@@ -369,8 +351,7 @@ namespace Fluxions
 			Unbind();
 		}
 
-		inline GLuint GetTexture() const
-		{
+		inline GLuint GetTexture() const {
 			if (!texture_)
 				return 0;
 			return *texture_;
@@ -394,8 +375,8 @@ namespace Fluxions
 		Image4f lightProbe;
 		SimpleGpuTexture texture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
 
-		bool LoadLightProbe(const std::string &path);
-		bool SphToLightProbe(const MultispectralSph4f &sph);
+		bool LoadLightProbe(const std::string& path);
+		bool SphToLightProbe(const MultispectralSph4f& sph);
 		bool UploadLightProbe();
 	};
 
@@ -508,23 +489,23 @@ namespace Fluxions
 		~SimpleSSPHHLight();
 
 		// Reads from a Path Traced Light Probe (a cube map stored images from left to right in a single image).
-		bool ReadPtrcLightProbe(const std::string &path);
+		bool ReadPtrcLightProbe(const std::string& path);
 		// Saves to a Path Traced Light Probe (a cube map with cube faces stored from left to right in a single image).
-		bool SavePtrcLightProbe(const std::string &path);
+		bool SavePtrcLightProbe(const std::string& path);
 
 		// Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-		bool SaveJsonSph(const std::string &path);
+		bool SaveJsonSph(const std::string& path);
 		// Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-		bool ReadJsonSph(const std::string &path);
+		bool ReadJsonSph(const std::string& path);
 
 		// Writes name.obj and name.mtl to the path
-		bool SaveOBJ(const std::string &path, const std::string &name);
+		bool SaveOBJ(const std::string& path, const std::string& name);
 
-		bool LightProbeToSph(const Image4f &lightProbe, MultispectralSph4f &sph);
-		bool SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe);
-		bool SphToLightProbe(const MultispectralSph4f &sph, Image4f &lightProbe, int maxDegree);
-		bool UploadLightProbe(Image4f &lightProbe, SimpleGpuTexture &texture);
-		bool UploadLightProbe(Image4f &lightProbe, GLuint &texture);
+		bool LightProbeToSph(const Image4f& lightProbe, MultispectralSph4f& sph);
+		bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe);
+		bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe, int maxDegree);
+		bool UploadLightProbe(Image4f& lightProbe, SimpleGpuTexture& texture);
+		bool UploadLightProbe(Image4f& lightProbe, GLuint& texture);
 
 		Color3f GetCoefficientColor(int l, int m) const;
 		float GetCoefficient(int j, int l, int m) const;
@@ -567,7 +548,7 @@ namespace Fluxions
 		SimpleSSPHH();
 		~SimpleSSPHH();
 
-		void INIT(SimpleSceneGraph &ssg);
+		void INIT(SimpleSceneGraph& ssg);
 		void GEN();
 		void VIZ();
 		void HIER(bool includeSelf = true, bool includeNeighbor = true, int maxDegrees = -1);
@@ -587,7 +568,7 @@ namespace Fluxions
 		};
 
 		std::string sceneName;
-		std::vector<SimpleSSPHHLight> *sphls_ = nullptr;
+		std::vector<SimpleSSPHHLight>* sphls_ = nullptr;
 		size_t size_ = 0; // The number of SPHLs
 
 		// GEN creates this light probe
@@ -696,7 +677,7 @@ namespace Fluxions
 
 		SimpleAssociativePropertyList newLocationList;
 
-		void GetMaterialProgramLocations(SimpleProgram &program);
+		void GetMaterialProgramLocations(SimpleProgram& program);
 	};
 
 	class SimpleSceneGraph
@@ -722,19 +703,19 @@ namespace Fluxions
 		SimpleMaterialSystem materials;
 		mutable SimpleRenderer_GLuint renderer;
 		__ShaderProgramLocations locs;
-		std::map<std::string, SimpleMap *> currentTextures;
+		std::map<std::string, SimpleMap*> currentTextures;
 		SimpleSSPHH ssphh;
 
-		bool ReadMtlLibFile(const std::string &filename);
-		bool ReadConfFile(const std::string &filename);
-		bool ReadObjFile(const std::string &filename, const std::string &name);
-		bool ReadTexmap(const std::string &name, const std::string &texmap);
-		bool ReadCamera(std::istream &istr);
+		//bool ReadMtlLibFile(const std::string &filename);
+		//bool ReadConfFile(const std::string &filename);
+		bool ReadObjFile(const std::string& filename, const std::string& name);
+		//bool ReadTexmap(const std::string &name, const std::string &texmap);
+		bool ReadCamera(std::istream& istr);
 
 		// Rendering tools
 		void ApplySpheresToCurrentProgram();
 		void ApplyGlobalSettingsToCurrentProgram();
-		void ApplyMaterialToCurrentProgram(SimpleMaterial &mtl, bool useMaps);
+		void ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
 		void DisableCurrentTextures();
 
 	private:
@@ -746,15 +727,12 @@ namespace Fluxions
 
 	public:
 		GLuint GetTexUnit() { return textureUnits.Create(); }
-		void FreeTexUnit(GLuint &id)
-		{
+		void FreeTexUnit(GLuint& id) {
 			textureUnits.Delete(id);
 			id = 0;
 		}
-		void FreeTexUnit(GLint &id)
-		{
-			if (id > 0)
-			{
+		void FreeTexUnit(GLint& id) {
+			if (id > 0) {
 				GLuint tid = static_cast<GLuint>(id);
 				textureUnits.Delete(tid);
 				id = 0;
@@ -769,30 +747,30 @@ namespace Fluxions
 		/// <para>Resets scene graph to initial conditions. It's completely empty with default values.</para></summary>
 		void Reset();
 
-		bool Load(const std::string &filename);
-		bool Save(const std::string &filename);
+		bool Load(const std::string& filename);
+		bool Save(const std::string& filename);
 
-		const BoundingBoxf &GetBoundingBox();
+		const BoundingBoxf& GetBoundingBox();
 
 		/// Note this is where we went wrong, by including rendering information in the scene graph...
 
 		void BuildBuffers();
-		void Render(SimpleProgram &program);
-		void RenderZOnly(SimpleProgram &program);
+		void Render(SimpleProgram& program);
+		void RenderZOnly(SimpleProgram& program);
 
-		void Render(SimpleProgram &program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f &projectionMatrix, Matrix4f &cameraMatrix);
+		void Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
 
-		void AdvancedRender(SimpleRenderConfiguration &rc);
-		void AdvancedRenderZOnly(const SimpleRenderConfiguration &rc) const;
-		void RenderZOnly(SimpleProgramPtr &program) const;
+		void AdvancedRender(SimpleRenderConfiguration& rc);
+		void AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) const;
+		void RenderZOnly(SimpleProgramPtr& program) const;
 
-		void SetUniforms(SimpleProgramPtr &shader);
+		void SetUniforms(SimpleProgramPtr& shader);
 
 		void InitSphls();
 		void MakeSphlsUnclean();
 	};
 
-	void RenderCubeShadowMap(const SimpleSceneGraph &ssg, SimpleCubeTexture &scs, const SimpleRenderConfiguration &rc);
+	void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc);
 } // namespace Fluxions
 
 #endif

@@ -23,7 +23,7 @@
 #include <cstdio>
 #include <fluxions_simple_scene_graph.hpp>
 #include <fluxions.hpp>
-#include <fluxions_fileio.hpp>
+#include <fluxions_fileio_iostream.hpp>
 #include <hatchetfish_stopwatch.hpp>
 
 #ifdef __APPLE__
@@ -36,8 +36,7 @@ namespace Fluxions
 	auto sprintf_s = sprintf;
 #endif
 
-	void async_pbsky_compute(Fluxions::PhysicallyBasedSky* pbsky, bool genCubeMap, bool genCylMap, bool* completed, double* timeElapsed = nullptr)
-	{
+	void async_pbsky_compute(Fluxions::PhysicallyBasedSky* pbsky, bool genCubeMap, bool genCylMap, bool* completed, double* timeElapsed = nullptr) {
 		Hf::StopWatch stopwatch;
 
 		if (genCubeMap) {
@@ -57,8 +56,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleEnvironment::Update(const BoundingBoxf& bbox)
-	{
+	void SimpleEnvironment::Update(const BoundingBoxf& bbox) {
 		pbsky.ComputeSunGroundRadiances();
 		curSunDirTo = pbsky.GetSunVector();
 		curGroundRadiance = pbsky.GetGroundRadiance();
@@ -117,8 +115,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleEnvironment::ComputePBSky()
-	{
+	void SimpleEnvironment::ComputePBSky() {
 		if (isSkyComputing)
 			return;
 
@@ -161,16 +158,14 @@ namespace Fluxions
 		Vector4f lightPositions[32];
 		bool lightEnabled[32];
 
-		void ComputeExtraValues()
-		{
+		void ComputeExtraValues() {
 			projectionViewMatrix = projectionMatrix * cameraMatrix;
 			modelViewMatrix = cameraMatrix * worldMatrix;
 			projectionModelViewMatrix = projectionMatrix * cameraMatrix * worldMatrix;
 			cameraPosition = cameraMatrix * Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
-		void Reset()
-		{
+		void Reset() {
 			projectionMatrix.LoadIdentity();
 			cameraMatrix.LoadIdentity();
 			worldMatrix.LoadIdentity();
@@ -186,23 +181,16 @@ namespace Fluxions
 		GLuint blockBinding;
 
 		SimpleUniformBuffer(const std::string& name, GLuint blockBinding)
-			: uniformBufferName(name), blockBinding(blockBinding)
-		{
-		}
+			: uniformBufferName(name), blockBinding(blockBinding) {}
 
 		virtual GLint GetSize() const { return 0; }
 	};
 
-	SimpleSceneGraph::SimpleSceneGraph()
-	{
-	}
+	SimpleSceneGraph::SimpleSceneGraph() {}
 
-	SimpleSceneGraph::~SimpleSceneGraph()
-	{
-	}
+	SimpleSceneGraph::~SimpleSceneGraph() {}
 
-	void SimpleSceneGraph::Reset()
-	{
+	void SimpleSceneGraph::Reset() {
 		boundingBox.Reset();
 		sceneFileLines.clear();
 		pathsToTry.clear();
@@ -223,8 +211,7 @@ namespace Fluxions
 		//geometry.Clear();
 	}
 
-	bool SimpleSceneGraph::Load(const std::string& filename)
-	{
+	bool SimpleSceneGraph::Load(const std::string& filename) {
 		// Use this as a template
 		//ifstream fin(filename.c_str());
 
@@ -304,21 +291,6 @@ namespace Fluxions
 					else {
 						Hf::Log.error("%s(): MTLLIB %s had an error while loading.", __FUNCTION__, mtllibFilename.c_str());
 					}
-				}
-			}
-			else if (str == "conffile") {
-				std::string confFilename = ReadString(istr);
-				FilePathInfo fpi(confFilename);
-				std::string filenameToTry;
-				fpi.FindFileIfExists(pathsToTry, filenameToTry);
-				if (filenameToTry.empty()) {
-					Hf::Log.error("%s(): CONF file %s was not found.", __FUNCTION__, confFilename.c_str());
-				}
-				else {
-					if (ReadConfFile(filenameToTry))
-						Hf::Log.info("%s(): CONF file %s loaded.", __FUNCTION__, confFilename.c_str());
-					else
-						Hf::Log.error("%s(): CONF file %s had an error while loading.", __FUNCTION__, confFilename.c_str());
 				}
 			}
 			else if (str == "geometryGroup") {
@@ -550,11 +522,6 @@ namespace Fluxions
 				environment.sunShadowViewMatrix.LookAt(environment.curSunDirTo * environment.sunSize, Vector3f(0, 0, 0), Vector3f(0, 1, 0));
 				environment.sunShadowInverseViewMatrix = environment.sunShadowViewMatrix.AsInverse();
 			}
-			else if (str == "newmap") {
-				std::string mapname = ReadString(istr);
-				std::string texmap = ReadString(istr);
-				bool result = ReadTexmap(mapname, texmap);
-			}
 			else if (str == "sphere") {
 				std::string mtlName = ReadString(istr);
 
@@ -613,8 +580,7 @@ namespace Fluxions
 		return false;
 	}
 
-	bool SimpleSceneGraph::Save(const std::string& filename)
-	{
+	bool SimpleSceneGraph::Save(const std::string& filename) {
 		FilePathInfo fpi(filename);
 
 		std::ofstream fout(filename.c_str());
@@ -708,47 +674,43 @@ namespace Fluxions
 		return true;
 	}
 
-	const BoundingBoxf& SimpleSceneGraph::GetBoundingBox()
-	{
+	const BoundingBoxf& SimpleSceneGraph::GetBoundingBox() {
 		return boundingBox;
 	}
 
-	bool SimpleSceneGraph::ReadMtlLibFile(const std::string& filename)
-	{
-		// Use this as a template
-		//ifstream fin(filename.c_str());
-		//if (!fin)
-		//	return false;
+	//bool SimpleSceneGraph::ReadMtlLibFile(const std::string& filename) {
+	//	// Use this as a template
+	//	//ifstream fin(filename.c_str());
+	//	//if (!fin)
+	//	//	return false;
 
-		//std::vector<std::string> lines;
-		//string str;
-		//std::istringstream istr;
-		//while (1)
-		//{
-		//	if (!fin)
-		//		break;
-		//	getline(fin, str);
-		//	lines.push_back(str);
+	//	//std::vector<std::string> lines;
+	//	//string str;
+	//	//std::istringstream istr;
+	//	//while (1)
+	//	//{
+	//	//	if (!fin)
+	//	//		break;
+	//	//	getline(fin, str);
+	//	//	lines.push_back(str);
 
-		//}
-		//fin.close();
+	//	//}
+	//	//fin.close();
 
-		//for (auto line = lines.begin(); line != lines.end(); line++)
-		//{
-		//	istr.clear();
-		//	istr.str(*line);
-		//}
-		//return true;
-		return true;
-	}
+	//	//for (auto line = lines.begin(); line != lines.end(); line++)
+	//	//{
+	//	//	istr.clear();
+	//	//	istr.str(*line);
+	//	//}
+	//	//return true;
+	//	return true;
+	//}
 
-	bool SimpleSceneGraph::ReadConfFile(const std::string& filename)
-	{
-		return false;
-	}
+	//bool SimpleSceneGraph::ReadConfFile(const std::string& filename) {
+	//	return false;
+	//}
 
-	bool SimpleSceneGraph::ReadObjFile(const std::string& filename, const std::string& geometryName)
-	{
+	bool SimpleSceneGraph::ReadObjFile(const std::string& filename, const std::string& geometryName) {
 		if (geometryObjects.IsAHandle(filename))
 			return true;
 
@@ -762,21 +724,14 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSceneGraph::ReadTexmap(const std::string& texmapName, const std::string& texmap)
-	{
-		return false;
-	}
-
-	bool SimpleSceneGraph::ReadCamera(std::istream& istr)
-	{
+	bool SimpleSceneGraph::ReadCamera(std::istream& istr) {
 		std::string cameraType;
 		istr >> cameraType;
 		if (cameraType != "camera") return false;
 		return false;
 	}
 
-	void SimpleSceneGraph::InitTexUnits()
-	{
+	void SimpleSceneGraph::InitTexUnits() {
 		KillTexUnits();
 
 		// Push some texture_ units to our resource manager so we can dish these out as necessary
@@ -786,13 +741,11 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::KillTexUnits()
-	{
+	void SimpleSceneGraph::KillTexUnits() {
 		textureUnits.Clear();
 	}
 
-	void SimpleSceneGraph::BuildBuffers()
-	{
+	void SimpleSceneGraph::BuildBuffers() {
 		InitTexUnits();
 		renderer.Reset();
 		for (auto it = geometry.begin(); it != geometry.end(); it++) {
@@ -829,8 +782,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::Render(SimpleProgram& program)
-	{
+	void SimpleSceneGraph::Render(SimpleProgram& program) {
 		SimpleUniform InverseCameraMatrix;
 		SimpleUniform CameraMatrix;
 		SimpleUniform ProjectionXMatrix;
@@ -875,23 +827,23 @@ namespace Fluxions
 		GLint program_loc_Tf = program.GetUniformLocation("Tf");
 		GLint program_loc_Ns = program.GetUniformLocation("Ns");
 		GLint program_loc_Ni = program.GetUniformLocation("Ni");
-		GLint program_loc_map_Ka = program.GetUniformLocation("map_Ka");
-		GLint program_loc_map_Kd = program.GetUniformLocation("map_Kd");
-		GLint program_loc_map_Ks = program.GetUniformLocation("map_Ks");
-		GLint program_loc_map_Ke = program.GetUniformLocation("map_Ke");
-		GLint program_loc_map_Tr = program.GetUniformLocation("map_Tr");
-		GLint program_loc_map_Tf = program.GetUniformLocation("map_Tf");
-		GLint program_loc_map_Ni = program.GetUniformLocation("map_Ni");
-		GLint program_loc_map_Ns = program.GetUniformLocation("map_Ns");
-		GLint program_loc_map_bump = program.GetUniformLocation("map_bump");
-		GLint program_loc_map_normal = program.GetUniformLocation("map_normal");
+		//GLint program_loc_map_Ka = program.GetUniformLocation("map_Ka");
+		//GLint program_loc_map_Kd = program.GetUniformLocation("map_Kd");
+		//GLint program_loc_map_Ks = program.GetUniformLocation("map_Ks");
+		//GLint program_loc_map_Ke = program.GetUniformLocation("map_Ke");
+		//GLint program_loc_map_Tr = program.GetUniformLocation("map_Tr");
+		//GLint program_loc_map_Tf = program.GetUniformLocation("map_Tf");
+		//GLint program_loc_map_Ni = program.GetUniformLocation("map_Ni");
+		//GLint program_loc_map_Ns = program.GetUniformLocation("map_Ns");
+		//GLint program_loc_map_bump = program.GetUniformLocation("map_bump");
+		//GLint program_loc_map_normal = program.GetUniformLocation("map_normal");
 		GLint program_loc_map_Ka_mix = program.GetUniformLocation("map_Ka_mix");
 		GLint program_loc_map_Kd_mix = program.GetUniformLocation("map_Kd_mix");
 		GLint program_loc_map_Ks_mix = program.GetUniformLocation("map_Ks_mix");
 		GLint program_loc_map_Ke_mix = program.GetUniformLocation("map_Ke_mix");
 		GLint program_loc_map_Tf_mix = program.GetUniformLocation("map_Tf_mix");
 		GLint program_loc_map_Tr_mix = program.GetUniformLocation("map_Tr_mix");
-		GLint program_loc_map_Ni_mix = program.GetUniformLocation("map_Ni_mix");
+		//GLint program_loc_map_Ni_mix = program.GetUniformLocation("map_Ni_mix");
 		GLint program_loc_map_Ns_mix = program.GetUniformLocation("map_Ns_mix");
 
 		GLint program_loc_sphere_array = program.GetUniformLocation("Spheres");
@@ -1051,8 +1003,7 @@ namespace Fluxions
 			std::cout << "SimpleSceneGraph::Render() -- END\n";
 	}
 
-	void SimpleSceneGraph::RenderZOnly(SimpleProgram& program)
-	{
+	void SimpleSceneGraph::RenderZOnly(SimpleProgram& program) {
 		// Render a bare bones, basic Z only version of this scene
 		SimpleUniform InverseCameraMatrix;
 		SimpleUniform CameraMatrix;
@@ -1118,8 +1069,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix)
-	{
+	void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix) {
 		Matrix4f inverseCameraMatrix = cameraMatrix.AsInverse();
 		Vector4f cameraPosition(0, 0, 0, 1);
 		//cameraPosition = camera.viewMatrix * cameraPosition;
@@ -1190,8 +1140,7 @@ namespace Fluxions
 		FxBindTextureAndSampler(environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, 0, 0);
 	}
 
-	void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc)
-	{
+	void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc) {
 		//double sceneMaxSize = boundingBox.MaxSize();
 		//double sceneDiagonal = ceil(sqrtf(2.0 * sceneMaxSize * sceneMaxSize));
 		//double centerDistance2 = ceil((rt.cameraPosition.xyz() - boundingBox.Center()).length());
@@ -1226,8 +1175,6 @@ namespace Fluxions
 			rc.fbo.Use();
 		}
 
-		GLbitfield clearBits = rc.GetClearBits();
-
 		if (rc.enableDepthTest) {
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(rc.depthComparisonTest);
@@ -1242,8 +1189,11 @@ namespace Fluxions
 			glClearColor(rc.clearColor.r, rc.clearColor.g, rc.clearColor.b, rc.clearColor.a);
 		}
 
-		if (clearBits)
-			glClear(clearBits);
+		{
+			GLbitfield clearBits = rc.GetClearBits();
+			if (clearBits)
+				glClear(clearBits);
+		}
 
 		if (!rc.useZOnly) {
 			if (rc.enableSRGB) {
@@ -1261,8 +1211,6 @@ namespace Fluxions
 			if (locs.shaderDebugSphl >= 0)
 				glUniform1i(locs.shaderDebugSphl, rc.shaderDebugSphl);
 
-			GLbitfield clearBits = rc.GetClearBits();
-
 			if (rc.enableDepthTest) {
 				glEnable(GL_DEPTH_TEST);
 				glDepthFunc(rc.depthComparisonTest);
@@ -1272,8 +1220,10 @@ namespace Fluxions
 				glClearColor(rc.clearColor.r, rc.clearColor.g, rc.clearColor.b, rc.clearColor.a);
 			}
 
-			if (clearBits)
+			GLbitfield clearBits = rc.GetClearBits();
+			if (clearBits) {
 				glClear(clearBits);
+			}
 
 			Matrix4f projectionMatrix;
 			Matrix4f cameraMatrix;
@@ -1482,8 +1432,7 @@ namespace Fluxions
 		glUseProgram(0);
 	}
 
-	void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) const
-	{
+	void SimpleSceneGraph::AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) const {
 		if (!rc.useZOnly)
 			return;
 		if (rc.useZOnly && rc.zShaderProgram == nullptr)
@@ -1565,8 +1514,7 @@ namespace Fluxions
 		glUseProgram(0);
 	}
 
-	void SimpleSceneGraph::RenderZOnly(SimpleProgramPtr& program) const
-	{
+	void SimpleSceneGraph::RenderZOnly(SimpleProgramPtr& program) const {
 		if (!program)
 			return;
 
@@ -1582,8 +1530,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::ApplyGlobalSettingsToCurrentProgram()
-	{
+	void SimpleSceneGraph::ApplyGlobalSettingsToCurrentProgram() {
 		if (locs.enviroCubeMap >= 0)
 			glUniform1i(locs.enviroCubeMap, environment.enviroColorMapUnit);
 		if (locs.enviroCubeMapAmount >= 0)
@@ -1608,8 +1555,7 @@ namespace Fluxions
 			glUniform1f(locs.toneMapGamma, environment.toneMapGamma);
 	}
 
-	void SimpleSceneGraph::SetUniforms(SimpleProgramPtr& program)
-	{
+	void SimpleSceneGraph::SetUniforms(SimpleProgramPtr& program) {
 		if (!program)
 			return;
 		program->Use();
@@ -1641,8 +1587,7 @@ namespace Fluxions
 			glUniform4fv(spl.groundE0, 1, environment.curGroundRadiance.const_ptr());
 	}
 
-	void SimpleSceneGraph::ApplySpheresToCurrentProgram()
-	{
+	void SimpleSceneGraph::ApplySpheresToCurrentProgram() {
 		std::vector<float> spherePositions;
 		std::vector<float> sphereKe;
 		int numSpheres = 0;
@@ -1745,8 +1690,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps)
-	{
+	void SimpleSceneGraph::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps) {
 		GLuint unit = 1;
 
 		if (useMaps) {
@@ -1902,8 +1846,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::DisableCurrentTextures()
-	{
+	void SimpleSceneGraph::DisableCurrentTextures() {
 		// Turn off textures and reset program unit bindings to 0
 		for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
 			SimpleMap* pMap = tmapIt->second;
@@ -1925,8 +1868,7 @@ namespace Fluxions
 
 	//
 
-	void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram& program)
-	{
+	void __ShaderProgramLocations::GetMaterialProgramLocations(SimpleProgram& program) {
 		locations.clear();
 		locations["Ka"] = Ka = program.GetUniformLocation("Ka");
 		locations["Kd"] = Kd = program.GetUniformLocation("Kd");
@@ -2025,8 +1967,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::InitSphls()
-	{
+	void SimpleSceneGraph::InitSphls() {
 		ssphhLights.clear();
 		ssphhLights.resize(MaxSphlLights);
 		for (int i = 0; i < MaxSphlLights; i++) {
@@ -2035,16 +1976,14 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleSceneGraph::MakeSphlsUnclean()
-	{
+	void SimpleSceneGraph::MakeSphlsUnclean() {
 		for (size_t i = 0; i < ssphhLights.size(); i++) {
 			ssphhLights[i].dirty = true;
 			ssphhLights[i].depthSphlMap.dirty = true;
 		}
 	}
 
-	void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc)
-	{
+	void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc) {
 		FxSetErrorMessage("fluxions_simple_scene_graph.cpp", __LINE__, __FUNCTION__);
 
 		if (!scs.dirty)

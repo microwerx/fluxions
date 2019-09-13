@@ -107,22 +107,16 @@ template class std::map<std::string, int>;
 
 namespace Fluxions
 {
-	SimpleAssociativePropertyList::SimpleAssociativePropertyList()
-	{
-	}
+	SimpleAssociativePropertyList::SimpleAssociativePropertyList() {}
 
-	SimpleAssociativePropertyList::~SimpleAssociativePropertyList()
-	{
-	}
+	SimpleAssociativePropertyList::~SimpleAssociativePropertyList() {}
 
-	void SimpleAssociativePropertyList::Clear()
-	{
+	void SimpleAssociativePropertyList::Clear() {
 		nameIndex.clear();
 		properties.clear();
 	}
 
-	void SimpleAssociativePropertyList::Add(const std::string &name, SharedSimplePropertyPtr &valuePtr)
-	{
+	void SimpleAssociativePropertyList::Add(const std::string& name, SharedSimplePropertyPtr& valuePtr) {
 		// check if index already exists...
 		int usedIndex = GetIndexOf(name);
 		if (usedIndex < 0) {
@@ -136,8 +130,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleAssociativePropertyList::Remove(const std::string &name)
-	{
+	void SimpleAssociativePropertyList::Remove(const std::string& name) {
 		int usedIndex = GetIndexOf(name);
 		if (usedIndex >= 0) {
 			properties[usedIndex].first.clear();
@@ -146,8 +139,7 @@ namespace Fluxions
 		}
 	}
 
-	bool SimpleAssociativePropertyList::IsElement(const std::string &name)
-	{
+	bool SimpleAssociativePropertyList::IsElement(const std::string& name) {
 		// If it's in the index and it's not a reset shared_ptr, return true.
 		int usedIndex = GetIndexOf(name);
 		if (usedIndex >= 0) {
@@ -157,8 +149,7 @@ namespace Fluxions
 		return false;
 	}
 
-	SharedSimplePropertyPtr &SimpleAssociativePropertyList::Get(const std::string &name)
-	{
+	SharedSimplePropertyPtr& SimpleAssociativePropertyList::Get(const std::string& name) {
 		int usedIndex = GetIndexOf(name);
 		if (usedIndex >= 0) {
 			return properties[usedIndex].second;
@@ -166,8 +157,7 @@ namespace Fluxions
 		return defaultItem;
 	}
 
-	int SimpleAssociativePropertyList::GetIndexOf(const std::string &name)
-	{
+	int SimpleAssociativePropertyList::GetIndexOf(const std::string& name) {
 		auto it = nameIndex.find(name);
 		if (it != nameIndex.end()) {
 			return it->second;
@@ -175,24 +165,21 @@ namespace Fluxions
 		return -1;
 	}
 
-	const std::string &SimpleAssociativePropertyList::GetNameAtIndex(int i)
-	{
+	const std::string& SimpleAssociativePropertyList::GetNameAtIndex(int i) {
 		if (i < 0 || i >= (int)properties.size()) {
 			return properties[i].first;
 		}
 		return emptyString;
 	}
 
-	SharedSimplePropertyPtr &SimpleAssociativePropertyList::GetAtIndex(int i)
-	{
+	SharedSimplePropertyPtr& SimpleAssociativePropertyList::GetAtIndex(int i) {
 		if (i < 0 || i >= (int)properties.size()) {
 			return properties[i].second;
 		}
 		return defaultItem;
 	}
 
-	SharedSimplePropertyPtr &SimpleAssociativePropertyList::operator[](const std::string &name)
-	{
+	SharedSimplePropertyPtr& SimpleAssociativePropertyList::operator[](const std::string& name) {
 		int index = GetIndexOf(name);
 		if (index < 0) {
 			properties.push_back(std::pair<std::string, SharedSimplePropertyPtr>(name, SharedSimplePropertyPtr()));
@@ -203,8 +190,7 @@ namespace Fluxions
 		return properties[index].second;
 	}
 
-	const std::string PropertyTypeToString(PropertyType propertyType)
-	{
+	const std::string PropertyTypeToString(PropertyType propertyType) {
 		switch (propertyType) {
 		case PropertyType::NOTHING:
 			return std::string("NOTHING");
@@ -344,8 +330,7 @@ namespace Fluxions
 		return std::string("UNKNOWN VALUE TYPE");
 	}
 
-	int test_fluxions_simple_property()
-	{
+	int test_fluxions_simple_property() {
 		using namespace Fluxions;
 
 		/*

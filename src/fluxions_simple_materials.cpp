@@ -17,7 +17,9 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <fluxions_fileio.hpp>
+#include <sstream>
+//#include <fluxions_fileio.hpp>
+#include <fluxions_fileio_iostream.hpp>
 #include <fluxions_simple_materials.hpp>
 
 namespace Fluxions
@@ -116,7 +118,7 @@ namespace Fluxions
 		pmtllib->mtls.clear();
 
 		TResourceManager<SimpleMaterial>& mtls = pmtllib->mtls;
-		TResourceManager<SimpleMap>& maps = pmtllib->maps;
+		//TResourceManager<SimpleMap>& maps = pmtllib->maps;
 		SimpleMaterial* curmtl = nullptr;
 
 		for (auto line = lines.begin(); line != lines.end(); line++) {
@@ -240,23 +242,23 @@ namespace Fluxions
 				auto MeanCosine = curmtl->MeanCosine = (float)ReadDouble(istr);
 				curmtl->Properties["MeanCosine"] = MakeSharedFloatProperty(MeanCosine);
 			}
-			else if (str == "RoundedCorners") {
-				auto HasRoundedCorners = curmtl->HasRoundedCorners = true;
-				auto RoundedCorners = curmtl->RoundedCorners = (float)ReadDouble(istr);
-				curmtl->Properties["RoundedCorners"] = MakeSharedFloatProperty(RoundedCorners);
-			}
-			else if (str == "Portal") {
-				auto IsPortal = curmtl->IsPortal = true;
-			}
-			else if (str == "IesProfile") {
-				auto HasIesProfile = curmtl->HasIesProfile = true;
-				auto IesProfileFilename = curmtl->IesProfileFilename = ReadString(istr);
-				curmtl->Properties["IesProfileFilename"] = MakeSharedStringProperty(IesProfileFilename);
-				auto IesProfileMatrix = curmtl->IesProfileMatrix = ReadMatrix4f(istr);
-				curmtl->Properties["IesProfileMatrix"] = MakeSharedMat4Property(IesProfileMatrix);
-				auto IesProfileKeepSharp = curmtl->IesProfileKeepSharp = ReadBool(istr);
-				curmtl->Properties["IesProfileKeepSharp"] = MakeSharedBoolProperty(IesProfileKeepSharp);
-			}
+			//else if (str == "RoundedCorners") {
+			//	auto HasRoundedCorners = curmtl->HasRoundedCorners = true;
+			//	auto RoundedCorners = curmtl->RoundedCorners = (float)ReadDouble(istr);
+			//	curmtl->Properties["RoundedCorners"] = MakeSharedFloatProperty(RoundedCorners);
+			//}
+			//else if (str == "Portal") {
+			//	auto IsPortal = curmtl->IsPortal = true;
+			//}
+			//else if (str == "IesProfile") {
+			//	auto HasIesProfile = curmtl->HasIesProfile = true;
+			//	auto IesProfileFilename = curmtl->IesProfileFilename = ReadString(istr);
+			//	curmtl->Properties["IesProfileFilename"] = MakeSharedStringProperty(IesProfileFilename);
+			//	auto IesProfileMatrix = curmtl->IesProfileMatrix = ReadMatrix4f(istr);
+			//	curmtl->Properties["IesProfileMatrix"] = MakeSharedMat4Property(IesProfileMatrix);
+			//	auto IesProfileKeepSharp = curmtl->IesProfileKeepSharp = ReadBool(istr);
+			//	curmtl->Properties["IesProfileKeepSharp"] = MakeSharedBoolProperty(IesProfileKeepSharp);
+			//}
 			else if (str == "RefractMode") {
 				curmtl->RefractMode.clear();
 				while (istr) {
@@ -641,13 +643,13 @@ namespace Fluxions
 		mtl.ScatteringAlbedo = Vector3f(0, 0, 0);
 		mtl.MeanCosine = 0;
 		mtl.RefractMode.clear();
-		mtl.HasRoundedCorners = false;
-		mtl.RoundedCorners = 0;
-		mtl.IsPortal = false;
-		mtl.HasIesProfile = false;
-		mtl.IesProfileFilename = "";
-		mtl.IesProfileMatrix.LoadIdentity();
-		mtl.IesProfileKeepSharp = false;
+		//mtl.HasRoundedCorners = false;
+		//mtl.RoundedCorners = 0;
+		//mtl.IsPortal = false;
+		//mtl.HasIesProfile = false;
+		//mtl.IesProfileFilename = "";
+		//mtl.IesProfileMatrix.LoadIdentity();
+		//mtl.IesProfileKeepSharp = false;
 		mtl.Invisible.clear();
 		mtl.map_Ka = "";
 		mtl.map_Kd = "";
@@ -772,19 +774,19 @@ namespace Fluxions
 		ostr << "MeanCosine ";
 		WriteDouble(ostr, mtl.MeanCosine);
 		ostr << std::endl;
-		if (mtl.HasRoundedCorners) {
-			ostr << "RoundedCorners ";
-			WriteDouble(ostr, mtl.RoundedCorners);
-			ostr << std::endl;
-		}
-		if (mtl.IsPortal)
-			ostr << "Portal\n";
-		if (mtl.HasIesProfile) {
-			ostr << "IesProfile ";
-			WriteString(ostr, mtl.IesProfileFilename);
-			WriteMatrix4f(ostr, mtl.IesProfileMatrix);
-			WriteBool(ostr, mtl.IesProfileKeepSharp);
-		}
+		//if (mtl.HasRoundedCorners) {
+		//	ostr << "RoundedCorners ";
+		//	WriteDouble(ostr, mtl.RoundedCorners);
+		//	ostr << std::endl;
+		//}
+		//if (mtl.IsPortal)
+		//	ostr << "Portal\n";
+		//if (mtl.HasIesProfile) {
+		//	ostr << "IesProfile ";
+		//	WriteString(ostr, mtl.IesProfileFilename);
+		//	WriteMatrix4f(ostr, mtl.IesProfileMatrix);
+		//	WriteBool(ostr, mtl.IesProfileKeepSharp);
+		//}
 		for (auto it = mtl.RefractMode.begin(); it <= mtl.RefractMode.end(); it++) {
 			if (it == mtl.RefractMode.begin())
 				ostr << "RefractMode ";
@@ -876,9 +878,5 @@ namespace Fluxions
 			ostr << std::endl;
 		}
 		return ostr;
-	}
-
-	std::istream& ReadMaterial(std::istream& istr, SimpleMaterial& mtl) {
-		return istr;
 	}
 } // namespace Fluxions
