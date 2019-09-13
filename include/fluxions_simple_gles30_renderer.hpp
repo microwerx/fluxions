@@ -183,7 +183,7 @@ namespace Fluxions
 		GLES30StateSnapshot gles30StateSnapshot;
 
 		SimpleSceneGraph emptySSG;
-		SimpleSceneGraph& ssg = emptySSG;
+		SimpleSceneGraph *pssg = nullptr;
 		SimpleRenderConfiguration renderConfig;
 
 		Matrix4f projectionMatrix;

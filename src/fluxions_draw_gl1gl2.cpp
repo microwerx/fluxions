@@ -21,8 +21,6 @@
 #include <cstdio>
 #include <sstream>
 #include <string>
-#define GLEW_STATIC
-#include <GL/freeglut.h>
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_math.hpp>
@@ -142,8 +140,7 @@ GLTypeInfo glutTypeInfo[] = {
 	{GL_UNSIGNED_INT_ATOMIC_COUNTER, GL_UNSIGNED_INT, 1, sizeof(GLuint)},
 	{0xffff, 0, 0, 0} };
 
-void FxSetErrorMessage(const char* filename, int line, const char* format, ...)
-{
+void FxSetErrorMessage(const char* filename, int line, const char* format, ...) {
 	std::ostringstream ostr;
 	char buffer[4096];
 	va_list args;
@@ -163,13 +160,11 @@ void FxSetErrorMessage(const char* filename, int line, const char* format, ...)
 	g_CurrentDebugMessage = ostr.str();
 }
 
-void FxSetDefaultErrorMessage()
-{
+void FxSetDefaultErrorMessage() {
 	FxSetErrorMessage("<unknown>", 0, "<nothing set for debugging>");
 }
 
-GLenum FxGetBaseType(GLenum type)
-{
+GLenum FxGetBaseType(GLenum type) {
 	int i = 0;
 	while (glutTypeInfo[i].type != 0xffff) {
 		if (type == glutTypeInfo[i].type) {
@@ -180,8 +175,7 @@ GLenum FxGetBaseType(GLenum type)
 	return 0;
 }
 
-GLint FxGetTypeComponents(GLenum type)
-{
+GLint FxGetTypeComponents(GLenum type) {
 	int i = 0;
 	while (glutTypeInfo[i].type != 0xffff) {
 		if (type == glutTypeInfo[i].type) {
@@ -192,8 +186,7 @@ GLint FxGetTypeComponents(GLenum type)
 	return 0;
 }
 
-GLsizei FxGetSizeOfType(GLenum type)
-{
+GLsizei FxGetSizeOfType(GLenum type) {
 	int i = 0;
 	while (glutTypeInfo[i].type != 0xffff) {
 		if (type == glutTypeInfo[i].type) {
@@ -204,8 +197,7 @@ GLsizei FxGetSizeOfType(GLenum type)
 	return 0;
 }
 
-GLsizei FxGetSizeOfBaseType(GLenum type)
-{
+GLsizei FxGetSizeOfBaseType(GLenum type) {
 	int i = 0;
 	while (glutTypeInfo[i].type != 0xffff) {
 		if (type == glutTypeInfo[i].type) {
@@ -216,8 +208,7 @@ GLsizei FxGetSizeOfBaseType(GLenum type)
 	return 0;
 }
 
-GLint FxSetActiveTexture(GLint unit)
-{
+GLint FxSetActiveTexture(GLint unit) {
 	if (g_MaxCombinedTextureUnits == 0) {
 		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &g_MaxCombinedTextureUnits);
 	}
@@ -230,13 +221,11 @@ GLint FxSetActiveTexture(GLint unit)
 	return unit;
 }
 
-bool FxBindDefaultTextureAndSampler(GLenum target)
-{
+bool FxBindDefaultTextureAndSampler(GLenum target) {
 	return FxBindTextureAndSampler(0, target, 0, 0);
 }
 
-bool FxBindTextureAndSampler(GLint unit, GLenum target, GLuint texture, GLuint sampler)
-{
+bool FxBindTextureAndSampler(GLint unit, GLenum target, GLuint texture, GLuint sampler) {
 	unit = FxSetActiveTexture(unit);
 	if (unit < 0)
 		return false;
@@ -246,8 +235,7 @@ bool FxBindTextureAndSampler(GLint unit, GLenum target, GLuint texture, GLuint s
 	return true;
 }
 
-bool FxBindTexture(GLint unit, GLenum target, GLuint texture)
-{
+bool FxBindTexture(GLint unit, GLenum target, GLuint texture) {
 	unit = FxSetActiveTexture(unit);
 	if (unit < 0)
 		return false;
@@ -256,8 +244,7 @@ bool FxBindTexture(GLint unit, GLenum target, GLuint texture)
 	return true;
 }
 
-bool FxBindSampler(GLint unit, GLuint sampler)
-{
+bool FxBindSampler(GLint unit, GLuint sampler) {
 	unit = FxSetActiveTexture(unit);
 	if (unit < 0)
 		return false;
@@ -266,8 +253,7 @@ bool FxBindSampler(GLint unit, GLuint sampler)
 	return true;
 }
 
-bool FxDebugBindTexture(GLenum target, GLuint texture)
-{
+bool FxDebugBindTexture(GLenum target, GLuint texture) {
 	GLenum e = glGetError();
 	glBindTexture(target, texture);
 	e = glGetError();
@@ -283,8 +269,7 @@ bool FxDebugBindTexture(GLenum target, GLuint texture)
 	return true;
 }
 
-void FxGlutTestLitSolidTeapotScene(double fovy, double aspect)
-{
+void FxGlutTestLitSolidTeapotScene(double fovy, double aspect) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHTING);
@@ -306,35 +291,38 @@ void FxGlutTestLitSolidTeapotScene(double fovy, double aspect)
 		Vector3f(0.0f, 1.0f, 0.0f));
 	glMultMatrixf(lookAt.const_ptr());
 
+#ifdef FLUXIONS_USE_FREEGLUT
 	glutSolidTeapot(1.0);
+#endif
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 }
 
-void FxGlutBitmapString(void* font, const char* str)
-{
+void FxGlutBitmapString(void* font, const char* str) {
 	int len = (int)strlen(str);
 	int i = 0;
 
 	for (i = 0; i < len; i++) {
+#ifdef FLUXIONS_USE_FREEGLUT
 		glutBitmapCharacter(font, str[i]);
+#endif
 	}
 }
 
-void FxGlutStrokeString(void* font, const char* str)
-{
+void FxGlutStrokeString(void* font, const char* str) {
 	int len = (int)strlen(str);
 	int i = 0;
 
 	for (i = 0; i < len; i++) {
+#ifdef FLUXIONS_USE_FREEGLUT
 		glutStrokeCharacter(font, str[i]);
+#endif
 	}
 }
 
-void FxGlutPrintString9x15(double x, double y, double screenWidth, int justification, const char* format, ...)
-{
+void FxGlutPrintString9x15(double x, double y, double screenWidth, int justification, const char* format, ...) {
 	char buffer[256];
 
 	va_list va;
@@ -346,13 +334,12 @@ void FxGlutPrintString9x15(double x, double y, double screenWidth, int justifica
 #endif
 	va_end(va);
 
-	FxGlutPrintBitmapStringJustified(x, y, screenWidth, justification, GLUT_BITMAP_9_BY_15, buffer);
+	FxGlutPrintBitmapStringJustified(x, y, screenWidth, justification, (void*)(FX_GLUT_FONT::BITMAP_9_BY_15), buffer);
 }
 
-void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...)
-{
+void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...) {
 	char buffer[256];
-	int pixelWidthOfString;
+	int pixelWidthOfString = 0;
 
 	va_list va;
 	va_start(va, format);
@@ -363,7 +350,9 @@ void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, in
 #endif
 	va_end(va);
 
+#ifdef FLUXIONS_USE_FREEGLUT
 	pixelWidthOfString = glutBitmapLength(font, (const unsigned char*)buffer);
+#endif
 
 	if (justification == LEFT) {
 		// left justified
@@ -380,10 +369,9 @@ void FxGlutPrintBitmapStringJustified(double x, double y, double screenWidth, in
 	FxGlutBitmapString(font, buffer);
 }
 
-void FxGlutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...)
-{
+void FxGlutPrintStrokeStringJustified(double x, double y, double screenWidth, int justification, void* font, const char* format, ...) {
 	char buffer[2048];
-	int pixelWidthOfString;
+	int pixelWidthOfString = 0;
 
 	va_list va;
 	va_start(va, format);
@@ -394,7 +382,9 @@ void FxGlutPrintStrokeStringJustified(double x, double y, double screenWidth, in
 #endif
 	va_end(va);
 
+#ifdef FLUXIONS_USE_FREEGLUT
 	pixelWidthOfString = glutStrokeLength(font, (const unsigned char*)buffer);
+#endif
 
 	if (justification == LEFT) {
 		// left justified
@@ -411,8 +401,7 @@ void FxGlutPrintStrokeStringJustified(double x, double y, double screenWidth, in
 	FxGlutStrokeString(font, buffer);
 }
 
-void FxDrawGL1ThreeAxis(float length)
-{
+void FxDrawGL1ThreeAxis(float length) {
 	GLfloat v[36] = {
 		0.0f, 0.0f, 0.0f,
 		length, 0.0f, 0.0f,
@@ -452,8 +441,7 @@ void FxDrawGL1ThreeAxis(float length)
 	glColorPointer(3, GL_FLOAT, 0, 0);
 }
 
-void FxDrawGL1Camera(double fov, float r, float g, float b, float zfar, const float* inverseCameraMatrix, const float* projectionMatrix)
-{
+void FxDrawGL1Camera(double fov, float r, float g, float b, float zfar, const float* inverseCameraMatrix, const float* projectionMatrix) {
 	glPushMatrix(); // for camera viz
 	glMultMatrixf(inverseCameraMatrix);
 
@@ -469,19 +457,18 @@ void FxDrawGL1Camera(double fov, float r, float g, float b, float zfar, const fl
 	glColor4f(r, g, b, 1.0f);
 	glPushMatrix(); // for cone
 	glTranslatef(0.0f, 0.0f, -1.0f);
-	glutWireCone(sin(0.5 * fov * 3.14159 / 180.0), 1.0, 32, 2);
+	FxDrawGL1WireCone(sinf(0.5f * fov * 3.14159f / 180.0f), 1.0f, 32, 2);
 	glPopMatrix(); // for cone
 
 	glPushMatrix(); // for wire cube
 	glTranslatef(0.0f, 0.0f, 0.5f);
-	glutWireCube(1.0);
+	FxDrawGL1WireCube(1.0);
 	glPopMatrix(); // for wire cube
 
 	glPopMatrix(); // for camera viz
 }
 
-void FxDrawGL1SixAxis(float length)
-{
+void FxDrawGL1SixAxis(float length) {
 	GLfloat v[36] = {
 		0.0f, 0.0f, 0.0f,
 		length, 0.0f, 0.0f,
@@ -521,8 +508,7 @@ void FxDrawGL1SixAxis(float length)
 	glColorPointer(3, GL_FLOAT, 0, 0);
 }
 
-void FxDrawGL1WireFrustumd(const double* m)
-{
+void FxDrawGL1WireFrustumd(const double* m) {
 	float f32m[16];
 	for (int i = 0; i < 16; i++) {
 		f32m[i] = (float)m[i];
@@ -542,8 +528,7 @@ struct Vector
 {
 	float x, y, z, w;
 
-	Vector scale(float amount) const
-	{
+	Vector scale(float amount) const {
 		Vector out;
 		out.x = x * amount;
 		out.y = y * amount;
@@ -552,8 +537,7 @@ struct Vector
 		return out;
 	}
 
-	Vector plus(Vector v) const
-	{
+	Vector plus(Vector v) const {
 		Vector out;
 		out.x = x + v.x;
 		out.y = y + v.y;
@@ -562,8 +546,7 @@ struct Vector
 		return out;
 	}
 
-	Vector cross3(const Vector& V) const
-	{
+	Vector cross3(const Vector& V) const {
 		Vector out;
 		out.x = y * V.z - z * V.y;
 		out.y = z * V.x - x * V.z;
@@ -572,13 +555,11 @@ struct Vector
 		return out;
 	}
 
-	float dot3(const Vector& V) const
-	{
+	float dot3(const Vector& V) const {
 		return x * V.x + y * V.y + z * V.z;
 	}
 
-	Vector norm3() const
-	{
+	Vector norm3() const {
 		Vector out;
 		float invlen = 1.0f / sqrtf(x * x + y * y + z * z);
 		out.x = x * invlen;
@@ -593,8 +574,7 @@ struct Plane
 {
 	float a, b, c, d;
 
-	void normalize()
-	{
+	void normalize() {
 		float invlen = 1.0f / sqrtf(a * a + b * b + c * c);
 		a *= invlen;
 		b *= invlen;
@@ -602,8 +582,7 @@ struct Plane
 		d *= invlen;
 	}
 
-	Vector axis()
-	{
+	Vector axis() {
 		Vector out;
 		out.x = a;
 		out.y = b;
@@ -613,8 +592,7 @@ struct Plane
 	}
 };
 
-Vector ThreePlaneIntersection(Plane A, Plane B, Plane C)
-{
+Vector ThreePlaneIntersection(Plane A, Plane B, Plane C) {
 	Vector out;
 	out.x = 0.0f;
 	out.y = 0.0f;
@@ -646,8 +624,7 @@ Vector ThreePlaneIntersection(Plane A, Plane B, Plane C)
 	return out;
 }
 
-void FxDrawGL1WireFrustumf(const float* m, float scale)
-{
+void FxDrawGL1WireFrustumf(const float* m, float scale) {
 	Matrix M;
 	memcpy(&M, m, sizeof(float) * 16);
 
@@ -765,8 +742,7 @@ void FxDrawGL1WireFrustumf(const float* m, float scale)
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 }
 
-void FxDrawGL1EnvironmentCube(GLfloat size, GLuint cubeMapTexId)
-{
+void FxDrawGL1EnvironmentCube(GLfloat size, GLuint cubeMapTexId) {
 	GLfloat v[] = {
 		-size, size, -size,
 		size, size, -size,
@@ -849,8 +825,7 @@ void FxDrawGL1EnvironmentCube(GLfloat size, GLuint cubeMapTexId)
 
 // FxDrawGL2UnwrappedCubeMap
 // Renders an unwrapped cube map to a 2D screen
-void FxDrawGL2UnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLint tloc)
-{
+void FxDrawGL2UnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLint tloc) {
 	GLfloat xs0 = x + 0.0f;
 	GLfloat xs1 = x + (GLfloat)size;
 	GLfloat xs2 = x + size * 2.0f;
@@ -1050,8 +1025,7 @@ void FxDrawGL2UnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLin
 
 // FxDrawGL2CubeMap
 // Renders an unwrapped cube map to a 2D screen
-void FxDrawGL2CubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint vloc, GLint tloc)
-{
+void FxDrawGL2CubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint vloc, GLint tloc) {
 	GLfloat x1 = (float)(x - size / 2.0);
 	GLfloat y1 = (float)(y - size / 2.0);
 	GLfloat z1 = (float)(z - size / 2.0);
@@ -1240,58 +1214,52 @@ void FxDrawGL2CubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint v
 	// glDeleteBuffers(1, &eabo);
 }
 
-void FxDrawGL1WireSphere(float radius, unsigned slices, unsigned stacks)
-{
-
+void FxDrawGL1WireSphere(float radius, unsigned slices, unsigned stacks) {
+#ifdef FLUXIONS_USE_FREEGLUT
+	glutWireSphere(radius, slices, stacks);
+#endif
 }
 
-void FxDrawGL1WireCone(float base, float height, unsigned slices, unsigned stacks)
-{
+void FxDrawGL1WireCone(float base, float height, unsigned slices, unsigned stacks) {
 #ifdef FLUXIONS_USE_FREEGLUT
 	glutWireCone(base, height, slices, stacks);
 #endif
 }
 
-void FxDrawGL1WireCube(float size)
-{
+void FxDrawGL1WireCube(float size) {
 #ifdef FLUXIONS_USE_FREEGLUT
 	glutWireCube(size);
 #endif
 }
 
-void FxDrawGL1SolidCube(float size)
-{
+void FxDrawGL1SolidCube(float size) {
 #ifdef FLUXIONS_USE_FREEGLUT
 	glutSolidCube(size);
 #endif
 
 }
 
-void FxDrawGL1SolidSphere(float radius, unsigned slices, unsigned stacks)
-{
+void FxDrawGL1SolidSphere(float radius, unsigned slices, unsigned stacks) {
 #ifdef FLUXIONS_USE_FREEGLUT
 	glutSolidSphere(radius, slices, stacks);
 #endif
 
 }
 
-void FxDrawGL1SolidCone(float base, float height, unsigned slices, unsigned stacks)
-{
+void FxDrawGL1SolidCone(float base, float height, unsigned slices, unsigned stacks) {
 #ifdef FLUXIONS_USE_FREEGLUT
 	glutSolidCone(base, height, slices, stacks);
 #endif
 
 }
 
-void FxDrawGL1SolidTeapot(float size)
-{
+void FxDrawGL1SolidTeapot(float size) {
 #ifdef FLUXIONS_USE_FREEGLUT
 	glutSolidTeapot(size);
 #endif
 }
 
-void FxDrawGL1Superquadric(float radius, unsigned slices, unsigned stacks, float n, float e)
-{
+void FxDrawGL1Superquadric(float radius, unsigned slices, unsigned stacks, float n, float e) {
 	float du = Fluxions::FX_F32_2_PI / slices;
 	float dv = Fluxions::FX_F32_PI / stacks;
 	float ds = 1.0f / slices;

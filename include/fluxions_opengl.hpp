@@ -40,6 +40,7 @@
 
 // GLEW must be included before gl.h
 #define GLEW_NO_GLU
+#define GLEW_STATIC
 #include <GL/glew.h>
 
 #ifdef FLUXIONS_USE_GLES

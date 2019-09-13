@@ -64,12 +64,6 @@
     <ClCompile Include="src\fluxions_simple_texture.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_sphl.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_sphl_sampler.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_fileio_iostream.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -142,12 +136,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_simple_texture.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_sphl.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_sphl_sampler.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_stdcxx.hpp">

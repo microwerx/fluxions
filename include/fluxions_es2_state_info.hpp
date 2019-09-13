@@ -22,7 +22,7 @@
 #include <vector>
 #include <memory>
 
-#include <fluxions_config.hpp>
+#include <fluxions_gte.hpp>
 #include <fluxions_opengl.hpp>
 
 namespace Fluxions

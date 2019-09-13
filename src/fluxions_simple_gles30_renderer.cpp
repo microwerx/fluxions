@@ -36,11 +36,12 @@ namespace Fluxions
 	}
 
 	void SimpleGLES30Renderer::SetSceneGraph(SimpleSceneGraph& ssg_) {
-		ssg = ssg_;
+		pssg = &ssg_;
 		areBuffersBuilt = false;
 	}
 
 	bool SimpleGLES30Renderer::ApplyRenderConfig() {
+		if (!pssg) return false;
 		if (renderConfig.shaderProgram == nullptr)
 			return false;
 		if (renderConfig.useZOnly && renderConfig.zShaderProgram == nullptr)
@@ -80,8 +81,12 @@ namespace Fluxions
 
 		if (renderConfig.useSceneCamera) {
 			projectionMatrix_.LoadIdentity();
-			projectionMatrix_.PerspectiveY((float)ssg.camera.fov, renderConfig.viewportRect.aspectRatiof(), (float)ssg.camera.imageNearZ, (float)ssg.camera.imageFarZ);
-			cameraMatrix_ = renderConfig.preCameraMatrix * ssg.camera.viewMatrix * renderConfig.postCameraMatrix;
+			projectionMatrix_.PerspectiveY(
+				(float)pssg->camera.fov,
+				renderConfig.viewportRect.aspectRatiof(),
+				(float)pssg->camera.imageNearZ,
+				(float)pssg->camera.imageFarZ);
+			cameraMatrix_ = renderConfig.preCameraMatrix * pssg->camera.viewMatrix * renderConfig.postCameraMatrix;
 		}
 		else {
 			projectionMatrix_.LoadIdentity();
@@ -389,28 +394,28 @@ namespace Fluxions
 
 	void SimpleGLES30Renderer::ApplyGlobalSettingsToCurrentProgram() {
 		if (locs.enviroCubeMap >= 0)
-			glUniform1i(locs.enviroCubeMap, ssg.environment.enviroColorMapUnit);
+			glUniform1i(locs.enviroCubeMap, pssg->environment.enviroColorMapUnit);
 		if (locs.enviroCubeMapAmount >= 0)
 			glUniform1f(locs.enviroCubeMapAmount, 0.0);
 		if (locs.pbskyCubeMap >= 0)
-			glUniform1i(locs.pbskyCubeMap, ssg.environment.pbskyColorMapUnit);
+			glUniform1i(locs.pbskyCubeMap, pssg->environment.pbskyColorMapUnit);
 		if (locs.sunDirTo >= 0)
-			glUniform3fv(locs.sunDirTo, 1, ssg.environment.curSunDirTo.const_ptr());
+			glUniform3fv(locs.sunDirTo, 1, pssg->environment.curSunDirTo.const_ptr());
 		if (locs.sunColor >= 0)
-			glUniform3fv(locs.sunColor, 1, ssg.environment.sunColor.const_ptr());
+			glUniform3fv(locs.sunColor, 1, pssg->environment.sunColor.const_ptr());
 		if (locs.sunSize >= 0)
-			glUniform1f(locs.sunSize, ssg.environment.sunSize);
+			glUniform1f(locs.sunSize, pssg->environment.sunSize);
 		if (locs.sunShadowMap >= 0)
-			glUniform1i(locs.sunShadowMap, ssg.environment.sunDepthMapUnit);
+			glUniform1i(locs.sunShadowMap, pssg->environment.sunDepthMapUnit);
 		if (locs.sunColorMap >= 0)
-			glUniform1i(locs.sunColorMap, ssg.environment.sunColorMapUnit);
+			glUniform1i(locs.sunColorMap, pssg->environment.sunColorMapUnit);
 	}
 
 	void SimpleGLES30Renderer::ApplySpheresToCurrentProgram() {
 		std::vector<float> spherePositions;
 		std::vector<float> sphereKe;
 		int numSpheres = 0;
-		for (auto sphIt = ssg.spheres.begin(); sphIt != ssg.spheres.end(); sphIt++) {
+		for (auto sphIt = pssg->spheres.begin(); sphIt != pssg->spheres.end(); sphIt++) {
 			if (spherePositions.size() > 8)
 				break;
 			Vector4f pos(0, 0, 0, 1);
@@ -420,7 +425,7 @@ namespace Fluxions
 			radius = radius - pos;
 			float length = radius.length();
 			pos.w = length;
-			SimpleMaterial* mtl = ssg.materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
+			SimpleMaterial* mtl = pssg->materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
 			// only push spheres that are emissive...
 			if (mtl) {
 				spherePositions.push_back(pos.x);
@@ -462,24 +467,24 @@ namespace Fluxions
 		program_.ApplyUniform("CameraPosition", CameraPosition);
 
 		// apply each material separately (use the idea that material state changes are worse than geometry ones
-		for (auto libIt = ssg.materials.begin(); libIt != ssg.materials.end(); libIt++) {
+		for (auto libIt = pssg->materials.begin(); libIt != pssg->materials.end(); libIt++) {
 			SimpleMaterialLibrary& mtllib = libIt->second;
 			std::string mtllibName = mtllib.name;
-			GLuint mtllibId = ssg.materials.GetLibraryId(mtllib.name);
-			ssg.materials.SetLibrary(mtllib.name);
+			GLuint mtllibId = pssg->materials.GetLibraryId(mtllib.name);
+			pssg->materials.SetLibrary(mtllib.name);
 
 			// loop through each material
 			for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++) {
 				GLuint mtlId = mtlIt->first;
-				std::string mtlName = ssg.materials.GetMaterialName(mtlId);
+				std::string mtlName = pssg->materials.GetMaterialName(mtlId);
 				SimpleMaterial& mtl = mtlIt->second;
-				ssg.materials.SetMaterial(mtlName);
+				pssg->materials.SetMaterial(mtlName);
 
 				if (useMaterials)
 					ApplyMaterialToCurrentProgram(mtl, useMaps);
 
 				// loop through each geometry object
-				for (auto geoIt = ssg.geometry.begin(); geoIt != ssg.geometry.end(); geoIt++) {
+				for (auto geoIt = pssg->geometry.begin(); geoIt != pssg->geometry.end(); geoIt++) {
 					SimpleGeometryGroup& geo = geoIt->second;
 					GLuint objectId = geo.objectId;
 					GLuint groupId = 0;
@@ -494,10 +499,10 @@ namespace Fluxions
 					Matrix4f totalTransform = geo.transform * geo.addlTransform;
 					ModelViewMatrix = totalTransform;
 
-					SunShadowBiasMatrix = ssg.environment.sunShadowBiasMatrix;
-					SunShadowProjectionMatrix = ssg.environment.sunShadowProjectionMatrix;
-					SunShadowViewMatrix = ssg.environment.sunShadowViewMatrix;
-					SunShadowInverseViewMatrix = ssg.environment.sunShadowInverseViewMatrix;
+					SunShadowBiasMatrix = pssg->environment.sunShadowBiasMatrix;
+					SunShadowProjectionMatrix = pssg->environment.sunShadowProjectionMatrix;
+					SunShadowViewMatrix = pssg->environment.sunShadowViewMatrix;
+					SunShadowInverseViewMatrix = pssg->environment.sunShadowInverseViewMatrix;
 
 					program_.ApplyUniform("ModelViewMatrix", ModelViewMatrix);
 					program_.ApplyUniform("SunShadowBiasMatrix", SunShadowBiasMatrix);
@@ -522,27 +527,27 @@ namespace Fluxions
 
 		if (useMaps) {
 			if (!mtl.map_Ka.empty())
-				currentTextures["map_Ka"] = ssg.materials.GetTextureMap(mtl.map_Ka);
+				currentTextures["map_Ka"] = pssg->materials.GetTextureMap(mtl.map_Ka);
 			if (!mtl.map_Kd.empty())
-				currentTextures["map_Kd"] = ssg.materials.GetTextureMap(mtl.map_Kd);
+				currentTextures["map_Kd"] = pssg->materials.GetTextureMap(mtl.map_Kd);
 			if (!mtl.map_Ks.empty())
-				currentTextures["map_Ks"] = ssg.materials.GetTextureMap(mtl.map_Ks);
+				currentTextures["map_Ks"] = pssg->materials.GetTextureMap(mtl.map_Ks);
 			if (!mtl.map_Ke.empty())
-				currentTextures["map_Ke"] = ssg.materials.GetTextureMap(mtl.map_Ke);
+				currentTextures["map_Ke"] = pssg->materials.GetTextureMap(mtl.map_Ke);
 			if (!mtl.map_Ns.empty())
-				currentTextures["map_Ns"] = ssg.materials.GetTextureMap(mtl.map_Ns);
+				currentTextures["map_Ns"] = pssg->materials.GetTextureMap(mtl.map_Ns);
 			if (!mtl.map_Ns.empty())
-				currentTextures["map_Ni"] = ssg.materials.GetTextureMap(mtl.map_Ni);
+				currentTextures["map_Ni"] = pssg->materials.GetTextureMap(mtl.map_Ni);
 			if (!mtl.map_Tf.empty())
-				currentTextures["map_Tf"] = ssg.materials.GetTextureMap(mtl.map_Tf);
+				currentTextures["map_Tf"] = pssg->materials.GetTextureMap(mtl.map_Tf);
 			if (!mtl.map_Tr.empty())
-				currentTextures["map_Tr"] = ssg.materials.GetTextureMap(mtl.map_Tr);
+				currentTextures["map_Tr"] = pssg->materials.GetTextureMap(mtl.map_Tr);
 			if (!mtl.map_bump.empty())
-				currentTextures["map_bump"] = ssg.materials.GetTextureMap(mtl.map_bump);
+				currentTextures["map_bump"] = pssg->materials.GetTextureMap(mtl.map_bump);
 			if (!mtl.map_normal.empty())
-				currentTextures["map_normal"] = ssg.materials.GetTextureMap(mtl.map_normal);
+				currentTextures["map_normal"] = pssg->materials.GetTextureMap(mtl.map_normal);
 			if (!mtl.PBmap.empty())
-				currentTextures["PBmap"] = ssg.materials.GetTextureMap(mtl.PBmap);
+				currentTextures["PBmap"] = pssg->materials.GetTextureMap(mtl.PBmap);
 
 			for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
 				SimpleMap* pMap = tmapIt->second;
@@ -777,16 +782,16 @@ namespace Fluxions
 
 		glUseProgram(programId);
 		if (uCubeTexture >= 0) {
-			FxBindTextureAndSampler(ssg.environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, ssg.environment.pbskyColorMapId, ssg.environment.pbskyColorMapSamplerId);
-			glUniform1i(uCubeTexture, ssg.environment.pbskyColorMapUnit);
+			FxBindTextureAndSampler(pssg->environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, pssg->environment.pbskyColorMapId, pssg->environment.pbskyColorMapSamplerId);
+			glUniform1i(uCubeTexture, pssg->environment.pbskyColorMapUnit);
 		}
 		if (uProjectionMatrix >= 0) {
-			Matrix4f projectionMatrix_ = ssg.camera.projectionMatrix;
-			//projectionMatrix_.MakePerspective(ssg.camera.fov, aspectRatio, ssg.camera.imageNearZ, ssg.camera.imageFarZ);
+			Matrix4f projectionMatrix_ = pssg->camera.projectionMatrix;
+			//projectionMatrix_.MakePerspective(pssg->camera.fov, aspectRatio, pssg->camera.imageNearZ, pssg->camera.imageFarZ);
 			glUniformMatrix4fv(uProjectionMatrix, 1, GL_FALSE, projectionMatrix_.ptr());
 		}
 		if (uCameraMatrix >= 0) {
-			Matrix4f viewMatrix = renderConfig.preCameraMatrix * ssg.camera.viewMatrix;
+			Matrix4f viewMatrix = renderConfig.preCameraMatrix * pssg->camera.viewMatrix;
 			viewMatrix.m14 = viewMatrix.m24 = viewMatrix.m34 = viewMatrix.m41 = viewMatrix.m42 = viewMatrix.m43 = 0.0f;
 			glUniformMatrix4fv(uCameraMatrix, 1, GL_FALSE, viewMatrix.const_ptr());
 		}
@@ -795,9 +800,9 @@ namespace Fluxions
 			glUniformMatrix4fv(uWorldMatrix, 1, GL_FALSE, worldMatrix.const_ptr());
 		}
 		if (uSunDirTo >= 0 && uSunE0 >= 0 && uGroundE0 >= 0) {
-			glUniform3fv(uSunDirTo, 1, ssg.environment.curSunDirTo.const_ptr());
-			glUniform4fv(uSunE0, 1, ssg.environment.curSunDiskRadiance.const_ptr());
-			glUniform4fv(uGroundE0, 1, ssg.environment.curGroundRadiance.const_ptr());
+			glUniform3fv(uSunDirTo, 1, pssg->environment.curSunDirTo.const_ptr());
+			glUniform4fv(uSunE0, 1, pssg->environment.curSunDiskRadiance.const_ptr());
+			glUniform4fv(uGroundE0, 1, pssg->environment.curGroundRadiance.const_ptr());
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, abo);
@@ -821,16 +826,16 @@ namespace Fluxions
 
 	void SimpleGLES30Renderer::BuildBuffers() {
 		renderer.Reset();
-		for (auto it = ssg.geometry.begin(); it != ssg.geometry.end(); it++) {
+		for (auto it = pssg->geometry.begin(); it != pssg->geometry.end(); it++) {
 			SimpleGeometryGroup& geo = it->second;
 			renderer.SetCurrentObjectId(geo.objectId);
 			renderer.SetCurrentMtlLibId(geo.mtllibId);
 			renderer.SetCurrentObjectName(geo.objectName);
 			renderer.SetCurrentMtlLibName(geo.mtllibName);
 			renderer.NewObject();
-			ssg.geometryObjects[geo.objectId].Render(renderer);
+			pssg->geometryObjects[geo.objectId].Render(renderer);
 		}
-		renderer.AssignMaterialIds(ssg.materials);
+		renderer.AssignMaterialIds(pssg->materials);
 		renderer.SetCurrentMtlLibName("");
 		renderer.SetCurrentMtlLibId(0);
 		InitSkyBox();
