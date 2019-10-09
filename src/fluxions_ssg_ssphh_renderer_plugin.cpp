@@ -5,7 +5,9 @@
 namespace Fluxions
 {
 	SSG_SSPHHRendererPlugin::SSG_SSPHHRendererPlugin(SimpleSceneGraph* pointerToSSG)
-		: ISimpleRendererPlugin(pointerToSSG) {}
+		: ISimpleRendererPlugin(pointerToSSG) {
+		pssg = pointerToSSG;
+	}
 
 	bool SSG_SSPHHRendererPlugin::Reset() {
 		ssphhLights.clear();
@@ -127,21 +129,30 @@ namespace Fluxions
 				}
 			}
 		}
-		if (v_MaxIndex >= 0) {
-			if (locs.sphl_light_count >= 0)
-				glUniform1i(locs.sphl_light_count, v_MaxIndex + 1);
+		if (v_MaxIndex >= 0 && locs.sphl_light_count >= 0) {
+			glUniform1i(locs.sphl_light_count, v_MaxIndex + 1);
 
 			for (int i = 0; i < 16; i++) {
-				glUniform1iv(locs.sphl_lights_enabled[i], 1, &v_Enabled[i]);
-				glUniform3fv(locs.sphl_lights_E0[i], 1, v_E0[i].const_ptr());
-				glUniform3fv(locs.sphl_lights_position[i], 1, v_Position[i].const_ptr());
-				glUniform1iv(locs.sphl_lights_lightProbeCubeMap[i], 1, &v_LightProbeCubeMapUnit[i]);
-				glUniform1iv(locs.sphl_lights_environmentCubeMap[i], 1, &v_EnvironmentCubeMapUnit[i]);
-				glUniform1iv(locs.sphl_lights_depthShadowCubeMap[i], 1, &v_DepthShadowCubeMapUnit[i]);
-				glUniform1fv(locs.sphl_lights_depthShadowZFar[i], 1, &v_DepthShadowZFar[i]);
+				if (locs.sphl_lights_enabled[i] >= 0)
+					glUniform1iv(locs.sphl_lights_enabled[i], 1, &v_Enabled[i]);
+				if (locs.sphl_lights_E0[i])
+					glUniform3fv(locs.sphl_lights_E0[i], 1, v_E0[i].const_ptr());
+				if (locs.sphl_lights_position[i])
+					glUniform3fv(locs.sphl_lights_position[i], 1, v_Position[i].const_ptr());
+				if (locs.sphl_lights_lightProbeCubeMap[i])
+					glUniform1iv(locs.sphl_lights_lightProbeCubeMap[i], 1, &v_LightProbeCubeMapUnit[i]);
+				if (locs.sphl_lights_environmentCubeMap[i])
+					glUniform1iv(locs.sphl_lights_environmentCubeMap[i], 1, &v_EnvironmentCubeMapUnit[i]);
+				if (locs.sphl_lights_depthShadowCubeMap[i])
+					glUniform1iv(locs.sphl_lights_depthShadowCubeMap[i], 1, &v_DepthShadowCubeMapUnit[i]);
+				if (locs.sphl_lights_depthShadowZFar[i])
+					glUniform1fv(locs.sphl_lights_depthShadowZFar[i], 1, &v_DepthShadowZFar[i]);
+				while (glGetError()) HFLOGWARN("This one ERROR!");
 				for (int j = 0; j < 9; j++) {
-					glUniform3fv(locs.sphl_lights_sph[i][j], 9, v_sph[i * 9].const_ptr());
+					if (locs.sphl_lights_sph[i][j])
+						glUniform3fv(locs.sphl_lights_sph[i][j], 9, v_sph[i * 9].const_ptr());
 				}
+				while (glGetError()) HFLOGWARN("That one ERROR!");
 			}
 
 			glActiveTexture(GL_TEXTURE0);
@@ -149,6 +160,7 @@ namespace Fluxions
 		else {
 			if (locs.sphl_light_count >= 0)
 				glUniform1i(locs.sphl_light_count, 0);
+			else return false;
 		}
 		return true;
 	}
