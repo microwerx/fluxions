@@ -37,6 +37,7 @@
 #pragma comment (lib, "winmm.lib")		// Windows MultiMedia library
 #pragma comment (lib, "user32.lib")		// Windows User library
 #pragma comment (lib, "glew32s.lib")		// GL Extension Wrangler library
+
 #endif
 
 // GLEW must be included before gl.h

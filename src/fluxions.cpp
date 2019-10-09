@@ -28,9 +28,8 @@ namespace Fluxions
 	std::string gl_renderer;
 	std::string gl_vendor;
 
-	std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string &filename)
-	{
-		const char *typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
+	std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string& filename) {
+		const char* typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
 			(type == GL_FRAGMENT_SHADER) ? "fragment" :
 			(type == GL_GEOMETRY_SHADER) ? "geometry" :
 			"unknown";
@@ -46,7 +45,7 @@ namespace Fluxions
 			return shader;
 		}
 		shader->source = ReadTextFile(filename);
-		const GLchar *sourceString = shader->source.c_str();
+		const GLchar* sourceString = shader->source.c_str();
 		const GLint length = (int)shader->source.size();
 		glShaderSource(shader->shader, 1, &sourceString, &length);
 		glCompileShader(shader->shader);
@@ -56,22 +55,19 @@ namespace Fluxions
 		shader->hadError = (ival != GL_TRUE);
 		glGetShaderiv(shader->shader, GL_INFO_LOG_LENGTH, &ival);
 		shader->infoLog.resize(ival);
-		GLchar *infoLog = &shader->infoLog[0];
+		GLchar* infoLog = &shader->infoLog[0];
 		glGetShaderInfoLog(shader->shader, ival, NULL, infoLog);
-		if (shader->hadError)
-		{
+		if (shader->hadError) {
 			HFLOGERROR("shader %d compile error for %s\n%s", shader->shader, filename.c_str(), shader->infoLog.c_str());
 		}
-		if (shader->didCompile)
-		{
+		if (shader->didCompile) {
 			HFLOGDEBUG("shader %d compiled", shader->shader);
 		}
 
 		return shader;
 	}
 
-	std::string FindFileIfExists(const std::string &filename, const std::vector<std::string> &pathsToTry)
-	{
+	std::string FindFileIfExists(const std::string& filename, const std::vector<std::string>& pathsToTry) {
 		std::string output;
 
 		// Is there a file name to test?
@@ -79,17 +75,13 @@ namespace Fluxions
 		if (fpi.fullfname.empty())
 			return output;
 
-		if (TestIfFileExists(filename))
-		{
+		if (TestIfFileExists(filename)) {
 			output = filename;
 		}
-		else
-		{
-			for (auto testPathIt : pathsToTry)
-			{
+		else {
+			for (auto testPathIt : pathsToTry) {
 				std::string testPath = testPathIt + fpi.fullfname;
-				if (TestIfFileExists(testPath))
-				{
+				if (TestIfFileExists(testPath)) {
 					output = testPath;
 					break;
 				}
@@ -99,40 +91,34 @@ namespace Fluxions
 		return output;
 	}
 
-	std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char **argv)
-	{
+	std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char** argv) {
 		std::map<std::string, std::string> argv_options;
-		for (int i = 0; i < argc; i++)
-		{
+		for (int i = 0; i < argc; i++) {
 			std::string option = argv[i];
 			HFLOGINFO("Processing '%s'", option.c_str());
 			std::regex dashequals("(^-+|=)",
-				std::regex_constants::ECMAScript);
+								  std::regex_constants::ECMAScript);
 			std::sregex_token_iterator it(option.begin(),
-				option.end(),
-				dashequals,
-				-1);
+										  option.end(),
+										  dashequals,
+										  -1);
 			std::sregex_token_iterator end;
 			size_t count = 0;
 
 			std::string key = "";
 			std::string value = "";
-			for (; it != end; it++)
-			{
-				if (count == 1)
-				{
+			for (; it != end; it++) {
+				if (count == 1) {
 					key = *it;
 				}
-				else if (count == 2)
-				{
+				else if (count == 2) {
 					value = *it;
 				}
 				std::string token = *it;
 				HFLOGDEBUG("token %d '%s'", count, token.c_str());
 				count++;
 			}
-			if (key.length() > 0)
-			{
+			if (key.length() > 0) {
 				argv_options.emplace(std::make_pair(key, value));
 				HFLOGINFO("argv adding key '%s' = '%s'", key.c_str(), value.c_str());
 			}
@@ -140,40 +126,53 @@ namespace Fluxions
 		return argv_options;
 	}
 
-	void ReadGLInfo()
-	{
+	void ReadGLInfo() {
 		__checkedGLInfo = true;
-		gl_version = (const char *)glGetString(GL_VERSION);
-		gl_vendor = (const char *)glGetString(GL_VENDOR);
-		gl_renderer = (const char *)glGetString(GL_RENDERER);
+		gl_version = (const char*)glGetString(GL_VERSION);
+		gl_vendor = (const char*)glGetString(GL_VENDOR);
+		gl_renderer = (const char*)glGetString(GL_RENDERER);
 
-		HFLOGINFO("GL_RENDERER: %s", gl_renderer.c_str());
-		HFLOGINFO("GL_VERSION:  %s", gl_version.c_str());
-		HFLOGINFO("GL_VENDOR:   %s", gl_vendor.c_str());
+		if (glewIsExtensionSupported("GL_ARB_ES2_compatibility")) {
+			HFLOGINFO("GL_EXTENSIONS: GL_ARB_ES2_compatibility supported");
+		}
+
+		if (glewIsExtensionSupported("GL_ARB_ES3_compatibility")) {
+			HFLOGINFO("GL_EXTENSIONS: GL_ARB_ES3_compatibility supported");
+		}
+
+		if (glewIsExtensionSupported("GL_ARB_ES3_1_compatibility")) {
+			HFLOGINFO("GL_EXTENSIONS: GL_ARB_ES3_1_compatibility supported");
+		}
+
+		if (glewIsExtensionSupported("GL_ARB_ES3_2_compatibility")) {
+			HFLOGINFO("GL_EXTENSIONS: GL_ARB_ES3_2_compatibility supported");
+		}
+
+		HFLOGINFO("GL_RENDERER:   %s", gl_renderer.c_str());
+		HFLOGINFO("GL_VERSION:    %s", gl_version.c_str());
+		HFLOGINFO("GL_VENDOR:     %s", gl_vendor.c_str());
 	}
 
-	const std::string &GetRenderer()
-	{
+	const std::string& GetRenderer() {
 		if (!__checkedGLInfo) ReadGLInfo();
 		return gl_renderer;
 	}
 
-	const std::string &GetVendor()
-	{
+	const std::string& GetVendor() {
 		if (!__checkedGLInfo) ReadGLInfo();
 		return gl_vendor;
 	}
 
-	const std::string &GetVersion()
-	{
+	const std::string& GetVersion() {
 		if (!__checkedGLInfo) ReadGLInfo();
 		return gl_version;
 	}
 
-	void Init()
-	{
+	void Init() {
 		// Perform any necessary initialization steps here
 		HFLOGINFO("Initializing Fluxions");
+
+		HFLOGINFO("Initializing GLEW");
 		GLenum err = glewInit();
 		if (err != GLEW_OK) {
 			HFLOGERROR("glewInit() -> %s", glewGetErrorString(err));
@@ -183,19 +182,17 @@ namespace Fluxions
 		glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT_ARB, GL_NICEST);
 
 #ifndef FLUXIONS_NO_SDL
-		HFLOGINFO("Initializing SDL");
+		HFLOGINFO("Initializing SDL2");
 		SDL_Init(SDL_INIT_EVERYTHING);
+
+		HFLOGINFO("Initializing SDL2_image for JPG/PNG support");
 		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 #endif
 	}
 
-	void Kill()
-	{
+	void Kill() {}
 
-	}
-
-	void YieldThread()
-	{
+	void YieldThread() {
 #ifdef _WIN32
 		INPUT input;
 		ZeroMemory(&input, sizeof(INPUT));
@@ -206,6 +203,6 @@ namespace Fluxions
 #elif _POSIX_VERSION
 		usleep(0);
 #endif
-	}
+}
 
 } // namespace Fluxions

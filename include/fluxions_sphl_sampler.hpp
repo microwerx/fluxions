@@ -16,33 +16,37 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.hpp"
-#include <fluxions_simple_scene_graph.hpp>
+#ifndef FLUXIONS_SPHL_SAMPLER_HPP
+#define FLUXIONS_SPHL_SAMPLER_HPP
 
+#include <vector>
+#include <fluxions_gte.hpp>
+#include <fluxions_simple_scene_graph.hpp>
+#include <fluxions_sphl.hpp>
 
 namespace Fluxions
 {
-	GLbitfield SimpleRenderConfiguration::GetClearBits() const {
-		GLbitfield clearBits = 0;
-		if (clearDepthBuffer) clearBits |= GL_DEPTH_BUFFER_BIT;
-		if (clearColorBuffer) clearBits |= GL_COLOR_BUFFER_BIT;
-		if (clearStencilBuffer) clearBits |= GL_STENCIL_BUFFER_BIT;
-		return clearBits;
-	}
+	class SphlSampler
+	{
+	public:
+		SphlSampler();
 
-	bool SimpleRenderConfiguration::check() const {
-		if (!zShaderProgram && !shaderProgram) {
-			return false;
-		}
+		void resize(size_t samplesX, size_t samplesY);
+		void saveSampleMap(const std::string& path, int pxscale);
+		void sampleCubeMap(const Image4f& cubeMap, MultispectralSph4f& msph);
 
-		if (zShaderProgram && !zShaderProgram->IsLinked()) {
-			return false;
-		}
+	private:
+		const size_t pxscale = 4;
+		Image3i sampleMap;
+		size_t ix = 128;
+		size_t iy = 64;
+		size_t numSamples = 0;
+		std::vector<Vector3f> randomVectors;
+		std::vector<double> theta;
+		std::vector<double> phi;
+		std::vector<double> sph;
+		std::vector<size_t> debug_sides;
+	};
+} // namespace Fluxions
 
-		if (shaderProgram && !shaderProgram->IsLinked()) {
-			return false;
-		}
-
-		return true;
-	}
-}
+#endif

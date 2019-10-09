@@ -96,7 +96,7 @@ class SimpleGeometryMesh
 
 	struct Surface
 	{
-		std::string materialName;
+		std::string materialName{ "" };
 		SurfaceType type = SurfaceType::Triangles;
 		unsigned first = 0;
 		unsigned count = 0;

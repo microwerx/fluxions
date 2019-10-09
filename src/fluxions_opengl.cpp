@@ -2213,7 +2213,7 @@ namespace Fluxions
 			glEnable(GL_DEBUG_OUTPUT);
 		}
 		else {
-			Hf::Log.warningfn(__FUNCTION__, "No glDebugMessageCallback");
+			HFLOGWARN("No glDebugMessageCallback");
 		}
 	}
 

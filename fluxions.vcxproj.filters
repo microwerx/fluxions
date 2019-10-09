@@ -70,6 +70,33 @@
     <ClCompile Include="src\fluxions_obj_static_model.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_simple_ssphh_light.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_sphl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_sphl_sampler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_sphl_image_texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_gpu_texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_ssphh_utilities.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_ssphh.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_ssg_ssphh_renderer_plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_render_utilities.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -157,6 +184,78 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_obj_static_model.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_ssphh.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_ssphh_light.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl_sampler.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssphh.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl_image_texture.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_gpu_texture.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_render_utilities.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_shader_program_locations.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_camera.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_cube_texture.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_environment.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_geometry_group.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_point_light.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_program.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_render_config.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_renderer_plugin.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_shader.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_sphere.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_surface.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_uniform.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_vertex.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssphh_utilities.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssg_ssphh_renderer_plugin.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
