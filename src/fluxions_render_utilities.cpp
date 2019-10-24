@@ -101,7 +101,7 @@ namespace Fluxions
 					}
 					else if (dstubpixels && srcfpixels) {
 						float v = *srcfpixels++;
-						*dstubpixels++ = Fluxions::clamp((int)(v * 255.99f), 0, 255);
+						*dstubpixels++ = (unsigned char)Fluxions::clamp((int)(v * 255.99f), 0, 255);
 					}
 					else if (dstfpixels && srcubpixels) {
 						float v = *srcubpixels++;

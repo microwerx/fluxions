@@ -457,7 +457,8 @@ void FxDrawGL1Camera(double fov, float r, float g, float b, float zfar, const fl
 	glColor4f(r, g, b, 1.0f);
 	glPushMatrix(); // for cone
 	glTranslatef(0.0f, 0.0f, -1.0f);
-	FxDrawGL1WireCone(sinf(0.5f * fov * 3.14159f / 180.0f), 1.0f, 32, 2);
+	float angle = (float)(fov * Fluxions::FX_DEGREES_TO_RADIANS * 0.5);
+	FxDrawGL1WireCone(sinf(angle), 1.0f, 32, 2);
 	glPopMatrix(); // for cone
 
 	glPushMatrix(); // for wire cube
