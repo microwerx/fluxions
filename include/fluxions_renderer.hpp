@@ -26,52 +26,11 @@
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_simple_renderer.hpp>
+#include <fluxions_iscene.hpp>
+#include <fluxions_irenderer.hpp>
 
 namespace Fluxions
 {
-	// SCENE INTERFACE
-
-	class IScene
-	{
-	public:
-		virtual bool Load(const char* filename) = 0;
-		virtual bool Save(const char* filename) = 0;
-
-		struct Light
-		{
-		};
-
-		struct Camera
-		{
-		};
-
-		struct Mesh
-		{
-		};
-
-		struct MtlLib
-		{
-		};
-
-		std::vector<Camera> Cameras;
-		std::vector<Mesh> Meshes;
-		std::vector<MtlLib> MtlLibs;
-	};
-
-	// RENDERER INTERFACE
-
-	class IRenderer
-	{
-	public:
-		virtual bool UploadCompileLink() = 0;
-		virtual void Render(const IScene* pScene) = 0;
-		virtual void Reset() = 0;
-
-		virtual bool IsConfig(const std::string& name) const = 0;
-		virtual bool UseConfig(const std::string& name) = 0;
-		virtual bool LoadConfig(const std::string& filename) = 0;
-	};
-
 	class Renderer : public IRenderer
 	{
 	public:
@@ -107,7 +66,7 @@ namespace Fluxions
 			RenderConfig(const std::string& _name) : name(_name) {}
 		};
 
-		using RenderConfigPtr = RenderConfig *;
+		using RenderConfigPtr = RenderConfig*;
 
 		struct Texture
 		{
@@ -163,8 +122,7 @@ namespace Fluxions
 		virtual RenderConfigPtr GetConfig(const std::string& name) { return IsConfig(name) ? &RenderConfigs.find(name)->second : nullptr; }
 
 		// G-Buffer and Deferred Renderers
-		virtual bool SetGbufferRenderConfig(const std::string& name)
-		{
+		virtual bool SetGbufferRenderConfig(const std::string& name) {
 			gbufferConfig = GetConfig(name);
 			return gbufferConfig != nullptr;
 		}
@@ -176,8 +134,7 @@ namespace Fluxions
 
 		virtual bool SetDeferredRenderConfig(Quadrant quadrant,
 											 const std::string& rc,
-											 const std::string& program)
-		{
+											 const std::string& program) {
 			deferredConfigs[quadrant] = GetConfig(rc);
 			deferredPrograms[quadrant] = FindProgram(rc, program);
 			return deferredConfigs[quadrant] != nullptr && deferredPrograms[quadrant] != nullptr;
@@ -185,13 +142,12 @@ namespace Fluxions
 
 		virtual RenderConfigPtr GetDeferredRenderConfig(Quadrant quadrant) { return deferredConfigs[quadrant]; }
 		virtual SimpleProgramPtr GetDeferredProgram(Quadrant quadrant) { return deferredPrograms[quadrant]; }
-		
-		virtual void SetDeferredRect(const Recti& rect)
-		{
+
+		virtual void SetDeferredRect(const Recti& rect) {
 			deferredRect = rect;
 			deferredSplitPoint = deferredRect.Clamp(deferredSplitPoint);
 		}
-		
+
 		virtual void SetDeferredSplit(const Vector2i& position) { deferredSplitPoint = deferredRect.Clamp(position); }
 		virtual void SetDeferredSplitPercent(const Vector2f& pct) { deferredSplitPoint = deferredRect.percent(pct); }
 		virtual const Vector2i& GetDeferredSplitPoint() const { return deferredSplitPoint; }
