@@ -258,6 +258,12 @@
     <ClInclude Include="include\fluxions_ssg_ssphh_renderer_plugin.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\fluxions_iscene.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_irenderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

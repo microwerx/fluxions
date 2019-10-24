@@ -305,6 +305,8 @@
     <ClInclude Include="include\fluxions_es2_state_info.hpp" />
     <ClInclude Include="include\fluxions_fileio.hpp" />
     <ClInclude Include="include\fluxions_fileio_iostream.hpp" />
+    <ClInclude Include="include\fluxions_irenderer.hpp" />
+    <ClInclude Include="include\fluxions_iscene.hpp" />
     <ClInclude Include="include\fluxions_multiple_render_target.hpp" />
     <ClInclude Include="include\fluxions_opengl.hpp" />
     <ClInclude Include="include\fluxions_pbsky.hpp" />
