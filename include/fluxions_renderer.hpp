@@ -113,14 +113,14 @@ namespace Fluxions
 		{
 			std::string name;
 			std::vector<std::pair<GLenum, std::string>> files;
-			GLenum target;
-			int level;
-			GLenum internalformat;
-			int width;
-			int height;
-			GLenum format;
-			GLenum type;
-			bool genmipmap;
+			GLenum target = 0;
+			int level = 0;
+			GLenum internalformat = 0;
+			int width = 0;
+			int height = 0;
+			GLenum format = 0;
+			GLenum type = 0;
+			bool genmipmap = true;
 		};
 
 		struct Sampler
@@ -132,10 +132,10 @@ namespace Fluxions
 		struct Renderbuffer
 		{
 			std::string name;
-			GLenum internalformat;
-			int width;
-			int height;
-			int samples;
+			GLenum internalformat = 0;
+			int width = 0;
+			int height = 0;
+			int samples = 0;
 		};
 
 		struct Framebuffer
@@ -174,19 +174,24 @@ namespace Fluxions
 
 		using Quadrant = Recti::Quadrant;
 
-		virtual bool SetDeferredRenderConfig(Quadrant quadrant, const std::string& rc, const std::string& program)
+		virtual bool SetDeferredRenderConfig(Quadrant quadrant,
+											 const std::string& rc,
+											 const std::string& program)
 		{
 			deferredConfigs[quadrant] = GetConfig(rc);
 			deferredPrograms[quadrant] = FindProgram(rc, program);
 			return deferredConfigs[quadrant] != nullptr && deferredPrograms[quadrant] != nullptr;
 		}
+
 		virtual RenderConfigPtr GetDeferredRenderConfig(Quadrant quadrant) { return deferredConfigs[quadrant]; }
 		virtual SimpleProgramPtr GetDeferredProgram(Quadrant quadrant) { return deferredPrograms[quadrant]; }
+		
 		virtual void SetDeferredRect(const Recti& rect)
 		{
 			deferredRect = rect;
 			deferredSplitPoint = deferredRect.Clamp(deferredSplitPoint);
 		}
+		
 		virtual void SetDeferredSplit(const Vector2i& position) { deferredSplitPoint = deferredRect.Clamp(position); }
 		virtual void SetDeferredSplitPercent(const Vector2f& pct) { deferredSplitPoint = deferredRect.percent(pct); }
 		virtual const Vector2i& GetDeferredSplitPoint() const { return deferredSplitPoint; }
@@ -223,11 +228,11 @@ namespace Fluxions
 		Recti deferredRect = Recti(0, 0, 0, 0);
 
 		std::string basepath;
-		RenderConfig* pcur_renderconfig;
-		RenderConfig::Program* pcur_program;
+		RenderConfig* pcur_renderconfig = nullptr;
+		RenderConfig::Program* pcur_program = nullptr;
 		std::string cur_sampler;
 		std::string cur_texture;
-		Framebuffer* pcur_fbo;
+		Framebuffer* pcur_fbo = nullptr;
 
 		virtual bool new_renderconfig(const std::string& name);
 		virtual bool use_renderconfig(const std::string& name);
