@@ -41,21 +41,21 @@ namespace Fluxions
 	bool SphlImageTexture::SphToLightProbe(const MultispectralSph4f& sph) {
 		float v_coefs[4][121];
 
-		size_t maxDegree = sph[0].GetMaxDegree();
-		size_t numCoefs = sph[0].getMaxCoefficients();
-		for (size_t j = 0; j < 4; j++) {
-			for (size_t lm = 0; lm < numCoefs; lm++) {
+		unsigned maxDegree = sph[0].GetMaxDegree();
+		unsigned numCoefs = sph[0].getMaxCoefficients();
+		for (unsigned j = 0; j < 4; j++) {
+			for (unsigned lm = 0; lm < numCoefs; lm++) {
 				v_coefs[j][lm] = sph[j][lm];
 			}
-			for (size_t lm = numCoefs; lm < 121; lm++) {
+			for (unsigned lm = numCoefs; lm < 121; lm++) {
 				v_coefs[j][lm] = 0.0f;
 			}
 		}
 
 		lightProbe.resize(32, 32, 6);
-		for (int face = 0; face < lightProbe.depth(); face++) {
-			for (int s = 0; s < lightProbe.width(); s++) {
-				for (int t = 0; t < lightProbe.height(); t++) {
+		for (unsigned face = 0; face < lightProbe.depth(); face++) {
+			for (unsigned s = 0; s < lightProbe.width(); s++) {
+				for (unsigned t = 0; t < lightProbe.height(); t++) {
 					float _s = (float)s / (float)lightProbe.width();
 					float _t = (float)t / (float)lightProbe.height();
 					Vector3f v;

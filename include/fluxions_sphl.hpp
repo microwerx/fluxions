@@ -33,8 +33,8 @@ namespace Fluxions
 	{
 		std::vector<Vector3f> vertices;
 		std::vector<Vector3i> triangles;
-		size_t vertexCount = 0;
-		size_t triangleCount = 0;
+		unsigned vertexCount = 0;
+		unsigned triangleCount = 0;
 
 		void load(const char* path);
 		void makeModel(SimpleGeometryMesh& model);

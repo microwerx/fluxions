@@ -25,7 +25,7 @@ namespace Fluxions
 		resize(ix, iy);
 	}
 
-	void SphlSampler::resize(size_t samplesX, size_t samplesY) {
+	void SphlSampler::resize(unsigned samplesX, unsigned samplesY) {
 		ix = samplesX;
 		iy = samplesY;
 		if (numSamples != ix * iy) {
@@ -42,8 +42,8 @@ namespace Fluxions
 			Vector3f avgVector;
 
 			// Create stratified set of samples on the sphere.
-			for (size_t b = 0; b < iy; b++) {
-				for (size_t a = 0; a < ix; a++) {
+			for (unsigned b = 0; b < iy; b++) {
+				for (unsigned a = 0; a < ix; a++) {
 					float x = 0.0f;
 
 					float y = 0.0f;
@@ -68,7 +68,7 @@ namespace Fluxions
 			}
 
 			sampleMap.resize(ix * pxscale, iy * pxscale);
-			for (size_t i = 0; i < numSamples; i++) {
+			for (unsigned i = 0; i < numSamples; i++) {
 				//float rtheta = randomSampler(0.0f, FX_PI);
 				//float rphi = randomSampler(0, 8.0 * FX_PI);
 				//randomVectors[i].from_theta_phi(rtheta, rphi);
@@ -81,12 +81,12 @@ namespace Fluxions
 				avgVector += randomVectors[i];
 				float s;
 				float t;
-				size_t side;
+				unsigned side;
 				MakeFaceSTFromCubeVector(randomVectors[i].x, randomVectors[i].y, randomVectors[i].z, &s, &t, &side);
 				debug_sides[i] = side;
 			}
 
-			//for (size_t i = 0; i < 6; i++)
+			//for (unsigned i = 0; i < 6; i++)
 			//{
 			//	std::cout << "side " << i << " = " << count(debug_sides.begin(), debug_sides.end(), i) << std::endl;
 			//}
@@ -94,8 +94,8 @@ namespace Fluxions
 			// std::cout << "Average vector: (" << avgVector.x << ", " << avgVector.y << ", " << avgVector.z << ")" << std::endl;
 			for (int l = 0; l <= 10; l++) {
 				for (int m = -l; m <= l; m++) {
-					for (size_t i = 0; i < numSamples; i++) {
-						size_t lm = l * (l + 1) + m;
+					for (unsigned i = 0; i < numSamples; i++) {
+						unsigned lm = l * (l + 1) + m;
 						double sph_value = spherical_harmonic(l, m, theta[i], phi[i]);
 						sph[i * 121 + lm] = sph_value;
 					}
@@ -109,7 +109,7 @@ namespace Fluxions
 
 		sampleMap.reset();
 		sampleMap.resize(ix * pixelScale, iy * pixelScale);
-		for (size_t i = 0; i < numSamples; i++) {
+		for (unsigned i = 0; i < numSamples; i++) {
 			int px = (int)(ix * pixelScale * (phi[i] / FX_PI));
 			int py = (int)(iy * pixelScale * (theta[i] + FX_PI) / FX_TWOPI);
 
@@ -122,11 +122,11 @@ namespace Fluxions
 		if (cubeMap.empty() || !cubeMap.IsCubeMap())
 			return;
 
-		size_t numCoefs = msph[0].getMaxCoefficients();
-		for (size_t lm = 0; lm < numCoefs; lm++) {
+		unsigned numCoefs = msph[0].getMaxCoefficients();
+		for (unsigned lm = 0; lm < numCoefs; lm++) {
 			Color4f coef;
 			float pixelArea = (4.0f * FX_F32_PI) / numSamples;
-			for (size_t i = 0; i < numSamples; i++) {
+			for (unsigned i = 0; i < numSamples; i++) {
 				Color4f texel = cubeMap.getPixelCubeMap(randomVectors[i]);
 				coef += texel * (float)sph[i * 121 + lm];
 			}

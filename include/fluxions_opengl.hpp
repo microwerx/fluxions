@@ -36,13 +36,12 @@
 #pragma comment (lib, "gdi32.lib")		// Windows GDI library
 #pragma comment (lib, "winmm.lib")		// Windows MultiMedia library
 #pragma comment (lib, "user32.lib")		// Windows User library
-#pragma comment (lib, "glew32s.lib")		// GL Extension Wrangler library
+#pragma comment (lib, "glew32.lib")		// GL Extension Wrangler library
 
 #endif
 
 // GLEW must be included before gl.h
 #define GLEW_NO_GLU
-#define GLEW_STATIC
 #include <GL/glew.h>
 
 #ifdef FLUXIONS_USE_GLES

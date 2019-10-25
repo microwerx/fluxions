@@ -36,14 +36,14 @@ namespace Fluxions
 		if (fin) {
 			fin >> vertexCount;
 			vertices.resize(vertexCount);
-			for (size_t i = 0; fin && i < vertexCount; i++) {
+			for (unsigned i = 0; fin && i < vertexCount; i++) {
 				fin >> vertices[i].x >> vertices[i].y >> vertices[i].z;
 				//vertices[i] *= 5.0;
 			}
 
 			fin >> triangleCount;
 			triangles.resize(triangleCount);
-			for (size_t i = 0; fin && i < triangleCount; i++) {
+			for (unsigned i = 0; fin && i < triangleCount; i++) {
 				fin >> triangles[i].x >> triangles[i].y >> triangles[i].z;
 			}
 			fin.close();
@@ -65,7 +65,7 @@ namespace Fluxions
 	}
 
 	void Sphl::randomize() {
-		for (size_t i = 0; i < MaxCoefficients; i++) {
+		for (unsigned i = 0; i < MaxCoefficients; i++) {
 			v_coefs[0][i] = coefs[i].x = randomSampler(0.18f, 2.2f);
 			v_coefs[1][i] = coefs[i].y = randomSampler(0.18f, 2.2f);
 			v_coefs[2][i] = coefs[i].z = randomSampler(0.18f, 2.2f);
@@ -86,26 +86,26 @@ namespace Fluxions
 		makeSimpleSPHLs = simpleSPHLs;
 
 		// clear out the entire coefficient matrix
-		for (size_t j = 0; j < MaxComponents; j++) {
-			for (size_t i = 0; i < MaxCoefficients; i++) {
+		for (unsigned j = 0; j < MaxComponents; j++) {
+			for (unsigned i = 0; i < MaxCoefficients; i++) {
 				v_coefs[j][i] = 0.0f;
 			}
 		}
 
-		for (size_t j = 0; j < 4; j++) {
-			size_t lmmax = GetMaxSphCoefficients(maxDegree);
-			for (size_t lm = 0; lm < lmmax; lm++) {
+		for (unsigned j = 0; j < 4; j++) {
+			unsigned lmmax = GetMaxSphCoefficients(maxDegree);
+			for (unsigned lm = 0; lm < lmmax; lm++) {
 				v_coefs[j][lm] = sphl.E0 * sphl.msph[j][lm];
 			}
 		}
 
 		int j = HierarchySelfComponent;
-		for (size_t lm = 0; lm < sphl.self[3].getMaxCoefficients(); lm++) {
+		for (unsigned lm = 0; lm < sphl.self[3].getMaxCoefficients(); lm++) {
 			v_coefs[j][lm] = sphl.self[3].getCoefficient(lm);
 		}
 
 		j = HierarchyNeighborComponent;
-		for (size_t lm = 0; lm < sphl.neighbor[3].getMaxCoefficients(); lm++) {
+		for (unsigned lm = 0; lm < sphl.neighbor[3].getMaxCoefficients(); lm++) {
 			v_coefs[j][lm] = sphl.neighbor[3].getCoefficient(lm);
 		}
 	}
@@ -138,8 +138,8 @@ namespace Fluxions
 			{0.3f, 0.0f, 0.15f},
 			{0.0f, 0.15f, 0.3f} };
 
-		size_t firstIndex = 0;
-		size_t lastIndex = MaxComponents - 1;
+		unsigned firstIndex = 0;
+		unsigned lastIndex = MaxComponents - 1;
 		if (makeSimpleSPHLs) {
 			firstIndex = lastIndex = 3;
 		}
@@ -161,8 +161,8 @@ namespace Fluxions
 			scale,
 			scale };
 
-		for (size_t j = firstIndex; j <= lastIndex; j++) {
-			for (size_t i = 0; i < model.vertexCount; i++) {
+		for (unsigned j = firstIndex; j <= lastIndex; j++) {
+			for (unsigned i = 0; i < model.vertexCount; i++) {
 				float sph = calc_spherical_harmonic<float>(maxDegree, v_coefs[j], model.vertices[i].theta(), model.vertices[i].phi());
 				if (sph > 0.0) {
 					//sph = 1.0f + sph;
@@ -178,13 +178,13 @@ namespace Fluxions
 			}
 		}
 
-		size_t k = 0;
-		for (size_t j = firstIndex; j <= lastIndex; j++) {
+		unsigned k = 0;
+		for (unsigned j = firstIndex; j <= lastIndex; j++) {
 			sph_model.BeginSurface(SimpleGeometryMesh::SurfaceType::Triangles);
-			for (size_t i = 0; i < model.triangleCount; i++) {
-				size_t v0 = k * model.vertexCount + model.triangles[i].x;
-				size_t v1 = k * model.vertexCount + model.triangles[i].y;
-				size_t v2 = k * model.vertexCount + model.triangles[i].z;
+			for (unsigned i = 0; i < model.triangleCount; i++) {
+				unsigned v0 = k * model.vertexCount + model.triangles[i].x;
+				unsigned v1 = k * model.vertexCount + model.triangles[i].y;
+				unsigned v2 = k * model.vertexCount + model.triangles[i].z;
 				Vector3f dp1 = sph_model.GetVertex(v1).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 				Vector3f dp2 = sph_model.GetVertex(v2).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 				Vector3f N = dp1.cross(dp2).norm();
@@ -199,11 +199,11 @@ namespace Fluxions
 			k++;
 		}
 
-		for (size_t j = firstIndex; j <= lastIndex; j++) {
-			for (size_t i = 0; i < model.triangleCount; i++) {
-				size_t v0 = j * model.vertexCount + model.triangles[i].x;
-				size_t v1 = j * model.vertexCount + model.triangles[i].y;
-				size_t v2 = j * model.vertexCount + model.triangles[i].z;
+		for (unsigned j = firstIndex; j <= lastIndex; j++) {
+			for (unsigned i = 0; i < model.triangleCount; i++) {
+				unsigned v0 = j * model.vertexCount + model.triangles[i].x;
+				unsigned v1 = j * model.vertexCount + model.triangles[i].y;
+				unsigned v2 = j * model.vertexCount + model.triangles[i].z;
 				sph_model.GetVertex(v0).attribs[1].normalize();
 				sph_model.GetVertex(v1).attribs[1].normalize();
 				sph_model.GetVertex(v2).attribs[1].normalize();
@@ -216,9 +216,9 @@ namespace Fluxions
 	void Sphl::createLightProbe() {
 		// create light probe
 		lightProbe.resize(32, 32, 6);
-		for (size_t face = 0; face < lightProbe.depth(); face++) {
-			for (size_t s = 0; s < lightProbe.width(); s++) {
-				for (size_t t = 0; t < lightProbe.height(); t++) {
+		for (unsigned face = 0; face < lightProbe.depth(); face++) {
+			for (unsigned s = 0; s < lightProbe.width(); s++) {
+				for (unsigned t = 0; t < lightProbe.height(); t++) {
 					float _s = (float)s / (float)lightProbe.width();
 					float _t = (float)t / (float)lightProbe.height();
 					Vector3f v;

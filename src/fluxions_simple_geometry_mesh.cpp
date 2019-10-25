@@ -91,7 +91,7 @@ bool SimpleGeometryMesh::SaveOBJ(const std::string &path, bool output_normals, b
 
 	// Write out each surface as a new object in the OBJ file
 
-	int surfacenum = 0;
+	unsigned surfacenum = 0;
 	for (auto &surface : surfaces)
 	{
 		objout << "g surface" << surfacenum << std::endl;
@@ -116,11 +116,11 @@ bool SimpleGeometryMesh::SaveOBJ(const std::string &path, bool output_normals, b
 
 		if (surface.type == SurfaceType::Triangles)
 		{
-			for (int i = surface.first; i < surface.first + surface.count; i += 3)
+			for (unsigned i = surface.first; i < surface.first + surface.count; i += 3)
 			{
-				int i1 = indices[i];
-				int i2 = indices[i + 1];
-				int i3 = indices[i + 2];
+				unsigned i1 = indices[i];
+				unsigned i2 = indices[i + 1];
+				unsigned i3 = indices[i + 2];
 
 				objout << "f ";
 				if (output_texcoords && output_normals)

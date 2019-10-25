@@ -128,7 +128,7 @@ namespace Fluxions
 												});
 
 		auto coefs = json->getMember("coefs");
-		for (size_t lm = 0; lm < msph->getMaxCoefficients(); lm++) {
+		for (unsigned lm = 0; lm < msph->getMaxCoefficients(); lm++) {
 			float r = msph[0].getCoefficient(lm);
 			float g = msph[1].getCoefficient(lm);
 			float b = msph[2].getCoefficient(lm);
@@ -182,7 +182,7 @@ namespace Fluxions
 			json->getMember("coefs")->IsArray()) {
 			// int jsonMaxDegree = json->getMember("maxDegree")->AsInt();
 			Df::JSONPtr coefs = json->getMember("coefs");
-			for (size_t j = 0; j < 4; j++) {
+			for (unsigned j = 0; j < 4; j++) {
 				Df::JSONPtr e = coefs->getElement((int)j);
 				if (e->IsArray()) {
 					std::vector<float> coefJ;
@@ -221,8 +221,8 @@ namespace Fluxions
 	bool SimpleSSPHHLight::SaveOBJ(const std::string& path, const std::string& gname) {
 		FilePathInfo fpi(path);
 		static const char* icos_path = "resources/models/icos4.txt";
-		static size_t numVertices = 0;
-		static size_t numTriangles = 0;
+		static unsigned numVertices = 0;
+		static unsigned numTriangles = 0;
 		static std::vector<Vector3f> vertices;
 		static std::vector<Vector3ui> triangles;
 		static std::vector<Vector3f> rgbiy[5];
@@ -261,10 +261,10 @@ namespace Fluxions
 			x.resize(vertices.size());
 		}
 
-		for (size_t i = 0; i < 3; i++) {
+		for (unsigned i = 0; i < 3; i++) {
 			if (msph[i].GetMaxDegree() < 5) {
 				msph[i].resize(5);
-				for (size_t lm = 0; lm < msph[i].getMaxCoefficients(); lm++) {
+				for (unsigned lm = 0; lm < msph[i].getMaxCoefficients(); lm++) {
 					float x = 2.0f * (float)rand() / (float)RAND_MAX - 1.0f;
 					msph[i].setCoefficient(lm, x);
 				}
@@ -273,7 +273,7 @@ namespace Fluxions
 
 		// Calculate the 3D positions for the red, green,
 		// blue, intensity, and luma Y' channels
-		for (size_t i = 0; i < vertices.size(); i++) {
+		for (unsigned i = 0; i < vertices.size(); i++) {
 			Vector3f& v = vertices[i];
 			float theta = v.theta();
 			float phi = v.phi();
@@ -305,11 +305,11 @@ namespace Fluxions
 		return result;
 		//if (!__g_sphl_icos) {
 		//	__g_sphl_icos = new SimpleGeometryMesh();
-		//	for (size_t i = 0; i < numVertices; i++) {
+		//	for (unsigned i = 0; i < numVertices; i++) {
 		//		__g_sphl_icos->Attrib3f(0, vertices[i]);
 		//	}
 		//	__g_sphl_icos->BeginSurface(SimpleGeometryMesh::SurfaceType::Triangles);
-		//	for (size_t i = 0; i < numTriangles; i++) {
+		//	for (unsigned i = 0; i < numTriangles; i++) {
 		//		__g_sphl_icos->AddIndex(triangles[i * 3 + 0]);
 		//		__g_sphl_icos->AddIndex(triangles[i * 3 + 1]);
 		//		__g_sphl_icos->AddIndex(triangles[i * 3 + 2]);
@@ -374,14 +374,14 @@ namespace Fluxions
 
 		// subdivide
 		std::vector<Vector3f> inew;
-		for (size_t i = 0; i < indcs.size(); i += 3) {
-			size_t vi = indcs[i];
-			size_t vj = indcs[i + 1];
-			size_t vk = indcs[i + 2];
+		for (unsigned i = 0; i < indcs.size(); i += 3) {
+			unsigned vi = indcs[i];
+			unsigned vj = indcs[i + 1];
+			unsigned vk = indcs[i + 2];
 			Vector3f sidea(0.5 * (verts[vi] + verts[vj]));
 			Vector3f sideb(0.5 * (verts[vj] + verts[vk]));
 			Vector3f sidec(0.5 * (verts[vk] + verts[vi]));
-			size_t first = inew.size();
+			unsigned first = inew.size();
 			verts.push_back(sidea);
 			verts.push_back(sideb);
 			verts.push_back(sidec);
@@ -410,9 +410,9 @@ namespace Fluxions
 		}
 
 		lightProbe.resize(32, 32, 6);
-		for (int face = 0; face < lightProbe.depth(); face++) {
-			for (int s = 0; s < lightProbe.width(); s++) {
-				for (int t = 0; t < lightProbe.height(); t++) {
+		for (unsigned face = 0; face < lightProbe.depth(); face++) {
+			for (unsigned s = 0; s < lightProbe.width(); s++) {
+				for (unsigned t = 0; t < lightProbe.height(); t++) {
 					float _s = (float)s / (float)lightProbe.width();
 					float _t = (float)t / (float)lightProbe.height();
 					Vector3f v;
@@ -449,9 +449,9 @@ namespace Fluxions
 		}
 
 		lightProbe.resize(32, 32, 6);
-		for (int face = 0; face < lightProbe.depth(); face++) {
-			for (int s = 0; s < lightProbe.width(); s++) {
-				for (int t = 0; t < lightProbe.height(); t++) {
+		for (unsigned face = 0; face < lightProbe.depth(); face++) {
+			for (unsigned s = 0; s < lightProbe.width(); s++) {
+				for (unsigned t = 0; t < lightProbe.height(); t++) {
 					float _s = (float)s / (float)lightProbe.width();
 					float _t = (float)t / (float)lightProbe.height();
 					Vector3f v;
@@ -693,13 +693,13 @@ namespace Fluxions
 	}
 
 	bool MakeStandardizedSph(SphericalHarmonicf& sph, MultispectralSph4f& msph) {
-		for (size_t i = 0; i < 4; i++) {
+		for (unsigned i = 0; i < 4; i++) {
 			if (sph.GetMaxDegree() != msph[i].GetMaxDegree())
 				return false;
 		}
 		auto lmmax = sph.getMaxCoefficients();
 
-		for (size_t lm = 0; lm < lmmax; lm++) {
+		for (unsigned lm = 0; lm < lmmax; lm++) {
 			float r = msph[0].getCoefficient(lm);
 			float g = msph[1].getCoefficient(lm);
 			float b = msph[2].getCoefficient(lm);
@@ -710,9 +710,9 @@ namespace Fluxions
 	}
 
 	bool MakeIntensityChannel4f(MultispectralSph4f& msph) {
-		size_t lmmax = msph[0].getMaxCoefficients();
+		unsigned lmmax = msph[0].getMaxCoefficients();
 
-		for (size_t lm = 0; lm < lmmax; lm++) {
+		for (unsigned lm = 0; lm < lmmax; lm++) {
 			float r = msph[0].getCoefficient(lm);
 			float g = msph[1].getCoefficient(lm);
 			float b = msph[2].getCoefficient(lm);
@@ -722,9 +722,9 @@ namespace Fluxions
 	}
 
 	bool MakeLuminanceChannel4f(MultispectralSph4f& msph) {
-		size_t lmmax = msph[0].getMaxCoefficients();
+		unsigned lmmax = msph[0].getMaxCoefficients();
 
-		for (size_t lm = 0; lm < lmmax; lm++) {
+		for (unsigned lm = 0; lm < lmmax; lm++) {
 			float r = msph[0].getCoefficient(lm);
 			float g = msph[1].getCoefficient(lm);
 			float b = msph[2].getCoefficient(lm);

@@ -266,7 +266,7 @@ namespace Fluxions
 		int maxDegree = ReadInt(istr);
 		if (maxDegree >= 0 && maxDegree <= 10) {
 			sph.resize(maxDegree);
-			for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+			for (unsigned i = 0; i < sph.getMaxCoefficients(); i++) {
 				sph[i] = ReadFloat(istr);
 			}
 		}
@@ -281,7 +281,7 @@ namespace Fluxions
 		int maxDegree = ReadInt(istr);
 		if (maxDegree >= 0 && maxDegree <= 10) {
 			sph.resize(maxDegree);
-			for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+			for (unsigned i = 0; i < sph.getMaxCoefficients(); i++) {
 				sph[i] = ReadFloat(istr);
 			}
 		}
@@ -410,7 +410,7 @@ namespace Fluxions
 
 	std::ostream& WriteSphericalHarmonicf(std::ostream& ostr, const SphericalHarmonicf& sph) {
 		ostr << sph.GetMaxDegree() << " ";
-		for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+		for (unsigned i = 0; i < sph.getMaxCoefficients(); i++) {
 			ostr << sph[i] << " ";
 		}
 		return ostr;
@@ -418,7 +418,7 @@ namespace Fluxions
 
 	std::ostream& WriteSphericalHarmonicd(std::ostream& ostr, const SphericalHarmonicd& sph) {
 		ostr << sph.GetMaxDegree() << " ";
-		for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+		for (unsigned i = 0; i < sph.getMaxCoefficients(); i++) {
 			ostr << sph[i] << " ";
 		}
 		return ostr;

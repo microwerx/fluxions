@@ -133,7 +133,7 @@ namespace Fluxions
 		return ostr;
 	}
 
-	std::ostream& XmlSize(std::ostream& ostr, const std::string& tagName, size_t val, int numtabs) {
+	std::ostream& XmlSize(std::ostream& ostr, const std::string& tagName, unsigned val, int numtabs) {
 		for (int i = 0; i < numtabs; i++)
 			ostr << "\t";
 		ostr << "<" << tagName << ">";
@@ -326,7 +326,7 @@ namespace Fluxions
 			ostr << "\t";
 		ostr << "<" << tagName << ">";
 		ostr << sph.GetMaxDegree();
-		for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+		for (unsigned i = 0; i < sph.getMaxCoefficients(); i++) {
 			ostr << " " << sph[i];
 		}
 		ostr << "</" << tagName << ">";
@@ -338,7 +338,7 @@ namespace Fluxions
 			ostr << "\t";
 		ostr << "<" << tagName << ">";
 		ostr << sph.GetMaxDegree();
-		for (size_t i = 0; i < sph.getMaxCoefficients(); i++) {
+		for (unsigned i = 0; i < sph.getMaxCoefficients(); i++) {
 			ostr << " " << sph[i];
 		}
 		ostr << "</" << tagName << ">";

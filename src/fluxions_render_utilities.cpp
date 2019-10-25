@@ -83,10 +83,9 @@ namespace Fluxions
 			Hf::Log.warning("%s(): Unsupported destination format", __FUNCTION__);
 		}
 
-		size_t size = w * h * layers;
-		size_t addr = 0;
-		for (int addr = 0; addr < size; addr++) {
-			for (int i = 0; i < (int)dstcomponents; i++) {
+		unsigned size = w * h * layers;
+		for (unsigned addr = 0; addr < size; addr++) {
+			for (unsigned i = 0; i < dstcomponents; i++) {
 				if (i >= (int)srccomponents) {
 					if (dstubpixels) {
 						*dstubpixels++ = 0;
