@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)..\damselfish\include;$(ProjectDir)..\hatchetfish\include;$(ProjectDir)..\libs\include;$(ProjectDir)dep\include;C:\Program Files\Python36\include;C:\Program Files\Python37\include;$(WindowsSDK_IncludePath);$(VC_IncludePath);$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)../fluxions-gte/include;$(ProjectDir)../fluxions-deps/include</IncludePath>
-    <LibraryPath>$(ProjectDir)..\libs\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)../vcpkg/installed/x64-windows/include;$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)../vcpkg/installed/x64-windows/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)..\damselfish\include;$(ProjectDir)..\hatchetfish\include;$(ProjectDir)..\libs\include;$(ProjectDir)dep\include;C:\Program Files\Python36\include;C:\Program Files\Python37\include;$(ProjectDir)include;$(ProjectDir)..\libs\include;C:\Program Files\Python37\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)../fluxions-gte/include;$(ProjectDir)../fluxions-deps/include</IncludePath>
-    <LibraryPath>$(ProjectDir)..\libs\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)../vcpkg/installed/x64-windows/include;$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)../vcpkg/installed/x64-windows/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)/../libs/include;$(ProjectDir)/dep/include;$(ProjectDir)/include;$(ProjectDir)/src;$(IncludePath);$(ProjectDir)include;$(ProjectDir)..\fluxions-gte\include;$(ProjectDir)..\fluxions-deps\include;$(ProjectDir)../fluxions-gte/include;$(ProjectDir)../fluxions-deps/include</IncludePath>
@@ -129,6 +129,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ArHosekSkyModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\damselfish.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\damselfish_evaluator.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\damselfish_json.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\damselfish_lexer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\damselfish_python.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions-gte.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\fluxions.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -162,6 +190,98 @@
     <ClCompile Include="src\fluxions_fileio_iostream.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_bounding_box.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_color3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_color4.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_color_tests.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_geometric_algebra.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_image.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_image_operations.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_iostream.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_math.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix4.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix_extra.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_matrix_stack.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_quaternion.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_ray.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_rect.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_scalar.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_spherical_harmonic.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_superquadric.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_vector2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_vector3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_gte_vector4.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\fluxions_multiple_render_target.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -289,14 +409,108 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\hatchetfish.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\hatchetfish_stopwatch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\unicornfish.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_broker.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_client.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_corona_database.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_corona_job.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_corona_scene_file.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_curl.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_frame.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_majordomo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_message.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_socket.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\unicornfish_worker.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_analog_bitset.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_dear_imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_gamepad.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_keyboard.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_mouse.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_widget.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\viperfish_xinput.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ArHosekSkyModel.h" />
+    <ClInclude Include="include\ArHosekSkyModelData_CIEXYZ.h" />
+    <ClInclude Include="include\ArHosekSkyModelData_RGB.h" />
+    <ClInclude Include="include\ArHosekSkyModelData_Spectral.h" />
+    <ClInclude Include="include\damselfish.hpp" />
+    <ClInclude Include="include\damselfish_evaluator.hpp" />
+    <ClInclude Include="include\damselfish_json.hpp" />
+    <ClInclude Include="include\damselfish_lexer.hpp" />
+    <ClInclude Include="include\damselfish_python.hpp" />
+    <ClInclude Include="include\damselfish_syntax_semantic_analyzer.hpp" />
     <ClInclude Include="include\fluxions.hpp" />
     <ClInclude Include="include\fluxions_astronomy.hpp" />
     <ClInclude Include="include\fluxions_bbox.hpp" />
@@ -305,6 +519,35 @@
     <ClInclude Include="include\fluxions_es2_state_info.hpp" />
     <ClInclude Include="include\fluxions_fileio.hpp" />
     <ClInclude Include="include\fluxions_fileio_iostream.hpp" />
+    <ClInclude Include="include\fluxions_gte.hpp" />
+    <ClInclude Include="include\fluxions_gte_bounding_box.hpp" />
+    <ClInclude Include="include\fluxions_gte_color3.hpp" />
+    <ClInclude Include="include\fluxions_gte_color4.hpp" />
+    <ClInclude Include="include\fluxions_gte_color_math.hpp" />
+    <ClInclude Include="include\fluxions_gte_common_vector.hpp" />
+    <ClInclude Include="include\fluxions_gte_extra.hpp" />
+    <ClInclude Include="include\fluxions_gte_geometric_algebra.hpp" />
+    <ClInclude Include="include\fluxions_gte_image.hpp" />
+    <ClInclude Include="include\fluxions_gte_image_operations.hpp" />
+    <ClInclude Include="include\fluxions_gte_iostream.hpp" />
+    <ClInclude Include="include\fluxions_gte_matrix2.hpp" />
+    <ClInclude Include="include\fluxions_gte_matrix3.hpp" />
+    <ClInclude Include="include\fluxions_gte_matrix4.hpp" />
+    <ClInclude Include="include\fluxions_gte_matrix_extra.hpp" />
+    <ClInclude Include="include\fluxions_gte_matrix_math.hpp" />
+    <ClInclude Include="include\fluxions_gte_matrix_stack.hpp" />
+    <ClInclude Include="include\fluxions_gte_plane.hpp" />
+    <ClInclude Include="include\fluxions_gte_quaternion.hpp" />
+    <ClInclude Include="include\fluxions_gte_ray.hpp" />
+    <ClInclude Include="include\fluxions_gte_rect.hpp" />
+    <ClInclude Include="include\fluxions_gte_scalar.hpp" />
+    <ClInclude Include="include\fluxions_gte_scalar_math.hpp" />
+    <ClInclude Include="include\fluxions_gte_spherical_harmonic.hpp" />
+    <ClInclude Include="include\fluxions_gte_superquadric.hpp" />
+    <ClInclude Include="include\fluxions_gte_vector2.hpp" />
+    <ClInclude Include="include\fluxions_gte_vector3.hpp" />
+    <ClInclude Include="include\fluxions_gte_vector4.hpp" />
+    <ClInclude Include="include\fluxions_gte_vector_math.hpp" />
     <ClInclude Include="include\fluxions_irenderer.hpp" />
     <ClInclude Include="include\fluxions_iscene.hpp" />
     <ClInclude Include="include\fluxions_multiple_render_target.hpp" />
@@ -351,7 +594,34 @@
     <ClInclude Include="include\fluxions_utilities.hpp" />
     <ClInclude Include="include\fluxions_xml.hpp" />
     <ClInclude Include="include\fluxions_draw_gl1gl2.hpp" />
+    <ClInclude Include="include\hatchetfish.hpp" />
+    <ClInclude Include="include\hatchetfish_stopwatch.hpp" />
+    <ClInclude Include="include\unicornfish.hpp" />
+    <ClInclude Include="include\unicornfish_broker.hpp" />
+    <ClInclude Include="include\unicornfish_client.hpp" />
+    <ClInclude Include="include\unicornfish_corona_database.hpp" />
+    <ClInclude Include="include\unicornfish_corona_job.hpp" />
+    <ClInclude Include="include\unicornfish_corona_scene_file.hpp" />
+    <ClInclude Include="include\unicornfish_curl.hpp" />
+    <ClInclude Include="include\unicornfish_frame.hpp" />
+    <ClInclude Include="include\unicornfish_majordomo.hpp" />
+    <ClInclude Include="include\unicornfish_message.hpp" />
+    <ClInclude Include="include\unicornfish_socket.hpp" />
+    <ClInclude Include="include\unicornfish_worker.hpp" />
+    <ClInclude Include="include\viperfish.hpp" />
+    <ClInclude Include="include\viperfish_dear_imgui.hpp" />
+    <ClInclude Include="include\viperfish_gamepad.hpp" />
+    <ClInclude Include="include\viperfish_keyboard.hpp" />
+    <ClInclude Include="include\viperfish_mouse.hpp" />
+    <ClInclude Include="include\viperfish_opengl.hpp" />
+    <ClInclude Include="include\viperfish_utilities.hpp" />
+    <ClInclude Include="include\viperfish_widget.hpp" />
+    <ClInclude Include="include\viperfish_xinput.hpp" />
     <ClInclude Include="src\pch.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\pch.h.gch" />
+    <None Include="src\stdafx.h.gch" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
