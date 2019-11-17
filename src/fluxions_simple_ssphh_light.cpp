@@ -86,7 +86,7 @@ namespace Fluxions
 		else
 			Hf::Log.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
 		ptrcLightProbeImage.convertRectToCubeMap();
-		double intensity = ptrcLightProbeImage.getIntensity();
+		double intensity = ptrcLightProbeImage.getTotalIntensity();
 		double numPixels = ptrcLightProbeImage.getNumPixels();
 		ptrcLightProbePercent = (float)(intensity / numPixels);
 		ChangeDegrees(MaxSphlDegree);
