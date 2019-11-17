@@ -61,7 +61,9 @@
 #endif
 
 #ifndef FLUXIONS_NO_SDL2
-#define HAVE_M_PI
+//#ifndef HAVE_M_PI
+//#define HAVE_M_PI 1
+//#endif
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
