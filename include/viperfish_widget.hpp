@@ -150,11 +150,14 @@ namespace Vf
 		virtual void OnGamepadButtonDown(int button, float value, const GamepadState &gs);
 		virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs);
 		virtual void OnReshape(int width, int height);
+
+		virtual void display();
 		virtual void OnPreRender();
 		virtual void OnRender3D();
 		virtual void OnRender2D();
 		virtual void OnRenderDearImGui();
 		virtual void OnPostRender();
+
 		virtual void OnMainLoop();
 		virtual void OnLeaveMainLoop();
 	private:
