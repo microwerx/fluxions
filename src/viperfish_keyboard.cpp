@@ -21,14 +21,14 @@
 
 namespace Vf
 {
-	static int vf_keymod = 0;
+	int KeyboardState::vf_keymod = 0;
 	
-	int GetKeyboardModifiers()
+	int KeyboardState::GetKeyboardModifiers()
 	{
 		return vf_keymod;
 	}
 
-	int SetKeyboardModifiers(bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, bool capsLock, bool numLock)
+	int KeyboardState::SetKeyboardModifiers(bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, bool capsLock, bool numLock)
 	{
 		vf_keymod = 0;
 		vf_keymod |= shiftKey ? VF_SHIFT_MODIFIER : 0;
@@ -72,7 +72,7 @@ namespace Vf
 		return count;
 	}
 
-	const char *KeyToHTML5Name(unsigned c)
+	const char * KeyboardState::KeyToHTML5Name(unsigned c)
 	{
 		static char s[10];
 
@@ -114,7 +114,7 @@ namespace Vf
 		return s;
 	}
 
-	int HTML5NameToKey(const std::string &key)
+	int KeyboardState::HTML5NameToKey(const std::string &key)
 	{
 		if (key == "Tab")
 			return 0x09;
@@ -183,7 +183,7 @@ namespace Vf
 		return 0;
 	}
 
-	const char *SpecialKeyToHTML5Name(unsigned key)
+	const char * KeyboardState::SpecialKeyToHTML5Name(unsigned key)
 	{
 		if (key >= 0x100)
 			key -= 0x100;

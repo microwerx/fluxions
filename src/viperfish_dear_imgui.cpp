@@ -123,9 +123,11 @@ namespace Vf
 		pIO->KeyAlt = keymod & KeyboardState::AltKeyBit;
 		pIO->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
 		pIO->KeyShift = keymod & KeyboardState::ShiftKeyBit;
+		pIO->KeySuper = keymod & KeyboardState::MetaKeyBit;
 
-		if (within(HTML5NameToKey(key), 0, 511)) {
-			pIO->KeysDown[HTML5NameToKey(key)] = true;
+		int html5key = KeyboardState::HTML5NameToKey(key);
+		if (within(html5key, 0, 511)) {
+			pIO->KeysDown[html5key] = true;
 		}
 	}
 
@@ -138,9 +140,11 @@ namespace Vf
 		pIO->KeyAlt = keymod & KeyboardState::AltKeyBit;
 		pIO->KeyCtrl = keymod & KeyboardState::CtrlKeyBit;
 		pIO->KeyShift = keymod & KeyboardState::ShiftKeyBit;
+		pIO->KeySuper = keymod & KeyboardState::MetaKeyBit;
 
-		if (within(HTML5NameToKey(key), 0, 511)) {
-			pIO->KeysDown[HTML5NameToKey(key)] = false;
+		int html5key = KeyboardState::HTML5NameToKey(key);
+		if (within(html5key, 0, 511)) {
+			pIO->KeysDown[html5key] = false;
 		}
 	}
 

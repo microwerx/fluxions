@@ -84,19 +84,19 @@ constexpr unsigned VF_KEY_KP_EQUAL = 0x156;
 
 namespace Vf
 {
-
 	struct KeyboardState
 	{
 		std::map<std::string, int> keys;
-		int modifiers;
+		int modifiers = 0;
 
-		static const int ShiftKeyBit = 1;
-		static const int CtrlKeyBit = 2;
-		static const int AltKeyBit = 4;
-		static const int ShiftCtrlBits = 3;
-		static const int ShiftAltBits = 5;
-		static const int CtrlAltBits = 6;
-		static const int ShiftCtrlAltBits = 7;
+		static constexpr int ShiftKeyBit = VF_SHIFT_MODIFIER;
+		static constexpr int CtrlKeyBit = VF_CTRL_MODIFIER;
+		static constexpr int AltKeyBit = VF_ALT_MODIFIER;
+		static constexpr int MetaKeyBit = VF_META_MODIFIER;
+		static constexpr int ShiftCtrlBits = ShiftKeyBit | CtrlKeyBit;
+		static constexpr int ShiftAltBits = ShiftKeyBit | AltKeyBit;
+		static constexpr int CtrlAltBits = CtrlKeyBit | AltKeyBit;
+		static constexpr int ShiftCtrlAltBits = ShiftKeyBit | CtrlKeyBit | AltKeyBit;
 
 		inline bool ctrlKey() const { return modifiers & CtrlKeyBit; }
 		inline bool altKey() const { return modifiers & AltKeyBit; }
@@ -105,39 +105,32 @@ namespace Vf
 		inline bool shiftAlt() const { return modifiers & (ShiftKeyBit | AltKeyBit); }
 		inline bool shiftCtrlAlt() const { return modifiers & (ShiftKeyBit | CtrlKeyBit | AltKeyBit); }
 
-		inline void Clear()
-		{
+		inline void Clear() {
 			keys.clear();
 			modifiers = 0;
 		}
 
-		inline void Reset()
-		{
+		inline void Reset() {
 			modifiers = 0;
-			for (auto& key : keys)
-			{
+			for (auto& key : keys) {
 				key.second = false;
 			}
 		}
 
-		inline void SetKey(const std::string& key, bool state)
-		{
+		inline void SetKey(const std::string& key, bool state) {
 			keys[key] = state;
 		}
 
-		inline void SetKey(const std::string& key, int keymod, bool state)
-		{
+		inline void SetKey(const std::string& key, int keymod, bool state) {
 			modifiers = keymod;
 			keys[key] = state;
 		}
 
 		void SetKey(unsigned c, unsigned keymod, bool state);
 
-		inline bool IsPressed(const std::string& key) const
-		{
+		inline bool IsPressed(const std::string& key) const {
 			std::map<std::string, int>::const_iterator it = keys.find(key);
-			if (it != keys.end())
-			{
+			if (it != keys.end()) {
 				return it->second;
 			}
 			return false;
@@ -147,15 +140,15 @@ namespace Vf
 
 		bool CheckKeyPressed(std::vector<std::string> keys);
 		int CountKeysPressed(std::vector<std::string> keys);
+
+		static const char* KeyToHTML5Name(unsigned c);
+		static const char* SpecialKeyToHTML5Name(unsigned key);
+		static int HTML5NameToKey(const std::string& key);
+		static int GetKeyboardModifiers();
+		static int SetKeyboardModifiers(bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, bool capsLock, bool numLock);
+	private:
+		static int vf_keymod;
 	};
-
-	int GetKeyboardModifiers();
-	int SetKeyboardModifiers(bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, bool capsLock, bool numLock);
-
-	const char* KeyToHTML5Name(unsigned c);
-	const char* SpecialKeyToHTML5Name(unsigned key);
-	int HTML5NameToKey(const std::string& key);
-
 } // namespace Vf
 
 #endif
