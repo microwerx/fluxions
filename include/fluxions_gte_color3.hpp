@@ -509,25 +509,25 @@ namespace Fluxions
 	extern template class TColor3<unsigned char>;
 #endif
 
-	// Scales the color by 255 and then clamps to 0 to 65535
-	constexpr Color3i ToColor3i(const Color3f color, float scale = 255.0f, int min_value = 0, int max_value = 65535) {
-		return color.ToColor3<int, float>(scale, min_value, max_value);
-	}
+	//// Scales the color by 255 and then clamps to 0 to 65535
+	//constexpr Color3i ToColor3i(const Color3f color, float scale = 255.0f, int min_value = 0, int max_value = 65535) {
+	//	return color.ToColor3<int, float>(scale, min_value, max_value);
+	//}
 
-	// Scales the color by 255 and then clamps to 0 to 255
-	constexpr Color3ub ToColor3ub(const Color3f color, float scale = 255.99f, int min_value = 0, int max_value = 255) {
-		return color.ToColor3<unsigned char, float>(scale, (unsigned char)min_value, (unsigned char)max_value);
-	}
+	//// Scales the color by 255 and then clamps to 0 to 255
+	//constexpr Color3ub ToColor3ub(const Color3f color, float scale = 255.99f, int min_value = 0, int max_value = 255) {
+	//	return color.ToColor3<unsigned char, float>(scale, (unsigned char)min_value, (unsigned char)max_value);
+	//}
 
-	// Scales the color by 1/255 and then clamps to 0 to 1
-	constexpr Color3f ToColor3f(const Color3ub color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f) {
-		return color.ToColor3<float>(scale, min_value, max_value);
-	}
+	//// Scales the color by 1/255 and then clamps to 0 to 1
+	//constexpr Color3f ToColor3f(const Color3ub color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f) {
+	//	return color.ToColor3<float>(scale, min_value, max_value);
+	//}
 
-	// Scales the color by 1/255 and then clamps to 0 to 1
-	constexpr Color3f ToColor3f(const Color3i color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f) {
-		return color.ToColor3<float>(scale, min_value, max_value);
-	}
+	//// Scales the color by 1/255 and then clamps to 0 to 1
+	//constexpr Color3f ToColor3f(const Color3i color, float scale = 1.0f / 255.0f, float min_value = 0.0f, float max_value = 1.0f) {
+	//	return color.ToColor3<float>(scale, min_value, max_value);
+	//}
 
 	Color3f HLSToRGBf(float h, float l, float s) noexcept;
 	Color3d HLSToRGBd(double h, double l, double s) noexcept;

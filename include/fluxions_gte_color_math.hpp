@@ -27,17 +27,17 @@ namespace Fluxions
 	template <typename T>
 	constexpr TColor3<float> ToColor3f(TColor3<T>& src) noexcept {
 		return TColor3<float>(
-			(float)src.r * TColor3<T>::to_float_factor,
-			(float)src.g * TColor3<T>::to_float_factor,
-			(float)src.b * TColor3<T>::to_float_factor);
+			(float)src[0] * color_to_float_factor<T>(),
+			(float)src[1] * color_to_float_factor<T>(),
+			(float)src[2] * color_to_float_factor<T>());
 	}
 
 	template <typename T>
 	constexpr TColor3<float> ToColor3f(TColor4<T>& src) noexcept {
 		return TColor3<float>(
-			(float)src.r * TColor4<T>::to_float_factor,
-			(float)src.g * TColor4<T>::to_float_factor,
-			(float)src.b * TColor4<T>::to_float_factor);
+			(float)src[0] * color_to_float_factor<T>(),
+			(float)src[1] * color_to_float_factor<T>(),
+			(float)src[2] * color_to_float_factor<T>());
 	}
 
 	template <typename T>
@@ -85,9 +85,9 @@ namespace Fluxions
 		bool is_int = std::is_integral_v<T>;
 		bool is_flt = std::is_floating_point_v<T>;
 		if (is_int && sizeof(T) == 1)
-			return float(1.0/255.0);
+			return float(1.0 / 255.0);
 		else if (is_int && sizeof(T) >= 2)
-			return float(1.0/65535.0);
+			return float(1.0 / 65535.0);
 		else if (is_flt)
 			return 1.0f;
 		else
