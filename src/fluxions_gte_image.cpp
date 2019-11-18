@@ -885,16 +885,16 @@ namespace Fluxions
 		else
 			return;
 
-		using PixelValue = typename ColorType::value_type;
+		using PixelValueType = typename ColorType::value_type;
 
 		resize(width, height, depth);
 		unsigned count = width * height * depth;
 		if (fromType == glconstant_UNSIGNED_BYTE && toType == glconstant_FLOAT) {
 			unsigned char* data = (unsigned char*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
-				PixelValue* v = pixels[i].ptr();
+				PixelValueType* v = pixels[i].ptr();
 				for (unsigned j = 0; j < stride; j++) {
-					v[j] = (PixelValue)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
+					v[j] = (PixelValueType)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
 				}
 				data += stride;
 			}
@@ -902,9 +902,9 @@ namespace Fluxions
 		else if (fromType == glconstant_FLOAT && toType == glconstant_UNSIGNED_BYTE) {
 			float* data = (float*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
-				PixelValue* v = pixels[i].ptr();
+				PixelValueType* v = pixels[i].ptr();
 				for (unsigned j = 0; j < stride; j++) {
-					v[j] = (PixelValue)clamp((int)(scaleFactor_ftoi * data[j]), 0, 255);
+					v[j] = (PixelValueType)clamp((int)(scaleFactor_ftoi * data[j]), 0, 255);
 				}
 				data += stride;
 			}
@@ -912,9 +912,9 @@ namespace Fluxions
 		else if (fromType == glconstant_UNSIGNED_BYTE && toType == glconstant_UNSIGNED_BYTE) {
 			unsigned char* data = (unsigned char*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
-				PixelValue* v = pixels[i].ptr();
+				PixelValueType* v = pixels[i].ptr();
 				for (unsigned j = 0; j < stride; j++) {
-					v[j] = (PixelValue)data[j];
+					v[j] = (PixelValueType)data[j];
 				}
 				data += stride;
 			}
@@ -922,9 +922,9 @@ namespace Fluxions
 		else if (fromType == glconstant_FLOAT && toType == glconstant_FLOAT) {
 			float* data = (float*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
-				typename ColorType::value_type* v = pixels[i].ptr();
+				PixelValueType* v = pixels[i].ptr();
 				for (unsigned j = 0; j < stride; j++) {
-					v[j] = (typename ColorType::value_type)data[j];
+					v[j] = (PixelValueType)data[j];
 				}
 				data += stride;
 			}
