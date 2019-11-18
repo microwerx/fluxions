@@ -26,9 +26,8 @@ namespace Fluxions
 		using TCommonContainer<T>::is_flt;
 
 		static constexpr unsigned value_size = sizeof(T);
-		static constexpr int int_max_value =
-			is_int && value_size == 1 ? 255 :
-			is_int && value_size == 2 ? 65535 : 255;
+		static constexpr unsigned short int_max_value =
+			is_int && value_size == 1 ? 255 : 65535;
 		static constexpr float to_float_factor =
 			is_int ? (1.0f / (float)int_max_value) :
 			1.0f;
