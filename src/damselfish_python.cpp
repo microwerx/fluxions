@@ -16,6 +16,8 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#ifdef FLUXIONS_USING_PYTHON
+
 #include <string>
 #include <utility>
 
@@ -32,16 +34,12 @@
 #include <windows.h>
 #endif
 
-#pragma comment(lib, "hatchetfish.lib")
-
-inline std::string wstring_to_string(const std::wstring &wstr) noexcept
-{
+inline std::string wstring_to_string(const std::wstring& wstr) noexcept {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	return converter.to_bytes(wstr);
 }
 
-inline std::wstring string_to_wstring(const std::string &str) noexcept
-{
+inline std::wstring string_to_wstring(const std::string& str) noexcept {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	return converter.from_bytes(str);
 }
@@ -59,16 +57,11 @@ inline std::wstring string_to_wstring(const std::string &str) noexcept
 namespace Df
 {
 
-	PythonInterpreter::PythonInterpreter()
-	{
-	}
+	PythonInterpreter::PythonInterpreter() {}
 
-	PythonInterpreter::~PythonInterpreter()
-	{
-	}
+	PythonInterpreter::~PythonInterpreter() {}
 
-	bool PythonInterpreter::init(const std::string &programName)
-	{
+	bool PythonInterpreter::init(const std::string& programName) {
 		if (myThread.joinable()) {
 			// we don't want to initialize a thread that's already running...
 			return false;
@@ -79,8 +72,7 @@ namespace Df
 		return true;
 	}
 
-	void PythonInterpreter::kill()
-	{
+	void PythonInterpreter::kill() {
 		if (myThread.joinable()) {
 			// thread is already running, so send the message to kill it...
 			addCommand(Command::Kill);
@@ -91,56 +83,46 @@ namespace Df
 		}
 	}
 
-	void PythonInterpreter::join()
-	{
+	void PythonInterpreter::join() {
 		myThread.join();
 	}
 
-	void PythonInterpreter::run()
-	{
+	void PythonInterpreter::run() {
 		myThread = std::thread(PythonInterpreter::thread_func, myProgramName, this);
 	}
 
-	void PythonInterpreter::start()
-	{
+	void PythonInterpreter::start() {
 		addCommand(Command::Start);
 	}
 
-	void PythonInterpreter::stop()
-	{
+	void PythonInterpreter::stop() {
 		addCommand(Command::Stop);
 	}
 
-	void PythonInterpreter::flush()
-	{
+	void PythonInterpreter::flush() {
 		while (processSingleCommand())
 			;
 	}
 
-	void PythonInterpreter::lock()
-	{
+	void PythonInterpreter::lock() {
 		myMutex.lock();
 	}
 
-	bool PythonInterpreter::try_lock()
-	{
+	bool PythonInterpreter::try_lock() {
 		return myMutex.try_lock();
 	}
 
-	void PythonInterpreter::unlock()
-	{
+	void PythonInterpreter::unlock() {
 		myMutex.unlock();
 	}
 
-	void PythonInterpreter::addCommand(Command cmd, const std::string &str)
-	{
+	void PythonInterpreter::addCommand(Command cmd, const std::string& str) {
 		lock();
 		commandDeque.push_back(std::pair<Command, std::string>(cmd, str));
 		unlock();
 	}
 
-	bool PythonInterpreter::processSingleCommand()
-	{
+	bool PythonInterpreter::processSingleCommand() {
 		if (currentState == State::InitialState)
 			return false;
 
@@ -199,8 +181,7 @@ namespace Df
 		return retval;
 	}
 
-	bool PythonInterpreter::doThreadLoop()
-	{
+	bool PythonInterpreter::doThreadLoop() {
 		if (currentState == State::InitialState)
 			return false;
 
@@ -209,8 +190,7 @@ namespace Df
 		return true;
 	}
 
-	void PythonInterpreter::thread_func(const std::string &programName, PythonInterpreter *pPyInterpreter)
-	{
+	void PythonInterpreter::thread_func(const std::string& programName, PythonInterpreter* pPyInterpreter) {
 		if (pPyInterpreter == nullptr)
 			return;
 #ifdef _WIN32
@@ -229,7 +209,7 @@ namespace Df
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 			}
 		}
-		catch (const std::exception &e) {
+		catch (const std::exception & e) {
 			std::cerr << "EXCEPTION! PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: " << std::endl;
 			std::cerr << e.what() << std::endl;
 		}
@@ -240,11 +220,10 @@ namespace Df
 		std::cout << "PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: stopping..." << std::endl;
 	}
 
-	void PythonInterpreter::onInit()
-	{
+	void PythonInterpreter::onInit() {
 		//cout << "OnInit" << std::endl;
 		std::wstring wstr = string_to_wstring(myProgramName);
-		wchar_t *wstrPtr = &wstr[0];
+		wchar_t* wstrPtr = &wstr[0];
 		Py_SetProgramName(wstrPtr);
 		Py_Initialize();
 		PySys_SetArgv(1, &wstrPtr);
@@ -252,36 +231,32 @@ namespace Df
 		cmdCount = 0;
 	}
 
-	void PythonInterpreter::onKill()
-	{
+	void PythonInterpreter::onKill() {
 		//cout << "OnKill" << std::endl;
 		Py_Finalize();
 		currentState = State::InitialState;
 		commandDeque.clear();
 	}
 
-	void PythonInterpreter::onStart()
-	{
+	void PythonInterpreter::onStart() {
 		if (currentState == State::InitialState)
 			return;
 		currentState = State::Started;
 		//cout << "OnStart" << std::endl;
 	}
 
-	void PythonInterpreter::onStop()
-	{
+	void PythonInterpreter::onStop() {
 		if (currentState == State::InitialState)
 			return;
 		//cout << "OnStop" << std::endl;
 		currentState = State::Ready;
 	}
 
-	void PythonInterpreter::onImportModule(const std::string &param)
-	{
-		PyObject *pName = Py_BuildValue("s", param.c_str());
+	void PythonInterpreter::onImportModule(const std::string& param) {
+		PyObject* pName = Py_BuildValue("s", param.c_str());
 		if (pName == nullptr)
 			return;
-		PyObject *pModule = PyImport_Import(pName);
+		PyObject* pModule = PyImport_Import(pName);
 
 		if (pName)
 			Py_DECREF(pName);
@@ -289,31 +264,26 @@ namespace Df
 			Py_DECREF(pName);
 	}
 
-	void PythonInterpreter::onCallFunction(const std::string &param)
-	{
-	}
+	void PythonInterpreter::onCallFunction(const std::string& param) {}
 
-	void PythonInterpreter::onPyRun_SimpleString(const std::string &param)
-	{
+	void PythonInterpreter::onPyRun_SimpleString(const std::string& param) {
 		if (currentState != State::Started)
 			return;
 		//cout << "OnPyRun_SimpleString: " << param << std::endl;
 		PyRun_SimpleString(param.c_str());
 	}
 
-	void PythonInterpreter::onPyRun_AnyFile(const std::string &param)
-	{
+	void PythonInterpreter::onPyRun_AnyFile(const std::string& param) {
 		if (currentState != State::Started)
 			return;
 		//cout << "OnPyRun_AnyFile: " << param << std::endl;
 	}
 
-	void PythonInterpreter::onPyRun_SimpleFile(const std::string &param)
-	{
+	void PythonInterpreter::onPyRun_SimpleFile(const std::string& param) {
 		if (currentState != State::Started)
 			return;
 		//cout << "OnPyRun_SimpleFile: " << param << std::endl;
-		FILE *fin = _Py_fopen(param.c_str(), "r+");
+		FILE* fin = _Py_fopen(param.c_str(), "r+");
 		if (fin) {
 			try {
 				int retval = PyRun_SimpleFileExFlags(fin, param.c_str(), 1, nullptr);
@@ -325,29 +295,25 @@ namespace Df
 		}
 	}
 
-	void PythonInterpreter::onPyRun_InteractiveOne(const std::string &param)
-	{
+	void PythonInterpreter::onPyRun_InteractiveOne(const std::string& param) {
 		if (currentState != State::Started)
 			return;
 		//cout << "OnPyRun_InteractiveOne: " << param << std::endl;
 	}
 
-	void PythonInterpreter::onPyRun_InteractiveLoop(const std::string &param)
-	{
+	void PythonInterpreter::onPyRun_InteractiveLoop(const std::string& param) {
 		if (currentState != State::Started)
 			return;
 		//cout << "OnPyRun_InteractiveLoop: " << param << std::endl;
 	}
 
-	void PythonInterpreter::onPyRun_File(const std::string &param)
-	{
+	void PythonInterpreter::onPyRun_File(const std::string& param) {
 		if (currentState != State::Started)
 			return;
 		//cout << "OnPyRun_File: " << param << std::endl;
 	}
 
-	int test_PythonInterpreter(int argc, char **argv)
-	{
+	int test_PythonInterpreter(int argc, char** argv) {
 		std::cout << "PythonInterpreter TEST" << std::endl;
 
 		PythonInterpreter python;
@@ -382,3 +348,5 @@ namespace Df
 		return 0;
 	}
 } // namespace Df
+
+#endif // FLUXIONS_USING_PYTHON
