@@ -489,6 +489,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\viperfish_loading_window.cpp" />
     <ClCompile Include="src\viperfish_mouse.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -615,6 +616,7 @@
     <ClInclude Include="include\viperfish_dear_imgui.hpp" />
     <ClInclude Include="include\viperfish_gamepad.hpp" />
     <ClInclude Include="include\viperfish_keyboard.hpp" />
+    <ClInclude Include="include\viperfish_loading_window.hpp" />
     <ClInclude Include="include\viperfish_mouse.hpp" />
     <ClInclude Include="include\viperfish_opengl.hpp" />
     <ClInclude Include="include\viperfish_root_window.hpp" />
