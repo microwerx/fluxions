@@ -220,19 +220,19 @@ namespace Fluxions
 		// * saveCubePFM
 		// * savePFM
 		//void savePPMRaw(const std::string& filename, unsigned z = 0) const;
-		void savePPM(const std::string& filename, unsigned z = 0, bool flipy = false) const;
+		bool savePPM(const std::string& filename, unsigned z = 0, bool flipy = false) const;
 		//void savePPMi(const std::string& filename, float scale, int minValue, int maxValue, unsigned z = 0, bool flipy = false) const;
 		//void savePPMHDRI(const std::string& filename, unsigned z = 0) const;
-		void saveCubePPM(const std::string& filename, bool flipy = false) const;
+		bool saveCubePPM(const std::string& filename, bool flipy = false) const;
 
 		// TODO: change these to
 		// * loadPPM
 		// * loadEXR
 		// * loadCubePPM
 		// * saveCubeEXR
-		void loadPPM(const std::string& filename);
-		void loadEXR(const std::string& path);
-		void saveEXR(const std::string& path) const;
+		bool loadPPM(const std::string& filename);
+		bool loadEXR(const std::string& path);
+		bool saveEXR(const std::string& path) const;
 
 		bool flipX(int z = 0);
 		bool flipY(int z = 0);

@@ -601,9 +601,9 @@ namespace Fluxions
 	//}
 
 	template <typename ColorType>
-	void TImage<ColorType>::loadPPM(const std::string& filename) {
+	bool TImage<ColorType>::loadPPM(const std::string& filename) {
 		std::ifstream fin(filename.c_str());
-
+		if (!fin) return false;
 		std::string magicNumber;
 		unsigned width;
 		unsigned height;
@@ -615,7 +615,7 @@ namespace Fluxions
 			fin >> magicNumber;
 		}
 		if (magicNumber != "P3")
-			return;
+			return false;
 		fin >> width;
 		fin >> height;
 		fin >> maxInt;
@@ -637,13 +637,13 @@ namespace Fluxions
 			}
 		}
 
-	//	fin.close();
-	//}
+		return false;
+	}
 
 	template <typename ColorType>
-	void TImage<ColorType>::savePPM(const std::string& filename, unsigned z, bool flipy) const {
-		if (pixels.empty()) return;
-		if (pixels[0].size() < 3) return;
+	bool TImage<ColorType>::savePPM(const std::string& filename, unsigned z, bool flipy) const {
+		if (pixels.empty()) return false;
+		if (pixels[0].size() < 3) return false;
 
 		float maxColorFound = (float)maxrgb();
 		float minColorFound = (float)minrgb();
@@ -713,7 +713,7 @@ namespace Fluxions
 			}
 		}
 
-		fout.close();
+		return true;
 	}
 	//
 	//	template <typename ColorType>
@@ -771,23 +771,22 @@ namespace Fluxions
 	//	}
 	//
 	template <typename ColorType>
-	void TImage<ColorType>::saveCubePPM(const std::string& path, bool flipy) const {
+	bool TImage<ColorType>::saveCubePPM(const std::string& path, bool flipy) const {
 		if (imageHeight * 6 == imageWidth) {
-			savePPM(path, 0, flipy);
-			return;
+			return savePPM(path, 0, flipy);
 		}
 
 		if (imageDepth == 6) {
 			TImage<ColorType> image;
 			convertCubeMapToRect(image);
-			image.savePPM(path, 0, flipy);
+			return image.savePPM(path, 0, flipy);
 		}
 
-		return;
+		return false;
 	}
 	//
 	template <typename ColorType>
-	void TImage<ColorType>::loadEXR(const std::string& path) {
+	bool TImage<ColorType>::loadEXR(const std::string& path) {
 #ifdef FLUXIONS_GTE_USEOPENEXR
 		double t1 = Hf::Log.getMillisecondsElapsed();
 		Imf::RgbaInputFile file(path.c_str());
@@ -795,7 +794,7 @@ namespace Fluxions
 		unsigned w = dw.max.x - dw.min.x + 1;
 		unsigned h = dw.max.y - dw.min.y + 1;
 		//Imf::Array2D<Imf::Rgba> filePixels;
-		std::vector<Imf::Rgba> filePixels(w * h);
+		std::vector<Imf::Rgba> filePixels((unsigned)w * h);
 		//filePixels.resizeErase(h, w);
 		file.setFrameBuffer(&filePixels[0], 1, w);
 		file.readPixels(dw.min.y, dw.max.y);
@@ -816,15 +815,18 @@ namespace Fluxions
 		}
 		t1 = Hf::Log.getMillisecondsElapsed() - t1;
 		Hf::Log.infofn("TImage<>::loadEXR", "Read %dx%d image from %s (%3f ms) (min, max) = (%-2.3f, %-2.3f)", w, h, path.c_str(), t1, minC, maxC);
-#endif
+		return true;
+#else
+		return false;
+#endif // FLUXIONS_GTE_USEOPENEXR
 	}
 
 	template <typename ColorType>
-	void TImage<ColorType>::saveEXR(const std::string& path) const {
+	bool TImage<ColorType>::saveEXR(const std::string& path) const {
 #ifdef FLUXIONS_GTE_USEOPENEXR
 		double t1 = Hf::Log.getMillisecondsElapsed();
 		const Imf::Rgba black(0.0f, 0.0f, 0.0f, 1.0f);
-		std::vector<Imf::Rgba> halfPixels(imageWidth * imageHeight * imageDepth, black);
+		std::vector<Imf::Rgba> halfPixels((unsigned)imageWidth * imageHeight * imageDepth, black);
 		const unsigned count = imageWidth * imageHeight * imageDepth;
 		for (unsigned i = 0; i < count; i++) {
 			constexpr float to_float = color_to_float_factor<value_type>();
@@ -839,7 +841,10 @@ namespace Fluxions
 		file.writePixels((int)imageHeight);
 		t1 = Hf::Log.getMillisecondsElapsed() - t1;
 		Hf::Log.infofn("TImage<>::saveEXR", "Wrote %dx%d image to %s (%3f ms)", imageWidth, imageHeight, path.c_str(), t1);
-#endif
+		return true;
+#else
+		return false;
+#endif // FLUXIONS_GTE_USEOPENEXR
 	}
 
 	template <typename ColorType>
