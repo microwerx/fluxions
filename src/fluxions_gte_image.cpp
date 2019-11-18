@@ -18,6 +18,7 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include <algorithm>
 #include <fstream>
+#include <hatchetfish.hpp>
 #include <fluxions_gte_color_math.hpp>
 #include <fluxions_gte_image.hpp>
 #include <fluxions_gte_image_operations.hpp>
@@ -548,7 +549,7 @@ namespace Fluxions
 	}
 
 	template <typename ColorType>
-	TImage<ColorType> TImage<ColorType>::ScaleImage(unsigned newWidth, unsigned newHeight, bool bilinear) {
+	TImage<ColorType> TImage<ColorType>::ScaleImage(unsigned newWidth, unsigned newHeight) {
 		TImage<ColorType> out;
 		out.resize(newWidth, newHeight, imageDepth);
 		unsigned newDepth = imageDepth;
@@ -785,57 +786,61 @@ namespace Fluxions
 		return;
 	}
 	//
-	//	template <typename ColorType>
-	//	void TImage<ColorType>::loadEXR(const std::string& path) {
-	//#ifdef FLUXIONS_GTE_USEOPENEXR
-	//		double t1 = Hf::Log.getMillisecondsElapsed();
-	//		Imf::RgbaInputFile file(path.c_str());
-	//		Imath::Box2i dw = file.dataWindow();
-	//		unsigned w = dw.max.x - dw.min.x + 1;
-	//		unsigned h = dw.max.y - dw.min.y + 1;
-	//		//Imf::Array2D<Imf::Rgba> filePixels;
-	//		std::vector<Imf::Rgba> filePixels(w * h);
-	//		//filePixels.resizeErase(h, w);
-	//		file.setFrameBuffer(&filePixels[0], 1, w);
-	//		file.readPixels(dw.min.y, dw.max.y);
-	//
-	//		resize(w, h);
-	//		unsigned addr = 0;
-	//		float minC = 1e6;
-	//		float maxC = -1e6;
-	//		for (unsigned j = 0; j < h; j++) {
-	//			for (unsigned i = 0; i < w; i++) {
-	//				Imf::Rgba rgba = filePixels[addr];
-	//				Color3f color(float(rgba.r), float(rgba.g), float(rgba.b));
-	//				minC = std::min(minC, color.minrgb());
-	//				maxC = std::max(maxC, color.maxrgb());
-	//				setPixel(i, j, color);
-	//				addr++;
-	//			}
-	//		}
-	//		t1 = Hf::Log.getMillisecondsElapsed() - t1;
-	//		Hf::Log.infofn("TImage<>::loadEXR", "Read %dx%d image from %s (%3f ms) (min, max) = (%-2.3f, %-2.3f)", w, h, path.c_str(), t1, minC, maxC);
-	//#endif
-	//	}
-	//
-	//	template <typename ColorType>
-	//	void TImage<ColorType>::saveEXR(const std::string& path) const {
-	//#ifdef FLUXIONS_GTE_USEOPENEXR
-	//		double t1 = Hf::Log.getMillisecondsElapsed();
-	//		const Imf::Rgba black(0.0f, 0.0f, 0.0f, 1.0f);
-	//		std::vector<Imf::Rgba> halfPixels(imageWidth * imageHeight * imageDepth, black);
-	//		const unsigned count = imageWidth * imageHeight * imageDepth;
-	//		for (unsigned i = 0; i < count; i++) {
-	//			Color3f color = ToColor3f(pixels[i]);
-	//			halfPixels[i] = Imf::Rgba(color.r, color.g, color.b);
-	//		}
-	//		Imf::RgbaOutputFile file(path.c_str(), (int)imageWidth, (int)imageHeight, Imf::WRITE_RGBA);
-	//		file.setFrameBuffer(halfPixels.data(), 1, imageWidth);
-	//		file.writePixels((int)imageHeight);
-	//		t1 = Hf::Log.getMillisecondsElapsed() - t1;
-	//		Hf::Log.infofn("TImage<>::saveEXR", "Wrote %dx%d image to %s (%3f ms)", imageWidth, imageHeight, path.c_str(), t1);
-	//#endif
-	//	}
+		template <typename ColorType>
+		void TImage<ColorType>::loadEXR(const std::string& path) {
+	#ifdef FLUXIONS_GTE_USEOPENEXR
+			double t1 = Hf::Log.getMillisecondsElapsed();
+			Imf::RgbaInputFile file(path.c_str());
+			Imath::Box2i dw = file.dataWindow();
+			unsigned w = dw.max.x - dw.min.x + 1;
+			unsigned h = dw.max.y - dw.min.y + 1;
+			//Imf::Array2D<Imf::Rgba> filePixels;
+			std::vector<Imf::Rgba> filePixels(w * h);
+			//filePixels.resizeErase(h, w);
+			file.setFrameBuffer(&filePixels[0], 1, w);
+			file.readPixels(dw.min.y, dw.max.y);
+	
+			resize(w, h);
+			unsigned addr = 0;
+			float minC = 1e6;
+			float maxC = -1e6;
+			for (unsigned j = 0; j < h; j++) {
+				for (unsigned i = 0; i < w; i++) {
+					Imf::Rgba rgba = filePixels[addr];
+					Color3f color(float(rgba.r), float(rgba.g), float(rgba.b));
+					minC = std::min(minC, color.minrgb());
+					maxC = std::max(maxC, color.maxrgb());
+					setPixel(i, j, color);
+					addr++;
+				}
+			}
+			t1 = Hf::Log.getMillisecondsElapsed() - t1;
+			Hf::Log.infofn("TImage<>::loadEXR", "Read %dx%d image from %s (%3f ms) (min, max) = (%-2.3f, %-2.3f)", w, h, path.c_str(), t1, minC, maxC);
+	#endif
+		}
+	
+		template <typename ColorType>
+		void TImage<ColorType>::saveEXR(const std::string& path) const {
+	#ifdef FLUXIONS_GTE_USEOPENEXR
+			double t1 = Hf::Log.getMillisecondsElapsed();
+			const Imf::Rgba black(0.0f, 0.0f, 0.0f, 1.0f);
+			std::vector<Imf::Rgba> halfPixels(imageWidth * imageHeight * imageDepth, black);
+			const unsigned count = imageWidth * imageHeight * imageDepth;
+			for (unsigned i = 0; i < count; i++) {
+				constexpr float to_float = color_to_float_factor<value_type>();
+				//Color3f color = ToColor3f(pixels[i]);
+				Color3f color(pixels[i][0] * to_float,
+							  pixels[i][1] * to_float,
+							  pixels[i][2] * to_float);
+				halfPixels[i] = Imf::Rgba(color.r, color.g, color.b);
+			}
+			Imf::RgbaOutputFile file(path.c_str(), (int)imageWidth, (int)imageHeight, Imf::WRITE_RGBA);
+			file.setFrameBuffer(halfPixels.data(), 1, imageWidth);
+			file.writePixels((int)imageHeight);
+			t1 = Hf::Log.getMillisecondsElapsed() - t1;
+			Hf::Log.infofn("TImage<>::saveEXR", "Wrote %dx%d image to %s (%3f ms)", imageWidth, imageHeight, path.c_str(), t1);
+	#endif
+		}
 
 	template <typename ColorType>
 	void TImage<ColorType>::resize(unsigned width, unsigned height, unsigned depth) {
@@ -880,14 +885,16 @@ namespace Fluxions
 		else
 			return;
 
+		using PixelValue = typename ColorType::value_type;
+
 		resize(width, height, depth);
 		unsigned count = width * height * depth;
 		if (fromType == glconstant_UNSIGNED_BYTE && toType == glconstant_FLOAT) {
 			unsigned char* data = (unsigned char*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
-				typename ColorType::value_type* v = pixels[i].ptr();
+				PixelValue* v = pixels[i].ptr();
 				for (unsigned j = 0; j < stride; j++) {
-					v[j] = (typename ColorType::value_type)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
+					v[j] = (PixelValue)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
 				}
 				data += stride;
 			}
@@ -895,9 +902,9 @@ namespace Fluxions
 		else if (fromType == glconstant_FLOAT && toType == glconstant_UNSIGNED_BYTE) {
 			float* data = (float*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
-				typename ColorType::value_type* v = pixels[i].ptr();
+				PixelValue* v = pixels[i].ptr();
 				for (unsigned j = 0; j < stride; j++) {
-					v[j] = (typename ColorType::value_type)clamp((int)(scaleFactor_ftoi * data[j]), 0, 255);
+					v[j] = (PixelValue)clamp((int)(scaleFactor_ftoi * data[j]), 0, 255);
 				}
 				data += stride;
 			}
@@ -905,9 +912,9 @@ namespace Fluxions
 		else if (fromType == glconstant_UNSIGNED_BYTE && toType == glconstant_UNSIGNED_BYTE) {
 			unsigned char* data = (unsigned char*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
-				typename ColorType::value_type* v = pixels[i].ptr();
+				PixelValue* v = pixels[i].ptr();
 				for (unsigned j = 0; j < stride; j++) {
-					v[j] = (typename ColorType::value_type)data[j];
+					v[j] = (PixelValue)data[j];
 				}
 				data += stride;
 			}
@@ -1292,7 +1299,6 @@ namespace Fluxions
 				}
 			};
 			TImage<ColorType> cubeimage(width, height, 6);
-			bool colorChoice = false;
 			for (unsigned z = 0; z < 6; z++) {
 				bool rowColorChoice = false;
 				ColorType blackPixel = pixelColors[0][z];
