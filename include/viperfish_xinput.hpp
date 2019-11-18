@@ -31,8 +31,6 @@
 #include <Windows.h>
 #include <Xinput.h>
 
-#pragma comment(lib, "xinput.lib")
-
 namespace Vf
 {
 	class XInputGamepadState : public GamepadState
