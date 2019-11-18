@@ -129,6 +129,10 @@ namespace Vf
 		if (within(html5key, 0, 511)) {
 			pIO->KeysDown[html5key] = true;
 		}
+
+		if (within(html5key, 0, 0x7f)) {
+			pIO->AddInputCharacter(html5key);
+		}
 	}
 
 	void DearImGuiWidget::OnKeyUp(const std::string& key, int keymod) {
