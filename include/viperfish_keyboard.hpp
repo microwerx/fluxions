@@ -141,8 +141,8 @@ namespace Vf
 		bool CheckKeyPressed(std::vector<std::string> keys);
 		int CountKeysPressed(std::vector<std::string> keys);
 
-		static const char* KeyToHTML5Name(unsigned c);
-		static const char* SpecialKeyToHTML5Name(unsigned key);
+		static const char* KeyToHTML5Name(int c);
+		static const char* SpecialKeyToHTML5Name(int key);
 		static int HTML5NameToKey(const std::string& key);
 		static int GetKeyboardModifiers();
 		static int SetKeyboardModifiers(bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, bool capsLock, bool numLock);
