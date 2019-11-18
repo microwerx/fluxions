@@ -250,6 +250,9 @@
     <ClCompile Include="src\viperfish_xinput.cpp">
       <Filter>src\viperfish</Filter>
     </ClCompile>
+    <ClCompile Include="src\viperfish_root_window.cpp">
+      <Filter>src\viperfish</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -602,6 +605,9 @@
     </ClInclude>
     <ClInclude Include="include\viperfish_xinput.hpp">
       <Filter>include\viperfish</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_root_window.hpp">
+      <Filter>src\viperfish</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
