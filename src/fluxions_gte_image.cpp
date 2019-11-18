@@ -877,13 +877,24 @@ namespace Fluxions
 		constexpr unsigned glconstant_FLOAT = 0x1406;
 		constexpr unsigned glconstant_UNSIGNED_BYTE = 0x1401;
 
-		unsigned stride;
+		unsigned fromstride;
 		if (fromFormat == 3 || fromFormat == glconstant_RGB)
-			stride = 3;
+			fromstride = 3;
 		else if (fromFormat == 4 || fromFormat == glconstant_RGBA)
-			stride = 4;
+			fromstride = 4;
 		else
 			return;
+		
+		unsigned tostride;
+		if (toFormat == 3 || toFormat == glconstant_RGB)
+			tostride = 3;
+		else if (toFormat == 4 || toFormat == glconstant_RGBA)
+			tostride = 4;
+		else
+			return;
+
+		// dstComponents handles case where reading RGBA image to RGB
+		unsigned dstComponents = min(fromstride, tostride);
 
 		using PixelValueType = typename ColorType::value_type;
 
@@ -893,40 +904,40 @@ namespace Fluxions
 			unsigned char* data = (unsigned char*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
 				PixelValueType* v = pixels[i].ptr();
-				for (unsigned j = 0; j < stride; j++) {
+				for (unsigned j = 0; j < dstComponents; j++) {
 					v[j] = (PixelValueType)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
 				}
-				data += stride;
+				data += fromstride;
 			}
 		}
 		else if (fromType == glconstant_FLOAT && toType == glconstant_UNSIGNED_BYTE) {
 			float* data = (float*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
 				PixelValueType* v = pixels[i].ptr();
-				for (unsigned j = 0; j < stride; j++) {
+				for (unsigned j = 0; j < dstComponents; j++) {
 					v[j] = (PixelValueType)clamp((int)(scaleFactor_ftoi * data[j]), 0, 255);
 				}
-				data += stride;
+				data += fromstride;
 			}
 		}
 		else if (fromType == glconstant_UNSIGNED_BYTE && toType == glconstant_UNSIGNED_BYTE) {
 			unsigned char* data = (unsigned char*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
 				PixelValueType* v = pixels[i].ptr();
-				for (unsigned j = 0; j < stride; j++) {
+				for (unsigned j = 0; j < dstComponents; j++) {
 					v[j] = (PixelValueType)data[j];
 				}
-				data += stride;
+				data += fromstride;
 			}
 		}
 		else if (fromType == glconstant_FLOAT && toType == glconstant_FLOAT) {
 			float* data = (float*)_pixels;
 			for (unsigned i = 0; i < count; i++) {
 				PixelValueType* v = pixels[i].ptr();
-				for (unsigned j = 0; j < stride; j++) {
+				for (unsigned j = 0; j < fromstride; j++) {
 					v[j] = (PixelValueType)data[j];
 				}
-				data += stride;
+				data += fromstride;
 			}
 		}
 	}
