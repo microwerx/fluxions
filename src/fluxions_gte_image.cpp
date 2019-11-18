@@ -937,7 +937,7 @@ namespace Fluxions
 		if (empty() || imageWidth != imageHeight)
 			return false;
 
-		std::vector<ColorType> tmp(imageWidth * imageHeight);
+		std::vector<ColorType> tmp((unsigned)imageWidth * imageHeight);
 		unsigned size = imageWidth;
 		//unsigned zstride = imageWidth * imageHeight;
 		unsigned zoffset = zstride * z;
