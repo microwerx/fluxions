@@ -21,8 +21,11 @@
 #include <viperfish.hpp>
 #include <viperfish_gamepad.hpp>
 
+
 namespace Vf
 {
+	static constexpr int MAX_RUN_MESSAGES = 2;
+
 	Widget::Widget() {
 		std::ostringstream ostr;
 		ostr << "unknownwidget" << (void*)this;
@@ -59,6 +62,7 @@ namespace Vf
 	}
 
 	void Widget::Init(std::vector<std::string> args) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		for (int i = 0; i < 4; i++) {
 			gamepads[i].Init(i);
 		}
@@ -67,7 +71,8 @@ namespace Vf
 	}
 
 	void Widget::Kill() {
-		OnKill();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+			OnKill();
 
 		// free the child, then the parent
 		decorateeWidget_.reset();
@@ -79,16 +84,19 @@ namespace Vf
 	}
 
 	void Widget::MainLoop() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		leaveMainLoop_ = false;
 		OnMainLoop();
 	}
 
 	void Widget::LeaveMainLoop() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		leaveMainLoop_ = true;
 		OnLeaveMainLoop();
 	}
 
 	void Widget::PollGamepads() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		for (int i = 0; i < 4; i++)
 			gamepads[i].index = i;
 		for (int i = 0; i < 4; i++)
@@ -96,6 +104,7 @@ namespace Vf
 	}
 
 	void Widget::HandleKey(const std::string& key, int keymod, bool pressed) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		keyboard.SetKey(key, keymod, pressed);
 
 		if (keymod == 0) {
@@ -153,6 +162,7 @@ namespace Vf
 	}
 
 	void Widget::HandleMouseButton(int button, bool pressed) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (pressed)
 			mouse.OnButtonDown(button);
 		else
@@ -160,6 +170,7 @@ namespace Vf
 	}
 
 	void Widget::HandleMouseMove(int x, int y) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		mouse.OnMove(x, y);
 		for (auto& button : mouse.buttons) {
 			if (button.second) {
@@ -169,18 +180,22 @@ namespace Vf
 	}
 
 	void Widget::HandleMouseClick(const MouseClickState& mcs) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		mouse.OnClick(mcs);
 	}
 
 	void Widget::HandleMouseDoubleClick(const MouseDoubleClickState& mdcs) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		mouse.OnDoubleClick(mdcs);
 	}
 
 	void Widget::HandleMouseDrag(const MouseDragState& mds) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		mouse.OnDrag(mds);
 	}
 
 	bool Widget::processStyle(const std::string& style) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		/*
 		using namespace Df;
 		JSONPtr json = JSON::MakeNull();
@@ -223,6 +238,7 @@ namespace Vf
 	}
 
 	void Widget::OnInit(const std::vector<std::string>& args) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		leaveMainLoop_ = false;
 		if (decorateeWidget_)
 			decorateeWidget_->OnInit(args);
@@ -232,6 +248,7 @@ namespace Vf
 	}
 
 	void Widget::OnKill() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnKill();
 		for (auto& w : children_) {
@@ -240,6 +257,7 @@ namespace Vf
 	}
 
 	void Widget::OnUpdate(double timeStamp) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		t0 = t1;
 		t1 = timeStamp;
 
@@ -252,6 +270,7 @@ namespace Vf
 	}
 
 	void Widget::OnKeyDown(const std::string& key, int keymod) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleKey(key, keymod, true);
 		if (decorateeWidget_)
 			decorateeWidget_->OnKeyDown(key, keymod);
@@ -261,6 +280,7 @@ namespace Vf
 	}
 
 	void Widget::OnKeyUp(const std::string& key, int keymod) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleKey(key, keymod, false);
 		if (decorateeWidget_)
 			decorateeWidget_->OnKeyUp(key, keymod);
@@ -270,6 +290,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseButtonDown(int button) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleMouseButton(button, true);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseButtonDown(button);
@@ -279,6 +300,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseButtonUp(int button) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleMouseButton(button, false);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseButtonUp(button);
@@ -288,6 +310,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseMove(int x, int y) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleMouseMove(x, y);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseMove(x, y);
@@ -297,6 +320,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseClick(int button, const MouseClickState& mcs) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleMouseClick(mcs);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseClick(button, mcs);
@@ -306,6 +330,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseDoubleClick(int button, const MouseDoubleClickState& mdcs) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleMouseDoubleClick(mdcs);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseDoubleClick(button, mdcs);
@@ -315,6 +340,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseDrag(int button, const MouseDragState& mds) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HandleMouseDrag(mds);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseDrag(button, mds);
@@ -324,6 +350,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseEnter() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseEnter();
 		for (auto& w : children_) {
@@ -332,6 +359,7 @@ namespace Vf
 	}
 
 	void Widget::OnMouseLeave() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMouseLeave();
 		for (auto& w : children_) {
@@ -340,6 +368,7 @@ namespace Vf
 	}
 
 	void Widget::OnMultiEnter(int id) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMultiEnter(id);
 		for (auto& w : children_) {
@@ -348,6 +377,7 @@ namespace Vf
 	}
 
 	void Widget::OnMultiLeave(int id) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMultiLeave(id);
 		for (auto& w : children_) {
@@ -356,6 +386,7 @@ namespace Vf
 	}
 
 	void Widget::OnMultiButtonDown(int id, int button, const MouseState& ms) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMultiButtonDown(id, button, ms);
 		for (auto& w : children_) {
@@ -364,6 +395,7 @@ namespace Vf
 	}
 
 	void Widget::OnMultiButtonUp(int id, int button, const MouseState& ms) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMultiButtonUp(id, button, ms);
 		for (auto& w : children_) {
@@ -372,6 +404,7 @@ namespace Vf
 	}
 
 	void Widget::OnMultiMove(int x, int y, const MouseState& ms) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMultiMove(x, y, ms);
 		for (auto& w : children_) {
@@ -380,6 +413,7 @@ namespace Vf
 	}
 
 	void Widget::OnGainFocus() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnGainFocus();
 		for (auto& w : children_) {
@@ -388,6 +422,7 @@ namespace Vf
 	}
 
 	void Widget::OnLostFocus() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnLostFocus();
 		for (auto& w : children_) {
@@ -396,6 +431,7 @@ namespace Vf
 	}
 
 	void Widget::OnInitContext() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnInitContext();
 		for (auto& w : children_) {
@@ -404,6 +440,7 @@ namespace Vf
 	}
 
 	void Widget::OnPauseApp() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnPauseApp();
 		for (auto& w : children_) {
@@ -412,6 +449,7 @@ namespace Vf
 	}
 
 	void Widget::OnResumeApp() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnResumeApp();
 		for (auto& w : children_) {
@@ -420,6 +458,7 @@ namespace Vf
 	}
 
 	void Widget::OnWindowMove(int x, int y) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		windowRect_.x = x;
 		windowRect_.y = y;
 		if (decorateeWidget_)
@@ -430,6 +469,7 @@ namespace Vf
 	}
 
 	void Widget::OnWindowVisible() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		visible_ = true;
 		if (decorateeWidget_)
 			decorateeWidget_->OnWindowVisible();
@@ -439,6 +479,7 @@ namespace Vf
 	}
 
 	void Widget::OnWindowHidden() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		visible_ = false;
 		if (decorateeWidget_)
 			decorateeWidget_->OnWindowHidden();
@@ -448,6 +489,7 @@ namespace Vf
 	}
 
 	void Widget::OnGamepadAxis(int axis, float value, const GamepadState& gs) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnGamepadAxis(axis, value, gs);
 		for (auto& w : children_) {
@@ -456,6 +498,7 @@ namespace Vf
 	}
 
 	void Widget::OnGamepadButtonDown(int button, float value, const GamepadState& gs) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnGamepadButtonDown(button, value, gs);
 		for (auto& w : children_) {
@@ -464,6 +507,7 @@ namespace Vf
 	}
 
 	void Widget::OnGamepadButtonUp(int button, float value, const GamepadState& gs) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnGamepadButtonUp(button, value, gs);
 		for (auto& w : children_) {
@@ -472,6 +516,7 @@ namespace Vf
 	}
 
 	void Widget::OnReshape(int width, int height) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		windowRect_.w = width;
 		windowRect_.h = height;
 		if (decorateeWidget_)
@@ -481,8 +526,18 @@ namespace Vf
 		}
 	}
 
+	void Widget::display() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+		if (decorateeWidget_) {
+			decorateeWidget_->display();
+		}
+		for (auto& w : children_) {
+			w->display();
+		}
+	}
+
 	void Widget::OnPreRender() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_) {
 			decorateeWidget_->OnPreRender();
 		}
@@ -492,7 +547,7 @@ namespace Vf
 	}
 
 	void Widget::OnRender3D() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnRender3D();
 		for (auto& w : children_) {
@@ -501,7 +556,7 @@ namespace Vf
 	}
 
 	void Widget::OnRender2D() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnRender2D();
 		for (auto& w : children_) {
@@ -510,7 +565,7 @@ namespace Vf
 	}
 
 	void Widget::OnRenderDearImGui() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnRenderDearImGui();
 		for (auto& w : children_) {
@@ -519,7 +574,7 @@ namespace Vf
 	}
 
 	void Widget::OnPostRender() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_) {
 			decorateeWidget_->OnPostRender();
 		}
@@ -529,6 +584,7 @@ namespace Vf
 	}
 
 	void Widget::OnMainLoop() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (decorateeWidget_)
 			decorateeWidget_->OnMainLoop();
 		for (auto& w : children_) {
@@ -537,6 +593,7 @@ namespace Vf
 	}
 
 	void Widget::OnLeaveMainLoop() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		leaveMainLoop_ = true;
 		if (decoraterWidget_)
 			decoraterWidget_->OnLeaveMainLoop();
