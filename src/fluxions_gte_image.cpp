@@ -947,7 +947,7 @@ namespace Fluxions
 				unsigned sy = y;
 				unsigned dst_offset = y * size + x;
 				unsigned src_offset = sy * size + sx;
-				tmp[dst_offset] = pixels[zoffset + src_offset];
+				tmp[dst_offset] = pixels[(unsigned)zoffset + src_offset];
 			}
 		}
 		copy(tmp.begin(), tmp.end(), pixels.begin() + zoffset);
@@ -1255,9 +1255,6 @@ namespace Fluxions
 		value_type grey2 = (black + white) / 2;
 		value_type grey3 = grey2 + grey1;
 
-		ColorType blackPixel{ grey1, grey2, grey3 };
-		ColorType whitePixel{ grey3, grey1, grey2 };
-
 #define COLORTYPENAME(X) #X
 		using std::cerr;
 		cerr << testbase << "  ";
@@ -1266,6 +1263,8 @@ namespace Fluxions
 		cerr << "-->| " << (double)white << "\n";
 
 		{	// Write rectangular image
+			ColorType blackPixel{ grey1, grey2, grey3 };
+			ColorType whitePixel{ grey3, grey1, grey2 };
 			TImage<ColorType> image(width, height, 1);
 			bool rowColorChoice = false;
 			for (unsigned y = 0; y < height; y++) {

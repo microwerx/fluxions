@@ -68,13 +68,13 @@ namespace Fluxions
 
 	template<typename T>
 	constexpr T color_max_value() {
-		bool is_int = std::is_integral_v<T>;
-		bool is_flt = std::is_floating_point_v<T>;
-		if (is_int && sizeof(T) == 1)
+		constexpr bool is_int = std::is_integral_v<T>;
+		constexpr bool is_flt = std::is_floating_point_v<T>;
+		if constexpr (is_int && sizeof(T) == 1)
 			return T(255);
-		else if (is_int && sizeof(T) >= 2)
+		else if constexpr (is_int && sizeof(T) >= 2)
 			return T(65535);
-		else if (is_flt)
+		else if constexpr (is_flt)
 			return T(1);
 		else
 			return T(0);
