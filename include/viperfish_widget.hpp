@@ -107,6 +107,8 @@ namespace Vf
 		inline bool isOrphan() const { return !parent_; }
 		inline bool leaveMainLoop() const { return leaveMainLoop_; }
 
+		inline operator bool() { return isVisible(); }
+
 		inline double GetElapsedTime() const { return t1 - baseTime; }
 		inline double GetFrameTime() const { return t1 - t0; }
 		inline double GetStopwatchTime() const { return t1 - stopwatchTimeT0; }
