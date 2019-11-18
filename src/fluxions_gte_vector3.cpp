@@ -73,9 +73,9 @@ namespace Fluxions
 		if (b != TVector3<T>(4, 5, 6)) result = false;
 
 		// Test constants
-		if (TVector3<T>::one != 1) result = false;
-		if (TVector3<T>::zero != 0) result = false;
-		if (TVector3<T>::is_signed && TVector3<T>::minusone != -1) {
+		if constexpr (TVector3<T>::one != 1) result = false;
+		if constexpr (TVector3<T>::zero != 0) result = false;
+		if constexpr (TVector3<T>::is_signed && TVector3<T>::minusone != -1) {
 			result = false;
 		}
 
