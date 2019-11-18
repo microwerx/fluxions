@@ -26,15 +26,21 @@
 #include <chrono>
 #include <cmath>
 
-#define HFLOGINFO(...) Hf::Log.infofn(__FUNCTION__, __VA_ARGS__)
-#define HFLOGWARN(...) Hf::Log.warningfn(__FUNCTION__, __VA_ARGS__)
-#define HFLOGERROR(...) Hf::Log.errorfn(__FUNCTION__, __VA_ARGS__)
-#define HFLOGDEBUG(...) Hf::Log.debugfn(__FUNCTION__, __VA_ARGS__)
-#define HFLOG(...) Hf::Log.logfn(__FUNCTION__, __VA_ARGS)
+#define HFLOGINFO(...) Hf::Log.infofn(__FUNCTION__, __VA_ARGS__);
+#define HFLOGWARN(...) Hf::Log.warningfn(__FUNCTION__, __VA_ARGS__);
+#define HFLOGERROR(...) Hf::Log.errorfn(__FUNCTION__, __VA_ARGS__);
+#define HFLOGDEBUG(...) Hf::Log.debugfn(__FUNCTION__, __VA_ARGS__);
+#define HFLOG(...) Hf::Log.logfn(__FUNCTION__, __VA_ARGS);
 #ifndef HFLOGDEBUGFIRSTRUN_COUNT
 #define HFLOGDEBUGFIRSTRUN_COUNT 1
 #endif
 #define HFLOGDEBUGFIRSTRUN() { static unsigned firstRun = HFLOGDEBUGFIRSTRUN_COUNT; if (firstRun) { firstRun--; HFLOGDEBUG("run %i", HFLOGDEBUGFIRSTRUN_COUNT - firstRun); } }
+
+#define HFLOGCHECK(condition) if (condition) Hf::Log.logfn(__FUNCTION__, "Condition is false (%s)", #condition);
+#define HFLOGCHECKINFO(condition) if (condition) Hf::Log.infofn(__FUNCTION__, "Condition is false (%s)", #condition);
+#define HFLOGCHECKWARN(condition) if (condition) Hf::Log.warningfn(__FUNCTION__, "Condition is false (%s)", #condition);
+#define HFLOGCHECKDEBUG(condition) if (condition) Hf::Log.debugfn(__FUNCTION__, "Condition is false (%s)", #condition);
+#define HFLOGCHECKERROR(condition) if (condition) Hf::Log.errorfn(__FUNCTION__, "Condition is false (%s)", #condition);
 
 namespace Hf
 {
