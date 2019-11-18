@@ -113,9 +113,12 @@ namespace Fluxions
 			int px = (int)(ix * pixelScale * (phi[i] / FX_PI));
 			int py = (int)(iy * pixelScale * (theta[i] + FX_PI) / FX_TWOPI);
 
-			sampleMap.setPixel(px, py, White);
+			if (px >= 0 && py >= 0)
+				sampleMap.setPixel(px, py, White);
 		}
-		sampleMap.savePPMi(path, 1.0f, 0, 255);
+		// NOTE: we changed from savePPMi
+		// sampleMap.savePPMi(path, 1.0f, 0, 255);
+		HFLOGCHECKWARN(sampleMap.savePPM(path));
 	}
 
 	void SphlSampler::sampleCubeMap(const Image4f& cubeMap, MultispectralSph4f& msph) {
