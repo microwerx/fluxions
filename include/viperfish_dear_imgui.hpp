@@ -78,6 +78,8 @@ namespace Vf
 		void InvalidateDeviceObjects();
 		void RenderDrawLists();
 	};
+
+	using DearImGuiWidgetPtr = std::shared_ptr<DearImGuiWidget>;
 } // namespace Vf
 
 #endif // VIPERFISH_IMGUI_HPP
