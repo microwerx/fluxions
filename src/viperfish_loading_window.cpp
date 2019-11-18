@@ -26,8 +26,11 @@ namespace Vf
 		ImGui::Begin(getName().c_str());
 		ImGui::PushID(popupId.c_str());
 		ImGui::Text("Loading...");
+		char buf[100];
+		ImGui::InputText("sometext", buf, 100);
 		ImGui::Separator();
 		ImGui::Text("%s", msg.c_str());
+		ImGui::Text("%s", buf);
 		ImGui::PopID();
 		ImGui::End();
 	}
