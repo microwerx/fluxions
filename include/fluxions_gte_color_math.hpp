@@ -41,17 +41,18 @@ namespace Fluxions
 	}
 
 	template <typename T>
-	constexpr void FromColor3f(TColor3<T>& dst, const TColor3<float>& src) {
-		dst.r = (typename TColor3<T>::value_type)(TColor4<T>::from_float_factor * (float)src.r);
-		dst.g = (typename TColor3<T>::value_type)(TColor4<T>::from_float_factor * (float)src.g);
-		dst.b = (typename TColor3<T>::value_type)(TColor4<T>::from_float_factor * (float)src.b);
+	constexpr TColor3<T>& FromColor3f(TColor3<T>& dst, const TColor3<float>& src) {
+		dst[0] = (typename TColor3<T>::value_type)(TColor4<T>::from_float_factor * (float)src.r);
+		dst[1] = (typename TColor3<T>::value_type)(TColor4<T>::from_float_factor * (float)src.g);
+		dst[2] = (typename TColor3<T>::value_type)(TColor4<T>::from_float_factor * (float)src.b);
+		return dst;
 	}
 
 	template <typename T>
-	constexpr void FromColor3f(TColor4<T>& dst, const TColor3<float>& src) {
-		dst.r = (typename TColor4<T>::value_type)(TColor4<T>::from_float_factor * (float)src.r);
-		dst.g = (typename TColor4<T>::value_type)(TColor4<T>::from_float_factor * (float)src.g);
-		dst.b = (typename TColor4<T>::value_type)(TColor4<T>::from_float_factor * (float)src.b);
+	constexpr TColor4<T>& FromColor3f(TColor4<T>& dst, const TColor3<float>& src) {
+		dst[0] = (typename TColor4<T>::value_type)(TColor4<T>::from_float_factor * (float)src.r);
+		dst[1] = (typename TColor4<T>::value_type)(TColor4<T>::from_float_factor * (float)src.g);
+		dst[2] = (typename TColor4<T>::value_type)(TColor4<T>::from_float_factor * (float)src.b);
 	}
 
 	// MATH ROUTINES
