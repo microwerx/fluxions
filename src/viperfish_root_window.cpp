@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <viperfish_root_window.hpp>
 
 namespace Vf
