@@ -869,13 +869,13 @@ namespace Fluxions
 
 	template <typename ColorType>
 	void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, unsigned width, unsigned height, unsigned depth, void* _pixels) {
-		float scaleFactor_itof = 1.0f / 255.99f;
-		float scaleFactor_ftoi = 255.99f;
+		constexpr float scaleFactor_itof = 1.0f / 255.99f;
+		constexpr float scaleFactor_ftoi = 255.99f;
 
-		const unsigned glconstant_RGB = 0x1907;
-		const unsigned glconstant_RGBA = 0x1908;
-		const unsigned glconstant_FLOAT = 0x1406;
-		const unsigned glconstant_UNSIGNED_BYTE = 0x1401;
+		constexpr unsigned glconstant_RGB = 0x1907;
+		constexpr unsigned glconstant_RGBA = 0x1908;
+		constexpr unsigned glconstant_FLOAT = 0x1406;
+		constexpr unsigned glconstant_UNSIGNED_BYTE = 0x1401;
 
 		unsigned stride;
 		if (fromFormat == 3 || fromFormat == glconstant_RGB)
