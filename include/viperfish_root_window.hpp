@@ -9,6 +9,8 @@ namespace Vf
 	public:
 		RootWindow(const std::string& name);
 		virtual ~RootWindow() override;
+
+		void display() override;
 	};
 }
 
