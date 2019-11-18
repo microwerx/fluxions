@@ -26,6 +26,8 @@
 #include <fluxions_gte_vector_math.hpp>
 #include <fluxions_gte_color_math.hpp>
 
+#define FLUXIONS_GTE_USEOPENEXR 1
+
 namespace Fluxions
 {
 	template <class T>
@@ -96,7 +98,7 @@ namespace Fluxions
 		TImage<ColorType>& ToneMap(float exposure);
 		TImage<ColorType>& ReverseToneMap(float exposure);
 		void scaleColors(float x);
-		TImage<ColorType> ScaleImage(unsigned newWidth, unsigned newHeight, bool bilinear = false);
+		TImage<ColorType> ScaleImage(unsigned newWidth, unsigned newHeight);
 
 		constexpr void setPixel(unsigned x, unsigned y, ColorType color) noexcept {
 			if (x >= imageWidth || y >= imageHeight)
@@ -229,8 +231,8 @@ namespace Fluxions
 		// * loadCubePPM
 		// * saveCubeEXR
 		//void loadPPM(const std::string& filename);
-		//void loadEXR(const std::string& path);
-		//void saveEXR(const std::string& path) const;
+		void loadEXR(const std::string& path);
+		void saveEXR(const std::string& path) const;
 
 		bool flipX(int z = 0);
 		bool flipY(int z = 0);
