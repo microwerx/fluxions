@@ -190,7 +190,7 @@ namespace Fluxions
 			for (const vector_type& pixel : pixels) {
 				value = std::max(
 					*std::max_element(pixel.cbegin(), pixel.cend()),
-									  value);
+					value);
 			}
 			return value;
 		}
@@ -221,9 +221,10 @@ namespace Fluxions
 		// * savePFM
 		//void savePPMRaw(const std::string& filename, unsigned z = 0) const;
 		bool savePPM(const std::string& filename, unsigned z = 0, bool flipy = false) const;
-		//void savePPMi(const std::string& filename, float scale, int minValue, int maxValue, unsigned z = 0, bool flipy = false) const;
-		//void savePPMHDRI(const std::string& filename, unsigned z = 0) const;
+		bool savePPMi(const std::string& filename, float scale, int minValue, int maxValue, unsigned z = 0, bool flipy = false) const;
 		bool saveCubePPM(const std::string& filename, bool flipy = false) const;
+		bool saveCubePPMi(const std::string& filename, float scale, int minValue, int maxValue, bool flipy = false) const;
+		//void savePPMHDRI(const std::string& filename, unsigned z = 0) const;
 
 		// TODO: change these to
 		// * loadPPM

@@ -715,37 +715,41 @@ namespace Fluxions
 
 		return true;
 	}
-	//
-	//	template <typename ColorType>
-	//	void TImage<ColorType>::savePPMi(const std::string& filename, float scale, int minValue, int maxValue, unsigned z, bool flipy) const {
-	//		//if (maxValue <= 0) {
-	//		//	maxValue = (int)(scale * maxrgb());
-	//		//}
-	//
-	//		std::ofstream fout(filename.c_str());
-	//
-	//		fout << "P3" << std::endl;
-	//		fout << imageWidth << " ";
-	//		fout << imageHeight << " ";
-	//		fout << maxValue << std::endl;
-	//
-	//		int y1 = 0;
-	//		int y2 = (int)imageHeight;
-	//		int dy = 1;
-	//		if (flipy) {
-	//			y1 = (int)imageHeight - 1;
-	//			y2 = -1;
-	//			dy = -1;
-	//		}
-	//		for (int y = y1; y != y2; y += dy) {
-	//			for (int x = 0; x < (int)imageWidth; x++) {
-	//				Color4i color = ToColor4i(getPixel(x, y, z), scale, minValue, maxValue);
-	//				fout << color.r << " " << color.g << " " << color.b << std::endl;
-	//			}
-	//		}
-	//
-	//		fout.close();
-	//	}
+
+	template <typename ColorType>
+	bool TImage<ColorType>::savePPMi(const std::string& filename, float scale, int minValue, int maxValue, unsigned z, bool flipy) const {
+		std::ofstream fout(filename.c_str());
+		if (!fout) return false;
+		if (pixels.empty()) return false;
+		if (pixels[0].size() < 3) return false;
+
+		fout << "P3" << std::endl;
+		fout << imageWidth << " ";
+		fout << imageHeight << " ";
+		fout << maxValue << std::endl;
+
+		int y1 = 0;
+		int y2 = (int)imageHeight;
+		int dy = 1;
+		if (flipy) {
+			y1 = (int)imageHeight - 1;
+			y2 = -1;
+			dy = -1;
+		}
+		for (int y = y1; y != y2; y += dy) {
+			for (int x = 0; x < (int)imageWidth; x++) {
+				ColorType c = getPixel(x, y, z);
+				Color3i color(
+					clamp<int>((int)(c[0] * scale), minValue, maxValue),
+					clamp<int>((int)(c[1] * scale), minValue, maxValue),
+					clamp<int>((int)(c[2] * scale), minValue, maxValue)
+					);
+					fout << color.r << " " << color.g << " " << color.b << std::endl;
+			}
+		}
+
+		return true;
+	}
 	//
 	//	template <typename ColorType>
 	//	void TImage<ColorType>::savePPMHDRI(const std::string& filename, unsigned z) const {
@@ -784,7 +788,22 @@ namespace Fluxions
 
 		return false;
 	}
-	//
+
+	template <typename ColorType>
+	bool TImage<ColorType>::saveCubePPMi(const std::string& path, float scale, int minValue, int maxValue, bool flipy) const {
+		if (imageHeight * 6 == imageWidth) {
+			return savePPMi(path, scale, minValue, maxValue, 0, flipy);
+		}
+
+		if (imageDepth == 6) {
+			TImage<ColorType> image;
+			convertCubeMapToRect(image);
+			return image.savePPMi(path, scale, minValue, maxValue, 0, flipy);
+		}
+
+		return false;
+	}
+
 	template <typename ColorType>
 	bool TImage<ColorType>::loadEXR(const std::string& path) {
 #ifdef FLUXIONS_GTE_USEOPENEXR
