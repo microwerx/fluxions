@@ -21,6 +21,8 @@
 
 namespace Vf
 {
+	constexpr int MAX_RUN_MESSAGES = 2;
+
 	DearImGuiWidget::DearImGuiWidget()
 		: Widget("imguiwidget") {
 
@@ -36,7 +38,8 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnInit(const std::vector<std::string>& args) {
-		Hf::Log.infofn(__FUNCTION__, "Creating Dear ImGui Context");
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+		HFLOGINFO("Creating Dear ImGui Context");
 		pImGuiContext = ImGui::CreateContext();
 		pIO = &ImGui::GetIO();
 		pIO->DisplaySize.x = 640.0f;
@@ -78,8 +81,9 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnKill() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		InvalidateDeviceObjects();
-		Hf::Log.infofn(__FUNCTION__, "Destroying Dear ImGui Context");
+		HFLOGINFO("Destroying Dear ImGui Context");
 		ImGui::DestroyContext(pImGuiContext);
 		pIO = nullptr;
 		pImGuiContext = nullptr;
@@ -88,18 +92,21 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnMouseButtonDown(int button) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		Widget::OnMouseButtonDown(button);
 		if (within(button, 0, 4) && pIO != nullptr)
 			pIO->MouseDown[button] = true;
 	}
 
 	void DearImGuiWidget::OnMouseButtonUp(int button) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		Widget::OnMouseButtonUp(button);
 		if (within(button, 0, 4) && pIO != nullptr)
 			pIO->MouseDown[button] = false;
 	}
 
 	void DearImGuiWidget::OnMouseMove(int x, int y) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		Widget::OnMouseMove(x, y);
 		if (pIO != nullptr) {
 			pIO->MousePos.x = (float)x;
@@ -108,6 +115,7 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnKeyDown(const std::string& key, int keymod) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		Widget::OnKeyDown(key, keymod);
 		if (pIO == nullptr || key.empty())
 			return;
@@ -122,6 +130,7 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnKeyUp(const std::string& key, int keymod) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		Widget::OnKeyUp(key, keymod);
 		if (pIO == nullptr || key.empty())
 			return;
@@ -136,6 +145,7 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnUpdate(double timeStamp) {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (program && pIO != nullptr) {
 			pIO->DisplaySize.x = (float)windowRect().w;
 			pIO->DisplaySize.y = (float)windowRect().h;
@@ -146,7 +156,7 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnPreRender() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 
 		Widget::OnPreRender();
 		if (!program) return;
@@ -154,7 +164,7 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnPostRender() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 
 		Widget::OnPostRender();
 		if (!program) return;
@@ -163,13 +173,14 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::OnRenderDearImGui() {
-		HFLOGDEBUGFIRSTRUN();
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 
 		if (!program) return;
 		Widget::OnRenderDearImGui();
 	}
 
 	bool DearImGuiWidget::CreateDeviceObjects() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HFLOGDEBUG("Creating Dear ImGui device objects...");
 		// Backup GL state
 		GLint last_texture, last_array_buffer, last_vertex_array;
@@ -318,6 +329,7 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::InvalidateDeviceObjects() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (vao)
 			glDeleteVertexArrays(1, &vao);
 		if (abo)
@@ -351,6 +363,7 @@ namespace Vf
 	}
 
 	void DearImGuiWidget::RenderDrawLists() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		if (program == 0)
 			return;
 		ImDrawData* draw_data = ImGui::GetDrawData();
