@@ -94,7 +94,7 @@ namespace Vf
 
 		inline bool decorate(SharedPtr w) noexcept { if (!w) return false; decorateeWidget_ = w; w->decoraterWidget_ = shared_from_this(); return true; }
 		inline void undecorate() noexcept { if (!decoraterWidget_) return; decoraterWidget_->decorateeWidget_.reset(); }
-		inline bool isDecorating() const noexcept { if (decorateeWidget_) return true; return false; }
+		inline bool is_decorating() const noexcept { if (decorateeWidget_) return true; return false; }
 
 		inline const std::string &getName() const noexcept { return name_; }
 		inline int getX() const { return windowRect_.x; }
