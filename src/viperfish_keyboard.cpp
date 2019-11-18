@@ -72,7 +72,7 @@ namespace Vf
 		return count;
 	}
 
-	const char * KeyboardState::KeyToHTML5Name(unsigned c)
+	const char * KeyboardState::KeyToHTML5Name(int c)
 	{
 		static char s[10];
 
@@ -108,7 +108,7 @@ namespace Vf
 		else {
 			c = (char)tolower(c);
 		}
-		s[0] = c;
+		s[0] = (char)c;
 		s[1] = 0;
 
 		return s;
@@ -124,8 +124,8 @@ namespace Vf
 			return 0x1B;
 		if (key == " ")
 			return 0x20;
-		if (key.front() <= 0x7f)
-			return tolower(key.front());
+		if (key.size() == 1 && key.front() <= 0x7f)
+			return key.front();// tolower(key.front());
 		if (key == "F1")
 			return VF_KEY_F1;
 		if (key == "F2")
@@ -183,7 +183,7 @@ namespace Vf
 		return 0;
 	}
 
-	const char * KeyboardState::SpecialKeyToHTML5Name(unsigned key)
+	const char * KeyboardState::SpecialKeyToHTML5Name(int key)
 	{
 		if (key >= 0x100)
 			key -= 0x100;
