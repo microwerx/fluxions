@@ -600,42 +600,42 @@ namespace Fluxions
 	//	fout.close();
 	//}
 
-	//template <typename ColorType>
-	//void TImage<ColorType>::loadPPM(const std::string& filename) {
-	//	std::ifstream fin(filename.c_str());
+	template <typename ColorType>
+	void TImage<ColorType>::loadPPM(const std::string& filename) {
+		std::ifstream fin(filename.c_str());
 
-	//	std::string magicNumber;
-	//	unsigned width;
-	//	unsigned height;
-	//	int maxInt;
+		std::string magicNumber;
+		unsigned width;
+		unsigned height;
+		int maxInt;
 
-	//	fin >> magicNumber;
-	//	while (!magicNumber.empty() && magicNumber[0] == '#') {
-	//		// skip comments
-	//		fin >> magicNumber;
-	//	}
-	//	if (magicNumber != "P3")
-	//		return;
-	//	fin >> width;
-	//	fin >> height;
-	//	fin >> maxInt;
+		fin >> magicNumber;
+		while (!magicNumber.empty() && magicNumber[0] == '#') {
+			// skip comments
+			fin >> magicNumber;
+		}
+		if (magicNumber != "P3")
+			return;
+		fin >> width;
+		fin >> height;
+		fin >> maxInt;
 
-	//	// decide what to do...
-	//	// const unsigned int size = ColorType::gl_size;
-	//	// const unsigned int type = ColorType::gl_type;
-	//	const float scale = ColorType::from_float_factor / 255.99f;
+		// decide what to do...
+		// const unsigned int size = ColorType::gl_size;
+		// const unsigned int type = ColorType::gl_type;
+		const float scale = ColorType::from_float_factor / 255.99f;
 
-	//	resize(width, height);
-	//	for (unsigned y = 0; y < imageHeight; y++) {
-	//		for (unsigned x = 0; x < imageWidth; x++) {
-	//			Color3f color;
-	//			fin >> color.r >> color.g >> color.b;
-	//			color *= scale;
-	//			ColorType dst;
-	//			FromColor3f(dst, color);
-	//			setPixel(x, y, dst);
-	//		}
-	//	}
+		resize(width, height);
+		for (unsigned y = 0; y < imageHeight; y++) {
+			for (unsigned x = 0; x < imageWidth; x++) {
+				Color3f color;
+				fin >> color.r >> color.g >> color.b;
+				color *= scale;
+				ColorType dst;
+				FromColor3f(dst, color);
+				setPixel(x, y, dst);
+			}
+		}
 
 	//	fin.close();
 	//}

@@ -230,7 +230,7 @@ namespace Fluxions
 		// * loadEXR
 		// * loadCubePPM
 		// * saveCubeEXR
-		//void loadPPM(const std::string& filename);
+		void loadPPM(const std::string& filename);
 		void loadEXR(const std::string& path);
 		void saveEXR(const std::string& path) const;
 
