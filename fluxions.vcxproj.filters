@@ -256,6 +256,9 @@
     <ClCompile Include="src\viperfish_loading_window.cpp">
       <Filter>src\viperfish</Filter>
     </ClCompile>
+    <ClCompile Include="src\viperfish_stats_window.cpp">
+      <Filter>src\viperfish</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -614,6 +617,12 @@
     </ClInclude>
     <ClInclude Include="include\viperfish_loading_window.hpp">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_stats_window.hpp">
+      <Filter>src\viperfish</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_noise.hpp">
+      <Filter>src\fluxions-gte</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

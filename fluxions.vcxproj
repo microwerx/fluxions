@@ -495,6 +495,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\viperfish_root_window.cpp" />
+    <ClCompile Include="src\viperfish_stats_window.cpp" />
     <ClCompile Include="src\viperfish_widget.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -540,6 +541,7 @@
     <ClInclude Include="include\fluxions_gte_matrix_extra.hpp" />
     <ClInclude Include="include\fluxions_gte_matrix_math.hpp" />
     <ClInclude Include="include\fluxions_gte_matrix_stack.hpp" />
+    <ClInclude Include="include\fluxions_gte_noise.hpp" />
     <ClInclude Include="include\fluxions_gte_plane.hpp" />
     <ClInclude Include="include\fluxions_gte_quaternion.hpp" />
     <ClInclude Include="include\fluxions_gte_ray.hpp" />
@@ -620,6 +622,7 @@
     <ClInclude Include="include\viperfish_mouse.hpp" />
     <ClInclude Include="include\viperfish_opengl.hpp" />
     <ClInclude Include="include\viperfish_root_window.hpp" />
+    <ClInclude Include="include\viperfish_stats_window.hpp" />
     <ClInclude Include="include\viperfish_utilities.hpp" />
     <ClInclude Include="include\viperfish_widget.hpp" />
     <ClInclude Include="include\viperfish_xinput.hpp" />
