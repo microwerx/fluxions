@@ -231,6 +231,48 @@ namespace Fluxions
 		return (x > T(1)) ? T(1) : x;
 	}
 
+	template <typename T>
+	constexpr T lerp(T t, T a, T b) noexcept {
+		return (T(1) - t) * a + t * b;
+	}
+
+	template <typename T>
+	constexpr T smoothstep(T x) noexcept {
+		if (x < 0) return 0;
+		if (x > 1) return 1;
+		return x * x * (T(3) - T(2) * x);
+	}
+
+	template <typename T>
+	constexpr T smootherstep(T x) noexcept {
+		x = clamp(x, T(0), T(1));
+		return x * x * x * (x * (x * T(6) - T(15)) + T(10));
+	}
+
+	template <typename T>
+	constexpr T smoothstep(T x, T a, T b) noexcept {
+		x = clamp((x - a) / (b - a), T(0), T(1));
+		return x * x * (T(3) - T(2) * x);
+	}
+
+	template <typename T>
+	constexpr T smootherstep(T x, T a, T b) noexcept {
+		x = clamp<T>((x - a) / (b - a), T(0), T(1));
+		return x * x * x * (x * (x * T(6) - T(15)) + T(10));
+	}
+
+	template <typename T>
+	constexpr T smoothlerp(T t, T a, T b) noexcept {
+		t = smoothstep(t);
+		return (T(1) - t) * a + t * b;
+	}
+
+	template <typename T>
+	constexpr T smootherlerp(T t, T a, T b) noexcept {
+		t = smootherstep(t);
+		return (T(1) - t) * a + t * b;
+	}
+
 	template <typename _Ty1, typename _Ty2>
 	constexpr _Ty2 remap_value_min_max(_Ty1 x, const _Ty2 minValue, const _Ty2 maxValue) noexcept {
 		if (maxValue == minValue)
