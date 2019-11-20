@@ -18,6 +18,7 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
 
+#include <cfloat>
 #include <hatchetfish.hpp>
 #include <fluxions_pbsky.hpp>
 #include <ArHosekSkyModel.h>
@@ -60,7 +61,7 @@ namespace Fluxions
 
 	template <typename T>
 	T flterrzero(T x) {
-		if (isfinite(x))
+		if (std::isfinite(x))
 			return x;
 		return 0.0;
 	}
@@ -233,13 +234,13 @@ namespace Fluxions
 		Real cosine = clamp(v[0] * sun[0] + v[1] * sun[1] + v[2] * sun[2], -1.0f, 1.0f);
 		Real gamma = acos(cosine);
 		Real theta = acos(v[2]);
-		if (isfinite(gamma)) {
+		if (std::isfinite(gamma)) {
 			*outGamma = gamma;
 		}
 		else {
 			*outGamma = 0.0;
 		}
-		if (isfinite(theta)) {
+		if (std::isfinite(theta)) {
 			*outTheta = theta;
 		}
 		else {
@@ -308,7 +309,7 @@ namespace Fluxions
 				amount += (float)arhosekskymodel_sun_direct_radiance(sunRadianceState, theta, gamma, wavelengths[i]);
 			//amount = (float)arhosekskymodel_solar_radiance(sunRadianceState[i], theta, gamma, wavelengths[i]);
 
-			if (isfinite(amount))
+			if (std::isfinite(amount))
 				addStatisticSample(amount);
 			//else std::cout << "BLAH!\n";
 
@@ -363,7 +364,7 @@ namespace Fluxions
 			//Real amount = arhosekskymodel_solar_radiance(sunRadianceState[i], theta, gamma, wavelengths[i]);
 			amount = (float)arhosekskymodel_inscattered_radiance(sunRadianceState, theta, gamma, wavelengths[i]);
 
-			if (isfinite(amount))
+			if (std::isfinite(amount))
 				addStatisticSample(amount);
 
 			if (gamma < 0.01f)
@@ -398,11 +399,11 @@ namespace Fluxions
 		output.b = (float)arhosek_tristim_skymodel_radiance(rgbRadianceState[2], theta, gamma, 2);
 		output.a = 1.0f;
 
-		if (isfinite(output.r))
+		if (std::isfinite(output.r))
 			addStatisticSample(output.r);
-		if (isfinite(output.g))
+		if (std::isfinite(output.g))
 			addStatisticSample(output.g);
-		if (isfinite(output.b))
+		if (std::isfinite(output.b))
 			addStatisticSample(output.b);
 	}
 
@@ -429,13 +430,13 @@ namespace Fluxions
 		//ComputeSunRadiance4_NoStatistics(sunTheta, sunGamma, output);
 		ComputeSunRadiance(sunTheta, sunGamma, output);
 
-		if (!isnormal(output.r) || output.r < 0.0f)
+		if (!std::isnormal(output.r) || output.r < 0.0f)
 			output.r = 0.0f;
-		if (!isnormal(output.g) || output.g < 0.0f)
+		if (!std::isnormal(output.g) || output.g < 0.0f)
 			output.g = 0.0f;
-		if (!isnormal(output.b) || output.b < 0.0f)
+		if (!std::isnormal(output.b) || output.b < 0.0f)
 			output.b = 0.0f;
-		if (!isnormal(output.a) || output.a < 0.0f)
+		if (!std::isnormal(output.a) || output.a < 0.0f)
 			output.a = 0.0f;
 
 		return Color4f(output);
@@ -844,7 +845,7 @@ namespace Fluxions
 							//float g = hwpbsky->ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
 							//float b = hwpbsky->ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
 
-							//if (isfinite(r) && isfinite(g) && isfinite(b))
+							//if (std::finite(r) && std::isfinite(g) && std::isfinite(b))
 							//{
 							//	sampleColor.r = r;
 							//	sampleColor.g = g;

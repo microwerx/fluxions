@@ -3,25 +3,30 @@
 # development packages
 # global
 
-INCLUDE_PROJECTS = hatchetfish fluxions-deps fluxions-gte damselfish
-INCLUDES = $(patsubst %,-I../%/include,$(INCLUDE_PROJECTS))
-DEP_INCDIR = dep/include
-DEP_SRCDIR = dep/src
+#INCLUDE_PROJECTS = hatchetfish fluxions-deps fluxions-gte damselfish
+#INCLUDES = $(patsubst %,-I../%/include,$(INCLUDE_PROJECTS))
+INCLUDES = -I../imgui
+#DEP_INCDIR = dep/include
+#DEP_SRCDIR = dep/src
 SRCDIR = src
 INCDIR = include
 OBJDIR = build
-DEPCXXSOURCES = $(wildcard $(DEP_SRCDIR)/*.cpp)
-DEPCSOURCES = $(wildcard $(DEP_SRCDIR)/*.c)
+#DEPCXXSOURCES = $(wildcard $(DEP_SRCDIR)/*.cpp)
+#DEPCSOURCES = $(wildcard $(DEP_SRCDIR)/*.c)
 CXXSOURCES = $(wildcard $(SRCDIR)/*.cpp)
-CXXHEADERS = $(wildcard $(INCDIR)/*.hpp) $(wildcard $(DEP_SRCDIR)/*.hpp)
+CXXHEADERS = $(wildcard $(INCDIR)/*.hpp)
+# ... $(wildcard $(DEP_SRCDIR)/*.hpp)
+#
 CSOURCES = $(wildcard $(SRCDIR)/*.c)
-CHEADERS = $(wildcard $(INCDIR)/*.h) $(wildcard $(DEP_SRCDIR)/*.h)
+CHEADERS = $(wildcard $(INCDIR)/*.h)
+# ... $(wildcard $(DEP_SRCDIR)/*.h)
 SOURCES = $(CXXSOURCES) $(CSOURCES)
 HEADERS = $(CXXHEADERS) $(CHEADERS)
 SRCOBJECTS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(CXXSOURCES)) $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(CSOURCES))
-DEPOBJECTS = $(patsubst $(DEP_SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(DEPCXXSOURCES)) $(patsubst $(DEP_SRCDIR)/%.c,$(OBJDIR)/%.o,$(DEPCSOURCES))
+# DEPOBJECTS = $(patsubst $(DEP_SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(DEPCXXSOURCES)) $(patsubst $(DEP_SRCDIR)/%.c,$(OBJDIR)/%.o,$(DEPCSOURCES))
 # DEPCOBJECTS= $(patsubst $(DEP_SRCDIR)/%.c,$(OBJDIR)/%.o,$(DEPCSOURCES))
-OBJECTS = $(SRCOBJECTS) $(DEPOBJECTS)
+OBJECTS = $(SRCOBJECTS)
+# $(DEPOBJECTS)
 TARGET = build/libfluxions.a
 GCH = $(SRCDIR)/pch.h.gch
 GCH_SRC = $(SRCDIR)/pch.hpp
@@ -29,9 +34,9 @@ GCH_SRC = $(SRCDIR)/pch.hpp
 MACINCDIRS = -I/usr/local/opt/mesa/include
 
 CC = gcc
-CCFLAGS = -Wall -I$(INCDIR) -I../fluxions-gte/include -I../fluxions-deps/include -I$(DEP_INCDIR) $(MACINCDIRS) `python3-config --includes`
+CCFLAGS = -Wall -I$(INCDIR) $(MACINCDIRS) `python3-config --includes`
 CXX = g++
-CXXFLAGS = -std=c++14 -g -Wall -I$(INCDIR) $(INCLUDES) -I$(DEP_INCDIR) $(MACINCDIRS) `python3-config --includes`
+CXXFLAGS = -std=c++17 -g -Wall -I$(INCDIR) $(INCLUDES) $(MACINCDIRS) `python3-config --includes`
 LDFLAGS = -LGLEW -LGL -LGLU -Lglut -lIlmImf
 
 .PHONY: all clean precompiled

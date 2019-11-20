@@ -20,11 +20,15 @@
 #ifndef FLUXIONS_VECTOR3_HPP
 #define FLUXIONS_VECTOR3_HPP
 
+#include <cstdint>
+#include <cstdio>
 #include <fluxions_gte_common_vector.hpp>
 #include <fluxions_gte_scalar_math.hpp>
 
 namespace Fluxions
 {
+    using std::uint64_t;
+
 	template <typename T>
 	class TVector3 : public TCommonContainer<T>
 	{
@@ -118,7 +122,9 @@ namespace Fluxions
 		constexpr TVector3<T> operator-() noexcept {
 			if (TVector3<T>::is_signed)
 				return TVector3<T>(-x, -y, -z);
-			fprintf(stderr, "%s(): ATTEMPTING UNARY NEGATIVE ON SIGNED TYPE", __FUNCTION__);
+#ifdef _DEBUG
+            fprintf(stderr, "%s(): ATTEMPTING UNARY NEGATIVE ON SIGNED TYPE", __FUNCTION__);
+#endif
 			return TVector3<T>(x, y, z);
 		}
 

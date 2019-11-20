@@ -5,8 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/dep/include",
-                "${workspaceFolder}/../libs/include",
+                "${workspaceFolder}/../imgui/",
                 "/usr/include/python3.7m"
             ],
             "defines": [],

@@ -25,6 +25,7 @@
 #include <map>
 #include <memory>
 #include <fluxions_gte.hpp>
+#include <hatchetfish.hpp>
 
 namespace Fluxions
 {
@@ -421,12 +422,12 @@ namespace Fluxions
 		T& GetValue(const std::string& name) {
 			SharedSimplePropertyPtr ptr = Get(name);
 			if (!ptr) {
-				Hf::Log.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid", __FUNCTION__);
+				HFLOGERROR("T& SimpleAssociatedPropertyContainer::GetValue(name) --> pointer is invalid");
 				throw std::bad_cast();
 			}
 
 			if (ptr->GetTypeID() != typeid(T)) {
-				Hf::Log.error("%s(): T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible", __FUNCTION__);
+				HFLOGERROR("T& SimpleAssociatedPropertyContainer::GetValue(name) --> types are incompatible");
 				throw std::bad_cast();
 			}
 

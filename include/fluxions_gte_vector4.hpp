@@ -20,11 +20,14 @@
 #ifndef FLUXIONS_VECTOR4_HPP
 #define FLUXIONS_VECTOR4_HPP
 
+#include <cstdint>
 #include <fluxions_gte_vector2.hpp>
 #include <fluxions_gte_vector3.hpp>
 
 namespace Fluxions
 {
+    using std::uint64_t;
+
 template <typename T>
 struct tvec4
 {

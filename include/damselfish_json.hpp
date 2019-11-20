@@ -198,8 +198,8 @@ namespace Df
 		inline bool IsTrue() const { return type_ == Type::True; }
 		inline bool IsFalse() const { return type_ == Type::False; }
 		inline bool IsBoolean() const { return type_ == Type::True || type_ == Type::False; }
-		inline bool IsFinite() const { return type_ == Type::Number && isfinite(dval_); }
-		inline bool IsNaN() const { return type_ == Type::Number && isnan(dval_); }
+		inline bool IsFinite() const { return type_ == Type::Number && std::isfinite(dval_); }
+		inline bool IsNaN() const { return type_ == Type::Number && std::isnan(dval_); }
 		inline bool IsNumber() const { return type_ == Type::Number; }
 		inline bool IsString() const { return type_ == Type::String; }
 		inline bool IsArray() const { return type_ == Type::Array; }

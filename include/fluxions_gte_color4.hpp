@@ -39,7 +39,7 @@ namespace Fluxions
 	public:
 		T r, g, b, a;
 
-		using value_type = TCommonContainer<T>::value_type;
+		using value_type = typename TCommonContainer<T>::value_type;
 
 		static float to_float_factor;
 		static float from_float_factor;
