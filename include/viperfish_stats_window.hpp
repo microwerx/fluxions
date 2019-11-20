@@ -21,6 +21,7 @@ namespace Vf
 		void set(int idx, float x);
 
 		bool visible = true;
+		float height = 0.0f;
 	private:
 		std::vector<float> metric{ 0.0f };
 		int metric_pl_start = 0;

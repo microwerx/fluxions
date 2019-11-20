@@ -50,7 +50,7 @@ namespace Vf
 						 metric_pl_size,
 						 0, (const char*)0,
 						 metric_min_value, metric_max_value,
-						 ImVec2(0.0f, 128.0f));
+						 ImVec2(0.0f, height));
 	}
 
 	float FloatStat::get(int idx) const {
