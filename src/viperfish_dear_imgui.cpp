@@ -196,22 +196,23 @@ namespace Vf
 		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
 		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
 
+		bool result = true;
 		glGenTextures(1, &fontTextureId);
 		if (fontTextureId == 0) {
 			HFLOGERROR("Unable to create Dear ImGui font texture");
-			return false;
+			result = false;
+		} else {
+			unsigned char* pixels;
+			int w;
+			int h;
+			pIO->Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
+			glBindTexture(GL_TEXTURE_2D, fontTextureId);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			//glGenerateMipmap(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-		unsigned char* pixels;
-		int w;
-		int h;
-		pIO->Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
-		glBindTexture(GL_TEXTURE_2D, fontTextureId);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//glGenerateMipmap(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
 		long long id = fontTextureId;
 		pIO->Fonts->TexID = (ImTextureID)id;
 
@@ -246,7 +247,6 @@ namespace Vf
 		program = glCreateProgram();
 		vshader = glCreateShader(GL_VERTEX_SHADER);
 		fshader = glCreateShader(GL_FRAGMENT_SHADER);
-		bool result = true;
 		if (program == 0 || vshader == 0 || fshader == 0) {
 			HFLOGERROR("Unable to create Dear ImGui shader program and/or shaders");
 			return false;
