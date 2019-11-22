@@ -17,6 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 
+#include <algorithm>
 #include <unicornfish_message.hpp>
 
 namespace Uf
@@ -221,7 +222,7 @@ void Message::PopMem(void *data, size_t size)
     if (!msg)
         return;
     Frame &frame = PopFrame();
-    memcpy(data, frame.GetData(), std::min(size, frame.SizeInBytes()));
+    memcpy(data, frame.GetData(), std::min<size_t>(size, frame.SizeInBytes()));
 }
 
 const std::string &Message::GetLastFrameString()
