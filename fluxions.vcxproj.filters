@@ -262,6 +262,8 @@
     <ClCompile Include="src\fluxions_gte_transformation.cpp">
       <Filter>src\fluxions-gte</Filter>
     </ClCompile>
+    <ClCompile Include="src\viperfish_animation_window.cpp" />
+    <ClCompile Include="src\viperfish_window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -633,6 +635,8 @@
     <ClInclude Include="include\fluxions_gte_noise.hpp">
       <Filter>include\fluxions-gte</Filter>
     </ClInclude>
+    <ClInclude Include="include\viperfish_animation_window.hpp" />
+    <ClInclude Include="include\viperfish_window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

@@ -533,6 +533,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\viperfish_animation_window.cpp" />
     <ClCompile Include="src\viperfish_dear_imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -575,6 +576,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\viperfish_window.cpp" />
     <ClCompile Include="src\viperfish_xinput.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -694,6 +696,7 @@
     <ClInclude Include="include\unicornfish_socket.hpp" />
     <ClInclude Include="include\unicornfish_worker.hpp" />
     <ClInclude Include="include\viperfish.hpp" />
+    <ClInclude Include="include\viperfish_animation_window.hpp" />
     <ClInclude Include="include\viperfish_dear_imgui.hpp" />
     <ClInclude Include="include\viperfish_gamepad.hpp" />
     <ClInclude Include="include\viperfish_keyboard.hpp" />
@@ -704,6 +707,7 @@
     <ClInclude Include="include\viperfish_stats_window.hpp" />
     <ClInclude Include="include\viperfish_utilities.hpp" />
     <ClInclude Include="include\viperfish_widget.hpp" />
+    <ClInclude Include="include\viperfish_window.hpp" />
     <ClInclude Include="include\viperfish_xinput.hpp" />
     <ClInclude Include="src\pch.hpp" />
   </ItemGroup>
