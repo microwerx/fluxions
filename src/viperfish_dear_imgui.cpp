@@ -24,6 +24,8 @@ namespace Vf
 {
 constexpr int MAX_RUN_MESSAGES = 2;
 
+DearImGuiWidget::ContextInitialized = false;
+
 DearImGuiWidget::DearImGuiWidget()
 	: Widget("imguiwidget") {
 
@@ -76,7 +78,7 @@ void DearImGuiWidget::OnInit(const std::vector<std::string>& args) {
 	pIO->KeyMap[ImGuiKey_Y] = 'y';
 	pIO->KeyMap[ImGuiKey_Z] = 'z';
 
-	CreateDeviceObjects();
+	ContextInitialized = CreateDeviceObjects();
 
 	Widget::OnInit(args);
 }
@@ -370,6 +372,7 @@ void DearImGuiWidget::InvalidateDeviceObjects() {
 		fontTextureId = 0;
 	}
 	Hf::Log.infofn(__FUNCTION__, "Dear ImGui Device Objects Invalidated");
+	ContextInitialized = false;
 }
 
 void DearImGuiWidget::RenderDrawLists() {

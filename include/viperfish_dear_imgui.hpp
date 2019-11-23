@@ -35,6 +35,8 @@ namespace Vf
 		DearImGuiWidget(DearImGuiWidget &&widget) = default;
 
 	public:
+		static bool ContextInitialized;
+
 		using SharedPtr = std::shared_ptr<DearImGuiWidget>;
 		using UniquePtr = std::unique_ptr<DearImGuiWidget>;
 
