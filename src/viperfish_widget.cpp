@@ -526,15 +526,15 @@ void Widget::OnReshape(int width, int height) {
 	}
 }
 
-void Widget::display() {
-	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
-	if (decorateeWidget_) {
-		decorateeWidget_->display();
-	}
-	for (auto& w : children_) {
-		w->display();
-	}
-}
+//void Widget::display() {
+//	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+//	if (decorateeWidget_) {
+//		decorateeWidget_->display();
+//	}
+//	for (auto& w : children_) {
+//		w->display();
+//	}
+//}
 
 void Widget::OnPreRender() {
 	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
@@ -565,6 +565,10 @@ void Widget::OnRender2D() {
 }
 
 void Widget::OnRenderDearImGui() {
+	if (!DearImGuiWidget::ContextInitialized) {
+		HFLOGDEBUGFIRSTRUNCOUNTMSG(MAX_RUN_MESSAGES, "DearImGui not initialized");
+		return;
+	}
 	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 	if (decorateeWidget_)
 		decorateeWidget_->OnRenderDearImGui();

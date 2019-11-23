@@ -153,7 +153,7 @@ namespace Vf
 		virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs);
 		virtual void OnReshape(int width, int height);
 
-		virtual void display();
+		//virtual void display();
 		virtual void OnPreRender();
 		virtual void OnRender3D();
 		virtual void OnRender2D();

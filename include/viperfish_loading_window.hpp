@@ -1,11 +1,11 @@
 #ifndef VIPERFISH_LOADING_WINDOW_HPP
 #define VIPERFISH_LOADING_WINDOW_HPP
 
-#include <viperfish_dear_imgui.hpp>
+#include <viperfish_window.hpp>
 
 namespace Vf
 {
-	class LoadingWindow : public Widget {
+	class LoadingWindow : public Window {
 	public:
 		LoadingWindow(const std::string& name);
 		virtual ~LoadingWindow() override;
@@ -13,8 +13,6 @@ namespace Vf
 		void OnRenderDearImGui() override;
 
 		std::string msg;
-	private:
-		std::string popupId;
 	};
 
 	using LoadingWindowPtr = std::shared_ptr<LoadingWindow>;
