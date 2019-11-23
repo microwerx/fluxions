@@ -36,6 +36,7 @@
 #endif
 #define HFLOGDEBUGFIRSTRUN() { static int firstRun = HFLOGDEBUGFIRSTRUN_COUNT; if (--firstRun >= 0) { HFLOGDEBUG("run %i", HFLOGDEBUGFIRSTRUN_COUNT - firstRun); } }
 #define HFLOGDEBUGFIRSTRUNCOUNT(count) { static int firstRun = count; if (--firstRun >= 0) { HFLOGDEBUG("run %i", count - firstRun); } }
+#define HFLOGDEBUGFIRSTRUNCOUNTMSG(count, msg) { static int firstRun = count; if (--firstRun >= 0) { HFLOGDEBUG("run %i, %s", count - firstRun, msg); } }
 
 #define HFLOGCHECK(condition) if (condition) Hf::Log.logfn(__FUNCTION__, "Condition is false (%s)", #condition);
 #define HFLOGCHECKINFO(condition) if (condition) Hf::Log.infofn(__FUNCTION__, "Condition is false (%s)", #condition);
