@@ -272,7 +272,7 @@ class TVector4
         return x * x + y * y + z * z + w * w;
     }
 
-    constexpr auto norm() const noexcept
+    constexpr auto unit() const noexcept
     {
         auto len = length();
         auto invLen = len != 0 ? static_cast<T>(1.0 / len) : 0;
@@ -285,12 +285,12 @@ class TVector4
 
     constexpr auto normalize() noexcept
     {
-        return *this = norm();
+        return *this = unit();
     }
 
     constexpr auto unit_vector() const noexcept
     {
-        return norm();
+        return unit();
     }
 
     template <typename U>

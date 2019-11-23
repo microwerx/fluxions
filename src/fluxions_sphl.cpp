@@ -187,7 +187,7 @@ namespace Fluxions
 				unsigned v2 = k * model.vertexCount + model.triangles[i].z;
 				Vector3f dp1 = sph_model.GetVertex(v1).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
 				Vector3f dp2 = sph_model.GetVertex(v2).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
-				Vector3f N = dp1.cross(dp2).norm();
+				Vector3f N = dp1.cross(dp2).unit();
 				sph_model.GetVertex(v0).attribs[1] += N;
 				sph_model.GetVertex(v1).attribs[1] += N;
 				sph_model.GetVertex(v2).attribs[1] += N;

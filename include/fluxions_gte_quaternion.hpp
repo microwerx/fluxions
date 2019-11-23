@@ -77,12 +77,12 @@ public:
 		return TQuaternion(-b, -c, -d, a);
 	}
 
-	T norm() const noexcept {
+	T unit() const noexcept {
 		return sqrt(b * b + c * c + d * d + a * a);
 	}
 
 	TQuaternion<T> normalized() const noexcept {
-		T length = T(1) / norm();
+		T length = T(1) / unit();
 		return TQuaternion<T>{a * length, b * length, c * length, d * length};
 	}
 
@@ -203,7 +203,7 @@ TQuaternion<T> slerp(T t, const TQuaternion<T>& a, const TQuaternion<T>& b) noex
 	const T threshold = T(0.9995);
 	if (dot > threshold) {
 		auto q = q1 + t * (q2 - q1);
-		return q.norm();
+		return q.unit();
 	}
 
 	T theta_0 = acos(dot);

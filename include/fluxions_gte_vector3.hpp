@@ -242,25 +242,25 @@ public:
 		return x * x + y * y + z * z;
 	}
 
-	constexpr vector_type norm() const noexcept {
-		T invLen = (length() != 0) ? (T)(1.0 / length()) : 0;
-		return TVector3<T>(x * invLen, y * invLen, z * invLen);
-	}
+	//constexpr vector_type norm() const noexcept {
+	//	T invLen = (length() != 0) ? (T)(1.0 / length()) : 0;
+	//	return TVector3<T>(x * invLen, y * invLen, z * invLen);
+	//}
 
-	constexpr vector_type unit_vector() const noexcept {
+	constexpr vector_type unit() const noexcept {
 		T invLen = length() != 0 ? (T)(1.0 / length()) : 0;
 		return TVector3<T>(x * invLen, y * invLen, z * invLen);
 	}
 
 	constexpr vector_type& normalize() noexcept {
-		return *this = norm();
+		return *this = unit();
 	}
 
-	constexpr value_type dot(const TVector3<T> v) const noexcept {
+	constexpr value_type dot(const TVector3<T>& v) const noexcept {
 		return x * v.x + y * v.y + z * v.z;
 	}
 
-	constexpr vector_type cross(const TVector3<T> v) const noexcept {
+	constexpr vector_type cross(const TVector3<T>& v) const noexcept {
 		return TVector3<T>(
 			y * v.z - z * v.y,
 			z * v.x - x * v.z,

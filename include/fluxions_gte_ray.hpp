@@ -34,7 +34,7 @@ class TRay
     TRay(const TVector3<T> &newOrigin, const TVector3<T> &newDirection)
     {
         origin = newOrigin;
-        direction = newDirection.norm();
+        direction = newDirection.unit();
     }
     ~TRay() {}
 
@@ -56,7 +56,7 @@ class TRay
     constexpr auto set(const TVector3<T> &newOrigin, const TVector3<T> &newDirection) noexcept
     {
         origin = newOrigin;
-        direction = newDirection.norm();
+        direction = newDirection.unit();
 
         return *this;
     }

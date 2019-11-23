@@ -855,9 +855,9 @@ namespace Fluxions
 		}
 
 		static constexpr TMatrix4<T> MakeLookAt(TVector3<T> eye, TVector3<T> center, TVector3<T> up) noexcept {
-			TVector3<T> F = (center - eye).norm();
-			TVector3<T> S = F.cross(up).norm();
-			TVector3<T> U = S.cross(F).norm();
+			TVector3<T> F = (center - eye).unit();
+			TVector3<T> S = F.cross(up).unit();
+			TVector3<T> U = S.cross(F).unit();
 
 			return TMatrix4<T>::multiply(TMatrix4<T>(
 				S.x, S.y, S.z, 0.0,
@@ -1563,9 +1563,9 @@ namespace Fluxions
 	//template <typename T>
 	//constexpr TMatrix4<double> TMatrix4<T>::MakeLookAt(TVector3<double> eye, TVector3<double> center, TVector3<double> up)
 	//{
-	//	TVector3<double> F = (center - eye).norm();
-	//	TVector3<double> S = F.cross(up).norm();
-	//	TVector3<double> U = S.cross(F).norm();
+	//	TVector3<double> F = (center - eye).unit();
+	//	TVector3<double> S = F.cross(up).unit();
+	//	TVector3<double> U = S.cross(F).unit();
 
 	//	return TMatrix4<double>::multiply(TMatrix4<double>(
 	//		S.X, S.y, S.z, 0.0,

@@ -826,7 +826,7 @@ namespace Fluxions
 
 						Vector3f v;
 						MakeCubeVectorFromFaceST(face, sp, tp, &v.x, &v.y, &v.z);
-						v = v.norm();
+						v = v.unit();
 
 						Color4f sampleColor;
 

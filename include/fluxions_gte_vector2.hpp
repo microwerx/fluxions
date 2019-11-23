@@ -134,13 +134,13 @@ namespace Fluxions
 			return x * x + y * y;
 		}
 
-		constexpr TVector2<T> norm() const noexcept {
+		constexpr TVector2<T> unit() const noexcept {
 			T invLen = length() != 0 ? (T)(1.0 / length()) : 0;
 			return TVector2<T>(x * invLen, y * invLen);
 		}
 
 		constexpr TVector2<T>& normalize() noexcept {
-			return *this = norm();
+			return *this = unit();
 		}
 	};
 

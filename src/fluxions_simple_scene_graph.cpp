@@ -75,14 +75,14 @@ namespace Fluxions
 			sunShadowMapDistance = radius; // calculation for perspective: sqrt(1.0f - powf(sinf(fov / 2.0f), 2.0f)) * 4.0f * radius;
 			sunShadowMapNearZ = sunShadowMapDistance - radius;
 			sunShadowMapFarZ = sunShadowMapDistance + radius;
-			sunShadowMapOrigin = curSunDirTo.norm() * sunShadowMapDistance + sunShadowMapTarget;
-			sunShadowMapUp = ((curSunDirTo.cross(Vector3f(0.0f, 1.0f, 0.0f))).cross(curSunDirTo)).norm();
+			sunShadowMapOrigin = curSunDirTo.unit() * sunShadowMapDistance + sunShadowMapTarget;
+			sunShadowMapUp = ((curSunDirTo.cross(Vector3f(0.0f, 1.0f, 0.0f))).cross(curSunDirTo)).unit();
 		}
 		else {
 			sunShadowMapUp.reset(0.0f, 1.0f, 0.0f);
-			sunShadowMapOrigin = curSunDirTo.norm() * 20.0f;
+			sunShadowMapOrigin = curSunDirTo.unit() * 20.0f;
 			sunShadowMapTarget.reset(0.0f, 0.0f, 0.0f);
-			sunShadowMapUp = ((Vector3f(0.0f, 1.0f, 0.0f).cross(curSunDirTo)).cross(curSunDirTo)).norm();
+			sunShadowMapUp = ((Vector3f(0.0f, 1.0f, 0.0f).cross(curSunDirTo)).cross(curSunDirTo)).unit();
 			sunShadowMapNearZ = 1.0f;
 			sunShadowMapFarZ = 100.0f;
 		}

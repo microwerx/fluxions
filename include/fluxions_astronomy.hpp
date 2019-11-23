@@ -106,7 +106,7 @@ namespace Fluxions
 				return std::sqrt(x * x + y * y + z * z);
 			}
 
-			Vector norm()
+			Vector unit()
 			{
 				Real inv_length = 1.0 / length();
 				return Vector(x * inv_length, y * inv_length, z * inv_length);
