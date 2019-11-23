@@ -1276,7 +1276,7 @@ namespace Fluxions
 
 
 	template <typename ColorType>
-	bool TestTImage(const char* testbase) {
+	bool TestTImage(const char* testbase) noexcept {
 		constexpr int width = 8;
 		constexpr int height = 8;
 		using value_type = typename ColorType::value_type;
@@ -1350,7 +1350,7 @@ namespace Fluxions
 		return true;
 	}
 
-	void TestImage() {
+	void TestImage() noexcept {
 #define FLUXIONS_TEST(test) fprintf(stderr, "%s(): Test " #test " was %s\n", __FUNCTION__, ((test) ? "successful" : "unsuccessful"));
 		FLUXIONS_TEST(TestTImage<Color4f>("Color4f"));
 		FLUXIONS_TEST(TestTImage<Color4i>("Color4i"));

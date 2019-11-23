@@ -5,20 +5,16 @@
 
 namespace Vf
 {
-LoadingWindow::LoadingWindow(const std::string &name)
-	: Widget(name)
-{
+LoadingWindow::LoadingWindow(const std::string& name)
+	: Widget(name) {
 	std::ostringstream ostr;
-	ostr << name << (void *)this;
+	ostr << name << (void*)this;
 	popupId = ostr.str();
 }
 
-LoadingWindow::~LoadingWindow()
-{
-}
+LoadingWindow::~LoadingWindow() {}
 
-void LoadingWindow::OnRenderDearImGui()
-{
+void LoadingWindow::OnRenderDearImGui() {
 	if (!isVisible())
 		return;
 
@@ -29,7 +25,7 @@ void LoadingWindow::OnRenderDearImGui()
 	ImGui::Begin(getName().c_str());
 	ImGui::PushID(popupId.c_str());
 	ImGui::Text("Loading...");
-	static char buf[100]{0};
+	static char buf[100]{ 0 };
 	ImGui::InputText("sometext", buf, 99);
 	ImGui::Separator();
 	ImGui::Text("%s", msg.c_str());

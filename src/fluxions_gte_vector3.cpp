@@ -17,6 +17,9 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include <stdio.h>
+#include <map>
+#include <string>
+#include <vector>
 #include <type_traits>
 #define FLUXIONS_NO_EXTERN_TEMPLATES
 #include <fluxions_gte_vector3.hpp>
@@ -34,8 +37,7 @@ template class TVector3<short>;
 template class TVector3<unsigned short>;
 
 template <typename T>
-bool TestTVector3()
-{
+bool TestTVector3(const char* testname) {
 	using vtype = TVector3<T>;
 #define TEST(test) \
 	if (!(test))   \
@@ -86,8 +88,7 @@ bool TestTVector3()
 		result = false;
 	if constexpr (TVector3<T>::zero != 0)
 		result = false;
-	if constexpr (TVector3<T>::is_signed && TVector3<T>::minusone != -1)
-	{
+	if constexpr (TVector3<T>::is_signed&& TVector3<T>::minusone != -1) {
 		result = false;
 	}
 
@@ -118,53 +119,56 @@ bool TestTVector3()
 	// Test unary operators
 
 	a.reset(2, 3, 4);
-	if (TVector3<T>::is_signed)
-	{
+	if (TVector3<T>::is_signed) {
 		TEST(-a == TVector3<T>(-2, -3, -4));
 	}
-	else
-	{
+	else {
 		TEST(-a == a);
 	}
 
 	// Test range-based for
 	a.reset(4, 5, 6);
 	unsigned i = 0;
-	for (T x : a)
-	{
+	for (T x : a) {
 		TEST(a[i++] == x);
 	}
 
 	i = 0;
-	for (const T &x : a)
-	{
+	for (const T& x : a) {
 		TEST(a[i++] == x);
 	}
 
 	i = 0;
-	for (T &x : a)
-	{
+	for (T& x : a) {
 		x = 1;
 		TEST(a[i++] == 1);
 	}
 
-	bool trivially_copy_constructible = 0;
-	fprintf(stderr, "trivially_copy_constructible: %d", std::is_trivially_copy_constructible_v<vtype>);
+	std::map<std::string, bool> std_concepts {
+		{ "trivially_copy_constructible", std::is_trivially_copy_constructible_v<vtype> },
+		{ "is_nothrow_swappable_with", std::is_nothrow_swappable_with_v<vtype, std::vector<T>> }
+	};
+
+	for (const auto& s : std_concepts) {
+		fprintf(stderr, "%s -- %s: %s\n",
+				testname,
+				s.first.c_str(),
+				s.second ? "true" : "false");
+	}
 
 	return result;
 }
 
-void TestVector3()
-{
-#define FLUXIONS_TEST(test) fprintf(stderr, "%s(): Test " #test " was %s\n", __FUNCTION__, ((test) ? "successful" : "unsuccessful"));
+void TestVector3() {
+#define FLUXIONS_TEST(test) fprintf(stderr, "%s(): Test " #test " was %s\n", __FUNCTION__, ((test(#test)) ? "successful" : "unsuccessful"));
 
-	FLUXIONS_TEST(TestTVector3<float>());
-	FLUXIONS_TEST(TestTVector3<double>());
-	FLUXIONS_TEST(TestTVector3<unsigned char>());
-	FLUXIONS_TEST(TestTVector3<signed char>());
-	FLUXIONS_TEST(TestTVector3<unsigned short>());
-	FLUXIONS_TEST(TestTVector3<short>());
-	FLUXIONS_TEST(TestTVector3<int>());
-	FLUXIONS_TEST(TestTVector3<unsigned int>());
+	FLUXIONS_TEST(TestTVector3<float>);
+	FLUXIONS_TEST(TestTVector3<double>);
+	FLUXIONS_TEST(TestTVector3<unsigned char>);
+	FLUXIONS_TEST(TestTVector3<signed char>);
+	FLUXIONS_TEST(TestTVector3<unsigned short>);
+	FLUXIONS_TEST(TestTVector3<short>);
+	FLUXIONS_TEST(TestTVector3<int>);
+	FLUXIONS_TEST(TestTVector3<unsigned int>);
 }
 } // namespace Fluxions

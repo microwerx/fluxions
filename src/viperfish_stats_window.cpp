@@ -8,8 +8,7 @@ namespace Vf
 {
 static Fluxions::Noise noise;
 
-FloatStat::FloatStat(int max_samples, float metric_min, float metric_max)
-{
+FloatStat::FloatStat(int max_samples, float metric_min, float metric_max) {
 	metric_len = max_samples;
 	metric_max_len = 4 * max_samples;
 	metric.resize(max_samples, metric_init_value);
@@ -17,13 +16,11 @@ FloatStat::FloatStat(int max_samples, float metric_min, float metric_max)
 	metric_max_value = metric_max;
 }
 
-void FloatStat::push(float x)
-{
+void FloatStat::push(float x) {
 	metric_min_value = std::min(metric_min_value, x);
 	metric_max_value = std::max(metric_max_value, x);
 	metric.push_back(x);
-	if (metric.size() > metric_max_len)
-	{
+	if (metric.size() > metric_max_len) {
 		int chop = metric_max_len >> 1;
 		metric.erase(metric.begin(), metric.begin() + chop);
 	}
@@ -31,14 +28,12 @@ void FloatStat::push(float x)
 	metric_pl_start = (int)metric.size() - metric_pl_size;
 }
 
-void FloatStat::push_difference(float x)
-{
+void FloatStat::push_difference(float x) {
 	push(x - metric_last_value);
 	metric_last_value = x;
 }
 
-void FloatStat::push_difference_inverse(float x)
-{
+void FloatStat::push_difference_inverse(float x) {
 	float denom = x - metric_last_value;
 	if (fabsf(denom) < FLT_EPSILON)
 		push(0.0f);
@@ -47,53 +42,44 @@ void FloatStat::push_difference_inverse(float x)
 	metric_last_value = x;
 }
 
-void FloatStat::plotLines(const char *label)
-{
+void FloatStat::plotLines(const char* label) {
 	if (!visible)
 		return;
 
 	ImGui::PlotLines(label != nullptr ? label : "",
 					 &metric[metric_pl_start],
 					 metric_pl_size,
-					 0, (const char *)0,
+					 0, (const char*)0,
 					 metric_min_value, metric_max_value,
 					 ImVec2(0.0f, height));
 }
 
-float FloatStat::get(int idx) const
-{
+float FloatStat::get(int idx) const {
 	return metric[metric_pl_start + idx];
 }
 
-void FloatStat::set(int idx, float x)
-{
+void FloatStat::set(int idx, float x) {
 	metric[metric_pl_start + idx] = x;
 }
 
-StatsWindow::StatsWindow(const std::string &name)
-	: Widget(name)
-{
+StatsWindow::StatsWindow(const std::string& name)
+	: Widget(name) {
 	std::ostringstream ostr;
-	ostr << name << (void *)this;
+	ostr << name << (void*)this;
 	popupId = ostr.str();
 
 	float_stats["et"].visible = false;
 }
 
-StatsWindow::~StatsWindow()
-{
-}
+StatsWindow::~StatsWindow() {}
 
-void StatsWindow::OnUpdate(double timeStamp)
-{
+void StatsWindow::OnUpdate(double timeStamp) {
 	Widget::OnUpdate(timeStamp);
-	if (pause)
-	{
-		auto &et = float_stats["et"];
-		auto &frac = float_stats["3frac"];
-		auto &turb = float_stats["4turb"];
-		for (int i = 0; i < MAX_SAMPLES; i++)
-		{
+	if (pause) {
+		auto& et = float_stats["et"];
+		auto& frac = float_stats["3frac"];
+		auto& turb = float_stats["4turb"];
+		for (int i = 0; i < MAX_SAMPLES; i++) {
 			float t = et.get(i);
 			frac.set(i, noise.fractal1(t, min_freq, max_freq));
 			turb.set(i, noise.turbulence1(t, min_freq, max_freq));
@@ -111,8 +97,7 @@ void StatsWindow::OnUpdate(double timeStamp)
 	float_stats["t"].push(timeStamp - int(timeStamp));
 }
 
-void StatsWindow::OnRenderDearImGui()
-{
+void StatsWindow::OnRenderDearImGui() {
 	if (!isVisible())
 		return;
 
@@ -122,21 +107,18 @@ void StatsWindow::OnRenderDearImGui()
 	ImGui::SetNextWindowContentSize(ImVec2(width, height));
 	ImGui::Begin(getName().c_str());
 	ImGui::PushID(popupId.c_str());
-	for (auto &fs : float_stats)
-	{
+	for (auto& fs : float_stats) {
 		fs.second.plotLines(fs.first);
 	}
 
 	ImGui::SliderFloat("Fmin", &min_freq, 1.0f, 8.0f);
 	ImGui::SliderFloat("Fmax", &max_freq, 1.0f, 16.0f);
 
-	if (!pause && ImGui::Button("Pause"))
-	{
+	if (!pause && ImGui::Button("Pause")) {
 		pause = true;
 	}
 
-	if (pause && ImGui::Button("Resume"))
-	{
+	if (pause && ImGui::Button("Resume")) {
 		pause = false;
 	}
 

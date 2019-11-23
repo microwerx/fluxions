@@ -77,8 +77,10 @@ bool SSG_SSPHHRendererPlugin::ReadUniformLocs(SimpleProgram &program)
 	for (int i = 0; i < 16; i++)
 	{
 		char name[64];
+#ifndef _WIN32
 #ifndef sprintf_s
 #define sprintf_s sprintf
+#endif
 #endif
 		sprintf_s(name, "SphlLights[%d].Enabled", i);
 		locs.sphl_lights_enabled[i] = program.GetUniformLocation(name);

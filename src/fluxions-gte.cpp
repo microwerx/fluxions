@@ -25,10 +25,12 @@ namespace Fluxions
 	void TestVector3();
 	void TestColorType();
 	void TestImage();
+	void TestGteTransformations() noexcept;
 
-	void TestFluxionsGTE() {
+	void TestFluxionsGTE() noexcept {
 		TestVector3();
 		TestColorType();
 		TestImage();
+		TestGteTransformations();
 	}
 }
