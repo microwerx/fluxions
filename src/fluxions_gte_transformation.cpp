@@ -13,6 +13,21 @@ template class TTransformation<float>;
 template class TTransformation<double>;
 
 template <typename T>
+bool TestCommonVector(const char* testname) {
+	FLUXIONS_BEGIN_TESTS();
+	const auto t1(1);
+	const auto t2(2);
+
+	auto t3 = t1 + t2;
+	auto t4 = t1 - t2;
+
+	cout << t3.toString() << endl;
+	cout << t4.toString() << endl;
+	
+	FLUXIONS_END_TESTS();
+}
+
+template <typename T>
 bool TestGteTransformations(const char* testname) {
 	using std::cout;
 	using std::endl;
@@ -28,8 +43,8 @@ bool TestGteTransformations(const char* testname) {
 	FLUXIONS_DO_TEST(t1.position.length() == 0);
 
 	cout << t1.toString() << endl;
-	cout << t1.toString() << endl;
-	cout << t1.toString() << endl;
+	cout << t2.toString() << endl;
+	cout << t3.toString() << endl;
 
 	// FLUXIONS_DO_TEST(t1.rotation.length() == 0);
 
