@@ -26,7 +26,11 @@
 #include <fluxions_gte_vector_math.hpp>
 #include <fluxions_gte_color_math.hpp>
 
-// #define FLUXIONS_GTE_USEOPENEXR 1
+#ifdef _WIN32
+#define FLUXIONS_GTE_USEOPENEXR 1
+#elif __unix__
+#define FLUXIONS_GTE_USEOPENEXR 1
+#endif
 
 namespace Fluxions
 {
