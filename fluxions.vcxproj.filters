@@ -259,6 +259,9 @@
     <ClCompile Include="src\viperfish_stats_window.cpp">
       <Filter>src\viperfish</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_gte_transformation.cpp">
+      <Filter>src\fluxions-gte</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -612,17 +615,23 @@
     <ClInclude Include="include\viperfish_xinput.hpp">
       <Filter>include\viperfish</Filter>
     </ClInclude>
+    <ClInclude Include="include\viperfish_stats_window.hpp">
+      <Filter>include\viperfish</Filter>
+    </ClInclude>
     <ClInclude Include="include\viperfish_root_window.hpp">
-      <Filter>src\viperfish</Filter>
+      <Filter>include\viperfish</Filter>
     </ClInclude>
     <ClInclude Include="include\viperfish_loading_window.hpp">
+      <Filter>include\viperfish</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gte_transformation.hpp">
+      <Filter>include\fluxions-gte</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_common_test.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\viperfish_stats_window.hpp">
-      <Filter>src\viperfish</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_gte_noise.hpp">
-      <Filter>src\fluxions-gte</Filter>
+      <Filter>include\fluxions-gte</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
