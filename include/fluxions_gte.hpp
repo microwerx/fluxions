@@ -50,7 +50,7 @@ namespace Fluxions
 	//		);
 	//}
 
-	void TestFluxionsGTE();
+	void TestFluxionsGTE() noexcept;
 
 } // namespace Fluxions
 
