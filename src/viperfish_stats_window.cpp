@@ -6,6 +6,7 @@
 
 namespace Vf
 {
+
 static Fluxions::Noise noise;
 
 FloatStat::FloatStat(int max_samples, float metric_min, float metric_max) {
@@ -63,7 +64,7 @@ void FloatStat::set(int idx, float x) {
 }
 
 StatsWindow::StatsWindow(const std::string& name)
-	: Widget(name) {
+	: Window(name) {
 	std::ostringstream ostr;
 	ostr << name << (void*)this;
 	popupId = ostr.str();
@@ -74,7 +75,7 @@ StatsWindow::StatsWindow(const std::string& name)
 StatsWindow::~StatsWindow() {}
 
 void StatsWindow::OnUpdate(double timeStamp) {
-	Widget::OnUpdate(timeStamp);
+	Window::OnUpdate(timeStamp);
 	if (pause) {
 		auto& et = float_stats["et"];
 		auto& frac = float_stats["3frac"];
@@ -98,15 +99,10 @@ void StatsWindow::OnUpdate(double timeStamp) {
 }
 
 void StatsWindow::OnRenderDearImGui() {
-	if (!isVisible())
-		return;
+	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+	if (!beginWindow()) return;
+	Window::OnRenderDearImGui();
 
-	constexpr float width = 512.0f;
-	constexpr float height = 384.0f;
-
-	ImGui::SetNextWindowContentSize(ImVec2(width, height));
-	ImGui::Begin(getName().c_str());
-	ImGui::PushID(popupId.c_str());
 	for (auto& fs : float_stats) {
 		fs.second.plotLines(fs.first);
 	}
@@ -125,7 +121,7 @@ void StatsWindow::OnRenderDearImGui() {
 	min_freq = floorf(min_freq);
 	max_freq = floorf(max_freq);
 
-	ImGui::PopID();
-	ImGui::End();
+	endWindow();
 }
+
 } // namespace Vf

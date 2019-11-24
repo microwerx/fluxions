@@ -7,7 +7,7 @@ namespace Vf
 constexpr int MAX_RUN_MESSAGES = 2;
 
 RootWindow::RootWindow(const std::string& name)
-	: Window(name) {
+	: Widget(name) {
 	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 }
 
@@ -17,6 +17,7 @@ RootWindow::~RootWindow() {
 
 void RootWindow::OnRenderDearImGui() {
 	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+	Widget::OnRenderDearImGui();
 }
 
 } // namespace Vf

@@ -85,27 +85,41 @@ namespace Vf
 		inline const value_type *data() const noexcept { if (leaf_) return nullptr; return children_.data(); }
 
 		// Properties
-		inline const SharedPtr &decoratee() const noexcept { return decorateeWidget_; }
-		inline SharedPtr &decoratee() noexcept { return decorateeWidget_; }
-		inline const SharedPtr &decorator() const noexcept { return decoraterWidget_; }
-		inline SharedPtr &decorator() noexcept { return decoraterWidget_; }
+		inline const SharedPtr &decoratee() const noexcept { return decoratorWidget_; }
+		inline SharedPtr &decoratee() noexcept { return decoratorWidget_; }
+		inline const SharedPtr &decorator() const noexcept { return decorateeWidget_; }
+		inline SharedPtr &decorator() noexcept { return decorateeWidget_; }
 		inline const SharedPtr &parent() const noexcept { return parent_; }
 		inline SharedPtr &parent() noexcept { return parent_; }
 
-		inline bool decorate(SharedPtr w) noexcept { if (!w) return false; decorateeWidget_ = w; w->decoraterWidget_ = shared_from_this(); return true; }
-		inline void undecorate() noexcept { if (!decoraterWidget_) return; decoraterWidget_->decorateeWidget_.reset(); }
-		inline bool is_decorating() const noexcept { if (decorateeWidget_) return true; return false; }
+		inline bool decorateWith(std::shared_ptr<Widget>& decorator) noexcept {
+			if (!decorator) return false;
+			decoratorWidget_ = decorator;
+			decorator->decorateeWidget_ = shared_from_this();
+			return true;
+		}
+
+		inline void undecorate() noexcept {
+			if (!decoratorWidget_) return;
+			decoratorWidget_->decorateeWidget_.reset();
+		}
+
+		inline bool is_decorated() const noexcept { return (bool)decoratorWidget_; }
 
 		inline const std::string &getName() const noexcept { return name_; }
-		inline int getX() const { return windowRect_.x; }
-		inline int getY() const { return windowRect_.y; }
-		inline int getHeight() const { return windowRect_.w; }
-		inline int getWidth() const { return windowRect_.h; }
-		inline const Recti &windowRect() const { return windowRect_; }
-		inline Recti &windowRect() { return windowRect_; }
+
+		inline float getX() const { return windowRect_.x; }
+		inline float getY() const { return windowRect_.y; }
+		inline float getHeight() const { return windowRect_.w; }
+		inline float getWidth() const { return windowRect_.h; }
+		inline const Rectf &windowRect() const { return windowRect_; }
+		inline Rectf &windowRect() { return windowRect_; }
+
 		inline bool isVisible() const { return visible_; }
 		inline bool isOrphan() const { return !parent_; }
 		inline bool leaveMainLoop() const { return leaveMainLoop_; }
+
+		int CountVisible() const;
 
 		inline operator bool() { return isVisible(); }
 
@@ -162,9 +176,11 @@ namespace Vf
 
 		virtual void OnMainLoop();
 		virtual void OnLeaveMainLoop();
+	protected:
+		bool* getVisiblePtr() { return &visible_; }
 	private:
+		SharedPtr decoratorWidget_;
 		SharedPtr decorateeWidget_;
-		SharedPtr decoraterWidget_;
 		SharedPtr parent_;
 		std::vector<SharedPtr> children_;
 
@@ -173,7 +189,7 @@ namespace Vf
 
 		bool leaveMainLoop_ = false;
 
-		Recti windowRect_;
+		Rectf windowRect_;
 		bool visible_ = true;
 
 		// A class should set leaf_ to false if it's okay to be a container, true if not
@@ -209,6 +225,8 @@ namespace Vf
 		const double getT0() const { return t0; }
 		const double getT1() const { return t1; }
 	};
+
+	using WidgetPtr = std::shared_ptr<Widget>;
 } // namespace Vf
 
 #endif

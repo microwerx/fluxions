@@ -5,13 +5,15 @@
 
 namespace Vf
 {
-	class RootWindow : public Window {
+	class RootWindow : public Widget {
 	public:
 		RootWindow(const std::string& name);
 		virtual ~RootWindow() override;
 
 		void OnRenderDearImGui() override;
 	};
+
+	using RootWindowPtr = std::shared_ptr<RootWindow>;
 }
 
 #endif

@@ -22,9 +22,9 @@
 
 namespace Vf
 {
-constexpr int MAX_RUN_MESSAGES = 2;
+// constexpr int MAX_RUN_MESSAGES = 2;
 
-DearImGuiWidget::ContextInitialized = false;
+bool DearImGuiWidget::ContextInitialized = false;
 
 DearImGuiWidget::DearImGuiWidget()
 	: Widget("imguiwidget") {

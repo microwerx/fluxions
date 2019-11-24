@@ -11,7 +11,9 @@ LoadingWindow::LoadingWindow(const std::string& name)
 LoadingWindow::~LoadingWindow() {}
 
 void LoadingWindow::OnRenderDearImGui() {
+	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 	if (!beginWindow()) return;
+	Window::OnRenderDearImGui();
 
 	ImGui::Text("Loading...");
 	static char buf[100]{ 0 };

@@ -1,7 +1,7 @@
 #ifndef VIPERFISH_STATS_WINDOW_HPP
 #define VIPERFISH_STATS_WINDOW_HPP
 
-#include <viperfish_dear_imgui.hpp>
+#include <viperfish_window.hpp>
 
 namespace Vf
 {
@@ -35,7 +35,7 @@ namespace Vf
 		float metric_max_value = 1.0f;// FLT_MAX;
 	};
 
-	class StatsWindow : public Widget {
+	class StatsWindow : public Window {
 	public:
 		StatsWindow(const std::string& name);
 		virtual ~StatsWindow() override;

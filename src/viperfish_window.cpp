@@ -18,22 +18,24 @@ Window::~Window() {
 }
 
 void Window::OnRenderDearImGui() {
+	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 	Widget::OnRenderDearImGui();
 }
 
 bool Window::beginWindow() {
-	ImGui::SetNextWindowContentSize(ImVec2(getWidth(), getHeight()));
-	if (!ImGui::Begin(getName().c_str(), &popupVisible)) {
+	if (!isVisible()) return false;
+	ImGui::SetNextWindowContentSize(ImVec2((float)getWidth(), (float)getHeight()));
+	if (!ImGui::Begin(getName().c_str(), getVisiblePtr())) {
 		ImGui::End();
 		return false;
 	}
-	ImGui::PushID(popupId.c_str());
+	//ImGui::PushID(popupId.c_str());
 
 	return true;
 }
 
 void Window::endWindow() {
-	ImGui::PopID();
+	//ImGui::PopID();
 	ImGui::End();
 }
 

@@ -15,7 +15,7 @@ namespace Vf
 		std::string msg;
 	};
 
-	using LoadingWindowPtr = std::shared_ptr<LoadingWindow>;
+	using LoadingWindowPtr = std::shared_ptr<LoadingWindow>;	
 }
 
 #endif
