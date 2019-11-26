@@ -106,6 +106,7 @@ namespace Fluxions
 	constexpr double FX_PI_4 = 0.785398163397448309616;    // pi/4
 	constexpr double FX_1_PI = 0.318309886183790671538;    // 1/pi
 	constexpr double FX_2_PI = 0.636619772367581343076;    // 2/pi
+	constexpr double FX_1_2PI = 0.159154943;	           // 1/(2pi)
 	constexpr double FX_2_SQRTPI = 1.12837916709551257390; // 2/sqrt(pi)
 	constexpr double FX_SQRT1_2 = 0.707106781186547524401; // 1/sqrt(2)
 
@@ -156,6 +157,7 @@ namespace Fluxions
 	constexpr float FX_F32_PI_4 = 0.78539816f;     // pi/4
 	constexpr float FX_F32_1_PI = 0.31830988f;     // 1/pi
 	constexpr float FX_F32_2_PI = 0.63661977f;     // 2/pi
+	constexpr float FX_F32_1_2PI = 0.159154943f;   // 1/(2pi)
 	constexpr float FX_F32_2_SQRTPI = 1.12837916f; // 2/sqrt(pi)
 	constexpr float FX_F32_SQRT1_2 = 0.70710678f;  // 1/sqrt(2)
 
