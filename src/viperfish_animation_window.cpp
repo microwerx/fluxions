@@ -6,8 +6,7 @@ namespace Vf
 {
 
 AnimationWindow::AnimationWindow(const std::string& name)
-	: Window(name) {
-}
+	: Window(name) {}
 
 AnimationWindow::~AnimationWindow() {
 
@@ -23,6 +22,8 @@ void AnimationWindow::OnUpdate(double timeInSeconds) {
 		animation.stop();
 	}
 
+	scalarGraph.push(animation.scalar());
+
 	animation.update((AnimationTime)GetFrameTime(), speed);
 }
 
@@ -32,6 +33,7 @@ void AnimationWindow::OnRenderDearImGui() {
 	Window::OnRenderDearImGui();
 
 	ImGui::Value("frame", animation.frame());
+	ImGui::Value("t", animation.time());
 	ImGui::Value("playing", animation.playing());
 	ImGui::Value("x", animation.scalar());
 
@@ -55,6 +57,9 @@ void AnimationWindow::OnRenderDearImGui() {
 	ImGui::SameLine();
 	if (ImGui::Button("KF>|")) { animation.last_frame(); }
 
+	scalarGraph.height = 100.0f;
+	scalarGraph.plotLines("scalar");
+
 	float fps = animation.fps();
 	ImGui::DragFloat("fps", &fps, 1.0f, 0.0f, 120.0f);
 	animation.fps(fps);
@@ -63,8 +68,26 @@ void AnimationWindow::OnRenderDearImGui() {
 }
 
 Animation::Animation() {
-	this->frames.push_back(Keyframe(new FrameCountSource(0.0f), new SineParameterSource(1.0, 1.0)));
-	this->frames.push_back(Keyframe(new FrameCountSource(10.0f), new SineParameterSource(2.0, 1.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(0.0f), new ParameterSource(-1.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(0.25f), new ParameterSource(0.50)));
+	this->frames.push_back(Keyframe(new FrameCountSource(0.50f), new ParameterSource(-0.25)));
+	this->frames.push_back(Keyframe(new FrameCountSource(0.75f), new ParameterSource(0.75)));
+	this->frames.push_back(Keyframe(new FrameCountSource(1.0f), new ParameterSource(-1.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(1.25f), new ParameterSource(0.50)));
+	this->frames.push_back(Keyframe(new FrameCountSource(1.50f), new ParameterSource(-0.25)));
+	this->frames.push_back(Keyframe(new FrameCountSource(1.75f), new ParameterSource(0.75)));
+	this->frames.push_back(Keyframe(new FrameCountSource(2.0f), new ParameterSource(-1.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(2.25f), new ParameterSource(0.50)));
+	this->frames.push_back(Keyframe(new FrameCountSource(2.50f), new ParameterSource(-0.25)));
+	this->frames.push_back(Keyframe(new FrameCountSource(2.75f), new ParameterSource(0.75)));
+	this->frames.push_back(Keyframe(new FrameCountSource(3.0f), new ParameterSource(-1.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(3.25f), new ParameterSource(0.50)));
+	this->frames.push_back(Keyframe(new FrameCountSource(3.50f), new ParameterSource(-0.25)));
+	this->frames.push_back(Keyframe(new FrameCountSource(3.75f), new ParameterSource(0.75)));
+	this->frames.push_back(Keyframe(new FrameCountSource(4.0f), new ParameterSource(0.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(5.0f), new SineParameterSource(1.0, 1.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(10.0f), new SineParameterSource(2.0, 2.0)));
+	this->frames.push_back(Keyframe(new FrameCountSource(15.0f), new SineParameterSource(3.0, 0.5)));
 }
 
 void Animation::first_frame() {
@@ -86,11 +109,34 @@ void Animation::last_frame() {
 }
 
 AnimationScalar Animation::scalar() const {
-	if (frames.empty()) return AnimationScalar();
-	if (frames.size() == 1) {
+	if (frames.empty()) {
+		return AnimationScalar();
+	}
+	else if (frames.size() == 1) {
 		const Keyframe& frame = frames.front();
 		AnimationTime t = t_ - frame.u->time();
 		return frame.p->scalar(t);
+	}
+	else {
+		const Keyframe& first = frames.front();
+		AnimationTime u1 = first.u->time();
+		if (t_ < u1) {
+			return first.p->scalar(t_ - u1);
+		}
+
+		const Keyframe& last = frames.back();
+		AnimationTime u2 = last.u->time();
+		if (t_ > u2)
+			return last.p->scalar(t_ - u2);
+
+		for (unsigned i = 0; i < frames.size() - 1; i++) {
+			const Keyframe& k1 = frames[i];
+			const Keyframe& k2 = frames[i + 1];
+			u2 = k2.u->time();
+			if (t_ <= u2) {
+				return interpolator.interpolate_scalar(t_, k1, k2);
+			}
+		}
 	}
 	return AnimationScalar();
 }

@@ -3,6 +3,7 @@
 
 #include <fluxions_gte_transformation.hpp>
 #include <viperfish_window.hpp>
+#include <viperfish_stats_window.hpp>
 
 namespace Vf
 {
@@ -54,10 +55,10 @@ struct ParameterSource {
 
 struct SineParameterSource : public ParameterSource {
 	SineParameterSource(float frequency, float amplitude)
-		: f(frequency * FX_F32_2_PI), A(amplitude) {}
+		: f(frequency), A(amplitude) {}
 
 	virtual AnimationScalar scalar(AnimationTime t) const override {
-		return A * sin(f * t);
+		return A * sin(f * t * FX_F32_TWOPI);
 	}
 
 	AnimationScalar f;
@@ -71,6 +72,49 @@ struct Keyframe {
 
 	std::shared_ptr<FrameCountSource> u;
 	std::shared_ptr<ParameterSource> p;
+};
+
+struct Interpolator {
+	Interpolator() {}
+	virtual ~Interpolator() {}
+
+	virtual float interpolate_scalar(AnimationTime u, const Keyframe& keyframe1, const Keyframe& keyframe2) const {
+		AnimationTime u1 = keyframe1.u->time();
+		AnimationTime u2 = keyframe2.u->time();
+		AnimationTime t = (u - u1) / (u2 - u1);
+		if (u < u2) return keyframe1.p->scalar(u - u1);
+		if (u >= u2) return keyframe2.p->scalar(u - u2);
+	}
+};
+
+struct LinearInterpolator : public Interpolator {
+	virtual ~LinearInterpolator() {}
+
+	virtual float interpolate_scalar(AnimationTime u, const Keyframe& keyframe1, const Keyframe& keyframe2) const override {
+		AnimationTime u1 = keyframe1.u->time();
+		AnimationTime u2 = keyframe2.u->time();
+		AnimationTime t = (u - u1) / (u2 - u1);
+		if (u < u1) return keyframe1.p->scalar(0);
+		if (u >= u2) return keyframe2.p->scalar(0);
+		AnimationScalar a = keyframe1.p->scalar(u - u1);
+		AnimationScalar b = keyframe2.p->scalar(0);
+		return (1 - t) * a + t * b;
+	}
+};
+
+struct CubicInterpolator : public Interpolator {
+	virtual ~CubicInterpolator() {}
+
+	virtual float interpolate_scalar(AnimationTime u, const Keyframe& keyframe1, const Keyframe& keyframe2) const override {
+		AnimationTime u1 = keyframe1.u->time();
+		AnimationTime u2 = keyframe2.u->time();
+		AnimationTime t = (u - u1) / (u2 - u1);
+		if (u < u1) return keyframe1.p->scalar(0);
+		if (u >= u2) return keyframe2.p->scalar(0);
+		AnimationScalar a = keyframe1.p->scalar(u - u1);
+		AnimationScalar b = keyframe2.p->scalar(0);
+		return (1 - t) * a + t * b;
+	}
 };
 
 class Animation {
@@ -96,6 +140,7 @@ public:
 	bool stopped() const { return playing_ == false; }
 	bool playing() const { return playing_; }
 	float frame() const { return t_ * fps_; }
+	float time() const { return t_; }
 	float fps() const { return fps_; }
 	void fps(float fps) { fps_ = Fluxions::clamp(fps, 0.0f, MaxAnimationTime); }
 
@@ -108,6 +153,7 @@ private:
 	float fps_ = 30.0f;
 	bool playing_ = false;
 	std::vector<Keyframe> frames;
+	LinearInterpolator interpolator;
 };
 
 class AnimationWindow : public Window
@@ -122,6 +168,7 @@ public:
 	Animation animation;
 private:
 	float speed = 0.0f;
+	FloatStat scalarGraph{ 100,-2.0f, 2.0f };
 };
 
 using AnimationWindowPtr = std::shared_ptr<AnimationWindow>;
