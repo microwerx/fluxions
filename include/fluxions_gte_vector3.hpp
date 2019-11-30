@@ -55,8 +55,8 @@ public:
 	using const_iterator = TCommonIterator<const T>;
 	iterator begin() noexcept { return iterator(ptr()); }
 	iterator end() noexcept { return iterator(ptr() + 3); }
-	const_iterator begin() const noexcept { return const_iterator(const_ptr()); }
-	const_iterator end() const noexcept { return const_iterator(const_ptr() + size()); }
+	const_iterator cbegin() const noexcept { return const_iterator(const_ptr()); }
+	const_iterator cend() const noexcept { return const_iterator(const_ptr() + size()); }
 
 	const T& operator[](unsigned i) const noexcept { return const_ptr()[i]; }
 	T& operator[](unsigned i) noexcept { return ptr()[i]; }
