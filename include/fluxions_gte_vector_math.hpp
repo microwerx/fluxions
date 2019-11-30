@@ -36,15 +36,21 @@ namespace Fluxions
 {
 
 template <typename ScalarType, typename VectorType>
-ScalarType CatmullRomKnot(ScalarType t0, ScalarType alpha, const VectorType& P0, const VectorType& P1) {
+ScalarType CatmullRomKnot(ScalarType t0,
+						  ScalarType alpha,
+						  const VectorType& P0,
+						  const VectorType& P1) {
 	VectorType difference = P1 - P0;
-	ScalarType length = std::inner_product(difference.cbegin(), difference.cend(),
-										   difference.cbegin(), 0);
-	return std::pow(length, 0.5f * alpha) + t0;
+	return std::pow(difference.length(), 0.5f * alpha) + t0;
 }
 
 template <typename ScalarType, typename VectorType>
-VectorType CatmullRomSegment(ScalarType t, const VectorType& P0, const VectorType& P1, const VectorType& P2, const VectorType& P3, ScalarType alpha = 0.5) {
+VectorType CatmullRomSegment(ScalarType t,
+							 const VectorType& P0,
+							 const VectorType& P1,
+							 const VectorType& P2,
+							 const VectorType& P3,
+							 ScalarType alpha = 0.5) {
 	ScalarType t0 = 0;
 	ScalarType t1 = CatmullRomKnot(t0, alpha, P0, P1);
 	ScalarType t2 = CatmullRomKnot(t1, alpha, P1, P2);
@@ -62,15 +68,15 @@ VectorType CatmullRomSegment(ScalarType t, const VectorType& P0, const VectorTyp
 }
 
 template <typename ScalarType, typename VectorType>
-::std::vector<VectorType>& CatmullRomSpline(const ::std::vector<VectorType>& controlPoints,
-											::std::vector<VectorType>& points,
-											unsigned first = 1,
-											unsigned last = 0,
-											unsigned pointsPerSegment = 60,
-											ScalarType alpha = 0.5) {
+std::vector<VectorType>& CatmullRomSpline(const std::vector<VectorType>& controlPoints,
+										  std::vector<VectorType>& points,
+										  unsigned first = 1,
+										  unsigned last = 0,
+										  unsigned pointsPerSegment = 60,
+										  ScalarType alpha = 0.5) {
 	last = (last > 0) ? last : controlPoints.size() - 2;
-	constexpr unsigned count = controlPoints.size();
-	constexpr ScalarType dt = ScalarType(1) / ScalarType(pointsPerSegment);
+	const unsigned count = controlPoints.size();
+	const ScalarType dt = ScalarType(1) / ScalarType(pointsPerSegment);
 	points.resize(count * pointsPerSegment);
 
 	unsigned out = 0;
@@ -90,19 +96,20 @@ template <typename ScalarType, typename VectorType>
 }
 
 template <typename ScalarType, typename VectorType>
-::std::vector<VectorType>& CatmullRomOpenSpline(const ::std::vector<VectorType>& controlPoints,
-												::std::vector<VectorType>& points,
-												unsigned pointsPerSegment = 60,
-												ScalarType alpha = 0.5) {
+std::vector<VectorType>& CatmullRomOpenSpline(const std::vector<VectorType>& controlPoints,
+											  std::vector<VectorType>& points,
+											  unsigned pointsPerSegment = 60,
+											  ScalarType alpha = 0.5) {
 	return CatmullRomSpline(controlPoints, points, 1, controlPoints.size() - 2, pointsPerSegment, alpha);
 }
 
 template <typename ScalarType, typename VectorType>
-::std::vector<VectorType>& CatmullRomClosedSpline(const ::std::vector<VectorType>& controlPoints,
-												  ::std::vector<VectorType>& points,
-												  unsigned pointsPerSegment = 60,
-												  ScalarType alpha = 0.5) {
+std::vector<VectorType>& CatmullRomClosedSpline(const std::vector<VectorType>& controlPoints,
+												std::vector<VectorType>& points,
+												unsigned pointsPerSegment = 60,
+												ScalarType alpha = 0.5) {
 	return CatmullRomSpline(controlPoints, points, 0, controlPoints.size() - 1, pointsPerSegment, alpha);
 }
 
+}
 #endif
