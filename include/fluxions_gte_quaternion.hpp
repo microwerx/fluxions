@@ -66,6 +66,7 @@ public:
 		return *this;
 	}
 
+	static TQuaternion<T> makeFromAngles(double azimuthInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
 	static TQuaternion<T> makeFromAngleAxis(double angleInDegrees, double x, double y, double z) noexcept;
 	static TQuaternion<T> makeFromMatrix3(const TMatrix3<T>& M) noexcept;
 
@@ -77,13 +78,17 @@ public:
 		return TQuaternion(-b, -c, -d, a);
 	}
 
-	T unit() const noexcept {
+	T length() const noexcept {
 		return sqrt(b * b + c * c + d * d + a * a);
 	}
 
 	TQuaternion<T> normalized() const noexcept {
-		T length = T(1) / unit();
-		return TQuaternion<T>{a * length, b * length, c * length, d * length};
+		T invlength = T(1) / length();
+		return TQuaternion<T>{a* invlength, b* invlength, c* invlength, d* invlength};
+	}
+
+	TQuaternion<T> operator-() const noexcept {
+		return TQuaternion<T>{-a, -b, -c, -d};
 	}
 
 	TQuaternion<T> operator+(const TQuaternion<T>& q) const noexcept {
@@ -99,7 +104,7 @@ public:
 		return TQuaternion<T>(a * q.a - b * q.b - c * q.c - d * q.d,
 							  a * q.b + b * q.a + c * q.d - d * q.c,
 							  a * q.c - b * q.d + c * q.a + d * q.b,
-							  a * q.a + b * q.b - c * q.c + d * q.d
+							  a * q.d + b * q.c - c * q.b + d * q.a
 							  );
 	}
 
@@ -109,6 +114,10 @@ public:
 
 	TQuaternion<T> operator-(T alpha) const noexcept {
 		return TQuaternion(a - alpha, b - alpha, c - alpha, d - alpha);
+	}
+
+	TQuaternion<T> scale(T alpha) const noexcept {
+		return TQuaternion(a * alpha, b * alpha, c * alpha, d * alpha);
 	}
 
 	TQuaternion<T> operator*(T alpha) const noexcept {
@@ -139,10 +148,19 @@ public:
 };
 
 template <typename T>
+TQuaternion<T> TQuaternion<T>::makeFromAngles(double azimuthInDegrees, double pitchInDegrees, double rollInDegrees) noexcept {
+	TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(pitchInDegrees, 1.0, 0.0, 0.0);
+	TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(azimuthInDegrees, 0.0, 1.0, 0.0);
+	TQuaternion<T> qZ = TQuaternion<T>::makeFromAngleAxis(rollInDegrees, 0.0, 0.0, 1.0);
+
+	return (qZ * qX * qY).normalized();
+}
+
+template <typename T>
 TQuaternion<T> TQuaternion<T>::makeFromAngleAxis(double angleInDegrees, double x, double y, double z) noexcept {
 	double c = cos(0.5 * angleInDegrees * FX_DEGREES_TO_RADIANS);
 	double s = sin(0.5 * angleInDegrees * FX_DEGREES_TO_RADIANS);
-	return TQuaternion<T>((T)c, (T)(s * x), (T)(s * y), (T)(s * z));
+	return TQuaternion<T>((T)c, (T)(s * x), (T)(s * y), (T)(s * z)).normalized();
 }
 
 template <typename T>
@@ -153,7 +171,12 @@ TQuaternion<T> TQuaternion<T>::makeFromMatrix3(const TMatrix3<T>& M) noexcept {
 	T x = (T)copysign(0.5 * sqrt(1 + M.m11 - M.m22 - M.m33), M.m32 - M.m23);
 	T y = (T)copysign(0.5 * sqrt(1 - M.m11 + M.m22 - M.m33), M.m13 - M.m31);
 	T z = (T)copysign(0.5 * sqrt(1 - M.m11 - M.m22 + M.m33), M.m21 - M.m12);
-	return TQuaternion<T>(w, x, y, z);
+	return TQuaternion<T>(w, x, y, z).normalized();
+}
+
+template <typename T>
+TQuaternion<T> operator*(T a, TQuaternion<T>& q) {
+	return TQuaternion<T>{a* q.a, a* q.b, a* q.c, a* q.d};
 }
 
 template <typename T>
@@ -191,19 +214,19 @@ TMatrix4<T> TQuaternion<T>::toMatrix4() const noexcept {
 template <typename T>
 TQuaternion<T> slerp(T t, const TQuaternion<T>& a, const TQuaternion<T>& b) noexcept {
 	// Code adapted from Wikipedia article / Ken Shoemake article
-	auto q1 = a.normalized();
-	auto q2 = b.normalized();
+	TQuaternion<T> q1 = a.normalized();
+	TQuaternion<T> q2 = b.normalized();
 	T dot = a.dot(b);
 
 	if (dot < 0) {
 		q2 = -q2;
 		dot = -dot;
 	}
-	
+
 	const T threshold = T(0.9995);
 	if (dot > threshold) {
-		auto q = q1 + t * (q2 - q1);
-		return q.unit();
+		TQuaternion<T> q = q1 + (q2 - q1).scale(t);
+		return q.normalized();
 	}
 
 	T theta_0 = acos(dot);
