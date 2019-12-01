@@ -24,7 +24,8 @@
 namespace Fluxions
 {
 	float randomSampler(float _min0, float _max0) {
-		static std::mt19937 s;
+		static std::random_device rd;
+		static std::mt19937 s(rd());
 		std::uniform_real_distribution<float> urd(_min0, _max0);
 
 		return urd(s);
