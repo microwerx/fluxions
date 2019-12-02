@@ -309,28 +309,42 @@ TQuaternion<T> squad_si(const TQuaternion<T>& q0,
 }
 
 template <typename T>
+TQuaternion<T> QDouble(const TQuaternion<T> p,
+					   const TQuaternion<T> q) {
+	return q.scale(2 * p.dot(q)) - p;
+}
+
+template <typename T>
+TQuaternion<T> QBisect(const TQuaternion<T> p,
+					   const TQuaternion<T> q) {
+	TQuaternion<T> pq = p + q;
+	return pq.scale(1.0f / pq.length());
+}
+
+template <typename T>
 TQuaternion<T> squad_a(const TQuaternion<T>& q0,
 					   const TQuaternion<T>& q1,
 					   const TQuaternion<T>& q2) {
-	TQuaternion<T> q0inv = q0.inverse();
-	TQuaternion<T> q1inv = q1.inverse();
-	TQuaternion<T> p0 = q0inv * q1;
-	TQuaternion<T> p1 = q1inv * q2;
-	TQuaternion<T> arg = (p0.log() - p1.log()).scale(0.25f);
-	return q1 * arg.exp();
+	//TQuaternion<T> q0inv = q0.inverse();
+	//TQuaternion<T> q1inv = q1.inverse();
+	//TQuaternion<T> p0 = q0inv * q1;
+	//TQuaternion<T> p1 = q1inv * q2;
+	//TQuaternion<T> arg = (p0.log() - p1.log()).scale(0.25f);
+	//return q1 * arg.exp();
+	return QBisect(QDouble(q0, q1), q2);
 }
 
 template <typename T>
 TQuaternion<T> squad_b(const TQuaternion<T>& q0,
 					   const TQuaternion<T>& q1,
 					   const TQuaternion<T>& q2) {
-
-	TQuaternion<T> q0inv = q0.inverse();
-	TQuaternion<T> q1inv = q1.inverse();
-	TQuaternion<T> p0 = q0inv * q1;
-	TQuaternion<T> p1 = q1inv * q2;
-	TQuaternion<T> arg = (p0.log() - p1.log()).scale(-0.25f);
-	return q1 * arg.exp();
+	//TQuaternion<T> q0inv = q0.inverse();
+	//TQuaternion<T> q1inv = q1.inverse();
+	//TQuaternion<T> p0 = q0inv * q1;
+	//TQuaternion<T> p1 = q1inv * q2;
+	//TQuaternion<T> arg = (p0.log() - p1.log()).scale(-0.25f);
+	//return q1 * arg.exp();
+	return QDouble(squad_a(q0, q1, q2), q1);
 }
 
 template <typename T>
@@ -341,7 +355,14 @@ TQuaternion<T> squad(const TQuaternion<T>& q0,
 					 T t) noexcept {
 	const TQuaternion<T> a = squad_a(q0, q1, q2);
 	const TQuaternion<T> b = squad_b(q1, q2, q3);
-	return slerp(slerp(q1, q2, t), slerp(a, b, t), 2 * t * (1 - t));
+
+	const TQuaternion<T> a1 = slerp(q1, a, t);
+	const TQuaternion<T> a2 = slerp(a, b, t);
+	const TQuaternion<T> a3 = slerp(b, q2, t);
+	const TQuaternion<T> b1 = slerp(a1, a2, t);
+	const TQuaternion<T> b2 = slerp(a2, a3, t);
+	return slerp(b1, b2, t);
+	//return slerp(slerp(q1, q2, t), slerp(a, b, t), 2 * t * (1 - t));
 }
 
 using Quaternionf = TQuaternion<float>;
