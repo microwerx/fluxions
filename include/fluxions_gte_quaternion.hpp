@@ -66,7 +66,7 @@ public:
 		return *this;
 	}
 
-	static TQuaternion<T> makeFromAngles(double azimuthInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
+	static TQuaternion<T> makeFromAngles(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
 	static TQuaternion<T> makeFromAngleAxis(double angleInDegrees, double x, double y, double z) noexcept;
 	static TQuaternion<T> makeFromMatrix3(const TMatrix3<T>& M) noexcept;
 
@@ -125,15 +125,71 @@ public:
 	}
 
 	T dot(const TQuaternion& q) const noexcept {
-		return (b * q.b + c * q.c + d * q.d);
+		return (a * q.a + b * q.b + c * q.c + d * q.d);
 	}
 
 	TQuaternion<T> cross(const TQuaternion<T>& q) const noexcept {
 		return TQuaternion(
+			0,
 			c * q.d - d * q.c,
 			d * q.b - b * q.d,
-			b * q.c - c * q.b,
-			0.);
+			b * q.c - c * q.b);
+	}
+
+	TQuaternion<T> exp() const noexcept {
+		// exp(a) (cos ||v|| + v/||v|| sin ||v||)
+		const T magv = std::sqrt(b * b + c * c + d * d);
+		const T sinv = std::sin(magv);
+		const T cosv = std::cos(magv);
+		const T expa = std::exp(a);
+		const T C = expa * sinv / magv;
+		return TQuaternion{ cosv * expa, C * b, C * c, C * d };
+	}
+
+	TQuaternion<T> log() const noexcept {
+		// ln ||q|| + v/||v|| arccos(a/||q||)
+		const T magq = length();
+		const T magv = std::sqrt(b * b + c * c + d * d);
+		const T logq = std::log(magq);
+		const T acos = std::acos(a / magq);
+		const T C = acos / magv;
+		return TQuaternion{ logq, C * b, C * c, C * d };
+	}
+
+	TQuaternion<T> pow(T p) const noexcept {
+		// exp(log(q)*p)
+		return (log().scale(p)).exp();
+	}
+
+	TQuaternion<T> inverse() const noexcept {
+		// q*/||q||^2
+		const T magq2 = (a * a + b * b + c * c + d * d);
+		return conjugate().scale(T(1) / magq2);
+	}
+
+	// theta (Y)
+	T yawInDegrees() const noexcept {
+		return T(FX_RADIANS_TO_DEGREES) *
+			std::atan2(-m31(), std::sqrt(m32() * m32() + m33() * m33()));
+		//return T(FX_RADIANS_TO_DEGREES) * std::asin(m13());
+	}
+
+	// phi (X)
+	T pitchInDegrees() const noexcept {
+		return T(FX_RADIANS_TO_DEGREES) * std::atan2(m32(), m33());
+		//if (std::abs(std::cos(std::asin(m13()))) == 0) {
+		//	return 0;
+		//}
+		//return T(FX_RADIANS_TO_DEGREES) * std::atan2(-m12(), m11());
+	}
+
+	// psi (Z)
+	T rollInDegrees() const noexcept {
+		//if (std::abs(std::cos(std::asin(m13()))) == 0) {
+		//	return T(FX_RADIANS_TO_DEGREES) * std::atan2(m32(), m22());
+		//}
+		//return T(FX_RADIANS_TO_DEGREES) * std::atan2(-m23(), m33());
+		return T(FX_RADIANS_TO_DEGREES) * std::atan2(m21(), m11());
 	}
 
 	inline constexpr value_type m11() const noexcept { return 1 - 2 * c * c - 2 * d * d; }
@@ -148,12 +204,13 @@ public:
 };
 
 template <typename T>
-TQuaternion<T> TQuaternion<T>::makeFromAngles(double azimuthInDegrees, double pitchInDegrees, double rollInDegrees) noexcept {
+TQuaternion<T> TQuaternion<T>::makeFromAngles(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept {
 	TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(pitchInDegrees, 1.0, 0.0, 0.0);
-	TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(azimuthInDegrees, 0.0, 1.0, 0.0);
+	TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(yawInDegrees, 0.0, 1.0, 0.0);
 	TQuaternion<T> qZ = TQuaternion<T>::makeFromAngleAxis(rollInDegrees, 0.0, 0.0, 1.0);
 
-	return (qZ * qX * qY).normalized();
+	return (qZ * qY * qX).normalized();
+	// return (qZ * qX * qY).normalized();
 }
 
 template <typename T>
@@ -212,7 +269,7 @@ TMatrix4<T> TQuaternion<T>::toMatrix4() const noexcept {
 }
 
 template <typename T>
-TQuaternion<T> slerp(T t, const TQuaternion<T>& a, const TQuaternion<T>& b) noexcept {
+TQuaternion<T> slerp(const TQuaternion<T>& a, const TQuaternion<T>& b, T t) noexcept {
 	// Code adapted from Wikipedia article / Ken Shoemake article
 	TQuaternion<T> q1 = a.normalized();
 	TQuaternion<T> q2 = b.normalized();
@@ -238,6 +295,53 @@ TQuaternion<T> slerp(T t, const TQuaternion<T>& a, const TQuaternion<T>& b) noex
 	T s1 = sin_theta / sin_theta_0;
 
 	return ((s0 * q1) + (s1 * q2)).normalized();
+}
+
+template <typename T>
+TQuaternion<T> squad_si(const TQuaternion<T>& q0,
+						const TQuaternion<T>& q1,
+						const TQuaternion<T>& q2) noexcept {
+	const TQuaternion<T> q1inv = q1.inverse();
+	const TQuaternion<T> log1 = (q0 * q1inv).log();
+	const TQuaternion<T> log2 = (q2 * q1inv).log();
+	const TQuaternion<T> tmp = (log1 + log2).scale(-0.25f);
+	return tmp.exp() * q1;
+}
+
+template <typename T>
+TQuaternion<T> squad_a(const TQuaternion<T>& q0,
+					   const TQuaternion<T>& q1,
+					   const TQuaternion<T>& q2) {
+	TQuaternion<T> q0inv = q0.inverse();
+	TQuaternion<T> q1inv = q1.inverse();
+	TQuaternion<T> p0 = q0inv * q1;
+	TQuaternion<T> p1 = q1inv * q2;
+	TQuaternion<T> arg = (p0.log() - p1.log()).scale(0.25f);
+	return q1 * arg.exp();
+}
+
+template <typename T>
+TQuaternion<T> squad_b(const TQuaternion<T>& q0,
+					   const TQuaternion<T>& q1,
+					   const TQuaternion<T>& q2) {
+
+	TQuaternion<T> q0inv = q0.inverse();
+	TQuaternion<T> q1inv = q1.inverse();
+	TQuaternion<T> p0 = q0inv * q1;
+	TQuaternion<T> p1 = q1inv * q2;
+	TQuaternion<T> arg = (p0.log() - p1.log()).scale(-0.25f);
+	return q1 * arg.exp();
+}
+
+template <typename T>
+TQuaternion<T> squad(const TQuaternion<T>& q0,
+					 const TQuaternion<T>& q1,
+					 const TQuaternion<T>& q2,
+					 const TQuaternion<T>& q3,
+					 T t) noexcept {
+	const TQuaternion<T> a = squad_a(q0, q1, q2);
+	const TQuaternion<T> b = squad_b(q1, q2, q3);
+	return slerp(slerp(q1, q2, t), slerp(a, b, t), 2 * t * (1 - t));
 }
 
 using Quaternionf = TQuaternion<float>;
