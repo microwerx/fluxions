@@ -119,6 +119,10 @@ void MathWindow::OnRenderDearImGui() {
 		q1 = Quaternionf::makeFromAngles(q1Y, q1X, q1Z);
 	}
 
+	if (ImGui::Button("create")) {
+		createNewPath = true;
+	}
+	ImGui::DragFloat("alpha", &alpha, 0.01f, -4.0f, 4.0f);
 	ImGui::Checkbox("LERP", &blerp);
 	ImGui::Checkbox("SQUAD", &bsquad);
 
