@@ -16,53 +16,19 @@ void MathWindow::OnUpdate(double timeStamp) {
 	Window::OnUpdate(timeStamp);
 }
 
-void MathWindow::OnRenderDearImGui() {
-	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
-	if (!beginWindow()) return;
-	Window::OnRenderDearImGui();
-
-	Quaternionf qX = Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
-	Quaternionf qY = Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
-	Quaternionf qZ = Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
-
-	q = qZ * qX * qY;
-
-	ImGui::SliderFloat("speed", &speed, 0.0f, 1.0f);
-	ImGui::Value("t", t);
-	ImGui::Separator();
-
-	ImGui::Value("x", p2.x);
+void MathWindow::showv(const char* m, const Vector3f& v) {
+	ImGui::Text(m);
 	ImGui::SameLine();
-	ImGui::Value("y", p2.y);
+	ImGui::Value("x", v.x);
 	ImGui::SameLine();
-	ImGui::Value("z", p2.z);
+	ImGui::Value("y", v.y);
+	ImGui::SameLine();
+	ImGui::Value("z", v.z);
+}
 
-	ImGui::Value("a", q2.a);
+void MathWindow::showq(const char* m, const Quaternionf& q) {
+	ImGui::Text(m);
 	ImGui::SameLine();
-	ImGui::Value("b", q2.b);
-	ImGui::SameLine();
-	ImGui::Value("c", q2.c);
-	ImGui::SameLine();
-	ImGui::Value("d", q2.d);
-
-	ImGui::Text("Keyframe");
-
-	ImGui::Value("a", q1.a);
-	ImGui::SameLine();
-	ImGui::Value("b", q1.b);
-	ImGui::SameLine();
-	ImGui::Value("c", q1.c);
-	ImGui::SameLine();
-	ImGui::Value("d", q1.d);
-
-	ImGui::Value("x", p1.x);
-	ImGui::SameLine();
-	ImGui::Value("y", p1.y);
-	ImGui::SameLine();
-	ImGui::Value("z", p1.z);
-
-	ImGui::Text("Modify active");
-
 	ImGui::Value("a", q.a);
 	ImGui::SameLine();
 	ImGui::Value("b", q.b);
@@ -70,25 +36,68 @@ void MathWindow::OnRenderDearImGui() {
 	ImGui::Value("c", q.c);
 	ImGui::SameLine();
 	ImGui::Value("d", q.d);
+}
+
+void MathWindow::OnRenderDearImGui() {
+	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+	if (!beginWindow()) return;
+	Window::OnRenderDearImGui();
+
+	if (!set_key) {
+		q1X = q1.pitchInDegrees();
+		q1Y = q1.yawInDegrees();
+		q1Z = q1.rollInDegrees();
+	}
+
+	//Quaternionf qX = Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
+	//Quaternionf qY = Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
+	//Quaternionf qZ = Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
+
+	//q1 = Quaternionf::makeFromAngles(X, Y, Z);
+
+	ImGui::SliderFloat("speed", &speed, 0.0f, 1.0f);
+	ImGui::Value("t", t);
+	ImGui::Separator();
+
+	showv("p2", p2);
+	showq("q2", q2);
+
+	//ImGui::Text("K");
+	//showq(kq0);
+	//showq(kq1);
+	//showq(kq2);
+	//showq(kq3);
+	//showq(ka);
+	//showq(kb);
+
+	ImGui::Text("Keyframe");
+
+	showq("q1", q1);
+	showv("p1", p1);
+
+	ImGui::Text("Modify active");
+
+	showq("q", q);
+
+	ImGui::SliderFloat("X", &X, -90.0f, 90.0f);
+	ImGui::SliderFloat("Y", &Y, -360.0f, 360.0f);
+	ImGui::SliderFloat("Z", &Z, -180.0f, 180.0f);
+
+	ImGui::Separator();
 
 	if (max_keys > 0) {
 		ImGui::SliderInt("Key", &key, 0, max_keys - 1);
 	}
 
-	ImGui::SliderFloat("qX", &X, -90.0f, 90.0f);
-	ImGui::SliderFloat("qY", &Y, -360.0f, 360.0f);
-	ImGui::SliderFloat("qZ", &Z, -180.0f, 180.0f);
+	ImGui::SliderFloat("qX", &q1X, -90.0f, 90.0f);
+	ImGui::SliderFloat("qY", &q1Y, -360.0f, 360.0f);
+	ImGui::SliderFloat("qZ", &q1Z, -180.0f, 180.0f);
 
 	ImGui::SliderFloat("pX", &p1.x, -30.0f, 30.0f);
 	ImGui::SliderFloat("pY", &p1.y, -30.0f, 30.0f);
 	ImGui::SliderFloat("pZ", &p1.z, -30.0f, 30.0f);
 
-	if (ImGui::Button("Set Key")) {
-		set_key = 1;
-	}
-	else {
-		set_key = 0;
-	}
+	ImGui::Checkbox("Set Key", &set_key);
 
 	if (ImGui::Button("Reset Q")) {
 		X = 0.0f;
@@ -96,8 +105,18 @@ void MathWindow::OnRenderDearImGui() {
 		Z = 0.0f;
 	}
 
-	if (ImGui::Button("Reset P")) {
+	if (ImGui::Button("Reset Q1")) {
+		q1X = 0.0f;
+		q1Y = 0.0f;
+		q1Z = 0.0f;
+	}
+
+	if (ImGui::Button("Reset P1")) {
 		p1.reset();
+	}
+
+	if (set_key) {
+		q1 = Quaternionf::makeFromAngles(q1Y, q1X, q1Z);
 	}
 
 	ImGui::Checkbox("LERP", &blerp);
