@@ -49,11 +49,11 @@ void MathWindow::OnRenderDearImGui() {
 		q1Z = q1.rollInDegrees();
 	}
 
-	//Quaternionf qX = Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
-	//Quaternionf qY = Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
-	//Quaternionf qZ = Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
+	Quaternionf qX = Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
+	Quaternionf qY = Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
+	Quaternionf qZ = Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
 
-	//q1 = Quaternionf::makeFromAngles(X, Y, Z);
+	q = qZ * qX * qY;
 
 	ImGui::SliderFloat("speed", &speed, 0.0f, 1.0f);
 	ImGui::Value("t", t);
