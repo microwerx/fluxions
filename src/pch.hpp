@@ -69,6 +69,9 @@
 // E X T E R N A L   D E P E N D E N C I E S /////////////////////////
 //////////////////////////////////////////////////////////////////////
 
+#include <fluxions_stdcxx.hpp>
+#include <fluxions_gte.hpp>
+
 #ifndef FLUXIONS_NO_SDL
 //#include <SDL2/SDL.h>
 //#include <SDL2/SDL_image.h>
