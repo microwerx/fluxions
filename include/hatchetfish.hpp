@@ -136,8 +136,8 @@ namespace Hf
 		void debugfn(const char* fn, const char* msg, ...);
 		void flush();
 
-		std::string makeTimeStamp();
-		std::string makeDTG();
+		std::string& makeTimeStamp();
+		std::string& makeDTG();
 		const std::vector<std::string>& getHistory() const { return history; }
 		void setMaxHistory(size_t lines) { maxHistoryLines = lines > 100 ? 100 : lines; }
 

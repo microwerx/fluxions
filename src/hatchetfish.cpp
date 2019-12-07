@@ -62,7 +62,7 @@ namespace Hf
 		setOutputFile();
 	}
 
-	std::string Hatchetfish::makeDTG() {
+	std::string& Hatchetfish::makeDTG() {
 		char msg[50];
 #ifdef __STDC_SECURE_LIB__
 		struct tm newtime;
@@ -85,7 +85,7 @@ namespace Hf
 		return dtg;
 	}
 
-	std::string Hatchetfish::makeTimeStamp() {
+	std::string& Hatchetfish::makeTimeStamp() {
 		char msg[50] = { 0 };
 #ifdef __STDC_SECURE_LIB__
 		struct tm newtime;
