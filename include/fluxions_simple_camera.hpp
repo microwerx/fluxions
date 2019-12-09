@@ -12,7 +12,7 @@ namespace Fluxions
 		Matrix4f projectionMatrix;
 		Matrix4f viewMatrix;
 		Matrix4f actualViewMatrix;
-		float fov = 45.0;
+		float fov = 45.0;	// horizontal field of view in degrees
 		float width = 2.0;
 		float fstop = 16.0;
 		float filmWidth = 35.0;
@@ -38,6 +38,18 @@ namespace Fluxions
 			imageAspect = screenWidth / screenHeight;
 			imageNearZ = znear;
 			imageFarZ = zfar;
+		}
+
+		inline Vector3f origin() const noexcept {
+			return viewMatrix.col4().xyz();
+		}
+
+		inline Vector3f target() const noexcept {
+			return origin() + viewMatrix.col3().xyz();
+		}
+
+		inline Vector3f roll() const noexcept {
+			return origin() + viewMatrix.col2().xyz();
 		}
 	}; // struct SimpleCamera
 } // namespace Fluxions
