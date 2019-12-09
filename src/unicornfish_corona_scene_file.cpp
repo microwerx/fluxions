@@ -27,6 +27,7 @@
 #include <unicornfish_corona_scene_file.hpp>
 #include <fluxions_ssg_ssphh_renderer_plugin.hpp>
 #include <fluxions_simple_point_light.hpp>
+#include <fluxions_scene_graph_writer.hpp>
 
 namespace Uf
 {
@@ -57,7 +58,9 @@ void CoronaSceneFile::SetPerspectiveCamera(const Fluxions::Vector3f &origin, con
 	cameraType = "perspective";
 }
 
-void CoronaSceneFile::SetCubeMapCamera(const Fluxions::Vector3f &origin, const Fluxions::Vector3f &target, const Fluxions::Vector3f &roll)
+void CoronaSceneFile::SetCubeMapCamera(const Fluxions::Vector3f &origin,
+									   const Fluxions::Vector3f &target,
+									   const Fluxions::Vector3f &roll)
 {
 	cameraOrigin = origin;
 	cameraTarget = target;
@@ -67,44 +70,53 @@ void CoronaSceneFile::SetCubeMapCamera(const Fluxions::Vector3f &origin, const F
 
 void CoronaSceneFile::WriteSCN(const std::string &filename, const Fluxions::SimpleSceneGraph &ssg)
 {
-	SetCameraType("perspective");
-	Fluxions::Vector3f origin = ssg.camera.viewMatrix.col4().xyz();
-	Fluxions::Vector3f target = ssg.camera.viewMatrix.col4().xyz() + ssg.camera.viewMatrix.col3().xyz();
-	Fluxions::Vector3f roll = ssg.camera.viewMatrix.col4().xyz() + ssg.camera.viewMatrix.col2().xyz();
-	float hfovDegrees = (float)ssg.camera.fov;
-	SetPerspectiveCamera(origin, target, roll, hfovDegrees);
-	Fluxions::Matrix4f coronaMatrix(
-		1.0, 0.0, 0.0, 0.0,
-		0.0, 0.0, -1.0, 0.0,
-		0.0, -1.0, 0.0, 0.0,
-		0.0, 0.0, 0.0, 1.0);
-	cameraMatrix = ssg.camera.actualViewMatrix;
+	Fluxions::XmlSceneGraphWriter writer;
+	writer.setPerspectiveCamera(ssg.camera.origin(),
+								ssg.camera.target(),
+								ssg.camera.roll(),
+								ssg.camera.fov);
+	writer.export_path_prefix = "./corona_export2/";
+	writer.extra_tags.push_back({ "conffile", "../" + CoronaJob::confPathPrefix + "export_corona_ground_truth.conf" });
+	ssg.Save(filename, &writer);
+	return;
+	//SetCameraType("perspective");
+	//Fluxions::Vector3f origin = ssg.camera.viewMatrix.col4().xyz();
+	//Fluxions::Vector3f target = ssg.camera.viewMatrix.col4().xyz() + ssg.camera.viewMatrix.col3().xyz();
+	//Fluxions::Vector3f roll = ssg.camera.viewMatrix.col4().xyz() + ssg.camera.viewMatrix.col2().xyz();
+	//float hfovDegrees = (float)ssg.camera.fov;
+	//SetPerspectiveCamera(origin, target, roll, hfovDegrees);
+	//Fluxions::Matrix4f coronaMatrix(
+	//	1.0, 0.0, 0.0, 0.0,
+	//	0.0, 0.0, -1.0, 0.0,
+	//	0.0, -1.0, 0.0, 0.0,
+	//	0.0, 0.0, 0.0, 1.0);
+	//cameraMatrix = ssg.camera.actualViewMatrix;
 
-	Hf::Log.infofn(__FUNCTION__, "Writing Regular scene %s", filename.c_str());
-	std::ofstream fout(filename);
-	if (!fout)
-		return;
+	//HFLOGINFO("Writing Regular scene %s", filename.c_str());
+	//std::ofstream fout(filename);
+	//if (!fout)
+	//	return;
 
-	XmlBeginTag(fout, "scene") << std::endl;
+	//XmlBeginTag(fout, "scene") << std::endl;
 
-	//fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Direct\"><componentName>diffuseDirect</componentName></renderElement>" << std::endl;
-	//fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Reflect\"><componentName>diffuseDirect</componentName></renderElement>" << std::endl;
-	//fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Indirect\"><componentName>diffuseIndirect</componentName></renderElement>" << std::endl << std::endl;
+	////fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Direct\"><componentName>diffuseDirect</componentName></renderElement>" << std::endl;
+	////fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Reflect\"><componentName>diffuseDirect</componentName></renderElement>" << std::endl;
+	////fout << "<renderElement class=\"Components\" instanceName=\"CESSENTIAL_Indirect\"><componentName>diffuseIndirect</componentName></renderElement>" << std::endl << std::endl;
 
-	XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "export_corona_ground_truth.conf") << "\n\n";
+	//XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "export_corona_ground_truth.conf") << "\n\n";
 
-	// Camera
-	writeCamera(fout);
+	//// Camera
+	//writeCamera(fout);
 
-	// Sun
-	writeSun(fout, ssg);
+	//// Sun
+	//writeSun(fout, ssg);
 
-	// Geometry Groups
-	writeGeometryGroups(fout, ssg);
+	//// Geometry Groups
+	//writeGeometryGroups(fout, ssg);
 
-	XmlEndTag(fout, "scene") << std::endl;
+	//XmlEndTag(fout, "scene") << std::endl;
 
-	fout.close();
+	//fout.close();
 }
 
 void CoronaSceneFile::WriteCubeMapSCN(const std::string &filename, const Fluxions::SimpleSceneGraph &ssg)
@@ -115,32 +127,42 @@ void CoronaSceneFile::WriteCubeMapSCN(const std::string &filename, const Fluxion
 
 void CoronaSceneFile::WriteCubeMapSCN(const std::string &filename, const Fluxions::SimpleSceneGraph &ssg, const Fluxions::Vector3f &cameraPosition)
 {
-	SetCubeMapCamera(cameraPosition, cameraPosition + Fluxions::Vector3f(0.0f, 0.0f, -1.0f), Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
+	Fluxions::XmlSceneGraphWriter writer;
+	writer.setCubeMapCamera(cameraPosition,
+							cameraPosition + Fluxions::Vector3f(0.0f, 0.0f, -1.0f),
+							Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
+	writer.export_path_prefix = "./corona_export2/";
+	writer.extra_tags.push_back({ "conffile", "../" + CoronaJob::confPathPrefix + "export_corona_ground_truth.conf" });
+	ssg.Save(filename, &writer);
 
-	Hf::Log.infofn(__FUNCTION__, "Writing Cube Map SCN scene %s", filename.c_str());
-	std::ofstream fout(filename);
-	if (!fout)
-		return;
+	//SetCubeMapCamera(cameraPosition,
+	//				 cameraPosition + Fluxions::Vector3f(0.0f, 0.0f, -1.0f),
+	//				 Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
 
-	XmlBeginTag(fout, "scene") << std::endl;
+	//HFLOGINFO("Writing Cube Map SCN scene %s", filename.c_str());
+	//std::ofstream fout(filename);
+	//if (!fout)
+	//	return;
 
-	// Camera
-	writeCamera(fout);
+	//XmlBeginTag(fout, "scene") << std::endl;
 
-	// Sun
-	writeSun(fout, ssg);
+	//// Camera
+	//writeCamera(fout);
 
-	// Geometry Groups
-	writeGeometryGroups(fout, ssg);
+	//// Sun
+	//writeSun(fout, ssg);
 
-	XmlEndTag(fout, "scene") << std::endl;
+	//// Geometry Groups
+	//writeGeometryGroups(fout, ssg);
 
-	fout.close();
+	//XmlEndTag(fout, "scene") << std::endl;
+
+	//fout.close();
 }
 
 void CoronaSceneFile::WriteSkySCN(const std::string &filename, const Fluxions::SimpleSceneGraph &ssg)
 {
-	Hf::Log.infofn(__FUNCTION__, "Writing Sky scene %s", filename.c_str());
+	HFLOGINFO("Writing Sky scene %s", filename.c_str());
 	std::ofstream fout(filename);
 	if (!fout)
 		return;
@@ -379,7 +401,7 @@ void CoronaSceneFile::WriteCache(const Fluxions::SimpleSceneGraph &ssg)
 		std::string last_mtllib;
 		std::string mtl_name;
 		int obj_count = 0;
-		auto it = ssg.geometry.cbegin();
+		auto it = ssg.geometry.begin();
 		for (unsigned i = 0; i < ssg.geometry.size(); i++, it++)
 		{
 			const SimpleGeometryGroup &sgo = it->second;
@@ -591,7 +613,7 @@ void CoronaSceneFile::WriteMaterials(const Fluxions::SimpleSceneGraph &ssg, bool
 	std::string last_mtllib;
 	std::string mtl_name;
 	// unsigned obj_count = 0;
-	auto it = ssg.geometry.cbegin();
+	auto it = ssg.geometry.begin();
 	for (unsigned i = 0; i < ssg.geometry.size(); i++, it++)
 	{
 		const SimpleGeometryGroup &sgo = it->second;
