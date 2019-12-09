@@ -522,42 +522,42 @@ namespace Fluxions
 		return currentMtlPtr;
 	}
 
-	const std::string& SimpleMaterialSystem::GetLibraryName() {
+	const std::string& SimpleMaterialSystem::GetLibraryName() const {
 		return currentMtlLibName;
 	}
 
-	const std::string& SimpleMaterialSystem::GetMaterialName() {
+	const std::string& SimpleMaterialSystem::GetMaterialName() const {
 		return currentMtlName;
 	}
 
-	const std::string& SimpleMaterialSystem::GetMaterialName(GLuint handle) {
+	const std::string& SimpleMaterialSystem::GetMaterialName(GLuint handle) const {
 		if (currentMtlLibPtr != nullptr)
 			return currentMtlLibPtr->mtls.GetNameFromHandle(handle);
 		else
 			return defaultName;
 	}
 
-	GLuint SimpleMaterialSystem::GetLibraryId() {
+	GLuint SimpleMaterialSystem::GetLibraryId() const {
 		return currentMtlLibId;
 	}
 
-	GLuint SimpleMaterialSystem::GetMaterialId() {
+	GLuint SimpleMaterialSystem::GetMaterialId() const {
 		return currentMtlId;
 	}
 
-	GLuint SimpleMaterialSystem::GetLibraryId(const std::string& name) {
+	GLuint SimpleMaterialSystem::GetLibraryId(const std::string& name) const {
 		return mtllibs.GetHandleFromName(name);
 	}
 
-	GLuint SimpleMaterialSystem::GetMaterialId(const std::string& name) {
+	GLuint SimpleMaterialSystem::GetMaterialId(const std::string& name) const {
 		if (currentMtlLibPtr) {
 			return currentMtlLibPtr->mtls.GetHandleFromName(name);
 		}
 		return 0;
 	}
 
-	GLuint SimpleMaterialSystem::GetLibraryMaterialId(const std::string& mtllibName, const std::string& mtlName) {
-		SimpleMaterialLibrary* pmtllib = nullptr;
+	GLuint SimpleMaterialSystem::GetLibraryMaterialId(const std::string& mtllibName, const std::string& mtlName) const {
+		const SimpleMaterialLibrary* pmtllib = nullptr;
 		GLuint handle = 0;
 		if (mtllibs.IsAHandle(mtllibName))
 			pmtllib = &(mtllibs[mtllibName]);
