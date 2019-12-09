@@ -126,6 +126,8 @@
 #include <fluxions_draw_gl1gl2.hpp>
 */
 
+#include <fluxions_resource_manager.hpp>
+
 /*
 #include <ArHosekSkyModel.h>
 
