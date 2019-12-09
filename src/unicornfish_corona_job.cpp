@@ -111,24 +111,24 @@ void CoronaJob::Start(CoronaSceneFile &coronaScene, Fluxions::SimpleSceneGraph &
 		{
 			tonemap = 0.0f;
 		}
-		Hf::Log.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
+		HFLOGINFO("Writing tonemap conf %s", tonemapconf.c_str());
 
 		std::ofstream fout(tonemapconf);
-		fout << "Float colorMap.simpleExposure = " << tonemap << std::endl;
+		fout << "Float colorMap.simpleExposure = " << tonemap << "\n";
 		if (type == Type::REF)
 		{
-			fout << "Int image.width = " << imageWidth << std::endl;
-			fout << "Int image.height = " << imageHeight << std::endl;
+			fout << "Int image.width = " << imageWidth << "\n";
+			fout << "Int image.height = " << imageHeight << "\n";
 		}
 		else
 		{
-			fout << "Int image.width = " << 6 * 128 << std::endl;
-			fout << "Int image.height = " << 128 << std::endl;
+			fout << "Int image.width = " << 6 * 128 << "\n";
+			fout << "Int image.height = " << 128 << "\n";
 		}
 		if (!isHQ)
 		{
-			fout << "Int shading.maxRayDepth = " << maxRayDepth << std::endl;
-			fout << "Int progressive.passLimit = " << passLimit << std::endl;
+			fout << "Int shading.maxRayDepth = " << maxRayDepth << "\n";
+			fout << "Int progressive.passLimit = " << passLimit << "\n";
 		}
 		fout.close();
 	}
@@ -224,7 +224,7 @@ std::string CoronaJob::MakeCoronaCommandLine()
 
 	cmd << " -c " << exportPathPrefix + scene_name << "_tonemap.conf";
 
-	Hf::Log.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
+	HFLOGINFO("running %s", cmd.str().c_str());
 
 	return cmd.str();
 }
@@ -251,11 +251,11 @@ bool CoronaJob::Run()
 		std::string commandLine = MakeCoronaCommandLine();
 		pcmd = commandLine.c_str();
 
-		Hf::Log.infofn(__FUNCTION__, "running %s", pcmd);
+		HFLOGINFO("running %s", pcmd);
 		retval = lastCoronaRetval = system(pcmd);
 		if (retval != 0)
 		{
-			Hf::Log.errorfn(__FUNCTION__, "unable to run corona");
+			HFLOGERROR("unable to run corona");
 			return false;
 		}
 		//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
@@ -265,11 +265,11 @@ bool CoronaJob::Run()
 		std::ostringstream cmd;
 		cmd << "magick " << output_path_exr << " " << output_path_png;
 		pcmd = cmd.str().c_str();
-		Hf::Log.infofn(__FUNCTION__, "running %s", pcmd);
+		HFLOGINFO("running %s", pcmd);
 		retval = lastConvertRetval = system(pcmd);
 		if (retval != 0)
 		{
-			Hf::Log.errorfn(__FUNCTION__, "unable to convert EXR to PNG");
+			HFLOGERROR("unable to convert EXR to PNG");
 			return false;
 		}
 	}
@@ -277,11 +277,11 @@ bool CoronaJob::Run()
 		std::ostringstream cmd;
 		cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
 		pcmd = cmd.str().c_str();
-		Hf::Log.infofn(__FUNCTION__, "running %s", pcmd);
+		HFLOGINFO("running %s", pcmd);
 		retval = lastConvertRetval = system(pcmd);
 		if (retval != 0)
 		{
-			Hf::Log.errorfn(__FUNCTION__, "unable to convert PNG to PPM");
+			HFLOGERROR("unable to convert PNG to PPM");
 			return false;
 		}
 	}
@@ -291,23 +291,23 @@ bool CoronaJob::Run()
 std::string CoronaJob::ToString() const
 {
 	std::ostringstream ostr;
-	ostr << imageWidth << std::endl;
-	ostr << imageHeight << std::endl;
-	ostr << ignoreCache << std::endl;
-	ostr << maxRayDepth << std::endl;
-	ostr << passLimit << std::endl;
-	ostr << elapsedTime << std::endl;
-	ostr << finished << std::endl;
-	ostr << working << std::endl;
-	ostr << isHQ << std::endl;
-	ostr << isHDR << std::endl;
-	ostr << sendLight << std::endl;
-	ostr << recvLight << std::endl;
+	ostr << imageWidth << "\n";
+	ostr << imageHeight << "\n";
+	ostr << ignoreCache << "\n";
+	ostr << maxRayDepth << "\n";
+	ostr << passLimit << "\n";
+	ostr << elapsedTime << "\n";
+	ostr << finished << "\n";
+	ostr << working << "\n";
+	ostr << isHQ << "\n";
+	ostr << isHDR << "\n";
+	ostr << sendLight << "\n";
+	ostr << recvLight << "\n";
 	std::string s_type;
-	ostr << CoronaJob::TypeToString(type, s_type) << std::endl;
-	ostr << scene_name << std::endl;
-	ostr << output_path_exr << std::endl;
-	ostr << output_path_ppm << std::endl;
+	ostr << CoronaJob::TypeToString(type, s_type) << "\n";
+	ostr << scene_name << "\n";
+	ostr << output_path_exr << "\n";
+	ostr << output_path_ppm << "\n";
 
 	return ostr.str();
 }
