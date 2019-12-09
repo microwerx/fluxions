@@ -169,6 +169,8 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\fluxions_scene_graph_reader.cpp" />
+    <ClCompile Include="src\fluxions_scene_graph_writer.cpp" />
     <ClCompile Include="src\fluxions_astronomy.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -605,6 +607,7 @@
     <ClInclude Include="include\fluxions_es2_state_info.hpp" />
     <ClInclude Include="include\fluxions_fileio.hpp" />
     <ClInclude Include="include\fluxions_fileio_iostream.hpp" />
+    <ClInclude Include="include\fluxions_file_reader_writer.hpp" />
     <ClInclude Include="include\fluxions_gte.hpp" />
     <ClInclude Include="include\fluxions_gte_bounding_box.hpp" />
     <ClInclude Include="include\fluxions_gte_catmull_rom.hpp" />
@@ -685,6 +688,8 @@
     <ClInclude Include="include\fluxions_draw_gl1gl2.hpp" />
     <ClInclude Include="include\hatchetfish.hpp" />
     <ClInclude Include="include\hatchetfish_stopwatch.hpp" />
+    <ClInclude Include="include\fluxions_scene_graph_reader.hpp" />
+    <ClInclude Include="include\fluxions_scene_graph_writer.hpp" />
     <ClInclude Include="include\unicornfish.hpp" />
     <ClInclude Include="include\unicornfish_broker.hpp" />
     <ClInclude Include="include\unicornfish_client.hpp" />
