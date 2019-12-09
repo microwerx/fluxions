@@ -35,6 +35,7 @@
 #include <functional>
 #include <regex>
 #include <random>
+#include <future>
 
 // C Libraries
 
@@ -42,9 +43,5 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-namespace Fluxions
-{
-}
 
 #endif
