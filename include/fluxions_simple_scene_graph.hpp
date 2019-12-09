@@ -34,10 +34,10 @@
 #include <fluxions_simple_geometry_group.hpp>
 #include <fluxions_simple_camera.hpp>
 #include <fluxions_simple_environment.hpp>
-#include <fluxions_simple_renderer_plugin.hpp>
 #include <fluxions_shader_program_locations.hpp>
 #include <fluxions_simple_sphere.hpp>
 #include <fluxions_simple_point_light.hpp>
+#include <fluxions_scene_graph_reader.hpp>
 
 namespace Fluxions
 {
@@ -45,6 +45,10 @@ namespace Fluxions
 	constexpr int MaxSphlDegree = 9;
 	constexpr int DefaultSphlDegree = 2;
 	constexpr int SphlSunIndex = MaxSphlLights;
+
+	struct SceneGraphReader;
+	struct SceneGraphWriter;
+	struct ISimpleRendererPlugin;
 
 	class SimpleSceneGraph
 	{
@@ -115,6 +119,16 @@ namespace Fluxions
 
 		bool Load(const std::string& filename);
 		bool Save(const std::string& filename);
+
+		bool Save(const char* path, SceneGraphWriter* writer) const;
+		bool Load(const char* path, SceneGraphReader* reader);
+
+		bool Save(const std::string& path, SceneGraphWriter* writer) const {
+			return Save(path.c_str(), writer);
+		}
+		bool Load(const std::string& path, SceneGraphReader* reader) {
+			return Load(path.c_str(), reader);
+		}
 
 		const BoundingBoxf& GetBoundingBox();
 
