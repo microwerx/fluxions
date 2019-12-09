@@ -8,9 +8,8 @@ namespace Fluxions
 {
 	class SimpleSceneGraph;
 
-	class ISimpleRendererPlugin
+	struct ISimpleRendererPlugin
 	{
-	public:
 		ISimpleRendererPlugin(SimpleSceneGraph* pointerToSSG);
 
 		virtual bool Reset() = 0;
