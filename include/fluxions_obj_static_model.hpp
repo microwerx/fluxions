@@ -52,8 +52,8 @@ namespace Fluxions
 		~OBJStaticModel();
 
 		bool LoadOBJ(const std::string& filename);
-		bool SaveOBJ(const std::string& filename);
-		void SavePrecompiled(const std::string& filename, const std::string objname);
+		bool SaveOBJ(const std::string& filename) const;
+		void SavePrecompiled(const std::string& filename, const std::string objname) const;
 		void LoadPrecompiled(const int numIndices, const int* indices, const int numVertices, const float* vertices, const int numSurfaces, const OBJSurface* surfaces);
 		void ComputeTangentVectors();
 		void Clear();
