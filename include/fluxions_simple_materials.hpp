@@ -112,9 +112,6 @@ namespace Fluxions
 		TResourceManager<SimpleMaterial> mtls;
 		FilePathInfo fpi;
 		std::string name;
-
-		SimpleMaterialLibrary() {}
-		~SimpleMaterialLibrary() {}
 	};
 
 	class SimpleMaterialSystem
@@ -138,14 +135,22 @@ namespace Fluxions
 		void SynchronizeIds();
 
 	public:
+		using iterator = typename TResourceManager<SimpleMaterialLibrary>::iterator;
+		using const_iterator = typename TResourceManager<SimpleMaterialLibrary>::const_iterator;
+		using value_type = typename TResourceManager<SimpleMaterialLibrary>::value_type;
+		using key_type = typename TResourceManager<SimpleMaterialLibrary>::key_type;
+		using mapped_type = typename TResourceManager<SimpleMaterialLibrary>::mapped_type;
+
 		SimpleMaterialSystem();
 		~SimpleMaterialSystem();
 
 		void Clear();
 
-		auto begin() -> decltype(mtllibs.begin()) { return mtllibs.begin(); }
-		auto end() -> decltype(mtllibs.end()) { return mtllibs.end(); }
-		auto size() -> decltype(mtllibs.size()) { return mtllibs.size(); }
+		iterator begin() { return mtllibs.begin(); }
+		iterator end() { return mtllibs.end(); }
+		const_iterator begin() const { return mtllibs.begin(); }
+		const_iterator end() const { return mtllibs.end(); }
+		unsigned size() { return mtllibs.size(); }
 
 		bool Save(const std::string& path);
 		bool Load(const std::string& mtllibName, const std::string& filename);
@@ -164,15 +169,15 @@ namespace Fluxions
 		const SimpleMaterial* GetLibraryMaterial(const std::string& mtllibName, const std::string& mtlName) const;
 		SimpleMaterial* GetCurrentMaterial() { return currentMtlPtr; }
 
-		const std::string& GetLibraryName();
-		const std::string& GetMaterialName();
-		const std::string& GetMaterialName(GLuint id);
+		const std::string& GetLibraryName() const;
+		const std::string& GetMaterialName() const;
+		const std::string& GetMaterialName(GLuint id) const;
 
-		GLuint GetLibraryId();
-		GLuint GetMaterialId();
-		GLuint GetLibraryId(const std::string& name);
-		GLuint GetMaterialId(const std::string& name);
-		GLuint GetLibraryMaterialId(const std::string& mtllibName, const std::string& mtlName);
+		GLuint GetLibraryId() const;
+		GLuint GetMaterialId() const;
+		GLuint GetLibraryId(const std::string& name) const;
+		GLuint GetMaterialId(const std::string& name) const;
+		GLuint GetLibraryMaterialId(const std::string& mtllibName, const std::string& mtlName) const;
 
 		bool AddMap(const std::string& path, const std::string& filename);
 		bool AddMapShader(const std::string& name, const std::string& shader);
