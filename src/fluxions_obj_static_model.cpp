@@ -375,7 +375,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool OBJStaticModel::SaveOBJ(const std::string& filename) {
+	bool OBJStaticModel::SaveOBJ(const std::string& filename) const {
 		Hf::Log.infofn(__FUNCTION__, "Writing OBJ %s", filename.c_str());
 
 		std::ofstream fout(filename.c_str());
@@ -414,7 +414,7 @@ namespace Fluxions
 		return true;
 	}
 
-	void OBJStaticModel::SavePrecompiled(const std::string& filename, const std::string objname) {
+	void OBJStaticModel::SavePrecompiled(const std::string& filename, const std::string objname) const {
 		Hf::Log.infofn(__FUNCTION__, "Writing precompiled %s", filename.c_str());
 
 		std::string outFilename = filename + ".cpp";
