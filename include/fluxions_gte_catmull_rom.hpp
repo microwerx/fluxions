@@ -9,6 +9,23 @@ namespace Fluxions
 {
 
 template <typename ScalarType, typename VectorType>
+ScalarType CubicBezier(ScalarType t,					   
+					   const VectorType& P0,
+					   const VectorType& P1,
+					   const VectorType& P2,
+					   const VectorType& P3) {
+	float one_minus_t = 1 - t;
+	float one_minus_t_2 = one_minus_t * one_minus_t;
+	float t2 = t * t;
+	float d = t * t * t;
+	float a = one_minus_t * one_minus_t_2;
+	float b = 3 * one_minus_t_2 * t;
+	float c = 3 * one_minus_t * t2;
+	return (a * P0) + (b * P1) + (c * P2) + (d * P3);
+}
+
+
+template <typename ScalarType, typename VectorType>
 ScalarType CatmullRomKnot(ScalarType t0,
 						  ScalarType alpha,
 						  const VectorType& P0,
