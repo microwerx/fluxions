@@ -19,6 +19,7 @@
 #ifndef FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 #define FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>
@@ -27,7 +28,6 @@
 #include <fluxions_pbsky.hpp>
 #include <fluxions_resource_manager.hpp>
 #include <fluxions_simple_materials.hpp>
-#include <fluxions_stdcxx.hpp>
 #include <fluxions_obj_static_model.hpp>
 #include <fluxions_simple_gpu_texture.hpp>
 #include <fluxions_simple_render_config.hpp>

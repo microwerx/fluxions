@@ -1,6 +1,8 @@
 #ifndef FLUXIONS_FILE_READER_WRITER_HPP
 #define FLUXIONS_FILE_READER_WRITER_HPP
 
+#include <fluxions_stdcxx.hpp>
+
 namespace Fluxions
 {
 

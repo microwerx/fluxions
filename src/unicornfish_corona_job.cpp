@@ -16,9 +16,7 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#ifdef __unix__
-#include <unistd.h>
-#endif
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_xml.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>

@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <sstream>
+#include <fluxions_stdcxx.hpp>
 //#include <fluxions_fileio.hpp>
 #include <fluxions_fileio_iostream.hpp>
 #include <fluxions_simple_materials.hpp>

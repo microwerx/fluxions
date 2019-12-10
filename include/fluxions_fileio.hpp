@@ -19,9 +19,7 @@
 #ifndef FLUXIONS_FILEIO_HPP
 #define FLUXIONS_FILEIO_HPP
 
-#include <string>
-#include <vector>
-#include <fstream>
+#include <fluxions_stdcxx.hpp>
 
 namespace Fluxions
 {

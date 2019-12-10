@@ -17,9 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_fileio.hpp>
 #include <fluxions_types.hpp>
 
@@ -29,19 +27,7 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#elif __unix__
-#include <libgen.h> // for dirname() and basename()
-#include <unistd.h> // for realpath()
 #endif
-
-#include <memory.h> // for free()
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <regex>
-#include <string>
-#include <vector>
 
 namespace Fluxions
 {

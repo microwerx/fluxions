@@ -43,5 +43,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory.h> // for free()
+
+#ifdef __unix__
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <libgen.h> // for dirname() and basename()
+#include <unistd.h>
+#endif
 
 #endif
