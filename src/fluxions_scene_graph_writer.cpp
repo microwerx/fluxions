@@ -111,7 +111,12 @@ bool XmlSceneGraphWriter::write(const SimpleSceneGraph* ssg) {
 	XmlBeginTag(fout, "scene") << "\n";
 
 	for (string_string& ss : extra_tags) {
-		XmlString(fout, ss.first, ss.second, 1) << "\n";
+		if (ss.first == "") {
+			fout << ss.second << "\n";
+		}
+		else {
+			XmlString(fout, ss.first, ss.second, 1) << "\n";
+		}
 	}
 
 	if (!camera_specified_) {
@@ -183,6 +188,7 @@ void XmlSceneGraphWriter::writeCamera(std::ostream& ostr) {
 
 void XmlSceneGraphWriter::writeSun(std::ostream& ostr,
 								   const Fluxions::SimpleSceneGraph* ssg) {
+	if (!write_sun) return;
 	XmlString(ostr, "mtllib", lights_mtllib, 1) << "\n";
 	XmlBeginTag(ostr, "sun", 1) << "\n";
 	Fluxions::Vector3f sunDirTo(ssg->environment.curSunDirTo.x,
@@ -241,6 +247,7 @@ void XmlSceneGraphWriter::writeSun(std::ostream& ostr,
 
 void XmlSceneGraphWriter::writeGeometryGroups(std::ostream& ostr,
 											  const Fluxions::SimpleSceneGraph* ssg) {
+	if (!write_geometry) return;
 	writeCache(ssg);
 	XmlBeginTag(ostr, "mtllib", 1);
 	ostr << "materials_corona.mtl";
@@ -283,7 +290,6 @@ void XmlSceneGraphWriter::writeCache(const SimpleSceneGraph* ssg) {
 				std::ostringstream obj_pathname;
 				obj_pathname << "object_" << std::setw(3) << std::setfill('0') << obj_count << "_" << sgo.objectName << ".obj";
 				std::string OBJpath = export_path_prefix + obj_pathname.str();
-				HFLOGINFO("Writing out %s", OBJpath.c_str());
 
 				mtl_name = sgo.objectName + "_" + surface.materialName;
 				for (auto& c : mtl_name) {
@@ -297,8 +303,13 @@ void XmlSceneGraphWriter::writeCache(const SimpleSceneGraph* ssg) {
 						writeMtl(mtl_fout, mtlxml_fout, mtl, ssg);
 					}
 				}
-				std::ofstream obj_fout(OBJpath);
-				writeObj(obj_fout, obj, surface);
+
+				FilePathInfo objfpi(OBJpath);
+				if (objfpi.DoesNotExist()) {
+					HFLOGINFO("Writing out %s", OBJpath.c_str());
+					std::ofstream obj_fout(OBJpath);
+					writeObj(obj_fout, obj, surface);
+				}
 
 				Fluxions::Matrix4f fixMatrix(
 					1.0f, 0.0f, 0.0f, 0.0f,
@@ -319,18 +330,22 @@ void XmlSceneGraphWriter::writeCache(const SimpleSceneGraph* ssg) {
 		for (auto& mapIt : written_maps) {
 			XmlCoronaMapTexture(mtlxml_fout, "mapDefinition", mapIt.first, mapIt.first, 1, 2.2f) << "\n";
 
+			std::string map_path = export_path_prefix + mapIt.first;
+			FilePathInfo mtlfpi(map_path);
+			if (mtlfpi.DoesNotExist()) {
 #ifdef _WIN32
-			// CopyFile(dst, src, bOverWrite?)
-			CopyFile(mapIt.second.c_str(), (export_path_prefix + mapIt.first).c_str(), TRUE);
+				// CopyFile(dst, src, bOverWrite?)
+				CopyFile(mapIt.second.c_str(), map_path.c_str(), TRUE);
 #elif __unix__
-			// POSIX version does not exist
-			// So we will call system instead
-			std::string cp_args = mapIt.second + " " + exportPathPrefix + mapIt.first;
-			execl("/bin/cp", cp_args.c_str());
+				// POSIX version does not exist
+				// So we will call system instead
+				std::string cp_args = mapIt.second + " " + map_path;
+				execl("/bin/cp", cp_args.c_str());
 #else
 #error "unsupported platform"
 #endif
-			//copy_file(mapIt.second, corona_export_prefix + mapIt.first);
+				//copy_file(mapIt.second, corona_export_prefix + mapIt.first);
+			}
 		}
 		XmlEndTag(mtlxml_fout, "mtlLib");
 		mtlxml_fout.close();

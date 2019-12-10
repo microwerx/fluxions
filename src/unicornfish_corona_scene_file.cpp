@@ -75,7 +75,7 @@ void CoronaSceneFile::WriteSCN(const std::string &filename, const Fluxions::Simp
 								ssg.camera.target(),
 								ssg.camera.roll(),
 								ssg.camera.fov);
-	writer.export_path_prefix = "./corona_export2/";
+	writer.export_path_prefix = CoronaJob::exportPathPrefix;
 	writer.extra_tags.push_back({ "conffile", "../" + CoronaJob::confPathPrefix + "export_corona_ground_truth.conf" });
 	ssg.Save(filename, &writer);
 	return;
@@ -131,7 +131,7 @@ void CoronaSceneFile::WriteCubeMapSCN(const std::string &filename, const Fluxion
 	writer.setCubeMapCamera(cameraPosition,
 							cameraPosition + Fluxions::Vector3f(0.0f, 0.0f, -1.0f),
 							Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
-	writer.export_path_prefix = "./corona_export2/";
+	writer.export_path_prefix = CoronaJob::exportPathPrefix;
 	writer.extra_tags.push_back({ "conffile", "../" + CoronaJob::confPathPrefix + "export_corona_ground_truth.conf" });
 	ssg.Save(filename, &writer);
 
@@ -162,20 +162,29 @@ void CoronaSceneFile::WriteCubeMapSCN(const std::string &filename, const Fluxion
 
 void CoronaSceneFile::WriteSkySCN(const std::string &filename, const Fluxions::SimpleSceneGraph &ssg)
 {
-	HFLOGINFO("Writing Sky scene %s", filename.c_str());
-	std::ofstream fout(filename);
-	if (!fout)
-		return;
+	Fluxions::XmlSceneGraphWriter writer;
+	writer.setCubeMapCamera(Fluxions::Vector3f(0.0f, 0.0f, 0.0f),
+							Fluxions::Vector3f(0.0f, 1.0f, 0.0f),
+							Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
+	writer.export_path_prefix = CoronaJob::exportPathPrefix;
+	writer.extra_tags.push_back({ "conffile", "../" + CoronaJob::confPathPrefix + "ssphh_sky.conf" });
+	writer.write_geometry = false;
+	ssg.Save(filename, &writer);
 
-	XmlBeginTag(fout, "scene") << std::endl;
-	XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "ssphh_sky.conf", 1) << std::endl
-																						 << std::endl;
-	SetCubeMapCamera(Fluxions::Vector3f(0.0f, 0.0f, 0.0f), Fluxions::Vector3f(0.0f, 1.0f, 0.0f), Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
-	writeCamera(fout);
-	writeSun(fout, ssg);
-	XmlEndTag(fout, "scene") << std::endl;
+	//HFLOGINFO("Writing Sky scene %s", filename.c_str());
+	//std::ofstream fout(filename);
+	//if (!fout)
+	//	return;
 
-	fout.close();
+	//XmlBeginTag(fout, "scene") << std::endl;
+	//XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "ssphh_sky.conf", 1) << std::endl
+	//																					 << std::endl;
+	//SetCubeMapCamera(Fluxions::Vector3f(0.0f, 0.0f, 0.0f), Fluxions::Vector3f(0.0f, 1.0f, 0.0f), Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
+	//writeCamera(fout);
+	//writeSun(fout, ssg);
+	//XmlEndTag(fout, "scene") << std::endl;
+
+	//fout.close();
 }
 
 bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxions::SimpleSceneGraph &ssg, int sourceLightIndex, int receivingLightIndex)
@@ -193,20 +202,24 @@ bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxion
 		return false;
 	}
 
-	Hf::Log.infofn(__FUNCTION__, "Writing VIZ scene %s", filename.c_str());
-	std::ofstream fout(filename);
-	if (!fout)
-		return false;
+	Fluxions::XmlSceneGraphWriter writer;
+	writer.export_path_prefix = CoronaJob::exportPathPrefix;
+	writer.extra_tags.push_back({ "conffile", "../" + CoronaJob::confPathPrefix + "sphlviz.conf" });
 
-	XmlBeginTag(fout, "scene") << std::endl;
-	XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "sphlviz.conf", 1) << std::endl
-																					   << std::endl;
+	//Hf::Log.infofn(__FUNCTION__, "Writing VIZ scene %s", filename.c_str());
+	//std::ofstream fout(filename);
+	//if (!fout)
+	//	return false;
+
+	//XmlBeginTag(fout, "scene") << std::endl;
+	//XmlString(fout, "conffile", "../" + CoronaJob::confPathPrefix + "sphlviz.conf", 1) << std::endl
+	//																				   << std::endl;
 
 	// Camera
 	if (receivingLightIndex < 0)
 	{
-		Fluxions::Vector3f position = ssg.camera.actualViewMatrix.col4().xyz();
-		SetCubeMapCamera(position, Fluxions::Vector3f(0.0f, 0.0f, 0.0f), Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
+		//Fluxions::Vector3f position = ssg.camera.actualViewMatrix.col4().xyz();
+		//SetCubeMapCamera(position, Fluxions::Vector3f(0.0f, 0.0f, 0.0f), Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
 	}
 	else
 	{
@@ -214,19 +227,25 @@ bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxion
 		Fluxions::Vector3f tmp = sphl2.position.xyz();
 		Fluxions::Vector3f position(tmp.x, -tmp.z, tmp.y);
 		Fluxions::Vector3f target(position.x, position.y - 1.0f, position.z);
-		SetCubeMapCamera(position, target, Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
-	}
-	writeCamera(fout);
+		//SetCubeMapCamera(position, target, Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
 
-	// Geometry Groups
-	writeGeometryGroups(fout, ssg);
+		writer.setCubeMapCamera(position,
+								target,
+								Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
+
+	}
+	//writeCamera(fout);
+
+	//// Geometry Groups
+	//writeGeometryGroups(fout, ssg);
 
 	if (sourceLightIndex < 0)
 	{
-		writeSun(fout, ssg);
+		//writeSun(fout, ssg);
 	}
 	else
 	{
+		writer.write_sun = false;
 		const SimpleSSPHHLight &sphl1 = ssphh->ssphhLights[sourceLightIndex];
 		Fluxions::Matrix4f lightMatrix(
 			0.1f, 0.0f, 0.0f, sphl1.position.x,
@@ -236,7 +255,7 @@ bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxion
 		FilePathInfo fpi(CoronaJob::exportPathPrefix + "sphlviz.mtl");
 		if (!fpi.Exists())
 		{
-			Hf::Log.infofn(__FUNCTION__, "Writing out sphlviz.mtl");
+			HFLOGINFO("Writing out sphlviz.mtl");
 			std::ofstream svout(CoronaJob::exportPathPrefix + "sphlviz.mtl");
 			svout << "<mtlLib>"
 					 "<materialDefinition name = \"sphlSphereLight\">"
@@ -250,6 +269,7 @@ bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxion
 			svout.close();
 		}
 		// int tab = 0;
+		std::ostringstream fout;
 		XmlString(fout, "mtllib", "sphlviz.mtl", 1) << std::endl;
 		XmlBeginTag(fout, "geometryGroup", 1) << std::endl;
 		XmlBeginTag(fout, "object", "sphere", 2) << std::endl;
@@ -261,10 +281,12 @@ bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxion
 		XmlMatrix4f(fout, "transform", lightMatrix, 3) << std::endl;
 		XmlEndTag(fout, "instance", 2) << std::endl;
 		XmlEndTag(fout, "geometryGroup", 1) << std::endl;
+		writer.extra_tags.push_back({ "", fout.str() });
 	}
 
-	XmlEndTag(fout, "scene");
-	fout.close();
+	//XmlEndTag(fout, "scene");
+	//fout.close();
+	ssg.Save(filename, &writer);
 	return true;
 }
 

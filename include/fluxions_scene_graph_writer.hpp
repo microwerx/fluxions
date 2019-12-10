@@ -39,7 +39,12 @@ struct XmlSceneGraphWriter : SceneGraphWriter {
 	// lights
 	// geometry groups
 	using string_string = std::pair<std::string, std::string>;
+	
+	// If first string is "", then the second is interpreted as already formatted
 	std::vector<string_string> extra_tags;
+
+	bool write_sun = true;
+	bool write_geometry = true;
 	bool enableKs = true;
 	std::string export_path_prefix{ "./xml_scn_output/" };
 private:
