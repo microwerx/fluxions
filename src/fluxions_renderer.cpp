@@ -32,6 +32,7 @@ namespace Fluxions
 
 	Renderer::~Renderer()
 	{
+		Reset();
 		KillTexUnits();
 	}
 
@@ -40,12 +41,12 @@ namespace Fluxions
 		return true;
 	}
 
-	void Renderer::Render(const IScene *pScene)
+	void Renderer::Render(const IScene* pScene)
 	{
 		if (!pScene) return;
 	}
 
-	bool Renderer::LoadConfig(const std::string &filename)
+	bool Renderer::LoadConfig(const std::string& filename)
 	{
 		FilePathInfo fpi(filename);
 		basepath = fpi.dir;
@@ -166,10 +167,13 @@ namespace Fluxions
 	{
 		pcur_program = nullptr;
 		pcur_renderconfig = nullptr;
+		Programs.clear();
 		RenderConfigs.clear();
-		Paths.clear();
-		Samplers.clear();
 		Textures.clear();
+		Samplers.clear();
+		Framebuffers.clear();
+		Renderbuffers.clear();
+		Paths.clear();
 		InitTexUnits();
 	}
 
@@ -215,9 +219,9 @@ namespace Fluxions
 		for (auto it = RenderConfigs.begin(); it != RenderConfigs.end(); it++)
 		{
 			HFLOGINFO("loading renderconfig %s", it->first.c_str());
-			Renderer::RenderConfig &rc = it->second;
+			Renderer::RenderConfig& rc = *it->second;
 
-			for (auto &p : rc.programs)
+			for (auto& p : rc.programs)
 			{
 				HFLOGINFO("loading program %s", p.name.c_str());
 
@@ -275,14 +279,14 @@ namespace Fluxions
 		}
 	}
 
-	SimpleProgramPtr Renderer::FindProgram(const std::string &renderConfigName, const std::string &name)
+	SimpleProgramPtr Renderer::FindProgram(const std::string& renderConfigName, const std::string& name)
 	{
 		SimpleProgramPtr p = nullptr;
 
-		auto it = RenderConfigs.find(renderConfigName);
-		if (it != RenderConfigs.end())
+		if (RenderConfigs.count(renderConfigName))
 		{
-			for (auto &program : it->second.programs)
+			for (RenderConfig::Program& program :
+				RenderConfigs[renderConfigName]->programs)
 			{
 				if (program.name == name)
 				{
@@ -294,23 +298,22 @@ namespace Fluxions
 		return p;
 	}
 
-	bool Renderer::new_renderconfig(const std::string &name)
+	bool Renderer::new_renderconfig(const std::string& name)
 	{
-		RenderConfigs[name] = RenderConfig(name);
+		RenderConfigs[name] = std::make_shared<RenderConfig>(name);
 		return use_renderconfig(name);
 	}
 
-	bool Renderer::use_renderconfig(const std::string &name)
+	bool Renderer::use_renderconfig(const std::string& name)
 	{
-		auto it = RenderConfigs.find(name);
 		pcur_renderconfig = nullptr;
-		if (it == RenderConfigs.end())
+		if (!RenderConfigs.count(name))
 			return false;
-		pcur_renderconfig = &it->second;
+		pcur_renderconfig = RenderConfigs[name];
 		return true;
 	}
 
-	bool Renderer::new_program(const std::string &name)
+	bool Renderer::new_program(const std::string& name)
 	{
 		if (pcur_renderconfig == nullptr)
 			return false;
@@ -318,20 +321,20 @@ namespace Fluxions
 		return use_program(name);
 	}
 
-	bool Renderer::use_program(const std::string &name)
+	bool Renderer::use_program(const std::string& name)
 	{
 		if (pcur_renderconfig == nullptr)
 			return false;
-		std::vector<RenderConfig::Program> &p = pcur_renderconfig->programs;
+		std::vector<RenderConfig::Program>& p = pcur_renderconfig->programs;
 		auto it = std::find_if(p.begin(), p.end(),
-			[&name](RenderConfig::Program &rc) { return rc.name == name; });
+			[&name](RenderConfig::Program& rc) { return rc.name == name; });
 		if (it == p.end())
 			return false;
 		pcur_program = &(*it);
 		return true;
 	}
 
-	bool Renderer::k_renderconfig(const Df::TokenVector &args)
+	bool Renderer::k_renderconfig(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "renderconfig")
@@ -341,7 +344,7 @@ namespace Fluxions
 		return false;
 	}
 
-	bool Renderer::k_path(const Df::TokenVector &args)
+	bool Renderer::k_path(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "path")
@@ -373,7 +376,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_program(const Df::TokenVector &args)
+	bool Renderer::k_program(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "program")
@@ -383,7 +386,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_vertshader(const Df::TokenVector &args)
+	bool Renderer::k_vertshader(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "vertshader")
@@ -398,7 +401,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_fragshader(const Df::TokenVector &args)
+	bool Renderer::k_fragshader(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "fragshader")
@@ -413,7 +416,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_geomshader(const Df::TokenVector &args)
+	bool Renderer::k_geomshader(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "geomshader")
@@ -428,7 +431,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_vertattrib(const Df::TokenVector &args)
+	bool Renderer::k_vertattrib(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 3 || args[0].sval != "vertattrib")
@@ -444,7 +447,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_sampler(const Df::TokenVector &args)
+	bool Renderer::k_sampler(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "sampler")
@@ -473,7 +476,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_texture(const Df::TokenVector &args)
+	bool Renderer::k_texture(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "texture")
@@ -530,7 +533,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_fbo(const Df::TokenVector &args)
+	bool Renderer::k_fbo(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "fbo")
@@ -580,7 +583,7 @@ namespace Fluxions
 		return true;
 	}
 
-	bool Renderer::k_renderbuffer(const Df::TokenVector &args)
+	bool Renderer::k_renderbuffer(const Df::TokenVector& args)
 	{
 		size_t count = args.size();
 		if (count < 5 || args[0].sval != "renderbuffer")

@@ -15,7 +15,8 @@ namespace Fluxions
 	{
 	private:
 		GLuint program = 0;
-		std::vector<std::shared_ptr<SimpleShader>> shaders;
+		using SimpleShaderPtr = std::shared_ptr<SimpleShader>;
+		std::vector<SimpleShaderPtr> shaders;
 
 		GLint linkStatus_ = 0;
 		bool linked = false;

@@ -57,16 +57,20 @@ namespace Fluxions
 
 				Program() {}
 				Program(const std::string& _name) : name(_name) {}
+				~Program() { program.reset(); }
 			};
+
+			using ProgramPtr = Program*;
 
 			std::string name;
 			std::vector<Program> programs;
 
 			RenderConfig() {};
 			RenderConfig(const std::string& _name) : name(_name) {}
+			~RenderConfig() { programs.clear(); }
 		};
 
-		using RenderConfigPtr = RenderConfig*;
+		using RenderConfigPtr = std::shared_ptr<RenderConfig>;
 
 		struct Texture
 		{
@@ -117,9 +121,9 @@ namespace Fluxions
 
 		// Render Configurations
 		virtual bool LoadConfig(const std::string& filename);
-		virtual bool IsConfig(const std::string& name) const { return RenderConfigs.find(name) != RenderConfigs.end(); }
+		virtual bool IsConfig(const std::string& name) const { return RenderConfigs.count(name); }
 		virtual bool UseConfig(const std::string& name) { return use_renderconfig(name); }
-		virtual RenderConfigPtr GetConfig(const std::string& name) { return IsConfig(name) ? &RenderConfigs.find(name)->second : nullptr; }
+		virtual RenderConfigPtr GetConfig(const std::string& name) { return IsConfig(name) ? RenderConfigs[name] : nullptr; }
 
 		// G-Buffer and Deferred Renderers
 		virtual bool SetGbufferRenderConfig(const std::string& name) {
@@ -133,8 +137,8 @@ namespace Fluxions
 		using Quadrant = Recti::Quadrant;
 
 		virtual bool SetDeferredRenderConfig(Quadrant quadrant,
-											 const std::string& rc,
-											 const std::string& program) {
+			const std::string& rc,
+			const std::string& program) {
 			deferredConfigs[quadrant] = GetConfig(rc);
 			deferredPrograms[quadrant] = FindProgram(rc, program);
 			return deferredConfigs[quadrant] != nullptr && deferredPrograms[quadrant] != nullptr;
@@ -155,8 +159,7 @@ namespace Fluxions
 		virtual void RenderDeferred(Quadrant quadrant = Recti::UpperLeft);
 
 		std::vector<SimpleProgramPtr> Programs;
-
-		std::map<std::string, RenderConfig> RenderConfigs;
+		std::map<std::string, RenderConfigPtr> RenderConfigs;
 		std::map<std::string, Texture> Textures;
 		std::map<std::string, Sampler> Samplers;
 		std::map<std::string, Framebuffer> Framebuffers;
@@ -184,8 +187,8 @@ namespace Fluxions
 		Recti deferredRect = Recti(0, 0, 0, 0);
 
 		std::string basepath;
-		RenderConfig* pcur_renderconfig = nullptr;
-		RenderConfig::Program* pcur_program = nullptr;
+		RenderConfigPtr pcur_renderconfig = nullptr;
+		RenderConfig::ProgramPtr pcur_program = nullptr;
 		std::string cur_sampler;
 		std::string cur_texture;
 		Framebuffer* pcur_fbo = nullptr;

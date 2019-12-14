@@ -155,6 +155,10 @@ namespace Fluxions
 			Hf::Log.info("%s(): program %d deleted.", __FUNCTION__, program);
 			glDeleteProgram(program);
 			program = 0;
+			for (SimpleShaderPtr& s : shaders) {
+				s->Delete();
+			}
+			shaders.clear();
 		}
 	}
 

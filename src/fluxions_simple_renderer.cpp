@@ -488,6 +488,13 @@ namespace Fluxions
 		currentObjectId = 0;
 		currentProgramId = 0;
 
+		for (auto& p : programs) {
+			if (p.second.use_count() > 1)
+			{
+				HFLOGWARN("Program count not 1: %i", p.second->GetProgram());
+			}
+			p.second.reset();
+		}
 		programs.clear();
 	}
 

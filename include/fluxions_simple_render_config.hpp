@@ -66,6 +66,7 @@ namespace Fluxions
 
 		GLbitfield GetClearBits() const;
 		bool check() const;
+		void reset();
 	};
 } // namespace Fluxions
 

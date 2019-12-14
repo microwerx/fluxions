@@ -29,6 +29,7 @@ namespace Fluxions
 	}
 
 	SimpleGLES30Renderer::~SimpleGLES30Renderer() {
+		renderConfig.reset();
 		if (abo)
 			glDeleteBuffers(1, &abo);
 		if (eabo)

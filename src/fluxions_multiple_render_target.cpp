@@ -75,6 +75,7 @@ namespace Fluxions
 				it->second.object = 0;
 			}
 		}
+		HFLOGDEBUG("Deleting framebuffer %i", fbo);
 		glDeleteFramebuffers(1, &fbo);
 		fbo = 0;
 		dirty = false;
@@ -88,6 +89,7 @@ namespace Fluxions
 		}
 
 		glGenFramebuffers(1, &fbo);
+		HFLOGDEBUG("Creating framebuffer %i", fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 		for (auto it = renderTargets.begin(); it != renderTargets.end(); it++) {

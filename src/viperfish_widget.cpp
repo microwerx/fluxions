@@ -86,8 +86,10 @@ void Widget::Kill() {
 	decoratorWidget_.reset();
 	decorateeWidget_.reset();
 	for (auto& w : children_) {
+		w->Kill();
 		w.reset();
 	}
+	children_.clear();
 	parent_.reset();
 }
 

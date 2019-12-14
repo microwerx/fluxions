@@ -45,4 +45,9 @@ namespace Fluxions
 
 		return true;
 	}
+
+	void SimpleRenderConfiguration::reset() {
+		shaderProgram.reset();
+		zShaderProgram.reset();
+	}
 }

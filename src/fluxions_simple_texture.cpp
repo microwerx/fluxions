@@ -21,8 +21,8 @@
 
 namespace Fluxions
 {
-	SamplerObject DefaultSamplerObject;
-	SimpleTexture DefaultTextureObject;
+	//SamplerObject DefaultSamplerObject;
+	//SimpleTexture DefaultTextureObject;
 
 	std::wstring StringToWString(const std::string& str) {
 		std::wstring output;
@@ -58,17 +58,21 @@ namespace Fluxions
 		id = 0;
 	}
 
-	SamplerObject::~SamplerObject() {}
+	SamplerObject::~SamplerObject() {
+		Delete();
+	}
 
 	void SamplerObject::Create() {
 		if (id != 0) {
 			Delete();
 		}
 		glGenSamplers(1, &id);
+		HFLOGINFO("Creating sampler %i", id);
 	}
 
 	void SamplerObject::Delete() {
 		if (id != 0) {
+			HFLOGINFO("Deleting sampler %i", id);
 			glDeleteSamplers(1, &id);
 			id = 0;
 		}
@@ -221,10 +225,12 @@ namespace Fluxions
 		if (id != 0)
 			Delete();
 		glGenTextures(1, &id);
+		HFLOGINFO("Creating texture %i", id);
 	}
 
 	void SimpleTexture::Delete() {
 		if (id != 0) {
+			HFLOGINFO("Deleting texture %i", id);
 			glDeleteTextures(1, &id);
 		}
 		id = 0;

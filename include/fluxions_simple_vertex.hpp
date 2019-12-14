@@ -54,6 +54,14 @@ namespace Fluxions
 	struct SimpleSlowVertex
 	{
 		GLfloat attrib[8][4] = { 0.0f };
+
+		SimpleSlowVertex() {
+			return;
+		}
+
+		~SimpleSlowVertex() {
+			return;
+		}
 	};
 } // namespace Fluxions
 

@@ -198,7 +198,9 @@ ISimpleRendererPlugin::ISimpleRendererPlugin(SimpleSceneGraph* pointerToSSG) {
 
 SimpleSceneGraph::SimpleSceneGraph() {}
 
-SimpleSceneGraph::~SimpleSceneGraph() {}
+SimpleSceneGraph::~SimpleSceneGraph() {
+	Reset();
+}
 
 void SimpleSceneGraph::Reset() {
 	boundingBox.Reset();
