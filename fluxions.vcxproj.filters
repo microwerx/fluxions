@@ -37,9 +37,6 @@
     <ClCompile Include="src\fluxions_es2_renderer.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_fileio.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_fileio_iostream.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
@@ -124,19 +121,7 @@
     <ClCompile Include="src\fluxions_pbsky.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_render_utilities.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_gles30_renderer.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_gpu_texture.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_simple_program.cpp">
@@ -145,19 +130,10 @@
     <ClCompile Include="src\fluxions_simple_property.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_render_configuration.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_renderer.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_simple_ssphh.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_simple_ssphh_light.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_texture.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_sphl.cpp">
@@ -277,6 +253,33 @@
     <ClCompile Include="src\fluxions_simple_materials.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_simple_gles30_renderer.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_renderer.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_render_utilities.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_gpu_texture.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_render_config.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_renderer.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_renderer_sampler_object.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_renderer_simple_texture.cpp">
+      <Filter>src\fluxions-gles30</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_file_path_info.cpp">
+      <Filter>src\fluxions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -331,9 +334,6 @@
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_es2_state_info.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_fileio.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_fileio_iostream.hpp">
@@ -513,9 +513,6 @@
     <ClInclude Include="include\fluxions_simple_surface.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_simple_texture.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_simple_uniform.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
@@ -667,6 +664,20 @@
     <ClInclude Include="include\fluxions_file_reader_writer.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
+    <ClInclude Include="include\fluxions_renderer_sampler_object.hpp">
+      <Filter>include\fluxions-gles30</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
+      <Filter>include\fluxions-gles30</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_map.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_material_library.hpp" />
+    <ClInclude Include="include\fluxions_simple_material.hpp" />
+    <ClInclude Include="include\fluxions_file_path_info.hpp">
+      <Filter>include\fluxions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
@@ -722,6 +733,12 @@
     </Filter>
     <Filter Include="src\fluxions-ssg">
       <UniqueIdentifier>{5620d350-8a55-43ae-aad5-8948d2482b61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\fluxions-gles30">
+      <UniqueIdentifier>{206af5a6-ea34-408b-b485-346848720236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\fluxions-gles30">
+      <UniqueIdentifier>{dbe714af-9daa-4a62-8b11-d1d7b267098e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
