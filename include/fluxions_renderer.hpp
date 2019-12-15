@@ -115,7 +115,7 @@ namespace Fluxions
 
 		virtual bool UploadCompileLink();
 		virtual void Render(const IScene* pScene);
-		virtual void Reset();
+		virtual void reset();
 
 		virtual void LoadShaders();
 

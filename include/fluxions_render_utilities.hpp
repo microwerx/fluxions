@@ -8,7 +8,7 @@ namespace Fluxions
 {
 	void RenderCubeShadowMap(const SimpleSceneGraph& ssg,
 							 SimpleCubeTexture& scs, 
-							 const SimpleRenderConfiguration& rc);
+							 const SimpleRenderConfig& rc);
 
 	bool SaveTextureMap(GLenum target,
 						GLuint id,
