@@ -32,7 +32,7 @@ namespace Fluxions
 
 	Renderer::~Renderer()
 	{
-		Reset();
+		reset();
 		KillTexUnits();
 	}
 
@@ -163,7 +163,7 @@ namespace Fluxions
 		return true;
 	}
 
-	void Renderer::Reset()
+	void Renderer::reset()
 	{
 		pcur_program = nullptr;
 		pcur_renderconfig = nullptr;

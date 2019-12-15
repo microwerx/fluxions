@@ -28,7 +28,7 @@ template class std::vector<Fluxions::SimpleGeometryMesh::Surface>;
 
 namespace Fluxions
 {
-void SimpleGeometryMesh::Reset()
+void SimpleGeometryMesh::reset()
 {
 	vertices.clear();
 	surfaces.clear();

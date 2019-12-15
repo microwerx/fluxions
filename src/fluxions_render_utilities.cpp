@@ -3,7 +3,7 @@
 
 namespace Fluxions
 {
-	void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfiguration& rc) {
+	void RenderCubeShadowMap(const SimpleSceneGraph& ssg, SimpleCubeTexture& scs, const SimpleRenderConfig& rc) {
 		FxSetErrorMessage("fluxions_simple_scene_graph.cpp", __LINE__, __FUNCTION__);
 
 		if (!scs.dirty)

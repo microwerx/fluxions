@@ -3,8 +3,9 @@
 
 namespace Fluxions
 {
-	struct SimpleRenderConfiguration
+	class SimpleRenderConfig
 	{
+	public:
 		bool useMaps = true;
 		bool useMaterials = true;
 		bool useZOnly = false;
@@ -64,9 +65,14 @@ namespace Fluxions
 		Matrix4f cameraMatrix;   // the actual camera matrix used...
 		Vector4f cameraPosition; // the actual camera position used...
 
+		SimpleRenderConfig(const std::string& name);
+		~SimpleRenderConfig();
+
 		GLbitfield GetClearBits() const;
 		bool check() const;
 		void reset();
+	private:
+		std::string name_;
 	};
 } // namespace Fluxions
 

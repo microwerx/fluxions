@@ -110,7 +110,7 @@ namespace Vf
 			modifiers = 0;
 		}
 
-		inline void Reset() {
+		inline void reset() {
 			modifiers = 0;
 			for (auto& key : keys) {
 				key.second = false;

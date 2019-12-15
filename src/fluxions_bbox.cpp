@@ -40,7 +40,7 @@ BBox::~BBox()
 {
 }
 
-void BBox::Reset()
+void BBox::reset()
 {
 	maxBounds = Vector3f(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	minBounds = Vector3f(FLT_MAX, FLT_MAX, FLT_MAX);

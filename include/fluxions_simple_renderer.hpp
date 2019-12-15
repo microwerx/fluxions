@@ -157,7 +157,7 @@ namespace Fluxions
 
 		void BuildBuffers();
 		void BindBuffers();
-		void Reset();
+		void reset();
 		void Render();
 		void RenderIf(const std::string& objectName, const std::string& groupName, const std::string& mtllibName, const std::string& mtlName, bool onlyRenderZ = false);
 		void RenderIf(GLuint objectId = 0, GLuint groupId = 0, GLuint mtllibId = 0, GLuint mtlId = 0, bool onlyRenderZ = false);

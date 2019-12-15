@@ -58,7 +58,7 @@ namespace Fluxions
 
 			bool optimizeIndexing = false;
 
-			BoundingBox.Reset();
+			BoundingBox.reset();
 
 			std::ifstream fin(filename.c_str());
 			std::string str;
@@ -295,7 +295,7 @@ namespace Fluxions
 			Vertices.resize(vertexCount);
 			Indices.resize(indexCount);
 			Surfaces.resize(surfaceCount);
-			BoundingBox.Reset();
+			BoundingBox.reset();
 
 			fin.read(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex) * vertexCount);
 			fin.read(reinterpret_cast<char*>(&Indices[0]), sizeof(unsigned) * indexCount);

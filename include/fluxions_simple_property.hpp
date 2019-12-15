@@ -19,14 +19,6 @@
 #ifndef FLUXIONS_SIMPLE_PROPERTY_HPP
 #define FLUXIONS_SIMPLE_PROPERTY_HPP
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
-#include <fluxions_gte.hpp>
-#include <hatchetfish.hpp>
-
 namespace Fluxions
 {
 
@@ -377,7 +369,7 @@ namespace Fluxions
 		/// <summary>Destructor for SimpleAssociativePropertyList</summary>
 		~SimpleAssociativePropertyList();
 
-		/// <summary>Reset() completely clears all pointers and names from this container.</summary>
+		/// <summary>reset() completely clears all pointers and names from this container.</summary>
 		void Clear();
 
 		/// <summary>Push(name, valuePtr) inserts a std::shared_ptr to a simple property in the list.</summary>

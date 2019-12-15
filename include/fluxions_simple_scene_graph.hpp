@@ -113,9 +113,9 @@ namespace Fluxions
 		SimpleSceneGraph();
 		~SimpleSceneGraph();
 
-		/// <summary>Reset() is a method of SimpleSceneGraph.
+		/// <summary>reset() is a method of SimpleSceneGraph.
 		/// <para>Resets scene graph to initial conditions. It's completely empty with default values.</para></summary>
-		void Reset();
+		void reset();
 
 		bool Load(const std::string& filename);
 		bool Save(const std::string& filename);
@@ -140,8 +140,8 @@ namespace Fluxions
 
 		void Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
 
-		void AdvancedRender(SimpleRenderConfiguration& rc);
-		void AdvancedRenderZOnly(const SimpleRenderConfiguration& rc) const;
+		void AdvancedRender(SimpleRenderConfig& rc);
+		void AdvancedRenderZOnly(const SimpleRenderConfig& rc) const;
 		void RenderZOnly(SimpleProgramPtr& program) const;
 
 		void SetUniforms(SimpleProgramPtr& shader);

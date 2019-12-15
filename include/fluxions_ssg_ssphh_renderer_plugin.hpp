@@ -36,7 +36,7 @@ namespace Fluxions
 		bool Draw() override;
 		bool Init() override;
 		bool Redo() override;
-		bool Reset() override;
+		bool reset() override;
 	private:
 		SimpleSceneGraph* pssg = nullptr;
 	};

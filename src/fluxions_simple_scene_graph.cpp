@@ -179,7 +179,7 @@ struct SimpleRendererUniforms {
 		cameraPosition = cameraMatrix * Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	void Reset() {
+	void reset() {
 		projectionMatrix.LoadIdentity();
 		cameraMatrix.LoadIdentity();
 		worldMatrix.LoadIdentity();
@@ -199,11 +199,11 @@ ISimpleRendererPlugin::ISimpleRendererPlugin(SimpleSceneGraph* pointerToSSG) {
 SimpleSceneGraph::SimpleSceneGraph() {}
 
 SimpleSceneGraph::~SimpleSceneGraph() {
-	Reset();
+	reset();
 }
 
-void SimpleSceneGraph::Reset() {
-	boundingBox.Reset();
+void SimpleSceneGraph::reset() {
+	boundingBox.reset();
 	sceneFileLines.clear();
 	pathsToTry.clear();
 	spheres.Clear();
@@ -214,7 +214,7 @@ void SimpleSceneGraph::Reset() {
 	pointLights.clear();
 
 	if (userdata) {
-		userdata->Reset();
+		userdata->reset();
 	}
 
 	// set time to longest time of the day
@@ -260,7 +260,7 @@ bool SimpleSceneGraph::Load(const std::string& filename) {
 	// Loading is successful, so go ahead and add path of the scene graph
 	// file so we can reference it if necessary for other referenced files
 	// in the mtllibs and objs.
-	Reset();
+	reset();
 	// Use the path of the scene graph as the default path, then the current
 	// directory
 	pathsToTry.push_back(scenefpi.dir);
@@ -770,7 +770,7 @@ void SimpleSceneGraph::KillTexUnits() { textureUnits.Clear(); }
 
 void SimpleSceneGraph::BuildBuffers() {
 	InitTexUnits();
-	renderer.Reset();
+	renderer.reset();
 	for (auto it = geometry.begin(); it != geometry.end(); it++) {
 		SimpleGeometryGroup& geo = it->second;
 		renderer.SetCurrentObjectId(geo.objectId);
@@ -1206,7 +1206,7 @@ void SimpleSceneGraph::Render(SimpleProgram& program, bool useMaterials,
 							0);
 }
 
-void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc) {
+void SimpleSceneGraph::AdvancedRender(SimpleRenderConfig& rc) {
 	// double sceneMaxSize = boundingBox.MaxSize();
 	// double sceneDiagonal = ceil(sqrtf(2.0 * sceneMaxSize * sceneMaxSize));
 	// double centerDistance2 = ceil((rt.cameraPosition.xyz() -
@@ -1529,7 +1529,7 @@ void SimpleSceneGraph::AdvancedRender(SimpleRenderConfiguration& rc) {
 }
 
 void SimpleSceneGraph::AdvancedRenderZOnly(
-	const SimpleRenderConfiguration& rc) const {
+	const SimpleRenderConfig& rc) const {
 	if (!rc.useZOnly)
 		return;
 	if (rc.useZOnly && rc.zShaderProgram == nullptr)

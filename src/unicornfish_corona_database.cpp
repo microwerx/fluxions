@@ -40,7 +40,7 @@ namespace Uf
 	}
 
 	void CoronaDatabase::BuildBuffers() {
-		renderer.Reset();
+		renderer.reset();
 		std::map<std::string, Fluxions::OBJStaticModel>::iterator modelIt;
 		for (modelIt = models.begin(); modelIt != models.end(); modelIt++) {
 			modelIt->second.Render(renderer);

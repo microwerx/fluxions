@@ -21,12 +21,115 @@
 
 namespace Fluxions
 {
+	//////////////////////////////////////////////////////////////////////
+	// GLES30StateSnapshot ///////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 
-	SimpleGLES30Renderer::SimpleGLES30Renderer() {}
+	GLES30StateSnapshot::GLES30StateSnapshot() {}
 
-	SimpleGLES30Renderer::SimpleGLES30Renderer(const SimpleRenderConfiguration& rc) {
-		SetRenderConfig(rc);
+	GLES30StateSnapshot::~GLES30StateSnapshot() {}
+
+	void GLES30StateSnapshot::save() {
+		glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTexture);
+		if (activeTexture >= GL_TEXTURE0)
+			activeTexture -= GL_TEXTURE0;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &texture2D);
+		glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &textureCubeMap);
+		glActiveTexture(GL_TEXTURE0);
+		glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+		glGetIntegerv(GL_RENDERBUFFER_BINDING, &renderbuffer);
+		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &arrayBuffer);
+		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &elementArrayBuffer);
+		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vertexArray);
+		glGetIntegerv(GL_BLEND_SRC_RGB, &blendSrcRgb);
+		glGetIntegerv(GL_BLEND_DST_RGB, &blendDstRgb);
+		glGetIntegerv(GL_BLEND_SRC_ALPHA, &blendSrcAlpha);
+		glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDstAlpha);
+		glGetIntegerv(GL_BLEND_EQUATION_RGB, &blendEquationRgb);
+		glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &blendEquationAlpha);
+		glGetIntegerv(GL_VIEWPORT, viewport.v());
+		glGetIntegerv(GL_SCISSOR_BOX, scissorBox.v());
+		glGetIntegerv(GL_DEPTH_FUNC, &depthFunc);
+
+		glGetIntegerv(GL_STENCIL_FUNC, &stencilFunc);
+		glGetIntegerv(GL_STENCIL_REF, &stencilRef);
+		glGetIntegerv(GL_STENCIL_VALUE_MASK, &stencilValueMask);
+		glGetIntegerv(GL_STENCIL_BACK_FUNC, &stencilBackFunc);
+		glGetIntegerv(GL_STENCIL_BACK_VALUE_MASK, &stencilBackValueMask);
+		glGetIntegerv(GL_STENCIL_BACK_REF, &stencilBackRef);
+
+		glGetIntegerv(GL_STENCIL_FAIL, &stencilFail);
+		glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, &stencilPassDepthFail);
+		glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, &stencilPassDepthPass);
+		glGetIntegerv(GL_STENCIL_BACK_FAIL, &stencilBackFail);
+		glGetIntegerv(GL_STENCIL_BACK_PASS_DEPTH_FAIL, &stencilBackPassDepthFail);
+		glGetIntegerv(GL_STENCIL_BACK_PASS_DEPTH_PASS, &stencilBackPassDepthPass);
+
+		glGetIntegerv(GL_CULL_FACE_MODE, &cullFaceMode);
+		glGetFloatv(GL_COLOR_CLEAR_VALUE, colorClearValue.ptr());
+		blendEnabled = glIsEnabled(GL_BLEND);
+		cullFaceEnabled = glIsEnabled(GL_CULL_FACE);
+		depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
+		scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
+		stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
 	}
+
+	void GLES30StateSnapshot::restore() {
+		glUseProgram(program);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+		glActiveTexture(GL_TEXTURE0 + activeTexture);
+		glBindTexture(GL_TEXTURE_2D, texture2D);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureCubeMap);
+		glBindVertexArray(vertexArray);
+		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+		glBlendEquationSeparate(blendEquationRgb, blendEquationAlpha);
+		glBlendFuncSeparate(blendSrcRgb, blendDstRgb, blendSrcAlpha, blendDstAlpha);
+		glDepthFunc(depthFunc);
+		glStencilFuncSeparate(GL_FRONT, stencilFunc, stencilRef, stencilValueMask);
+		glStencilFuncSeparate(GL_BACK, stencilBackFunc, stencilBackRef, stencilBackValueMask);
+		glStencilOpSeparate(GL_FRONT, stencilFail, stencilPassDepthFail, stencilPassDepthPass);
+		glStencilOpSeparate(GL_BACK, stencilBackFail, stencilBackPassDepthFail, stencilBackPassDepthPass);
+		glCullFace(cullFaceMode);
+		glClearColor(colorClearValue.r, colorClearValue.g, colorClearValue.b, colorClearValue.a);
+		if (blendEnabled)
+			glEnable(GL_BLEND);
+		else
+			glDisable(GL_BLEND);
+		if (cullFaceEnabled)
+			glEnable(GL_CULL_FACE);
+		else
+			glDisable(GL_CULL_FACE);
+		if (depthTestEnabled)
+			glEnable(GL_DEPTH_TEST);
+		else
+			glDisable(GL_DEPTH_TEST);
+		if (scissorTestEnabled)
+			glEnable(GL_SCISSOR_TEST);
+		else
+			glDisable(GL_SCISSOR_TEST);
+		if (stencilTestEnabled)
+			glEnable(GL_STENCIL_TEST);
+		else
+			glDisable(GL_STENCIL_TEST);
+		glViewport(viewport.x, viewport.y, viewport.w, viewport.h);
+		glScissor(scissorBox.x, scissorBox.y, scissorBox.w, scissorBox.h);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	// SimpleGLES30Renderer ///////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	SimpleGLES30Renderer::SimpleGLES30Renderer(const std::string& name)
+		: name_{ name } {}
+
+	//SimpleGLES30Renderer::SimpleGLES30Renderer(const std::string& name,
+	//	const SimpleRenderConfig& rc)
+	//	: name_{ name } {
+	//	SetRenderConfig(rc);
+	//}
 
 	SimpleGLES30Renderer::~SimpleGLES30Renderer() {
 		renderConfig.reset();
@@ -36,12 +139,12 @@ namespace Fluxions
 			glDeleteBuffers(1, &eabo);
 	}
 
-	void SimpleGLES30Renderer::SetSceneGraph(SimpleSceneGraph& ssg_) {
+	void SimpleGLES30Renderer::setSceneGraph(SimpleSceneGraph& ssg_) {
 		pssg = &ssg_;
 		areBuffersBuilt = false;
 	}
 
-	bool SimpleGLES30Renderer::ApplyRenderConfig() {
+	bool SimpleGLES30Renderer::applyRenderConfig() {
 		if (!pssg) return false;
 		if (renderConfig.shaderProgram == nullptr)
 			return false;
@@ -62,8 +165,8 @@ namespace Fluxions
 
 		program->Use();
 		locs.GetMaterialProgramLocations(*program);
-		ApplyGlobalSettingsToCurrentProgram();
-		ApplySpheresToCurrentProgram();
+		applyGlobalSettingsToCurrentProgram();
+		applySpheresToCurrentProgram();
 
 		if (renderConfig.enableDepthTest) {
 			glEnable(GL_DEPTH_TEST);
@@ -111,18 +214,18 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleGLES30Renderer::SaveGLState() {
-		gles30StateSnapshot.Save();
+	bool SimpleGLES30Renderer::saveGLState() {
+		gles30StateSnapshot.save();
 		return true;
 	}
 
-	bool SimpleGLES30Renderer::RestoreGLState() {
+	bool SimpleGLES30Renderer::restoreGLState() {
 		program = nullptr;
 
 		if (renderConfig.renderToFBO)
 			renderConfig.fbo.RestoreGLState();
 
-		gles30StateSnapshot.Restore();
+		gles30StateSnapshot.restore();
 
 		//glUseProgram(0);
 
@@ -146,15 +249,15 @@ namespace Fluxions
 		return true;
 	}
 
-	void SimpleGLES30Renderer::SetRenderConfig(const SimpleRenderConfiguration& rc) {
+	void SimpleGLES30Renderer::setRenderConfig(const SimpleRenderConfig& rc) {
 		renderConfig = rc;
 	}
 
-	void SimpleGLES30Renderer::Render() {
+	void SimpleGLES30Renderer::render() {
 		if (renderConfig.isCubeMap)
-			RenderCubeImages();
+			renderCubeImages();
 		else
-			RenderSingleImage();
+			renderSingleImage();
 	}
 
 	class BufferObject
@@ -292,7 +395,7 @@ namespace Fluxions
 		}
 	};
 
-	void SimpleGLES30Renderer::RenderMesh(SimpleGeometryMesh& mesh, const Matrix4f& modelViewMatrix) {
+	void SimpleGLES30Renderer::renderMesh(SimpleGeometryMesh& mesh, const Matrix4f& modelViewMatrix) {
 		if (renderConfig.shaderProgram == nullptr)
 			return;
 
@@ -308,9 +411,9 @@ namespace Fluxions
 		vao.Draw();
 	}
 
-	void SimpleGLES30Renderer::RenderCubeImages() {
+	void SimpleGLES30Renderer::renderCubeImages() {
 		if (!areBuffersBuilt)
-			BuildBuffers();
+			buildBuffers();
 
 		GLsizei s = renderConfig.viewportRect.w;
 
@@ -318,44 +421,44 @@ namespace Fluxions
 		renderConfig.viewportRect.y = s;
 		renderConfig.defaultCubeFace = 1;
 		glClear(GL_DEPTH_BUFFER_BIT);
-		RenderSingleImage();
+		renderSingleImage();
 
 		renderConfig.viewportRect.x = 2 * s;
 		renderConfig.viewportRect.y = s;
 		renderConfig.defaultCubeFace = 0;
 		glClear(GL_DEPTH_BUFFER_BIT);
-		RenderSingleImage();
+		renderSingleImage();
 
 		renderConfig.viewportRect.x = s;
 		renderConfig.viewportRect.y = 2 * s;
 		renderConfig.defaultCubeFace = 2;
 		glClear(GL_DEPTH_BUFFER_BIT);
-		RenderSingleImage();
+		renderSingleImage();
 
 		renderConfig.viewportRect.x = s;
 		renderConfig.viewportRect.y = 0;
 		renderConfig.defaultCubeFace = 3;
 		glClear(GL_DEPTH_BUFFER_BIT);
-		RenderSingleImage();
+		renderSingleImage();
 
 		renderConfig.viewportRect.x = s;
 		renderConfig.viewportRect.y = s;
 		renderConfig.defaultCubeFace = 4;
 		glClear(GL_DEPTH_BUFFER_BIT);
-		RenderSingleImage();
+		renderSingleImage();
 
 		renderConfig.viewportRect.x = 3 * s;
 		renderConfig.viewportRect.y = s;
 		renderConfig.defaultCubeFace = 5;
 		glClear(GL_DEPTH_BUFFER_BIT);
-		RenderSingleImage();
+		renderSingleImage();
 	}
 
-	void SimpleGLES30Renderer::RenderSingleImage() {
+	void SimpleGLES30Renderer::renderSingleImage() {
 		if (!areBuffersBuilt)
-			BuildBuffers();
+			buildBuffers();
 
-		if (!ApplyRenderConfig())
+		if (!applyRenderConfig())
 			return;
 
 		if (renderConfig.isCubeMap) {
@@ -367,33 +470,33 @@ namespace Fluxions
 				cameraMatrix.LoadIdentity();
 				cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + renderConfig.defaultCubeFace);
 				cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-				Render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
+				render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
 			}
 			else {
 				for (int i = 0; i < 6; i++) {
 					cameraMatrix.LoadIdentity();
 					cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 					cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
-					Render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
+					render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
 				}
 			}
 		}
 		else {
-			Render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
+			render(*program, renderConfig.useMaterials, renderConfig.useMaps, renderConfig.useZOnly, projectionMatrix, cameraMatrix);
 		}
 
 		glUseProgram(0);
 
 		if (renderConfig.renderSkyBox) {
 			glEnable(GL_DEPTH_TEST);
-			RenderSkyBox();
+			renderSkyBox();
 			glDisable(GL_DEPTH_TEST);
 		}
 
-		RestoreGLState();
+		restoreGLState();
 	}
 
-	void SimpleGLES30Renderer::ApplyGlobalSettingsToCurrentProgram() {
+	void SimpleGLES30Renderer::applyGlobalSettingsToCurrentProgram() {
 		if (locs.enviroCubeMap >= 0)
 			glUniform1i(locs.enviroCubeMap, pssg->environment.enviroColorMapUnit);
 		if (locs.enviroCubeMapAmount >= 0)
@@ -412,7 +515,7 @@ namespace Fluxions
 			glUniform1i(locs.sunColorMap, pssg->environment.sunColorMapUnit);
 	}
 
-	void SimpleGLES30Renderer::ApplySpheresToCurrentProgram() {
+	void SimpleGLES30Renderer::applySpheresToCurrentProgram() {
 		std::vector<float> spherePositions;
 		std::vector<float> sphereKe;
 		int numSpheres = 0;
@@ -452,7 +555,7 @@ namespace Fluxions
 			glUniform1i(locs.sphere_count, numSpheres);
 	}
 
-	void SimpleGLES30Renderer::Render(SimpleProgram& program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix_, Matrix4f& cameraMatrix_) {
+	void SimpleGLES30Renderer::render(SimpleProgram& program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix_, Matrix4f& cameraMatrix_) {
 		Matrix4f inverseCameraMatrix = cameraMatrix_.AsInverse();
 		Vector4f cameraPosition(0, 0, 0, 1);
 		cameraPosition = inverseCameraMatrix * cameraPosition;
@@ -482,7 +585,7 @@ namespace Fluxions
 				pssg->materials.SetMaterial(mtlName);
 
 				if (useMaterials)
-					ApplyMaterialToCurrentProgram(mtl, useMaps);
+					applyMaterialToCurrentProgram(mtl, useMaps);
 
 				// loop through each geometry object
 				for (auto geoIt = pssg->geometry.begin(); geoIt != pssg->geometry.end(); geoIt++) {
@@ -518,12 +621,12 @@ namespace Fluxions
 						renderer.RenderIf(geo.objectName, "", geo.mtllibName, mtlName, useZOnly);
 				}
 
-				DisableCurrentTextures();
+				disableCurrentTextures();
 			}
 		}
 	}
 
-	void SimpleGLES30Renderer::ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps) {
+	void SimpleGLES30Renderer::applyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps) {
 		GLuint unit = 1;
 
 		if (useMaps) {
@@ -554,7 +657,7 @@ namespace Fluxions
 				SimpleMap* pMap = tmapIt->second;
 				if (pMap) {
 					if (pMap->unitId <= 0)
-						pMap->unitId = GetTexUnit();
+						pMap->unitId = getTexUnit();
 					pMap->samplerId = pMap->textureObject.samplerObject.GetId();
 					pMap->textureId = pMap->textureObject.GetTextureId();
 					pMap->textureObject.Bind(pMap->unitId, false);
@@ -667,7 +770,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleGLES30Renderer::DisableCurrentTextures() {
+	void SimpleGLES30Renderer::disableCurrentTextures() {
 		// Turn off textures and reset program_ unit bindings to 0
 		for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
 			SimpleMap* pMap = tmapIt->second;
@@ -678,7 +781,7 @@ namespace Fluxions
 				glUniform1f(pMap->map_mix_loc, 0.0f);
 
 				if (pMap->unitId != 0) {
-					FreeTexUnit(pMap->unitId);
+					freeTexUnit(pMap->unitId);
 					pMap->unitId = 0;
 				}
 			}
@@ -688,7 +791,7 @@ namespace Fluxions
 		currentTextures.clear();
 	}
 
-	void SimpleGLES30Renderer::InitSkyBox() {
+	void SimpleGLES30Renderer::initSkyBox() {
 		GLfloat size = 50.0f;
 		// GLfloat v[] = {
 		//     -size, size, -size,
@@ -750,7 +853,7 @@ namespace Fluxions
 		}
 	}
 
-	void SimpleGLES30Renderer::RenderSkyBox() {
+	void SimpleGLES30Renderer::renderSkyBox() {
 		// GLuint vbo = 0;
 		GLint vloc = -1;
 		GLint tloc = -1;
@@ -825,8 +928,8 @@ namespace Fluxions
 		glUseProgram(0);
 	}
 
-	void SimpleGLES30Renderer::BuildBuffers() {
-		renderer.Reset();
+	void SimpleGLES30Renderer::buildBuffers() {
+		renderer.reset();
 		for (auto it = pssg->geometry.begin(); it != pssg->geometry.end(); it++) {
 			SimpleGeometryGroup& geo = it->second;
 			renderer.SetCurrentObjectId(geo.objectId);
@@ -839,7 +942,7 @@ namespace Fluxions
 		renderer.AssignMaterialIds(pssg->materials);
 		renderer.SetCurrentMtlLibName("");
 		renderer.SetCurrentMtlLibId(0);
-		InitSkyBox();
+		initSkyBox();
 		areBuffersBuilt = true;
 	}
 } // namespace Fluxions

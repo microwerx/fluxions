@@ -111,7 +111,7 @@ namespace Fluxions
 	}
 
 	void Sphl::createMesh(FxModel& model) {
-		sph_model.Reset();
+		sph_model.reset();
 		sph_model.Attrib3f(1, Vector3f(0.0f, 0.0f, 0.0f)); // Normal is 0, we will add neighboring face normals in a bit
 
 		float theta = 0.0f;

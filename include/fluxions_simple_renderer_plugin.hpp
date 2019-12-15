@@ -12,7 +12,7 @@ namespace Fluxions
 	{
 		ISimpleRendererPlugin(SimpleSceneGraph* pointerToSSG);
 
-		virtual bool Reset() = 0;
+		virtual bool reset() = 0;
 		virtual bool Init() = 0;
 		virtual bool Redo() = 0;
 		virtual bool Read(const std::string& cmd, std::istringstream& istr) = 0;

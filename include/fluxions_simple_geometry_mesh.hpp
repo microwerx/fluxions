@@ -133,7 +133,7 @@ class SimpleGeometryMesh
 	inline void Attrib3f(int i, const Vector3f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, v.z, 1.0f, addIndex); }
 	inline void Attrib2f(int i, const Vector2f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, 0.0f, 1.0f, addIndex); }
 
-	void Reset();
+	void reset();
 	void BeginSurface(SurfaceType type);
 	inline void AddIndex(int i = -1)
 	{

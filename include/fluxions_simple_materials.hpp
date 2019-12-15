@@ -22,97 +22,15 @@
 #include <fluxions_fileio.hpp>
 #include <fluxions_simple_property.hpp>
 #include <fluxions_resource_manager.hpp>
-#include <fluxions_simple_texture.hpp>
+#include <fluxions_renderer_texture.hpp>
+#include <fluxions_simple_material.hpp>
+#include <fluxions_simple_material_library.hpp>
 
 namespace Fluxions
 {
 
-	struct SimpleMaterial
-	{
-		Color3f Kd;
-		Color3f Ks;
-		Color3f Ke;
-		Color3f Ka;
-		Color3f Tf;      // Translucency;	// Tf
-		float Tr = 0.0f; // TranslucencyLevel -- same as (1 - d)
-		Color3f Refract;
-		Color3f Opacity;
-		float Ns = 0.0f; // Specular exponent [0 <= Ns <= 1000]
-		float Ni = 0.0f;
-		float d = 1.0f; // dissolved -- same as (1 - Tr)
-
-		float PBm = 0.0f;         // for roughness
-		float PBk = 0.0f;         // for metals
-		float PBKdm = 0.0f;       // for diffuse roughness (Oren-Nayer)
-		float PBKsm = 0.0f;       // for specular roughness (Cook-Torrance)
-		float PBior = 0.0f;       // for Fresnel reflection (Cook-Torrance)
-		float PBGGXgamma = 0.11f; // for GGX BRDF (0.0 - 1.0 maps to 1.0 to 10.0 in the shader)
-		std::string PBmap;
-
-		float EmissionGlossiness = 0;
-		float ReflectFresnel = 0;
-		float RefractGlossiness = 0;
-		float ReflectGlossiness = 0;
-		float AnisotropyAmount = 0;
-		float AnisotropyRotation = 0;
-		Color3f AttenuationColor;
-		float AttenuationDistance = 0;
-		Color3f ScatteringAlbedo;
-		float MeanCosine = 0;
-		std::vector<std::string> RefractMode;
-		//bool HasRoundedCorners = false;
-		//float RoundedCorners = 0;
-		//bool IsPortal = false;
-		//bool HasIesProfile = false;
-		//std::string IesProfileFilename;
-		//Matrix4f IesProfileMatrix;
-		//bool IesProfileKeepSharp = false;
-		std::vector<std::string> Invisible;
-		std::string map_Ka;
-		std::string map_Kd;
-		std::string map_Ks;
-		std::string map_Ke;
-		std::string map_d;
-		std::string map_opacity;
-		std::string map_Ns;
-		std::string map_Ni;
-		std::string map_Tr; // translucency;
-		std::string map_Tf; //Tf translucencyLevel;
-		std::string map_refract;
-		std::string map_anisotropy;
-		std::string map_anisorotation;
-		std::string map_scatteringAlbedo;
-		std::string map_attenuation;
-		std::string map_normal;
-		std::string map_bump;
-
-		SimpleAssociativePropertyList Properties;
-	};
-
-	struct SimpleMap
-	{
-		std::string mapName;
-		GLuint mapId = 0;
-		std::string pathname;
-		std::string shader;
-		GLuint textureId = 0;
-		GLuint samplerId = 0;
-		GLint unitId = 0; // we're not using GLenum here because unitId can be < 0 and no overflow is expected.
-		GLint map_loc = 0;
-		GLint map_mix_loc = 0;
-		SimpleTexture textureObject;
-	};
-
 	std::ostream& WriteMaterial(std::ostream& ostr, const SimpleMaterial& mtl);
 	void SetMaterialDefaults(SimpleMaterial& mtl);
-
-	struct SimpleMaterialLibrary
-	{
-		TResourceManager<SimpleMap> maps;
-		TResourceManager<SimpleMaterial> mtls;
-		FilePathInfo fpi;
-		std::string name;
-	};
 
 	class SimpleMaterialSystem
 	{

@@ -35,7 +35,7 @@ namespace Fluxions
 
 	template <typename IndexType, GLenum GLIndexType>
 	SimpleRenderer<IndexType, GLIndexType>::~SimpleRenderer() {
-		Reset();
+		reset();
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -441,7 +441,7 @@ namespace Fluxions
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
-	void SimpleRenderer<IndexType, GLIndexType>::Reset() {
+	void SimpleRenderer<IndexType, GLIndexType>::reset() {
 		vertexCount = 0;
 		triangleCount = 0;
 		if (arrayBuffer) {

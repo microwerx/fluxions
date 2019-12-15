@@ -10,7 +10,7 @@ SSG_SSPHHRendererPlugin::SSG_SSPHHRendererPlugin(SimpleSceneGraph *pointerToSSG)
 	pssg = pointerToSSG;
 }
 
-bool SSG_SSPHHRendererPlugin::Reset()
+bool SSG_SSPHHRendererPlugin::reset()
 {
 	ssphhLights.clear();
 	ssphhLights.reserve(16);

@@ -2199,7 +2199,7 @@ namespace Fluxions
 		return false;
 	}
 
-	void QuickGLErrorChecker::Reset() {
+	void QuickGLErrorChecker::reset() {
 		e = glGetError();
 	}
 

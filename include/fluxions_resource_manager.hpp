@@ -56,7 +56,7 @@ public:
 
 	void Init() noexcept;
 	void Clear() noexcept;
-	void Reset() noexcept;
+	void reset() noexcept;
 
 	inline void clear() noexcept { Clear(); }
 	inline iterator begin() noexcept { return resources.begin(); }
@@ -101,7 +101,7 @@ public:
 	void Clear();
 
 	// Frees allocated elements and makes them available
-	void Reset();
+	void reset();
 
 	// Adds a resource to the available list
 	void Add(T& resource);
@@ -137,7 +137,7 @@ void TSimpleResourceManager<T>::Clear() {
 }
 
 template <typename T>
-void TSimpleResourceManager<T>::Reset() {
+void TSimpleResourceManager<T>::reset() {
 	available.reserve(available.size() + allocated.size());
 	copy(allocated.begin(), allocated.end(), back_inserter(available));
 	allocated.clear();
@@ -194,7 +194,7 @@ void TResourceManager<T>::Clear() noexcept {
 }
 
 template <typename T>
-void TResourceManager<T>::Reset() noexcept {
+void TResourceManager<T>::reset() noexcept {
 	availableResourceHandles.reserve(availableResourceHandles.size() + allocatedResourceHandles.size());
 	move(allocatedResourceHandles.begin(), allocatedResourceHandles.end(), back_inserter(availableResourceHandles));
 	availableResourceHandles.clear();
