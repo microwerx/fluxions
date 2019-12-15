@@ -33,7 +33,7 @@ class BBox
 	BBox();
 	~BBox();
 
-	void Reset();
+	void reset();
 	void operator+=(const Vector3f &point);
 	bool IsPointInside(const Vector3f &point) const;
 	float MaxXSize() const { return maxBounds.x - minBounds.x; }

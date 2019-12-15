@@ -27,7 +27,7 @@ namespace Fluxions
 	class Matrix4Stack
 	{
 	public:
-		void Reset()
+		void reset()
 		{
 			curlevel = 0;
 			LoadIdentity();

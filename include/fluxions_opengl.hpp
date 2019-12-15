@@ -88,7 +88,7 @@ namespace Fluxions
 	public:
 		QuickGLErrorChecker();
 		bool IsError();
-		void Reset();
+		void reset();
 	private:
 		GLenum e;
 	};

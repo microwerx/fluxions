@@ -38,7 +38,7 @@ class TBoundingBox
 	// resets the bounds to:
 	// maxBounds(-1000000000, -1000000000, -1000000000)
 	// minBounds( 1000000000,  1000000000,  1000000000)
-	void Reset();
+	void reset();
 
 	// adds the point (X, y, 0) to the box, expanding it if necessary
 	void operator+=(const TVector2<T> &point);
@@ -126,7 +126,7 @@ TBoundingBox<T> &TBoundingBox<T>::operator=(const TBoundingBox<T> &bbox)
 }
 
 template <typename T>
-void TBoundingBox<T>::Reset()
+void TBoundingBox<T>::reset()
 {
 	maxBounds = TVector3<int>(-1000000000, -1000000000, -1000000000);
 	minBounds = TVector3<int>(1000000000, 1000000000, 1000000000);

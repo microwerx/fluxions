@@ -11,7 +11,7 @@ namespace Fluxions
 	public:
 		virtual bool UploadCompileLink() = 0;
 		virtual void Render(const IScene* pScene) = 0;
-		virtual void Reset() = 0;
+		virtual void reset() = 0;
 
 		virtual bool IsConfig(const std::string& name) const = 0;
 		virtual bool UseConfig(const std::string& name) = 0;
