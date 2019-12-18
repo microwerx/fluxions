@@ -84,7 +84,7 @@ namespace Fluxions
 		int i = 0;
 		for (auto& sphl : *sphls_) {
 			S[i].resize(sphl.maxDegree);
-			sphl.LightProbeToSph(sphl.vizgenLightProbes[i], S[i].msph);
+			sphl.lightProbeToSph(sphl.vizgenLightProbes[i], S[i].msph);
 			H[i][i] = S[i];
 			P[i][i] = 1.0f;
 
@@ -105,7 +105,7 @@ namespace Fluxions
 			std::string basename = "output/" + MakeGENName(sceneName, (int)i);
 			if (savePPMs) {
 				Image4f lightProbe(32, 32, 6);
-				sphl.SphToLightProbe(H[i][i].msph, lightProbe);
+				sphl.sphToLightProbe(H[i][i].msph, lightProbe);
 				lightProbe.convertCubeMapToRect();
 				lightProbe.savePPMi(basename + "_sph.ppm", 255.99f, 0, 255);
 				lightProbe.saveEXR(basename + "_sph.exr");
@@ -131,17 +131,17 @@ namespace Fluxions
 				if (i == j)
 					continue;
 				if (sphl.vizgenLightProbes.empty()) {
-					Hf::Log.errorfn(__FUNCTION__, "VIZ() called with no light probes!");
+					HFLOGERROR("VIZ() called with no light probes!");
 					continue;
 				}
 
 				H[i][j].resize(sphl.maxDegree);
-				sphl.LightProbeToSph(sphl.vizgenLightProbes[j], H[i][j].msph);
+				sphl.lightProbeToSph(sphl.vizgenLightProbes[j], H[i][j].msph);
 
 				std::string basename = "output/" + MakeVIZName(sceneName, (int)i, (int)j);
 				if (savePPMs) {
 					Image4f lightProbe(32, 32, 6);
-					sphl.SphToLightProbe(H[i][j].msph, lightProbe);
+					sphl.sphToLightProbe(H[i][j].msph, lightProbe);
 					lightProbe.convertCubeMapToRect();
 					lightProbe.savePPMi(basename + "_sph.ppm", 255.99f, 0, 255);
 					lightProbe.saveEXR(basename + "_sph.exr");
@@ -225,14 +225,14 @@ namespace Fluxions
 		for (size_t i = 0; i < size_; i++) {
 			sphls[i].self = self[i];
 			sphls[i].neighbor = neighbor[i];
-			sphls[i].SphToLightProbe(Sprime[i].msph, sphls[i].hierLightProbeImage);
-			sphls[i].UploadLightProbe(sphls[i].hierLightProbeImage, sphls[i].hierLightProbeTexture);
+			sphls[i].sphToLightProbe(Sprime[i].msph, sphls[i].hierLightProbeImage);
+			sphls[i].uploadLightProbe(sphls[i].hierLightProbeImage, sphls[i].hierLightProbeTexture);
 
 			std::string base = "output/" + MakeHIERName(sceneName, (int)i, (int)MaxDegrees);
 
 			if (savePPMs) {
 				Image4f lightProbeSprime;
-				sphls[i].SphToLightProbe(Sprime[i].msph, lightProbeSprime, MaxDegrees);
+				sphls[i].sphToLightProbe(Sprime[i].msph, lightProbeSprime, MaxDegrees);
 				lightProbeSprime.convertCubeMapToRect();
 				lightProbeSprime.savePPMi(base + "_01_Sprime.ppm", 255.99f, 0, 0);
 				lightProbeSprime.saveEXR(base + "_01_Sprime.exr");
@@ -244,7 +244,7 @@ namespace Fluxions
 
 			if (savePPMs) {
 				Image4f lightProbeSelf;
-				sphls[i].SphToLightProbe(self[i].msph, lightProbeSelf, MaxDegrees);
+				sphls[i].sphToLightProbe(self[i].msph, lightProbeSelf, MaxDegrees);
 				lightProbeSelf.convertCubeMapToRect();
 				lightProbeSelf.savePPMi(base + "_02_self.ppm", 255.99f, 0, 0);
 				lightProbeSelf.saveEXR(base + "_02_self.exr");
@@ -256,7 +256,7 @@ namespace Fluxions
 
 			if (savePPMs) {
 				Image4f lightProbeNeighbor;
-				sphls[i].SphToLightProbe(neighbor[i].msph, lightProbeNeighbor, MaxDegrees);
+				sphls[i].sphToLightProbe(neighbor[i].msph, lightProbeNeighbor, MaxDegrees);
 				lightProbeNeighbor.convertCubeMapToRect();
 				lightProbeNeighbor.savePPMi(base + "_03_neighbor.ppm", 255.99f, 0, 0);
 				lightProbeNeighbor.saveEXR(base + "_03_neighbor.exr");

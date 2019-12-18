@@ -71,6 +71,7 @@
 
 #include <fluxions_stdcxx.hpp>
 #include <fluxions_gte.hpp>
+#include <fluxions_file_path_info.hpp>
 
 #ifndef FLUXIONS_NO_SDL
 //#include <SDL2/SDL.h>
@@ -104,7 +105,6 @@
 #include <fluxions_config.hpp>
 #include <fluxions_es2_renderer.hpp>
 #include <fluxions_es2_state_info.hpp>
-#include <fluxions_fileio.hpp>
 #include <fluxions_multiple_render_target.hpp>
 #include <fluxions_opengl.hpp>
 #include <fluxions_pbsky.hpp>

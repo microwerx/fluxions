@@ -19,17 +19,16 @@ namespace Fluxions {
 		kill();
 	}
 
-	void RendererSamplerObject::init() {
-		if (id != 0) {
-			kill();
-		}
+	void RendererSamplerObject::init(const std::string& name) {
+		kill();
+		name_ = name;
 		glGenSamplers(1, &id);
-		HFLOGINFO("Creating sampler %i", id);
+		HFLOGINFO("Creating sampler '%s' = %i", name_.c_str(), id);
 	}
 
 	void RendererSamplerObject::kill() {
 		if (id != 0) {
-			HFLOGINFO("Deleting sampler %i", id);
+			HFLOGINFO("Deleting sampler '%s' = %i", name_.c_str(), id);
 			glDeleteSamplers(1, &id);
 			id = 0;
 		}

@@ -488,12 +488,12 @@ namespace Fluxions
 		currentObjectId = 0;
 		currentProgramId = 0;
 
-		for (auto& p : programs) {
-			if (p.second.use_count() > 1)
+		for (auto& [pname, program] : programs) {
+			if (program.use_count() > 1)
 			{
-				HFLOGWARN("Program count not 1: %i", p.second->GetProgram());
+				HFLOGWARN("Program count not 1: %i", program->getProgram());
 			}
-			p.second.reset();
+			program.reset();
 		}
 		programs.clear();
 	}

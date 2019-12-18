@@ -92,7 +92,7 @@ namespace Vf
 		inline const SharedPtr &parent() const noexcept { return parent_; }
 		inline SharedPtr &parent() noexcept { return parent_; }
 
-		inline bool decorateWith(std::shared_ptr<Widget>& decorator) noexcept {
+		inline bool decorateWith(std::shared_ptr<Widget> decorator) noexcept {
 			if (!decorator) return false;
 			decoratorWidget_ = decorator;
 			decorator->decorateeWidget_ = shared_from_this();

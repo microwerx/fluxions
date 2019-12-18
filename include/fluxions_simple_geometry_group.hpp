@@ -5,7 +5,7 @@
 #include <fluxions_gte_matrix4.hpp>
 #include <fluxions_gte_bounding_box.hpp>
 #include <fluxions_opengl.hpp>
-#include <fluxions_fileio.hpp>
+#include <fluxions_file_path_info.hpp>
 
 namespace Fluxions
 {

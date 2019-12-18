@@ -11,7 +11,7 @@ namespace Fluxions {
 		RendererSamplerObject();
 		~RendererSamplerObject();
 
-		void init();
+		void init(const std::string& name);
 		void kill();
 		void bind(GLuint unit);
 		void unbind();
@@ -57,6 +57,7 @@ namespace Fluxions {
 		GLuint id;
 
 		GLint lastBoundUnit = -1;
+		std::string name_;
 	};
 }
 

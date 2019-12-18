@@ -3,7 +3,7 @@
 
 #include <fluxions_opengl.hpp>
 #include <fluxions_simple_property.hpp>
-#include <fluxions_simple_program.hpp>
+#include <fluxions_renderer_program.hpp>
 
 namespace Fluxions
 {
@@ -85,7 +85,7 @@ namespace Fluxions
 
 		SimpleAssociativePropertyList newLocationList;
 
-		void GetMaterialProgramLocations(SimpleProgram& program);
+		void getMaterialProgramLocations(RendererProgram& program);
 	};
 } // namespace Fluxions
 

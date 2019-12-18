@@ -20,21 +20,16 @@
 #define FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 
 #include <fluxions_stdcxx.hpp>
-#include <fluxions_fileio.hpp>
+#include <fluxions_file_path_info.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>
-#include <fluxions_multiple_render_target.hpp>
-#include <fluxions_opengl.hpp>
+#include <fluxions_obj_static_model.hpp>
 #include <fluxions_pbsky.hpp>
 #include <fluxions_resource_manager.hpp>
 #include <fluxions_simple_materials.hpp>
-#include <fluxions_obj_static_model.hpp>
-#include <fluxions_simple_gpu_texture.hpp>
-#include <fluxions_simple_render_config.hpp>
 #include <fluxions_simple_geometry_group.hpp>
 #include <fluxions_simple_camera.hpp>
 #include <fluxions_simple_environment.hpp>
-#include <fluxions_shader_program_locations.hpp>
 #include <fluxions_simple_sphere.hpp>
 #include <fluxions_simple_point_light.hpp>
 #include <fluxions_scene_graph_reader.hpp>
@@ -70,8 +65,8 @@ namespace Fluxions
 		std::vector<SimplePointLight> pointLights;
 
 		SimpleMaterialSystem materials;
-		mutable SimpleRenderer_GLuint renderer;
-		__ShaderProgramLocations locs;
+		//mutable SimpleRenderer_GLuint renderer;
+		//__ShaderProgramLocations locs;
 		std::map<std::string, SimpleMap*> currentTextures;
 
 		ISimpleRendererPlugin* userdata = nullptr;
@@ -83,31 +78,31 @@ namespace Fluxions
 		bool ReadCamera(std::istream& istr);
 
 		// Rendering tools
-		void ApplySpheresToCurrentProgram();
-		void ApplyGlobalSettingsToCurrentProgram();
-		void ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
-		void DisableCurrentTextures();
+		//void ApplySpheresToCurrentProgram();
+		//void ApplyGlobalSettingsToCurrentProgram();
+		//void ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
+		//void DisableCurrentTextures();
 
 	private:
 		BoundingBoxf boundingBox;
 
-		TSimpleResourceManager<GLuint> textureUnits;
-		void InitTexUnits();
-		void KillTexUnits();
+		//TSimpleResourceManager<GLuint> textureUnits;
+		//void InitTexUnits();
+		//void KillTexUnits();
 
 	public:
-		GLuint GetTexUnit() { return textureUnits.Create(); }
-		void FreeTexUnit(GLuint& id) {
-			textureUnits.Delete(id);
-			id = 0;
-		}
-		void FreeTexUnit(GLint& id) {
-			if (id > 0) {
-				GLuint tid = static_cast<GLuint>(id);
-				textureUnits.Delete(tid);
-				id = 0;
-			}
-		}
+		//GLuint GetTexUnit() { return textureUnits.Create(); }
+		//void FreeTexUnit(GLuint& id) {
+		//	textureUnits.Delete(id);
+		//	id = 0;
+		//}
+		//void FreeTexUnit(GLint& id) {
+		//	if (id > 0) {
+		//		GLuint tid = static_cast<GLuint>(id);
+		//		textureUnits.Delete(tid);
+		//		id = 0;
+		//	}
+		//}
 
 	public:
 		SimpleSceneGraph();
@@ -134,17 +129,17 @@ namespace Fluxions
 
 		/// Note this is where we went wrong, by including rendering information in the scene graph...
 
-		void BuildBuffers();
-		void Render(SimpleProgram& program);
-		void RenderZOnly(SimpleProgram& program);
+		//void BuildBuffers();
+		//void Render(RendererProgram& program);
+		//void RenderZOnly(RendererProgram& program);
 
-		void Render(SimpleProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
+		//void Render(RendererProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
 
-		void AdvancedRender(SimpleRenderConfig& rc);
-		void AdvancedRenderZOnly(const SimpleRenderConfig& rc) const;
-		void RenderZOnly(SimpleProgramPtr& program) const;
+		//void AdvancedRender(RendererConfig& rc);
+		//void AdvancedRenderZOnly(const RendererConfig& rc) const;
+		//void RenderZOnly(RendererProgramPtr& program) const;
 
-		void SetUniforms(SimpleProgramPtr& shader);
+		//void SetUniforms(RendererProgramPtr& shader);
 
 		//void InitSphls();
 		//void MakeSphlsUnclean();

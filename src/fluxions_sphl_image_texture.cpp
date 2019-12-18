@@ -18,12 +18,11 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <fluxions_fileio.hpp>
 #include <fluxions_sphl_image_texture.hpp>
 
 namespace Fluxions
 {
-	bool SphlImageTexture::LoadLightProbe(const std::string& path) {
+	bool SphlImageTexture::loadLightProbe(const std::string& path) {
 		FilePathInfo fpi(path);
 		if (fpi.DoesNotExist())
 			return false;
@@ -33,12 +32,12 @@ namespace Fluxions
 		else if (fpi.ext == ".exr")
 			lightProbe.loadEXR(path);
 		else
-			Hf::Log.errorfn(__FUNCTION__, "Path %s is not a PPM or EXR", path.c_str());
+			HFLOGERROR("Path %s is not a PPM or EXR", path.c_str());
 		lightProbe.convertRectToCubeMap();
 		return true;
 	}
 
-	bool SphlImageTexture::SphToLightProbe(const MultispectralSph4f& sph) {
+	bool SphlImageTexture::sphToLightProbe(const MultispectralSph4f& sph) {
 		float v_coefs[4][121];
 
 		unsigned maxDegree = sph[0].GetMaxDegree();
@@ -77,13 +76,13 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SphlImageTexture::UploadLightProbe() {
-		texture.Bind(0);
+	bool SphlImageTexture::uploadLightProbe() {
+		texture.bind(0);
 		for (int i = 0; i < 6; i++) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
 		}
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-		texture.Unbind();
+		texture.unbind();
 		return true;
 	}
 }

@@ -64,7 +64,7 @@ namespace Fluxions {
 		std::string map_normal;
 		std::string map_bump;
 
-		// SimpleAssociativePropertyList Properties;
+		SimpleAssociativePropertyList Properties;
 	};
 }
 

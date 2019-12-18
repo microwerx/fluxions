@@ -28,45 +28,6 @@ namespace Fluxions
 	std::string gl_renderer;
 	std::string gl_vendor;
 
-	std::shared_ptr<SimpleShader> CompileShaderFromFile(GLenum type, const std::string& filename) {
-		const char* typeName = (type == GL_VERTEX_SHADER) ? "vertex" :
-			(type == GL_FRAGMENT_SHADER) ? "fragment" :
-			(type == GL_GEOMETRY_SHADER) ? "geometry" :
-			"unknown";
-		std::shared_ptr<SimpleShader> shader(new SimpleShader());
-		FilePathInfo fpi(filename);
-		if (!fpi.IsFile())
-			return shader;
-		HFLOGDEBUG("loading %s shader `%s'", typeName, fpi.fullfname.c_str());
-
-		shader->Create(type);
-		if (shader->shader == 0) {
-			HFLOGERROR("%s shader could not be created!", typeName);
-			return shader;
-		}
-		shader->source = ReadTextFile(filename);
-		const GLchar* sourceString = shader->source.c_str();
-		const GLint length = (int)shader->source.size();
-		glShaderSource(shader->shader, 1, &sourceString, &length);
-		glCompileShader(shader->shader);
-		GLint ival = 0;
-		glGetShaderiv(shader->shader, GL_COMPILE_STATUS, &ival);
-		shader->didCompile = (ival == GL_TRUE);
-		shader->hadError = (ival != GL_TRUE);
-		glGetShaderiv(shader->shader, GL_INFO_LOG_LENGTH, &ival);
-		shader->infoLog.resize(ival);
-		GLchar* infoLog = &shader->infoLog[0];
-		glGetShaderInfoLog(shader->shader, ival, NULL, infoLog);
-		if (shader->hadError) {
-			HFLOGERROR("shader %d compile error for %s\n%s", shader->shader, filename.c_str(), shader->infoLog.c_str());
-		}
-		if (shader->didCompile) {
-			HFLOGDEBUG("shader %d compiled", shader->shader);
-		}
-
-		return shader;
-	}
-
 	std::string FindFileIfExists(const std::string& filename, const std::vector<std::string>& pathsToTry) {
 		std::string output;
 

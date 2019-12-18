@@ -18,7 +18,6 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
 #include <fluxions_stdcxx.hpp>
-//#include <fluxions_fileio.hpp>
 #include <fluxions_fileio_iostream.hpp>
 #include <fluxions_simple_materials.hpp>
 
@@ -428,8 +427,8 @@ namespace Fluxions
 			currentMtlLibPtr->maps[id].pathname = path + filename;
 		else if (TestIfFileExists(filename))
 			currentMtlLibPtr->maps[id].pathname = path + filename;
-		currentMtlLibPtr->maps[id].textureId = 0;
-		currentMtlLibPtr->maps[id].samplerId = 0;
+		currentMtlLibPtr->maps[id].cached.textureId = 0;
+		currentMtlLibPtr->maps[id].cached.samplerId = 0;
 
 		return true;
 	}
@@ -446,8 +445,8 @@ namespace Fluxions
 		currentMtlLibPtr->maps[id].mapId = id;
 		currentMtlLibPtr->maps[id].mapName = name;
 		currentMtlLibPtr->maps[id].pathname.clear();
-		currentMtlLibPtr->maps[id].textureId = 0;
-		currentMtlLibPtr->maps[id].samplerId = 0;
+		currentMtlLibPtr->maps[id].cached.textureId = 0;
+		currentMtlLibPtr->maps[id].cached.samplerId = 0;
 		currentMtlLibPtr->maps[id].shader = shader;
 
 		return true;
@@ -570,12 +569,14 @@ namespace Fluxions
 	void SimpleMaterialSystem::LoadMaps() {
 		maps_paths.clear();
 
-		for (auto libIt = mtllibs.begin(); libIt != mtllibs.end(); libIt++) {
-			for (auto mapIt = libIt->second.maps.begin(); mapIt != libIt->second.maps.end(); mapIt++) {
-				if (!mapIt->second.pathname.empty()) {
-					mapIt->second.textureObject.LoadTexture2D(mapIt->second.pathname);
-					mapIt->second.textureId = mapIt->second.textureObject.GetTextureId();
-					maps_paths[mapIt->second.mapName] = mapIt->second.pathname;
+		//for (auto libIt = mtllibs.begin(); libIt != mtllibs.end(); libIt++) {
+		for (auto& [mtllibk, mtllib]: mtllibs) {
+			//for (auto mapIt = libIt->second.maps.begin(); mapIt != libIt->second.maps.end(); mapIt++) {
+			for (auto& [mapk, map]: mtllib.maps) {
+				if (!map.pathname.empty()) {
+					map.cached.textureObject.loadTexture2D(map.pathname);
+					map.cached.textureId = map.cached.textureObject.getTextureId();
+					maps_paths[map.mapName] = map.pathname;
 				}
 			}
 		}

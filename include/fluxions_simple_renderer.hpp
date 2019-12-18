@@ -25,7 +25,7 @@
 #include <fluxions_simple_materials.hpp>
 #include <fluxions_simple_vertex.hpp>
 #include <fluxions_simple_surface.hpp>
-#include <fluxions_simple_program.hpp>
+#include <fluxions_renderer_program.hpp>
 
 namespace Fluxions
 {
@@ -109,7 +109,7 @@ namespace Fluxions
 		SimpleRenderer();
 		~SimpleRenderer();
 
-		std::map<std::string, SimpleProgramPtr> programs;
+		std::map<std::string, RendererProgramPtr> programs;
 
 		void SetCurrentMtlLibId(GLuint value) { currentMtlLibId = value; }
 		void SetCurrentMtlId(GLuint value) { currentMtlId = value; }
@@ -163,7 +163,7 @@ namespace Fluxions
 		void RenderIf(GLuint objectId = 0, GLuint groupId = 0, GLuint mtllibId = 0, GLuint mtlId = 0, bool onlyRenderZ = false);
 		void RenderZOnly();
 
-		//void Configure(Renderer *pRenderer);
+		//void Configure(RendererContext *pRenderer);
 		int vertexCount = 0;
 		int triangleCount = 0;
 	}; // template class SimpleRenderer

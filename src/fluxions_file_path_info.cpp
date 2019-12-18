@@ -19,7 +19,6 @@
 #include "pch.hpp"
 #include <fluxions_stdcxx.hpp>
 #include <fluxions_types.hpp>
-#include <fluxions_file_path_info.hpp>
 
 #ifdef __APPLE__
 #define __unix__ 1

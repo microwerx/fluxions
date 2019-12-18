@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <hatchetfish.hpp>
-#include <fluxions_fileio.hpp>
 #include <fluxions_obj_static_model.hpp>
 #include <fluxions_fileio_iostream.hpp>
 #include <iomanip>

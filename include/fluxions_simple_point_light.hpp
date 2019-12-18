@@ -2,7 +2,7 @@
 #define FLUXIONS_SIMPLE_POINT_LIGHT_HPP
 
 #include <fluxions_gte_vector3.hpp>
-#include <fluxions_simple_cube_texture.hpp>
+#include <fluxions_renderer_texture_cube.hpp>
 
 namespace Fluxions
 {
@@ -14,7 +14,8 @@ namespace Fluxions
 		float falloffRadius;
 		Vector3f position;
 
-		SimpleCubeTexture scs;
+		// FIXME: Why do we have a renderer element here?
+		RendererTextureCube scs;
 	};
 } // namespace Fluxions
 

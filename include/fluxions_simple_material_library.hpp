@@ -3,7 +3,7 @@
 
 #include <fluxions_stdcxx.hpp>
 #include <fluxions_resource_manager.hpp>
-#include <fluxions_fileio.hpp>
+#include <fluxions_file_path_info.hpp>
 #include <fluxions_simple_material.hpp>
 #include <fluxions_simple_map.hpp>
 

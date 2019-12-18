@@ -19,10 +19,9 @@
 #ifndef FLUXIONS_SIMPLE_MATERIALS_HPP
 #define FLUXIONS_SIMPLE_MATERIALS_HPP
 
-#include <fluxions_fileio.hpp>
 #include <fluxions_simple_property.hpp>
 #include <fluxions_resource_manager.hpp>
-#include <fluxions_renderer_texture.hpp>
+#include <fluxions_renderer_texture_object.hpp>
 #include <fluxions_simple_material.hpp>
 #include <fluxions_simple_material_library.hpp>
 

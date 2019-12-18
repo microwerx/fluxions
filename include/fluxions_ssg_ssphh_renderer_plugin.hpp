@@ -30,12 +30,12 @@ namespace Fluxions
 
 		std::vector<SimpleSSPHHLight> ssphhLights;
 
-		bool Read(const std::string& cmd, std::istringstream& istr) override;
-		bool ReadUniformLocs(SimpleProgram& program) override;
-		bool Prog() override;
-		bool Draw() override;
-		bool Init() override;
-		bool Redo() override;
+		bool read(const std::string& cmd, std::istringstream& istr) override;
+		bool readUniformLocs(RendererProgram& program) override;
+		bool prog() override;
+		bool draw() override;
+		bool init() override;
+		bool redo() override;
 		bool reset() override;
 	private:
 		SimpleSceneGraph* pssg = nullptr;

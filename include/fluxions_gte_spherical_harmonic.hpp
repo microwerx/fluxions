@@ -40,51 +40,47 @@ namespace Fluxions
 	constexpr unsigned GetMaxSphCoefficients(unsigned l) noexcept { return l * (l + 1) + l + 1; }
 
 	template <typename T>
-	T calc_spherical_harmonic(int max_degree, const T *a, T theta, T phi);
+	T calc_spherical_harmonic(int max_degree, const T* a, T theta, T phi);
 
 #ifdef FLUXIONS_NO_EXTERN_TEMPLATES
-	extern template float calc_spherical_harmonic<float>(int max_degree, const float *, float theta, float phi);
-	extern template double calc_spherical_harmonic<double>(int max_degree, const double *, double theta, double phi);
+	extern template float calc_spherical_harmonic<float>(int max_degree, const float*, float theta, float phi);
+	extern template double calc_spherical_harmonic<double>(int max_degree, const double*, double theta, double phi);
 #endif
 
 	template <typename VectorType, typename ScalarType>
-	class TSphericalHarmonic
-	{
+	class TSphericalHarmonic {
 	private:
 		unsigned maxCoefficients = 1;
 		unsigned maxDegree = 0;
 		std::vector<VectorType> coefficients;
 
 	public:
-		constexpr TSphericalHarmonic()
-		{
+		constexpr TSphericalHarmonic() {
 			resize(0);
 		}
 
 		constexpr void reset() noexcept { resize(maxDegree, VectorType(0)); }
 		constexpr void reset(unsigned maxDegree_) noexcept { resize(maxDegree_, VectorType(0)); }
-		constexpr void reset(unsigned maxDegree_, const VectorType &value) noexcept { resize(maxDegree_, value); }
+		constexpr void reset(unsigned maxDegree_, const VectorType& value) noexcept { resize(maxDegree_, value); }
 		constexpr void resize(unsigned maxDegree_) noexcept;
-		constexpr void resize(unsigned maxDegree_, const VectorType &value) noexcept;
-		void readFromString(const std::string &data) noexcept;
-		void readFromFile(const std::string &filename) noexcept;
+		constexpr void resize(unsigned maxDegree_, const VectorType& value) noexcept;
+		void readFromString(const std::string& data) noexcept;
+		void readFromFile(const std::string& filename) noexcept;
 
 		// VectorType sum() const { VectorType a = 0; for (auto x : coefficients) a += x; return a; }
 		constexpr VectorType sum() const noexcept { return std::accumulate(coefficients.begin(), coefficients.end(), VectorType(0)); }
 
-		constexpr const VectorType *cdata() const noexcept { return &coefficients[0]; }
-		constexpr VectorType *data() noexcept { return &coefficients[0]; }
+		constexpr const VectorType* cdata() const noexcept { return &coefficients[0]; }
+		constexpr VectorType* data() noexcept { return &coefficients[0]; }
 
-		constexpr TSphericalHarmonic<VectorType, ScalarType> &operator*=(const ScalarType s) noexcept
-		{
-			for (auto &x : coefficients) {
+		constexpr TSphericalHarmonic<VectorType, ScalarType>& operator*=(const ScalarType s) noexcept {
+			for (auto& x : coefficients) {
 				x *= (VectorType)s;
 			}
 			return *this;
 		}
 
-		constexpr TSphericalHarmonic<VectorType, ScalarType> &operator+=(const TSphericalHarmonic<VectorType, ScalarType> &b) noexcept
-		{
+		constexpr TSphericalHarmonic<VectorType, ScalarType>& operator+=(const TSphericalHarmonic<VectorType, ScalarType>& b) noexcept {
 			if (coefficients.size() != b.coefficients.size()) {
 				//Hf::Log.error("%s(): spherical harmonics do not have the same degree! addition not done.", __FUNCTION__);
 				return *this;
@@ -97,8 +93,7 @@ namespace Fluxions
 			return *this;
 		}
 
-		constexpr TSphericalHarmonic<VectorType, ScalarType> &Accumulate(const TSphericalHarmonic<VectorType, ScalarType> &b, const ScalarType c = 1, int maxDegrees = -1) noexcept
-		{
+		constexpr TSphericalHarmonic<VectorType, ScalarType>& Accumulate(const TSphericalHarmonic<VectorType, ScalarType>& b, const ScalarType c = 1, int maxDegrees = -1) noexcept {
 			unsigned firstIndex = 0;
 			unsigned lastDegree = maxDegree;
 			if (maxDegrees >= 0) {
@@ -116,8 +111,7 @@ namespace Fluxions
 			return *this;
 		}
 
-		constexpr TSphericalHarmonic<VectorType, ScalarType> &Accumulate(const TSphericalHarmonic<VectorType, ScalarType> &b, const TSphericalHarmonic<VectorType, ScalarType> &c, int maxDegrees = -1) noexcept
-		{
+		constexpr TSphericalHarmonic<VectorType, ScalarType>& Accumulate(const TSphericalHarmonic<VectorType, ScalarType>& b, const TSphericalHarmonic<VectorType, ScalarType>& c, int maxDegrees = -1) noexcept {
 			unsigned firstIndex = 0;
 			unsigned lastDegree = maxDegree;
 			if (maxDegrees >= 0) {
@@ -141,8 +135,7 @@ namespace Fluxions
 			return *this;
 		}
 
-		constexpr TSphericalHarmonic<VectorType, ScalarType> &Accumulate(const TSphericalHarmonic<VectorType, ScalarType> &b, const TSphericalHarmonic<VectorType, ScalarType> &c, float d, int maxDegrees = -1) noexcept
-		{
+		constexpr TSphericalHarmonic<VectorType, ScalarType>& Accumulate(const TSphericalHarmonic<VectorType, ScalarType>& b, const TSphericalHarmonic<VectorType, ScalarType>& c, float d, int maxDegrees = -1) noexcept {
 			unsigned firstIndex = 0;
 			unsigned lastDegree = maxDegree;
 			if (maxDegrees >= 0) {
@@ -160,45 +153,38 @@ namespace Fluxions
 			return *this;
 		}
 
-		constexpr const VectorType operator[](unsigned i) const noexcept
-		{
+		constexpr const VectorType operator[](unsigned i) const noexcept {
 			if (i >= 0 && i < maxCoefficients)
 				return coefficients[i];
 			else
 				return VectorType();
 		}
 
-		constexpr VectorType &operator[](unsigned i)
-		{
+		constexpr VectorType& operator[](unsigned i) {
 			return coefficients[i];
 		}
 
-		constexpr unsigned GetMaxDegree() const noexcept
-		{
+		constexpr unsigned GetMaxDegree() const noexcept {
 			return maxDegree;
 		}
 
-		constexpr unsigned getMaxCoefficients() const noexcept
-		{
+		constexpr unsigned getMaxCoefficients() const noexcept {
 			return maxDegree * (maxDegree + 1) + maxDegree + 1;
 		}
 
 		// returns -1 if out of range, or index if in range
-		constexpr unsigned getCoefficientIndex(unsigned l, int m) const noexcept
-		{
+		constexpr unsigned getCoefficientIndex(unsigned l, int m) const noexcept {
 			if (l <= maxDegree && (unsigned)abs(m) <= l)
 				return l * (l + 1) + m;
 			else
 				return 0;
 		}
 
-		constexpr std::vector<VectorType> getCoefficients() noexcept
-		{
+		constexpr std::vector<VectorType> getCoefficients() noexcept {
 			return coefficients;
 		}
 
-		constexpr VectorType getCoefficient(unsigned l, int m) const noexcept
-		{
+		constexpr VectorType getCoefficient(unsigned l, int m) const noexcept {
 			unsigned index = getCoefficientIndex(l, m);
 			if (index < coefficients.size())
 				return coefficients[index];
@@ -206,29 +192,25 @@ namespace Fluxions
 				return VectorType();
 		}
 
-		constexpr VectorType getCoefficient(unsigned lm) const noexcept
-		{
+		constexpr VectorType getCoefficient(unsigned lm) const noexcept {
 			if (lm < coefficients.size())
 				return coefficients[lm];
 			else
 				return VectorType();
 		}
 
-		constexpr void setCoefficient(unsigned l, int m, const VectorType x) noexcept
-		{
+		constexpr void setCoefficient(unsigned l, int m, const VectorType x) noexcept {
 			unsigned index = getCoefficientIndex(l, m);
 			if (index < coefficients.size())
 				coefficients[index] = x;
 		}
 
-		constexpr void setCoefficient(unsigned lm, const VectorType x) noexcept
-		{
+		constexpr void setCoefficient(unsigned lm, const VectorType x) noexcept {
 			if (lm < coefficients.size())
 				coefficients[lm] = x;
 		}
 
-		constexpr VectorType e_m_phi_real(int m, double phi) noexcept
-		{
+		constexpr VectorType e_m_phi_real(int m, double phi) noexcept {
 			if (m < 0)
 				return VectorType(FX_SQRT2 * sin(-m * phi));
 			if (m > 0)
@@ -236,8 +218,7 @@ namespace Fluxions
 			return VectorType(1);
 		}
 
-		constexpr VectorType K(int l, int m) noexcept
-		{
+		constexpr VectorType K(int l, int m) noexcept {
 			// ScalarType fourPi = (ScalarType)12.566370614359172953850573533118;
 			constexpr ScalarType invFourPi = (ScalarType)0.07957747154594766788444188168626;
 			ScalarType c = invFourPi * (2 * l + 1);
@@ -251,15 +232,13 @@ namespace Fluxions
 			return static_cast<VectorType>(sqrt(t * c));
 		}
 
-		constexpr VectorType calc(VectorType theta, VectorType phi) noexcept
-		{
-			const VectorType *a = &coefficients[0];
+		constexpr VectorType calc(VectorType theta, VectorType phi) noexcept {
+			const VectorType* a = &coefficients[0];
 			return calc_spherical_harmonic<VectorType>((int)maxDegree, a, theta, phi);
 		}
 
 	private:
-		static constexpr long long factorial(int i) noexcept
-		{
+		static constexpr long long factorial(int i) noexcept {
 			if (i < 0 || i > 20)
 				return 0;
 			long long f[] = {
@@ -289,8 +268,7 @@ namespace Fluxions
 	};
 
 	template <typename VectorType, typename ScalarType>
-	constexpr void TSphericalHarmonic<VectorType, ScalarType>::resize(unsigned maxDegree_) noexcept
-	{
+	constexpr void TSphericalHarmonic<VectorType, ScalarType>::resize(unsigned maxDegree_) noexcept {
 		if (maxDegree_ > 10) {
 			maxDegree_ = 10;
 		}
@@ -302,8 +280,7 @@ namespace Fluxions
 	}
 
 	template <typename VectorType, typename ScalarType>
-	constexpr void TSphericalHarmonic<VectorType, ScalarType>::resize(unsigned maxDegree_, const VectorType &value) noexcept
-	{
+	constexpr void TSphericalHarmonic<VectorType, ScalarType>::resize(unsigned maxDegree_, const VectorType& value) noexcept {
 		if (maxDegree_ > 10) {
 			maxDegree_ = 10;
 		}
@@ -316,8 +293,7 @@ namespace Fluxions
 	}
 
 	template <typename VectorType, typename ScalarType>
-	void TSphericalHarmonic<VectorType, ScalarType>::readFromString(const std::string &data) noexcept
-	{
+	void TSphericalHarmonic<VectorType, ScalarType>::readFromString(const std::string& data) noexcept {
 		std::istringstream iss(data);
 		std::string fileId;
 		int numberOfBands;
@@ -362,8 +338,7 @@ namespace Fluxions
 	}
 
 	template <typename VectorType, typename ScalarType>
-	void TSphericalHarmonic<VectorType, ScalarType>::readFromFile(const std::string &filename) noexcept
-	{
+	void TSphericalHarmonic<VectorType, ScalarType>::readFromFile(const std::string& filename) noexcept {
 		std::ifstream fin(filename.c_str());
 
 		if (!fin)
@@ -400,96 +375,87 @@ namespace Fluxions
 	using MultispectralSph4d = SphericalHarmonicd[4];
 
 	// When finished, sph = (R+G+B)/3 and msph[3] = 0.2126R + 0.7152G + 0.0722B
-	bool MakeStandardizedSph(SphericalHarmonicf &sph, MultispectralSph4f &msph);
+	bool MakeStandardizedSph(SphericalHarmonicf& sph, MultispectralSph4f& msph);
 	// Sets fourth channel msph[3] to luminance (0.2126R + 0.7152G + 0.0722B)
-	bool MakeLuminanceChannel4f(MultispectralSph4f &msph);
+	bool MakeLuminanceChannel4f(MultispectralSph4f& msph);
 	// Sets fourth channel msph[3] to intensity (R+G+B)/3
-	bool MakeIntensityChannel4f(MultispectralSph4f &msph);
+	bool MakeIntensityChannel4f(MultispectralSph4f& msph);
 
-	struct Sph4f
-	{
+	struct Sph4f {
 		MultispectralSph4f msph;
 		int maxDegree = 0;
 
 		inline Sph4f() {}
 
-		inline Sph4f(int degree, float value = 0.0f)
-		{
+		inline Sph4f(int degree, float value = 0.0f) {
 			for (int i = 0; i < 4; i++)
 				msph[i].resize(degree, value);
 			maxDegree = degree;
 		}
 
-		inline Sph4f(const Sph4f &sph)
-		{
+		inline Sph4f(const Sph4f& sph) {
 			for (int i = 0; i < 4; i++)
 				msph[i] = sph.msph[i];
 		}
 
-		inline Sph4f &operator=(const Sph4f &sph)
-		{
+		inline Sph4f& operator=(const Sph4f& sph) {
 			for (int i = 0; i < 4; i++)
 				msph[i] = sph.msph[i];
 			return *this;
 		}
 
-		SphericalHarmonicf &r() { return msph[0]; }
-		SphericalHarmonicf &g() { return msph[1]; }
-		SphericalHarmonicf &b() { return msph[2]; }
-		SphericalHarmonicf &a() { return msph[3]; }
+		SphericalHarmonicf& r() { return msph[0]; }
+		SphericalHarmonicf& g() { return msph[1]; }
+		SphericalHarmonicf& b() { return msph[2]; }
+		SphericalHarmonicf& a() { return msph[3]; }
 
-		const SphericalHarmonicf &r() const { return msph[0]; }
-		const SphericalHarmonicf &g() const { return msph[1]; }
-		const SphericalHarmonicf &b() const { return msph[2]; }
-		const SphericalHarmonicf &a() const { return msph[3]; }
+		const SphericalHarmonicf& r() const { return msph[0]; }
+		const SphericalHarmonicf& g() const { return msph[1]; }
+		const SphericalHarmonicf& b() const { return msph[2]; }
+		const SphericalHarmonicf& a() const { return msph[3]; }
 
-		SphericalHarmonicf &operator[](unsigned i) { return msph[i]; }
-		const SphericalHarmonicf &operator[](unsigned i) const { return msph[i]; }
+		SphericalHarmonicf& operator[](unsigned i) { return msph[i]; }
+		const SphericalHarmonicf& operator[](unsigned i) const { return msph[i]; }
 
-		inline void resize(int degree, float value = 0.0f)
-		{
+		inline void resize(int degree, float value = 0.0f) {
 			for (int i = 0; i < 4; i++)
 				msph[i].resize(degree, value);
 			maxDegree = degree;
 		}
 
-		inline void reset()
-		{
+		inline void reset() {
 			for (int i = 0; i < 4; i++)
 				msph[i].resize(maxDegree, 0.0f);
 		}
 
 		// returns the number of elements: maxDegree * (maxDegree + 1) + maxDegree + 1
-		constexpr unsigned size() const noexcept { unsigned m = maxDegree;  return m * (m+1) + m + 1; }
+		constexpr unsigned size() const noexcept { unsigned m = maxDegree;  return m * (m + 1) + m + 1; }
 
 		inline void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
 
 		inline void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
 
-		inline void Accumulate(const Sph4f &b, const float c, int maxDegrees = -1)
-		{
+		inline void Accumulate(const Sph4f& b, const float c, int maxDegrees = -1) {
 			for (int i = 0; i < 4; i++)
 				msph[i].Accumulate(b[i], c, maxDegrees);
 		}
 
-		inline void Accumulate(const Sph4f &b, const Sph4f &c, int maxDegrees = -1)
-		{
+		inline void Accumulate(const Sph4f& b, const Sph4f& c, int maxDegrees = -1) {
 			for (int i = 0; i < 4; i++)
 				msph[i].Accumulate(b[i], c[i], maxDegrees);
 		}
 
-		inline void Accumulate(const Sph4f &b, const Sph4f &c, float d, int maxDegrees = -1)
-		{
+		inline void Accumulate(const Sph4f& b, const Sph4f& c, float d, int maxDegrees = -1) {
 			for (int i = 0; i < 4; i++)
 				msph[i].Accumulate(b[i], c[i], d, maxDegrees);
 		}
 
-		void SaveJSON(const std::string &path, const std::string &name, const Vector3f &position);
+		void SaveJSON(const std::string& path, const std::string& name, const Vector3f& position);
 
 		// Returns true if able to convert from vector format
-		bool fromVectorFormat(int maxDegrees, const std::vector<std::vector<float>> & v);
+		bool fromVectorFormat(int maxDegrees, const std::vector<std::vector<float>>& v);
 		// Returns true if able to convert to vector format
-		bool toVectorFormat(int numChannels, std::vector<std::vector<float>> & v);
+		bool toVectorFormat(int numChannels, std::vector<std::vector<float>>& v);
 	};
 } // namespace Fluxions
 

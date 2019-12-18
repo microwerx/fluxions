@@ -1,26 +1,27 @@
 #ifndef FLUXIONS_SIMPLE_RENDERER_PLUGIN_HPP
 #define FLUXIONS_SIMPLE_RENDERER_PLUGIN_HPP
 
-#include <fluxions_simple_program.hpp>
-#include <fluxions_simple_scene_graph.hpp>
-
 namespace Fluxions
 {
 	class SimpleSceneGraph;
+	class RendererContext;
+	class RendererGLES30;
 
 	struct ISimpleRendererPlugin
 	{
 		ISimpleRendererPlugin(SimpleSceneGraph* pointerToSSG);
 
 		virtual bool reset() = 0;
-		virtual bool Init() = 0;
-		virtual bool Redo() = 0;
-		virtual bool Read(const std::string& cmd, std::istringstream& istr) = 0;
-		virtual bool ReadUniformLocs(SimpleProgram& program) = 0;
-		virtual bool Prog() = 0;
-		virtual bool Draw() = 0;
+		virtual bool init() = 0;
+		virtual bool redo() = 0;
+		virtual bool read(const std::string& cmd, std::istringstream& istr) = 0;
+		virtual bool readUniformLocs(RendererProgram& program) = 0;
+		virtual bool prog() = 0;
+		virtual bool draw() = 0;
 
 		SimpleSceneGraph* pssg;
+		RendererContext* pRendererContext;
+		RendererGLES30* pRenderer;
 	}; // class ISimpleRendererPlugin
 } // namespace Fluxions
 

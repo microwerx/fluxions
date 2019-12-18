@@ -3,18 +3,18 @@
 
 #include <fluxions_gte_image.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>
-#include <fluxions_simple_gpu_texture.hpp>
+#include <fluxions_renderer_texture_cube.hpp>
 
 namespace Fluxions
 {
 	struct SphlImageTexture
 	{
 		Image4f lightProbe;
-		SimpleGpuTexture texture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
+		RendererTextureCube texture;
 
-		bool LoadLightProbe(const std::string& path);
-		bool SphToLightProbe(const MultispectralSph4f& sph);
-		bool UploadLightProbe();
+		bool loadLightProbe(const std::string& path);
+		bool sphToLightProbe(const MultispectralSph4f& sph);
+		bool uploadLightProbe();
 	};
 }
 

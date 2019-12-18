@@ -6,7 +6,7 @@
 #include <fluxions_gte_spherical_harmonic.hpp>
 #include <fluxions_gte_image.hpp>
 #include <fluxions_simple_scene_graph.hpp>
-#include <fluxions_simple_cube_texture.hpp>
+#include <fluxions_renderer_texture_cube.hpp>
 
 namespace Fluxions
 {
@@ -37,76 +37,76 @@ namespace Fluxions
 
 		// This holds a cubemap representation of the path traced (ptrc) 3D light probe
 		Image4f ptrcLightProbeImage;
-		SimpleGpuTexture ptrcLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
+		RendererTextureCube ptrcLightProbeTexture;
 		float ptrcLightProbePercent = 0.0f;
 
 		// This holds a cube map representation of the msph for this SPHL
 		Image4f msphLightProbeImage;
-		SimpleGpuTexture msphLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
+		RendererTextureCube msphLightProbeTexture;
 
 		// This holds the finalized SELF + NEIGHBOR light probe
 		//SSPHHLightHierarchy hierSph;
 		Image4f hierLightProbeImage;
-		SimpleGpuTexture hierLightProbeTexture = SimpleGpuTexture(GL_TEXTURE_CUBE_MAP);
+		RendererTextureCube hierLightProbeTexture;
 
-		SimpleCubeTexture depthSphlMap;
-		SimpleCubeTexture colorSphlMap;
-		SimpleCubeTexture environmentLightProbeMap;
+		RendererTextureCube depthSphlMap;
+		RendererTextureCube colorSphlMap;
+		RendererTextureCube environmentLightProbeMap;
 
 		SimpleSSPHHLight();
 		~SimpleSSPHHLight();
 
 		// Reads from a Path Traced Light Probe (a cube map stored images from left to right in a single image).
-		bool ReadPtrcLightProbe(const std::string& path);
+		bool readPtrcLightProbe(const std::string& path);
 		// Saves to a Path Traced Light Probe (a cube map with cube faces stored from left to right in a single image).
-		bool SavePtrcLightProbe(const std::string& path);
+		bool savePtrcLightProbe(const std::string& path);
 
 		// Saves a JSON form of the multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-		bool SaveJsonSph(const std::string& path);
+		bool saveJsonSph(const std::string& path);
 		// Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
-		bool ReadJsonSph(const std::string& path);
+		bool readJsonSph(const std::string& path);
 
 		// Writes name.obj and name.mtl to the path
-		bool SaveOBJ(const std::string& path, const std::string& name);
+		bool saveOBJ(const std::string& path, const std::string& name);
 
-		bool LightProbeToSph(const Image4f& lightProbe, MultispectralSph4f& sph);
-		bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe);
-		bool SphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe, int maxDegree);
-		bool UploadLightProbe(Image4f& lightProbe, SimpleGpuTexture& texture);
-		bool UploadLightProbe(Image4f& lightProbe, GLuint& texture);
+		bool lightProbeToSph(const Image4f& lightProbe, MultispectralSph4f& sph);
+		bool sphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe);
+		bool sphToLightProbe(const MultispectralSph4f& sph, Image4f& lightProbe, int maxDegree);
+		bool uploadLightProbe(Image4f& lightProbe, RendererTextureCube& texture);
+		bool uploadLightProbe(Image4f& lightProbe, GLuint& texture);
 
-		Color3f GetCoefficientColor(int l, int m) const;
-		float GetCoefficient(int j, int l, int m) const;
-		float GetCoefficient(int j, int lm) const;
-		void ZeroCoefficients();
-		void IsolateCoefficient(int j, int l, int m);
-		void SetCoefficient(int j, int l, int m, float value);
-		void RandomizeCoefficient(int j, int l, int m, float minValue, float maxValue);
-		inline void Standardize() { MakeIntensityChannel4f(msph); }
-		void Randomize(float size = 1.0f);
+		Color3f getCoefficientColor(int l, int m) const;
+		float getCoefficient(int j, int l, int m) const;
+		float getCoefficient(int j, int lm) const;
+		void zeroCoefficients();
+		void isolateCoefficient(int j, int l, int m);
+		void setCoefficient(int j, int l, int m, float value);
+		void randomizeCoefficient(int j, int l, int m, float minValue, float maxValue);
+		inline void standardize() { MakeIntensityChannel4f(msph); }
+		void randomizeCoefficients(float size = 1.0f);
 
-		void ChangeDegrees(int degrees);
-		inline void IncDegrees() { ChangeDegrees(maxDegree + 1); }
-		inline void DecDegrees() { ChangeDegrees(maxDegree - 1); }
+		void changeDegrees(int degrees);
+		inline void incDegrees() { changeDegrees(maxDegree + 1); }
+		inline void decDegrees() { changeDegrees(maxDegree - 1); }
 
-		void ResizeHierarchies(int size);
+		void resizeHierarchies(int size);
 
-		void MakeDirty();
+		void makeDirty();
 
-		inline bool IsDirty() { return dirty; }
-		inline int GetMaxCoefficients() const { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
-		inline int GetMaxCoefficients(int degree) { return degree * (degree + 1) + degree + 1; }
-		inline void MakeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
-		inline void MakeIntensityChannel() { MakeIntensityChannel4f(msph); }
+		inline bool isDirty() { return dirty; }
+		inline int getMaxCoefficients() const { return maxDegree * (maxDegree + 1) + maxDegree + 1; }
+		inline int getMaxCoefficients(int degree) { return degree * (degree + 1) + degree + 1; }
+		inline void makeLuminanceChannel() { MakeLuminanceChannel4f(msph); }
+		inline void makeIntensityChannel() { MakeIntensityChannel4f(msph); }
 
 		// Hierarchies
-		void SortHierarchiesByPercent();
-		void SortHierarchiesByIndex();
-		void CopySphlToHierarchies();
+		void sortHierarchiesByPercent();
+		void sortHierarchiesByIndex();
+		void copySphlToHierarchies();
 
-		void SetHierarchyDescriptionToIndex();
-		void SetHierarchyDescriptionToPercent();
-		void SetHierarchyDescription();
+		void setHierarchyDescriptionToIndex();
+		void setHierarchyDescriptionToPercent();
+		void setHierarchyDescription();
 	};
 }
 

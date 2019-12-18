@@ -51,8 +51,7 @@
 #include <fluxions_simple_renderer.hpp>
 #include <fluxions_simple_scene_graph.hpp>
 #include <fluxions_simple_geometry_mesh.hpp>
-#include <fluxions_simple_gles30_renderer.hpp>
-#include <fluxions_multiple_render_target.hpp>
+#include <fluxions_renderer_context.hpp>
 
 namespace Fluxions
 {
