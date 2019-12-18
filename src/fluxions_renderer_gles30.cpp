@@ -852,6 +852,7 @@ namespace Fluxions
 	}
 
 	void RendererGLES30::buildBuffers() {
+		if (!validate()) return;
 		renderer.reset();
 		for (auto it = pSSG->geometry.begin(); it != pSSG->geometry.end(); it++) {
 			SimpleGeometryGroup& geo = it->second;
