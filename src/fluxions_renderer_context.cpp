@@ -46,7 +46,7 @@ namespace Fluxions
 		std::string line;
 		Df::TokenVector tokens;
 
-		const std::map<std::string, int> quickLookup{
+		std::map<std::string, int> quickLookup{
 			{"renderconfig", 1},
 			{"path", 2},
 			{"program", 3},
@@ -80,7 +80,7 @@ namespace Fluxions
 			if (count >= 1 && tokens[0].IsString())
 			{
 				bool processed = true;
-				int number = quickLookup.at(tokens[0].sval);
+				int number = quickLookup[tokens[0].sval];
 				switch (number)
 				{
 				case 0:
