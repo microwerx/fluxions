@@ -9,8 +9,9 @@ namespace Fluxions
 		RendererGpuTexture(GLenum target);
 		~RendererGpuTexture();
 
-		void init(const std::string& name) override;
+		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
+		const char* type() const override;
 
 		void bind(int unit);
 		void unbind();

@@ -2,17 +2,17 @@
 #define FLUXIONS_RENDERER_SAMPLER_OBJECT_HPP
 
 #include <fluxions_stdcxx.hpp>
-#include <fluxions_opengl.hpp>
+#include <fluxions_renderer_object.hpp>
 
 namespace Fluxions {
-	class RendererSamplerObject
+	class RendererSamplerObject: public RendererObject
 	{
 	public:
 		RendererSamplerObject();
 		~RendererSamplerObject();
 
-		void init(const std::string& name);
-		void kill();
+		void init(const std::string& newname, RendererObject *pparent) override;
+		void kill() override;
 		void bind(GLuint unit);
 		void unbind();
 
@@ -57,7 +57,6 @@ namespace Fluxions {
 		GLuint id;
 
 		GLint lastBoundUnit = -1;
-		std::string name_;
 	};
 }
 

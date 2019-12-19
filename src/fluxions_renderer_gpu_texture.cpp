@@ -11,8 +11,9 @@ namespace Fluxions
 
 	RendererGpuTexture::~RendererGpuTexture() {}
 
-	void RendererGpuTexture::init(const std::string& name) {
-		RendererObject::init(name);
+	void RendererGpuTexture::init(const std::string& name,
+								  RendererObject* pparent) {
+		RendererObject::init(name, pparent);
 		try {
 			texture_ = std::make_shared<GLuint>(0);
 			GLuint texture;
@@ -35,6 +36,10 @@ namespace Fluxions
 			texture_.reset();
 		}
 		RendererObject::kill();
+	}
+
+	const char* RendererGpuTexture::type() const {
+		return "RendererGpuTexture";
 	}
 
 	void RendererGpuTexture::bind(int unit) {

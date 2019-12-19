@@ -73,8 +73,8 @@ namespace Fluxions
 	{
 	public:
 		OpenGLNameTranslator();
-		int GetEnum(const std::string &name) const noexcept;
-		const char *GetString(int id) const noexcept;
+		int getEnum(const std::string &name) const noexcept;
+		const char *getString(int id) const noexcept;
 	private:
 		std::map<std::string, int> enums;
 		std::map<int, std::string> enum_strings;
@@ -87,7 +87,7 @@ namespace Fluxions
 	{
 	public:
 		QuickGLErrorChecker();
-		bool IsError();
+		bool isError();
 		void reset();
 	private:
 		GLenum e;

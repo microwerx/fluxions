@@ -262,7 +262,7 @@ bool FxDebugBindTexture(GLenum target, GLuint texture) {
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &id1);
 		glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &id2);
 		GLint id3 = glIsTexture(texture);
-		HFLOGERROR("could not bind %d to %s [2D: %d, CM: %d, is: %d]", texture, Fluxions::glNameTranslator.GetString(target), id1, id2, id3);
+		HFLOGERROR("could not bind %d to %s [2D: %d, CM: %d, is: %d]", texture, Fluxions::glNameTranslator.getString(target), id1, id2, id3);
 		return false;
 	}
 

@@ -25,7 +25,7 @@ void Window::OnRenderDearImGui() {
 bool Window::beginWindow() {
 	if (!isVisible()) return false;
 	ImGui::SetNextWindowContentSize(ImVec2((float)getWidth(), (float)getHeight()));
-	if (!ImGui::Begin(getName().c_str(), getVisiblePtr())) {
+	if (!ImGui::Begin(name().c_str(), getVisiblePtr())) {
 		ImGui::End();
 		return false;
 	}

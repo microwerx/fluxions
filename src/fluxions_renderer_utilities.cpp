@@ -247,12 +247,12 @@ namespace Fluxions
 			HFLOGWARN("unknown internal format %04x / %d / %s",
 					  internalformat,
 					  internalformat,
-					  Fluxions::glNameTranslator.GetString(internalformat));
+					  Fluxions::glNameTranslator.getString(internalformat));
 			HFLOGWARN("unknown type %d/%s/%s/%s",
 					  depthSize,
-					  Fluxions::glNameTranslator.GetString(depthType),
-					  Fluxions::glNameTranslator.GetString(type),
-					  Fluxions::glNameTranslator.GetString(components));
+					  Fluxions::glNameTranslator.getString(depthType),
+					  Fluxions::glNameTranslator.getString(type),
+					  Fluxions::glNameTranslator.getString(components));
 			return false;
 		}
 
@@ -307,15 +307,15 @@ namespace Fluxions
 
 		if (error != 0) {
 			HFLOGWARN("glError() -> %s [%s/%s/%s] (R: %d/%s, G: %d/%s, B: %d/%s, A: %d/%s, Z: %d/%s)",
-					  Fluxions::glNameTranslator.GetString(error),
-					  Fluxions::glNameTranslator.GetString(internalformat),
-					  Fluxions::glNameTranslator.GetString(type),
-					  Fluxions::glNameTranslator.GetString(components),
-					  redSize, Fluxions::glNameTranslator.GetString(redType),
-					  greenSize, Fluxions::glNameTranslator.GetString(greenType),
-					  blueSize, Fluxions::glNameTranslator.GetString(blueType),
-					  alphaSize, Fluxions::glNameTranslator.GetString(alphaType),
-					  depthSize, Fluxions::glNameTranslator.GetString(depthType));
+					  Fluxions::glNameTranslator.getString(error),
+					  Fluxions::glNameTranslator.getString(internalformat),
+					  Fluxions::glNameTranslator.getString(type),
+					  Fluxions::glNameTranslator.getString(components),
+					  redSize, Fluxions::glNameTranslator.getString(redType),
+					  greenSize, Fluxions::glNameTranslator.getString(greenType),
+					  blueSize, Fluxions::glNameTranslator.getString(blueType),
+					  alphaSize, Fluxions::glNameTranslator.getString(alphaType),
+					  depthSize, Fluxions::glNameTranslator.getString(depthType));
 		}
 
 		bool iszero = true;

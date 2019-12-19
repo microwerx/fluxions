@@ -9,8 +9,9 @@ namespace Fluxions
 		kill();
 	}
 
-	void RendererConfig::init(const std::string& name) {
-		RendererObject::init(name);
+	void RendererConfig::init(const std::string& name,
+							  RendererObject* pparent) {
+		RendererObject::init(name, pparent);
 	}
 
 	void RendererConfig::kill() {
@@ -18,6 +19,10 @@ namespace Fluxions
 		zShaderProgram.reset();
 
 		RendererObject::kill();
+	}
+
+	const char* RendererConfig::type() const {
+		return "RendererConfig";
 	}
 
 	GLbitfield RendererConfig::getClearBits() const {

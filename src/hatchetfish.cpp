@@ -49,9 +49,10 @@ namespace Hf
 
 	namespace hf
 	{
-		const char* info = "INFO";
-		const char* warning = "WARN";
+		const char* info = "INFO ";
+		const char* warning = "WARN ";
 		const char* error = "ERROR";
+		const char* debug = "DEBUG";
 	}
 
 	Hatchetfish::Hatchetfish() {
@@ -209,7 +210,7 @@ namespace Hf
 	void Hatchetfish::warningfn(const char* fn, const char* msg, ...) {
 		va_list args;
 		va_start(args, msg);
-		makeMessagefn("WARNING", fn, msg, args);
+		makeMessagefn(hf::warning, fn, msg, args);
 		va_end(args);
 		print(ansi::yellow);
 	}
@@ -217,7 +218,7 @@ namespace Hf
 	void Hatchetfish::error(const char* msg, ...) {
 		va_list args;
 		va_start(args, msg);
-		makeMessage("ERROR", msg, args);
+		makeMessage(hf::error, msg, args);
 		va_end(args);
 		print(ansi::red);
 	}
@@ -225,7 +226,7 @@ namespace Hf
 	void Hatchetfish::errorfn(const char* fn, const char* msg, ...) {
 		va_list args;
 		va_start(args, msg);
-		makeMessagefn("ERROR", fn, msg, args);
+		makeMessagefn(hf::error, fn, msg, args);
 		va_end(args);
 		print(ansi::red);
 	}
@@ -233,7 +234,7 @@ namespace Hf
 	void Hatchetfish::debug(const char* msg, ...) {
 		va_list args;
 		va_start(args, msg);
-		makeMessage("DEBUG", msg, args);
+		makeMessage(hf::debug, msg, args);
 		va_end(args);
 		print(ansi::magenta);
 	}
@@ -241,7 +242,7 @@ namespace Hf
 	void Hatchetfish::debugfn(const char* fn, const char* msg, ...) {
 		va_list args;
 		va_start(args, msg);
-		makeMessagefn("DEBUG", fn, msg, args);
+		makeMessagefn(hf::debug, fn, msg, args);
 		va_end(args);
 		print(ansi::magenta);
 	}

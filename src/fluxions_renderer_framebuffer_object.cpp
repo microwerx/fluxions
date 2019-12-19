@@ -20,8 +20,9 @@ namespace Fluxions
 
 	RendererFramebufferObject::~RendererFramebufferObject() {}
 
-	void RendererFramebufferObject::init(const std::string& name) {
-		RendererObject::init(name);
+	void RendererFramebufferObject::init(const std::string& name,
+										 RendererObject* pparent) {
+		RendererObject::init(name, pparent);
 		setDefaultParameters();
 	}
 
@@ -29,6 +30,10 @@ namespace Fluxions
 		deleteBuffers();
 		setDefaultParameters();
 		RendererObject::kill();
+	}
+
+	const char* RendererFramebufferObject::type() const {
+		return "RendererFramebufferObject";
 	}
 
 	void RendererFramebufferObject::setDefaultParameters() {
@@ -299,5 +304,10 @@ namespace Fluxions
 		rt.projectionViewMatrix = projectionViewMatrix;
 		renderTargets.push_back(std::pair<GLenum, RenderTarget>(whichInternalformat, rt));
 		dirty = true;
+	}
+
+	void RendererFramebufferObject::setMapName(const std::string& mapName) {
+		if (renderTargets.empty()) return;
+		renderTargets.back().second.mapName = mapName;
 	}
 } // namespace Fluxions

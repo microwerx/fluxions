@@ -13,8 +13,13 @@ namespace Fluxions
 		RendererGpuTexture texture{ GL_TEXTURE_2D };
 		bool dirty = true;
 
-		void init(const std::string& name) override;
+		std::string mappath;
+		std::string uniformname;
+		std::string samplername;
+
+		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
+		const char* type() const override;
 	};
 }
 

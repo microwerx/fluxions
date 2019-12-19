@@ -22,14 +22,19 @@
 
 namespace Fluxions
 {
-	void RendererProgram::init(const std::string& name) {
-		RendererObject::init(name);
+	void RendererProgram::init(const std::string& name,
+							   RendererObject* pparent) {
+		RendererObject::init(name, pparent);
 		create_program();
 	}
 
 	void RendererProgram::kill() {
 		delete_program();
 		RendererObject::kill();
+	}
+
+	const char* RendererProgram::type() const {
+		return "RendererProgram";
 	}
 
 	const char* RendererProgram::AttribUniformInfo::GetNameOfType() {
@@ -216,15 +221,33 @@ namespace Fluxions
 		if (!linked)
 			return;
 		//for (auto it = uniforms.begin(); it != uniforms.end(); ++it) {
-		for (const auto& [uniformName, uniform]: uniforms) {
+		for (const auto& [uniformName, uniform] : uniforms) {
 			GLint loc = getUniformLocation(uniformName);
 			if (loc >= 0) {
 				uniform.setProgramUniform(loc);
 			}
 			else {
 				HFLOGINFO("unable to set uniform %s (%d) for program %d.",
-					uniformName.c_str(), loc, program);
+						  uniformName.c_str(), loc, program);
 			}
+		}
+	}
+
+	void RendererProgram::loadShaders() {
+		if (!vertshaderpath.empty()) {
+			auto s = CompileShaderFromFile(GL_VERTEX_SHADER, vertshaderpath);
+			if (s->didCompile) attachShaders(s);
+			else HFLOGERROR("shader '%s' compile failed", vertshaderpath.c_str());
+		}
+		if (!fragshaderpath.empty()) {
+			auto s = CompileShaderFromFile(GL_FRAGMENT_SHADER, fragshaderpath);
+			if (s->didCompile) attachShaders(s);
+			else HFLOGERROR("shader '%s' compile failed", fragshaderpath.c_str());
+		}
+		if (!geomshaderpath.empty()) {
+			auto s = CompileShaderFromFile(GL_GEOMETRY_SHADER, geomshaderpath);
+			if (s->didCompile) attachShaders(s);
+			else HFLOGERROR("shader '%s' compile failed", geomshaderpath.c_str());
 		}
 	}
 
@@ -251,12 +274,16 @@ namespace Fluxions
 
 	bool RendererProgram::link() {
 		if (program == 0 || !glIsProgram(program)) {
-			Hf::Log.errorfn(__FUNCTION__, "program %d does not exist", program);
+			HFLOGERROR("program %d does not exist", program);
 			return false;
 		}
 
 		for (auto& shaderIt : shaders) {
 			glAttachShader(program, shaderIt->shader);
+		}
+
+		for (auto& ra : requestedVertexAttribs) {
+			bindAttribLocation(ra.index, ra.name.c_str());
 		}
 
 		GLint bufSize;

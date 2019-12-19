@@ -106,7 +106,7 @@ namespace Vf
 
 		inline bool is_decorated() const noexcept { return (bool)decoratorWidget_; }
 
-		inline const std::string &getName() const noexcept { return name_; }
+		inline const std::string &name() const noexcept { return name_; }
 
 		inline float getX() const { return windowRect_.x; }
 		inline float getY() const { return windowRect_.y; }

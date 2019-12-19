@@ -41,6 +41,11 @@ namespace Fluxions
 
 		RendererProgramPtr zShaderProgram{ nullptr };
 		RendererProgramPtr shaderProgram{ nullptr };
+		
+		std::string rc_program;
+		std::string ssg_camera;
+		std::string ssg_projection;
+		RendererProgram* pprogram{ nullptr };
 
 		bool renderToFBO{ false };
 		RendererFramebufferObject fbo;
@@ -77,8 +82,9 @@ namespace Fluxions
 		RendererConfig();
 		~RendererConfig() override;
 
-		void init(const std::string& name) override;
+		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
+		const char* type() const override;
 
 		GLbitfield getClearBits() const;
 		bool check() const;

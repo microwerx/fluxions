@@ -19,6 +19,7 @@
 #ifndef FLUXIONS_RENDERER_GLES30_HPP
 #define FLUXIONS_RENDERER_GLES30_HPP
 
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_simple_scene_graph.hpp>
 #include <fluxions_simple_geometry_mesh.hpp>
 #include <fluxions_renderer_config.hpp>
@@ -27,14 +28,16 @@
 
 namespace Fluxions
 {
-	class RendererGLES30 : public RendererObject
-	{
+	class RendererContext;
+
+	class RendererGLES30 : public RendererObject {
 	public:
 		RendererGLES30();
 		~RendererGLES30();
 
-		void init(const std::string& name) override;
+		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
+		const char* type() const override;
 
 		void buildBuffers();
 		void render();
@@ -51,23 +54,28 @@ namespace Fluxions
 		void setRenderConfig(RendererConfig* newRenderConfig);
 		RendererConfig* getRenderConfig();
 
+		void setContext(RendererContext* pcontext);
+
 		bool validate() const {
 			return (pSSG != nullptr
-				&& pRenderConfig != nullptr
-				&& pProgram != nullptr);
+					&& pContext != nullptr
+					&& pRenderConfig != nullptr
+					&& pProgram != nullptr);
 		}
 
 		GLuint getTexUnit();
 		void freeTexUnit(GLuint id);
 
+		std::string renderconfigname;
 	private:
 		std::string name_;
 		RendererGLES30Snapshot gles30StateSnapshot;
 
 		//SimpleSceneGraph emptySSG;
 		SimpleSceneGraph* pSSG = nullptr;
+		RendererContext* pContext = nullptr;
 		RendererConfig* pRenderConfig = nullptr;
-		RendererProgramPtr pProgram = nullptr;
+		RendererProgram* pProgram = nullptr;
 
 		Matrix4f projectionMatrix;
 		Matrix4f cameraMatrix;
@@ -86,7 +94,7 @@ namespace Fluxions
 		void renderCubeImages();
 		void applyGlobalSettingsToCurrentProgram();
 		void applySpheresToCurrentProgram();
-		void render(RendererProgramPtr program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
+		void render(RendererProgram* program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
 		void applyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
 		void disableCurrentTextures();
 

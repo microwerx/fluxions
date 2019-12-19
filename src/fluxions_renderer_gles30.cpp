@@ -18,6 +18,7 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
 #include <fluxions_renderer_gles30.hpp>
+#include <fluxions_renderer_context.hpp>
 
 namespace Fluxions
 {
@@ -30,8 +31,9 @@ namespace Fluxions
 
 	RendererGLES30::~RendererGLES30() {}
 
-	void RendererGLES30::init(const std::string& name) {
-		RendererObject::init(name);
+	void RendererGLES30::init(const std::string& name,
+							  RendererObject* pparent) {
+		RendererObject::init(name, pparent);
 
 		abo = 0;
 		eabo = 0;
@@ -45,13 +47,13 @@ namespace Fluxions
 	void RendererGLES30::kill() {
 		if (pSSG)
 			pSSG = nullptr;
-		
+
 		if (pRenderConfig)
 			pRenderConfig = nullptr;
-		
+
 		if (pProgram)
 			pProgram = nullptr;
-		
+
 		if (abo) {
 			glDeleteBuffers(1, &abo);
 			abo = 0;
@@ -65,7 +67,12 @@ namespace Fluxions
 		RendererObject::kill();
 	}
 
+	const char* RendererGLES30::type() const {
+		return "RendererGLES30";
+	}
+
 	void RendererGLES30::setSceneGraph(SimpleSceneGraph* pSSG_) {
+		if (pSSG == pSSG_) return;
 		pSSG = pSSG_;
 		areBuffersBuilt = false;
 	}
@@ -152,22 +159,30 @@ namespace Fluxions
 	}
 
 	void RendererGLES30::setRenderConfig(RendererConfig* rc) {
-		pRenderConfig = rc;
 		if (!rc) return;
 
+		pRenderConfig = rc;
 		pProgram = nullptr;
-		if (pRenderConfig->useZOnly) {
-			if (pRenderConfig->zShaderProgram != nullptr) {
-				pProgram = pRenderConfig->zShaderProgram;
-			}
+
+		if (pContext && pContext->programs.count(rc->rc_program)) {
+			pProgram = &pContext->programs[rc->rc_program];
 		}
-		else if (pRenderConfig->shaderProgram != nullptr) {
-			pProgram = pRenderConfig->shaderProgram;
-		}
+		//else if (pRenderConfig->useZOnly) {
+		//	if (pRenderConfig->zShaderProgram != nullptr) {
+		//		pProgram = pRenderConfig->zShaderProgram;
+		//	}
+		//}
+		//else if (pRenderConfig->shaderProgram != nullptr) {
+		//	pProgram = pRenderConfig->shaderProgram;
+		//}
 	}
 
 	RendererConfig* RendererGLES30::getRenderConfig() {
 		return pRenderConfig;
+	}
+
+	void RendererGLES30::setContext(RendererContext* pcontext) {
+		pContext = pcontext;
 	}
 
 	void RendererGLES30::render() {
@@ -470,7 +485,7 @@ namespace Fluxions
 			glUniform1i(locs.sphere_count, numSpheres);
 	}
 
-	void RendererGLES30::render(RendererProgramPtr program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix_, Matrix4f& cameraMatrix_) {
+	void RendererGLES30::render(RendererProgram* program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix_, Matrix4f& cameraMatrix_) {
 		Matrix4f inverseCameraMatrix = cameraMatrix_.AsInverse();
 		Vector4f cameraPosition(0, 0, 0, 1);
 		cameraPosition = inverseCameraMatrix * cameraPosition;

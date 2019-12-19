@@ -10,13 +10,18 @@ namespace Fluxions {
 		RendererObject();
 		virtual ~RendererObject();
 
-		virtual void init(const std::string& name);
+		virtual void init(const std::string& newname, RendererObject* pparent = nullptr);
 		virtual void kill();
 		virtual void reset();
+		virtual const char* type() const;
 
-		const std::string& getName() const noexcept { return name_; };
+		const std::string& name() const noexcept { return name_; };
+
+		void setParent(RendererObject* pparent);
+		RendererObject* parent();
 	private:
 		std::string name_;
+		RendererObject* parent_{ nullptr };
 	};
 }
 

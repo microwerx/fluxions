@@ -14,8 +14,9 @@ namespace Fluxions
 		RendererFramebufferObject();
 		~RendererFramebufferObject();
 
-		void init(const std::string& name) override;
+		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
+		const char* type() const override;
 
 		bool make();
 		void useForWriting();
@@ -28,6 +29,7 @@ namespace Fluxions
 		void addRenderbuffer(GLenum attachment, GLenum internalformat);
 		void addTexture2D(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
 		void addTextureCubeMap(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
+		void setMapName(const std::string& mapName);
 
 		// Used by Renderer{GLES30, ...}
 		void restoreGLState();
@@ -54,6 +56,7 @@ namespace Fluxions
 		Matrix4f projectionViewMatrix;
 
 		struct RenderTarget {
+			std::string mapName;
 			GLuint object = 0;
 			GLenum target = 0;
 			GLenum attachment = 0;
