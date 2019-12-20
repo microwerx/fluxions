@@ -17,9 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 
-#ifdef __unix__
-#include <unistd.h>
-#endif
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_fileio_iostream.hpp>
 #include <fluxions_xml.hpp>
