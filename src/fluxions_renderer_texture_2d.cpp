@@ -5,7 +5,7 @@ namespace Fluxions
 {
 	void RendererTexture2D::init(const std::string& name, RendererObject* pparent) {
 		RendererObject::init(name, pparent);
-		texture.init(name);
+		texture.init(name, this);
 	}
 
 	void RendererTexture2D::kill() {
