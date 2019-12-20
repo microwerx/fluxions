@@ -64,7 +64,10 @@ namespace Fluxions
 		return false;
 	}
 
-	bool SSG_SSPHHRendererPlugin::readUniformLocs(RendererProgram& program) {
+	bool SSG_SSPHHRendererPlugin::readUniformLocs(RendererProgram* pprogram) {
+		if (!pprogram) return false;
+		RendererProgram& program = *pprogram;
+
 		for (int i = 0; i < 16; i++) {
 			char name[64];
 #ifndef _WIN32
