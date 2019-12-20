@@ -448,9 +448,6 @@
     <ClInclude Include="include\fluxions_iscene.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_obj_static_model.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_opengl.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
@@ -461,57 +458,6 @@
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_resource_manager.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_camera.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_environment.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_geometry_group.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_point_light.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_property.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_sphere.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_ssphh.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_ssphh_light.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_surface.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_vertex.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_sphl.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_sphl_image_texture.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_sphl_sampler.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_ssphh_renderer_plugin.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssphh.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssphh_utilities.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_stdcxx.hpp">
@@ -709,6 +655,61 @@
     <ClInclude Include="include\fluxions_renderer_texture_2d.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
+    <ClInclude Include="include\fluxions_simple_ssphh_light.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl_image_texture.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_sphl_sampler.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssg_ssphh_renderer_plugin.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssphh.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssphh_utilities.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_camera.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_environment.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_geometry_group.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_point_light.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_property.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_sphere.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_ssphh.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_surface.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_vertex.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_obj_static_model.hpp">
+      <Filter>include\fluxions-renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
@@ -770,6 +771,9 @@
     </Filter>
     <Filter Include="include\fluxions-renderer">
       <UniqueIdentifier>{206af5a6-ea34-408b-b485-346848720236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\fluxions-ssphh">
+      <UniqueIdentifier>{7b634a8e-9bf0-44cf-811e-55e3146d6048}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

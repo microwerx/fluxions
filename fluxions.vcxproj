@@ -678,6 +678,7 @@
     <ClInclude Include="include\fluxions_simple_scene_graph.hpp" />
     <ClInclude Include="include\fluxions_obj_static_model.hpp" />
     <ClInclude Include="include\fluxions_renderer_shader.hpp" />
+    <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp" />
     <ClInclude Include="include\fluxions_simple_sphere.hpp" />
     <ClInclude Include="include\fluxions_simple_ssphh.hpp" />
     <ClInclude Include="include\fluxions_simple_ssphh_light.hpp" />
