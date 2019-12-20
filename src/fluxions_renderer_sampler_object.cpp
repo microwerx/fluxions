@@ -23,12 +23,12 @@ namespace Fluxions {
 		RendererObject::init(newname, pparent);
 		kill();
 		glGenSamplers(1, &id);
-		HFLOGINFO("Creating sampler '%s' = %i", name().c_str(), id);
+		HFLOGINFO("Creating sampler '%s' = %i", name(), id);
 	}
 
 	void RendererSamplerObject::kill() {
 		if (id != 0) {
-			HFLOGINFO("Deleting sampler '%s' = %i", name().c_str(), id);
+			HFLOGINFO("Deleting sampler '%s' = %i", name(), id);
 			glDeleteSamplers(1, &id);
 			id = 0;
 		}
