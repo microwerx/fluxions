@@ -545,14 +545,14 @@ namespace Fluxions
 				if (arg1 == WRITEFBO) {
 					pcurRendererConfig->writeFBOs.push_back({ arg2, nullptr });
 					HFLOGINFO("rendererconfig '%s' adding write fbo '%s'",
-							  pcurRendererConfig->name().c_str(),
+							  pcurRendererConfig->name(),
 							  arg2.c_str());
 					return true;
 				}
 				else if (arg1 == READFBO) {
 					pcurRendererConfig->readFBOs.push_back({ arg2, nullptr });
 					HFLOGINFO("rendererconfig '%s' adding read fbo '%s'",
-							  pcurRendererConfig->name().c_str(),
+							  pcurRendererConfig->name(),
 							  arg2.c_str());
 					return true;
 				}
@@ -560,7 +560,7 @@ namespace Fluxions
 					if (programs.count(arg2)) {
 						pcurRendererConfig->rc_program = arg2;
 						HFLOGINFO("rendererconfig '%s' adding program '%s'",
-								  pcurRendererConfig->name().c_str(),
+								  pcurRendererConfig->name(),
 								  arg2.c_str());
 						return true;
 					}
@@ -573,14 +573,14 @@ namespace Fluxions
 				else if (arg1 == CAMERA) {
 					pcurRendererConfig->ssg_camera = arg2;
 					HFLOGINFO("rendererconfig '%s' adding camera '%s'",
-							  pcurRendererConfig->name().c_str(),
+							  pcurRendererConfig->name(),
 							  arg2.c_str());
 					return true;
 				}
 				else if (arg1 == PROJECTION) {
 					pcurRendererConfig->ssg_projection = arg2;
 					HFLOGINFO("rendererconfig '%s' adding projection '%s'",
-							  pcurRendererConfig->name().c_str(),
+							  pcurRendererConfig->name(),
 							  arg2.c_str());
 					return true;
 				}
@@ -856,7 +856,7 @@ namespace Fluxions
 			int height = k_ivalue(args, 3);
 			if (!width || !height) {
 				HFLOGERROR("fbo '%s' dimensions must be > 0",
-						   pcurFBO->name().c_str());
+						   pcurFBO->name());
 			}
 			pcurFBO->setDimensions(width, height);
 		}
@@ -887,7 +887,7 @@ namespace Fluxions
 			else {
 				HFLOGERROR("target '%s' incorrect for fbo '%s'",
 						   args[2].sval.c_str(),
-						   pcurFBO->name().c_str());
+						   pcurFBO->name());
 				return false;
 			}
 
@@ -906,7 +906,7 @@ namespace Fluxions
 			else {
 				HFLOGERROR("attachment incorrect for fbo '%s'",
 						   args[3].sval.c_str(),
-						   pcurFBO->name().c_str());
+						   pcurFBO->name());
 				return false;
 			}
 
@@ -927,7 +927,7 @@ namespace Fluxions
 			else {
 				HFLOGERROR("internalformat %s incorrect for fbo '%s'",
 						   args[4].sval.c_str(),
-						   pcurFBO->name().c_str());
+						   pcurFBO->name());
 				return false;
 			}
 
@@ -936,20 +936,20 @@ namespace Fluxions
 				case GL_RENDERBUFFER:
 					pcurFBO->addRenderbuffer(attachment, internalformat);
 					HFLOGINFO("attaching renderbuffer to fbo '%s'",
-							  pcurFBO->name().c_str());
+							  pcurFBO->name());
 					break;
 				case GL_TEXTURE_2D:
 					pcurFBO->addTexture2D(attachment, target, internalformat, generateMipmaps);
 					pcurFBO->setMapName(mapName);
 					HFLOGINFO("attaching texture2D to fbo '%s' for map '%s'",
-							  pcurFBO->name().c_str(),
+							  pcurFBO->name(),
 							  mapName.c_str());
 					break;
 				case GL_TEXTURE_CUBE_MAP:
 					pcurFBO->addTextureCubeMap(attachment, target, internalformat, generateMipmaps);
 					pcurFBO->setMapName(mapName);
 					HFLOGINFO("attaching textureCube to fbo '%s' for map '%s'",
-							  pcurFBO->name().c_str(),
+							  pcurFBO->name(),
 							  mapName.c_str());
 					break;
 				}
