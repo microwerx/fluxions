@@ -10,6 +10,8 @@
 
 namespace Fluxions
 {
+	class RendererProgram;
+
 	class SSG_SSPHHRendererPlugin : public ISimpleRendererPlugin
 	{
 	private:
@@ -31,7 +33,7 @@ namespace Fluxions
 		std::vector<SimpleSSPHHLight> ssphhLights;
 
 		bool read(const std::string& cmd, std::istringstream& istr) override;
-		bool readUniformLocs(RendererProgram& program) override;
+		bool readUniformLocs(RendererProgram* pprogram) override;
 		bool prog() override;
 		bool draw() override;
 		bool init() override;
