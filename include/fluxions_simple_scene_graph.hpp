@@ -45,8 +45,7 @@ namespace Fluxions
 	struct SceneGraphWriter;
 	struct ISimpleRendererPlugin;
 
-	class SimpleSceneGraph
-	{
+	class SimpleSceneGraph {
 	public:
 		std::string name;
 		std::vector<std::string> sceneFileLines;
@@ -63,6 +62,7 @@ namespace Fluxions
 		// TODO: Change OBJStaticModel to SimpleGeometryMesh
 		TResourceManager<OBJStaticModel> geometryObjects;
 		std::vector<SimplePointLight> pointLights;
+		std::vector<SimpleSceneGraphNode*> nodes;
 
 		SimpleMaterialSystem materials;
 		//mutable SimpleRenderer_GLuint renderer;
