@@ -6,6 +6,7 @@ namespace Fluxions
 	class SimpleSceneGraph;
 	class RendererContext;
 	class RendererGLES30;
+	class RendererProgram;
 
 	struct ISimpleRendererPlugin
 	{
@@ -15,7 +16,7 @@ namespace Fluxions
 		virtual bool init() = 0;
 		virtual bool redo() = 0;
 		virtual bool read(const std::string& cmd, std::istringstream& istr) = 0;
-		virtual bool readUniformLocs(RendererProgram& program) = 0;
+		virtual bool readUniformLocs(RendererProgram* pprogram) = 0;
 		virtual bool prog() = 0;
 		virtual bool draw() = 0;
 
