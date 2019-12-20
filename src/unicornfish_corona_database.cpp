@@ -16,15 +16,12 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_obj_static_model.hpp>
 #include <unicornfish_corona_database.hpp>
 
 template class std::vector<Fluxions::OBJStaticModel::Vertex>;
-template class std::vector<GLuint>;
+//template class std::vector<unsigned>;
 template class std::vector<Fluxions::OBJStaticModel::Surface>;
 template class std::map<std::string, Fluxions::OBJStaticModel>;
 
@@ -39,21 +36,21 @@ namespace Uf
 		models[objname].LoadOBJ(filename);
 	}
 
-	void CoronaDatabase::BuildBuffers() {
-		renderer.reset();
-		std::map<std::string, Fluxions::OBJStaticModel>::iterator modelIt;
-		for (modelIt = models.begin(); modelIt != models.end(); modelIt++) {
-			modelIt->second.Render(renderer);
-		}
-		renderer.BuildBuffers();
-	}
+	//void CoronaDatabase::BuildBuffers() {
+	//	renderer.reset();
+	//	std::map<std::string, Fluxions::OBJStaticModel>::iterator modelIt;
+	//	for (modelIt = models.begin(); modelIt != models.end(); modelIt++) {
+	//		modelIt->second.Render(renderer);
+	//	}
+	//	renderer.BuildBuffers();
+	//}
 
-	void CoronaDatabase::Render() {
-		renderer.Render();
-	}
+	//void CoronaDatabase::Render() {
+	//	renderer.Render();
+	//}
 
-	void CoronaDatabase::RenderZOnly() {
-		renderer.RenderZOnly();
-	}
+	//void CoronaDatabase::RenderZOnly() {
+	//	renderer.RenderZOnly();
+	//}
 
 } // namespace Uf
