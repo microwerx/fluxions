@@ -1217,7 +1217,7 @@ namespace Fluxions
 	//	// rt.znear = (float)znear;
 	//	// rt.zfar = (float)zfar;
 
-	//	camera.SetImageParameters((float)rc.viewportRect.w, (float)rc.viewportRect.h,
+	//	camera.setImageParameters((float)rc.viewportRect.w, (float)rc.viewportRect.h,
 	//		rc.znear, rc.zfar);
 
 	//	if (!rc.useZOnly && rc.shaderProgram == nullptr)
