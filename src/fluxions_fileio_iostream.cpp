@@ -1,6 +1,6 @@
 #include "pch.hpp"
+#include <hatchetfish.hpp>
 #include <fluxions_fileio_iostream.hpp>
-#include <fluxions_types.hpp>
 
 namespace Fluxions
 {
@@ -271,7 +271,7 @@ namespace Fluxions
 			}
 		}
 		else {
-			std::cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
+			HFLOGERROR("invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10");
 		}
 		return sph;
 	}
@@ -286,7 +286,7 @@ namespace Fluxions
 			}
 		}
 		else {
-			std::cerr << __FUNCTION__ << "(): invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10" << std::endl;
+			HFLOGERROR("invalid number of bands of spherical harmonics. Must satisfy condition that 0 <= maxDegree <= 10");
 		}
 		return sph;
 	}
