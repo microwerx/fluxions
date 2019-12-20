@@ -5,8 +5,7 @@
 
 namespace Fluxions
 {
-	struct SimpleCamera
-	{
+	struct SimpleCamera : public SimpleSceneGraphNode {
 		bool isOrtho;
 		bool isPerspective;
 		Matrix4f projectionMatrix;
@@ -32,7 +31,9 @@ namespace Fluxions
 		float imageNearZ = 0.1f;
 		float imageFarZ = 1000.0f;
 
-		void SetImageParameters(float screenWidth, float screenHeight, float znear, float zfar) {
+		const char* nodetype() const noexcept override { return "SimpleCamera"; }
+
+		void setImageParameters(float screenWidth, float screenHeight, float znear, float zfar) {
 			imageWidth = screenWidth;
 			imageHeight = screenHeight;
 			imageAspect = screenWidth / screenHeight;
