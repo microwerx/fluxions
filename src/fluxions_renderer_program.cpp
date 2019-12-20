@@ -233,22 +233,19 @@ namespace Fluxions
 		}
 	}
 
+	void RendererProgram::loadShader(std::string& path, GLenum type) {
+		if (path.empty()) return;
+		RendererShaderPtr shader = std::make_shared<RendererShader>();
+		shader->init(path, this, type);
+		CompileShaderFromFile(shader, type, path);
+		if (shader->didCompile) attachShaders(shader);
+		else HFLOGERROR("shader '%s' compile failed", path.c_str());
+	}
+
 	void RendererProgram::loadShaders() {
-		if (!vertshaderpath.empty()) {
-			auto s = CompileShaderFromFile(GL_VERTEX_SHADER, vertshaderpath);
-			if (s->didCompile) attachShaders(s);
-			else HFLOGERROR("shader '%s' compile failed", vertshaderpath.c_str());
-		}
-		if (!fragshaderpath.empty()) {
-			auto s = CompileShaderFromFile(GL_FRAGMENT_SHADER, fragshaderpath);
-			if (s->didCompile) attachShaders(s);
-			else HFLOGERROR("shader '%s' compile failed", fragshaderpath.c_str());
-		}
-		if (!geomshaderpath.empty()) {
-			auto s = CompileShaderFromFile(GL_GEOMETRY_SHADER, geomshaderpath);
-			if (s->didCompile) attachShaders(s);
-			else HFLOGERROR("shader '%s' compile failed", geomshaderpath.c_str());
-		}
+		loadShader(vertshaderpath, GL_VERTEX_SHADER);
+		loadShader(fragshaderpath, GL_FRAGMENT_SHADER);
+		loadShader(geomshaderpath, GL_GEOMETRY_SHADER);
 	}
 
 	void RendererProgram::attachShaders(RendererShaderPtr& shaderPtr) {
@@ -256,6 +253,7 @@ namespace Fluxions
 			return;
 		if (!shaderPtr->didCompile)
 			return;
+		shaderPtr->setParent(this);
 		shaders.push_back(shaderPtr);
 		linked = false;
 	}
