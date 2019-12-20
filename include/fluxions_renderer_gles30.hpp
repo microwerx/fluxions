@@ -25,6 +25,7 @@
 #include <fluxions_renderer_config.hpp>
 #include <fluxions_renderer_gles30_snapshot.hpp>
 #include <fluxions_shader_program_locations.hpp>
+#include <fluxions_simple_renderer.hpp>
 
 namespace Fluxions
 {
