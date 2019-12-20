@@ -1,11 +1,8 @@
 #ifndef FLUXIONS_OBJ_STATIC_MODEL_HPP
 #define FLUXIONS_OBJ_STATIC_MODEL_HPP
 
-#include <string>
-#include <vector>
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_gte.hpp>
-#include <fluxions_simple_renderer.hpp>
-#include <fluxions_precompiled_models.hpp>
 
 namespace Fluxions
 {
@@ -53,16 +50,16 @@ namespace Fluxions
 
 		bool LoadOBJ(const std::string& filename);
 		bool SaveOBJ(const std::string& filename) const;
-		void SavePrecompiled(const std::string& filename, const std::string objname) const;
-		void LoadPrecompiled(const int numIndices, const int* indices, const int numVertices, const float* vertices, const int numSurfaces, const OBJSurface* surfaces);
+		//void SavePrecompiled(const std::string& filename, const std::string objname) const;
+		//void LoadPrecompiled(const int numIndices, const int* indices, const int numVertices, const float* vertices, const int numSurfaces, const OBJSurface* surfaces);
 		void ComputeTangentVectors();
 		void Clear();
 		void Resize(int vertexCount, int indexCount, int surfaceCount = 1);
 		void CreateSimpleModel(int vertexCount, int indexCount, int surfaceCount = 1);
 		void Transform(const Matrix4d& mat);
 
-		void Render(SimpleRenderer_GLuint& renderer);
-		void RenderGL1();
+		//void Render(SimpleRenderer_GLuint* prenderer);
+		//void RenderGL1();
 
 		std::vector<Vertex> Vertices;
 		std::vector<unsigned> Indices;
