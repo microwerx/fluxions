@@ -876,7 +876,8 @@ namespace Fluxions
 			renderer.SetCurrentObjectName(geo.objectName);
 			renderer.SetCurrentMtlLibName(geo.mtllibName);
 			renderer.NewObject();
-			pSSG->geometryObjects[geo.objectId].Render(renderer);
+			// pSSG->geometryObjects[geo.objectId].Render(renderer);
+			HFLOGDEBUGFIRSTRUNCOUNTMSG(5, "NEED TO RENDER OBJ_STATIC_MODEL");
 		}
 		renderer.AssignMaterialIds(pSSG->materials);
 		renderer.SetCurrentMtlLibName("");
