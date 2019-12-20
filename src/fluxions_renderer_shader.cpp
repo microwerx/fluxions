@@ -2,14 +2,13 @@
 #include <fluxions_renderer_shader.hpp>
 
 namespace Fluxions {
-	RendererShaderPtr CompileShaderFromFile(GLenum type, const std::string& filename) {
+	RendererShaderPtr CompileShaderFromFile(RendererShaderPtr& shader, GLenum type, const std::string& filename) {
 		const char* typeName =
 			(type == GL_VERTEX_SHADER) ? "vertex" :
 			(type == GL_FRAGMENT_SHADER) ? "fragment" :
 			(type == GL_GEOMETRY_SHADER) ? "geometry" :
 			"unknown";
 
-		RendererShaderPtr shader = std::make_shared<RendererShader>();
 		FilePathInfo fpi(filename);
 		if (!fpi.IsFile()) {
 			HFLOGERROR("file '%s' does not exist", filename.c_str());
@@ -17,7 +16,6 @@ namespace Fluxions {
 		}
 		HFLOGDEBUG("loading %s shader `%s'", typeName, fpi.fullfname.c_str());
 
-		shader->init(fpi.fullfname, type);
 		if (shader->shader == 0) {
 			HFLOGERROR("%s shader could not be created!", typeName);
 			return shader;
@@ -38,8 +36,8 @@ namespace Fluxions {
 
 	RendererShader::~RendererShader() {}
 
-	void RendererShader::init(const std::string& name, GLenum shaderType) {
-		RendererObject::init(name);
+	void RendererShader::init(const std::string& name, RendererObject* pparent, GLenum shaderType) {
+		RendererObject::init(name, pparent);
 		create_shader(shaderType);
 	}
 
