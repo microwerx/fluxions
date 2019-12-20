@@ -68,6 +68,8 @@ namespace Fluxions
 		const std::string& getInfoLog() const;
 		GLuint getProgram() const;
 	private:
+		void loadShader(std::string& path, GLenum type);
+
 		void create_program();
 		void delete_program();
 
