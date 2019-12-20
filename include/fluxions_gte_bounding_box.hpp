@@ -96,12 +96,15 @@ class TBoundingBox
 
 	TVector3<T> minBounds;
 	TVector3<T> maxBounds;
+
+	static constexpr T DefaultMaxValue = 0;
+	static constexpr T DefaultMinValue = 0;
 };
 
 template <typename T>
 TBoundingBox<T>::TBoundingBox()
-	: minBounds(1000000000, 1000000000, 1000000000),
-	  maxBounds(-1000000000, -1000000000, -1000000000)
+	: minBounds(DefaultMinValue, DefaultMinValue, DefaultMinValue),
+	  maxBounds(DefaultMaxValue, DefaultMaxValue, DefaultMaxValue)
 {
 }
 
