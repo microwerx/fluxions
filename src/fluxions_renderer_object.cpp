@@ -21,6 +21,7 @@ namespace Fluxions
 				   name_.c_str(),
 				   type(),
 				   parent_ ? parent_->name_.c_str() : "(noparent)");
+		initialized_ = true;
 	}
 
 	void RendererObject::kill() {
@@ -28,9 +29,15 @@ namespace Fluxions
 				   name_.c_str(),
 				   type(),
 				   parent_ ? parent_->name_.c_str() : "(noparent)");
+		initialized_ = false;
 	}
 
 	void RendererObject::reset() {
+		if (!initialized_) {
+			HFLOGERROR("Renderer object never initialized");
+			return;
+		}
+
 		HFLOGDEBUG("Resetting renderer object '%s' [%s]",
 				   name_.c_str(),
 				   type());
@@ -43,10 +50,17 @@ namespace Fluxions
 	}
 
 	void RendererObject::setParent(RendererObject* pparent) {
+		if (!pparent) {
+			HFLOGWARN("This object '%s' does not have a parent", name());
+		}
 		parent_ = pparent;
 	}
 
 	RendererObject* RendererObject::parent() {
+		return parent_;
+	}
+
+	const RendererObject* RendererObject::parent() const {
 		return parent_;
 	}
 }
