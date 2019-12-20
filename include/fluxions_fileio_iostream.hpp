@@ -1,7 +1,7 @@
 #ifndef FLUXIONS_FILEIO_IOSTREAM_HPP
 #define FLUXIONS_FILEIO_IOSTREAM_HPP
 
-#include <iostream>
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>
 
