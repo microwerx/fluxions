@@ -3,15 +3,8 @@
 
 namespace Fluxions
 {
-	void RendererTexture2D::init(const std::string& name, RendererObject* pparent) {
-		RendererObject::init(name, pparent);
-		texture.init(name, this);
-	}
-
-	void RendererTexture2D::kill() {
-		texture.kill();
-		RendererObject::kill();
-	}
+	RendererTexture2D::RendererTexture2D()
+		:RendererGpuTexture(GL_TEXTURE_2D) {}
 
 	const char* RendererTexture2D::type() const {
 		return "RendererTexture2D";
