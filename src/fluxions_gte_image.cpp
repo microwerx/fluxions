@@ -888,7 +888,7 @@ namespace Fluxions
 
 	template <typename ColorType>
 	void TImage<ColorType>::setImageData(unsigned int format, unsigned int type, unsigned width, unsigned height, unsigned depth, void* _pixels) {
-		_setImageData(format, type, ColorType::gl_type, ColorType::gl_size, width, height, depth, _pixels);
+		_setImageData(getComponentCount(format), type, ColorType::gl_size, ColorType::gl_type, width, height, depth, _pixels);
 	}
 
 	constexpr unsigned getComponentCount(unsigned format) {
