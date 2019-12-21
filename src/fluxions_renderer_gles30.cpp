@@ -796,7 +796,13 @@ namespace Fluxions
 	void RendererGLES30::renderSkyBox() {
 		if (renderskyboxname.empty()) return;
 
+		while (glGetError()) HFLOGWARN("SKYBOX PRE GL ERROR!");
+
+		Matrix4f skyboxCameraMatrix;
+		Matrix4f skyboxProjectionMatrix;
 		Matrix4f skyboxWorldMatrix;
+
+		skyboxProjectionMatrix.PerspectiveY(90.0, 1.0, 1.0, 1000.0);
 
 		if (!pSkyboxCube) {
 			pSkyboxCube = &pContext->textureCubes[renderskyboxname];
@@ -808,7 +814,7 @@ namespace Fluxions
 
 		pProgram->use();
 		pProgram->applyUniform(pSkyboxCube->uniformname, 1);
-		pProgram->applyUniform("CameraMatrix", pSSG->camera.actualViewMatrix);
+		pProgram->applyUniform("CameraMatrix", pSSG->camera.viewMatrix);
 		pProgram->applyUniform("ProjectionMatrix", pSSG->camera.projectionMatrix);
 		pProgram->applyUniform("WorldMatrix", skyboxWorldMatrix);
 
@@ -819,21 +825,18 @@ namespace Fluxions
 
 		glBindBuffer(GL_ARRAY_BUFFER, abo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-		glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
-		glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
-		if (vloc >= 0)
-			glEnableVertexAttribArray(vloc);
-		if (tloc >= 0)
-			glEnableVertexAttribArray(tloc);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
-		if (vloc >= 0)
-			glDisableVertexAttribArray(vloc);
-		if (tloc >= 0)
-			glDisableVertexAttribArray(tloc);
-
+		if (vloc >= 0) glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
+		if (tloc >= 0) glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
+		if (vloc >= 0) glEnableVertexAttribArray(vloc);
+		if (tloc >= 0) glEnableVertexAttribArray(tloc);
+		if (vloc >= 0) glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+		if (vloc >= 0) glDisableVertexAttribArray(vloc);
+		if (tloc >= 0) glDisableVertexAttribArray(tloc);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glUseProgram(0);
+
+		while (glGetError()) HFLOGWARN("SKYBOX POST GL ERROR!");
 	}
 
 	void RendererGLES30::buildBuffers() {
