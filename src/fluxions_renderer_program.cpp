@@ -235,10 +235,11 @@ namespace Fluxions
 
 	void RendererProgram::loadShader(std::string& path, GLenum type) {
 		if (path.empty()) return;
+		FilePathInfo fpi(path);
 		RendererShaderPtr shader = std::make_shared<RendererShader>();
-		shader->init(path, this, type);
-		CompileShaderFromFile(shader, type, path);
-		if (shader->didCompile) attachShaders(shader);
+		shader->init(fpi.fullfname, this, type);
+		if (CompileShaderFromFile(shader, type, path))
+			attachShaders(shader);
 		else HFLOGERROR("shader '%s' compile failed", path.c_str());
 	}
 

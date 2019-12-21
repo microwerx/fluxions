@@ -7,42 +7,42 @@ namespace Fluxions
 	RendererObject::RendererObject() {}
 
 	RendererObject::~RendererObject() {
-		HFLOGDEBUG("Destroying renderer object '%s' [%s]",
-				   name_.c_str(),
-				   type());
-		kill();
+		if (initialized_) kill();
 	}
 
-	void RendererObject::init(const std::string& newname,
-							  RendererObject* pparent) {
+	void RendererObject::init(const std::string& newname, RendererObject* pparent) {
+		if (initialized_) kill();
 		name_ = newname;
 		setParent(pparent);
-		HFLOGDEBUG("Initting renderer object '%s' [%s] with parent '%s'",
-				   name_.c_str(),
-				   type(),
-				   parent_ ? parent_->name_.c_str() : "(noparent)");
+		HFLOGDEBUG("Initializing renderer object (%s) --> [%s] '%s'",
+				   parent_ ? parent_->name() : "noparent",
+				   type(), 
+				   name());
 		initialized_ = true;
 	}
 
 	void RendererObject::kill() {
-		HFLOGDEBUG("Killing renderer object '%s' [%s] with parent '%s'",
-				   name_.c_str(),
+		if (!initialized_) {
+			HFLOGERROR("NOT KILLING renderer object (%s) --> [%s] '%s'",
+					   parent_ ? parent_->name() : "noparent",
+					   type(),
+					   name());
+			return;
+		}
+		HFLOGDEBUG("Killing renderer object (%s) --> [%s] '%s'",
+				   parent_ ? parent_->name() : "noparent",
 				   type(),
-				   parent_ ? parent_->name_.c_str() : "(noparent)");
+				   name());
 		initialized_ = false;
 	}
 
 	void RendererObject::reset() {
-		if (!initialized_) {
-			HFLOGERROR("Renderer object never initialized");
-			return;
-		}
-
-		HFLOGDEBUG("Resetting renderer object '%s' [%s]",
-				   name_.c_str(),
-				   type());
+		HFLOGDEBUG("Resetting renderer object (%s) --> [%s] '%s'",
+				   parent_ ? parent_->name() : "noparent",
+				   type(),
+				   name());
 		kill();
-		init(name());
+		init(name(), parent_);
 	}
 
 	const char* RendererObject::type() const {
@@ -51,7 +51,7 @@ namespace Fluxions
 
 	void RendererObject::setParent(RendererObject* pparent) {
 		if (!pparent) {
-			HFLOGWARN("This object '%s' does not have a parent", name());
+			HFLOGWARN("Renderer object [%s] '%s' does not have a parent", type(), name());
 		}
 		parent_ = pparent;
 	}
