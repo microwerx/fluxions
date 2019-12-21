@@ -234,6 +234,14 @@ public:
 	//const T LengthSquared() const;
 	//TVector3<T> & Normalize();
 
+	constexpr T l1dist() const noexcept {
+		return x + y + z;
+	}
+
+	constexpr T l2dist() const noexcept {
+		return length();
+	}
+
 	constexpr T length() const noexcept {
 		return static_cast<T>(sqrt(x * x + y * y + z * z));
 	}
@@ -627,43 +635,43 @@ constexpr auto operator-(const TVector3<T>& v1, const TVector3<U>& v2) noexcept 
 // COMPARISON OPERATORS //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-template <typename T>
-constexpr bool operator==(const TVector3<T>& a, const TVector3<T>& b) noexcept {
-	return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
+template <typename T, typename U>
+constexpr bool operator==(const TVector3<T>& a, const TVector3<U>& b) noexcept {
+	return (a.x == (T)b.x) && (a.y == (T)b.y) && (a.z == (T)b.z);
 }
 
 
-template <typename T>
-constexpr bool operator!=(const TVector3<T>& a, const TVector3<T>& b) noexcept {
-	return !(a == b);
+template <typename T, typename U>
+constexpr bool operator!=(const TVector3<T>& a, const TVector3<U>& b) noexcept {
+	return (a.x != (T)b.x) || (a.y != (T)b.y) || (a.z != (T)b.z);
 }
 
-template <typename T>
-constexpr TVector3<T> operator < (const TVector3<T>& a, const TVector3<T>& b) noexcept {
-	return TVector3<T>(a.x < b.x ? TVector3<T>::one : TVector3<T>::zero,
-					   a.y < b.y ? TVector3<T>::one : TVector3<T>::zero,
-					   a.z < b.z ? TVector3<T>::one : TVector3<T>::zero);
+template <typename T, typename U>
+constexpr TVector3<T> operator < (const TVector3<T>& a, const TVector3<U>& b) noexcept {
+	return TVector3<T>(a.x < (T)b.x ? TVector3<T>::one : TVector3<T>::zero,
+					   a.y < (T)b.y ? TVector3<T>::one : TVector3<T>::zero,
+					   a.z < (T)b.z ? TVector3<T>::one : TVector3<T>::zero);
 }
 
-template <typename T>
-constexpr TVector3<T> operator <= (const TVector3<T>& a, const TVector3<T>& b) noexcept {
-	return TVector3<T>(a.x <= b.x ? TVector3<T>::one : TVector3<T>::zero,
-					   a.y <= b.y ? TVector3<T>::one : TVector3<T>::zero,
-					   a.z <= b.z ? TVector3<T>::one : TVector3<T>::zero);
+template <typename T, typename U>
+constexpr TVector3<T> operator <= (const TVector3<T>& a, const TVector3<U>& b) noexcept {
+	return TVector3<T>(a.x <= (T)b.x ? TVector3<T>::one : TVector3<T>::zero,
+					   a.y <= (T)b.y ? TVector3<T>::one : TVector3<T>::zero,
+					   a.z <= (T)b.z ? TVector3<T>::one : TVector3<T>::zero);
 }
 
-template <typename T>
-constexpr TVector3<T> operator > (const TVector3<T>& a, const TVector3<T>& b) noexcept {
-	return TVector3<T>(a.x > b.x ? TVector3<T>::one : TVector3<T>::zero,
-					   a.y > b.y ? TVector3<T>::one : TVector3<T>::zero,
-					   a.z > b.z ? TVector3<T>::one : TVector3<T>::zero);
+template <typename T, typename U>
+constexpr TVector3<T> operator > (const TVector3<T>& a, const TVector3<U>& b) noexcept {
+	return TVector3<T>(a.x > (T)b.x ? TVector3<T>::one : TVector3<T>::zero,
+					   a.y > (T)b.y ? TVector3<T>::one : TVector3<T>::zero,
+					   a.z > (T)b.z ? TVector3<T>::one : TVector3<T>::zero);
 }
 
-template <typename T>
-constexpr TVector3<T> operator >= (const TVector3<T>& a, const TVector3<T>& b) noexcept {
-	return TVector3<T>(a.x >= b.x ? TVector3<T>::one : TVector3<T>::zero,
-					   a.y >= b.y ? TVector3<T>::one : TVector3<T>::zero,
-					   a.z >= b.z ? TVector3<T>::one : TVector3<T>::zero);
+template <typename T, typename U>
+constexpr TVector3<T> operator >= (const TVector3<T>& a, const TVector3<U>& b) noexcept {
+	return TVector3<T>(a.x >= (T)b.x ? TVector3<T>::one : TVector3<T>::zero,
+					   a.y >= (T)b.y ? TVector3<T>::one : TVector3<T>::zero,
+					   a.z >= (T)b.z ? TVector3<T>::one : TVector3<T>::zero);
 }
 
 } // namespace Fluxions
