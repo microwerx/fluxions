@@ -269,7 +269,8 @@ namespace Fluxions
 	private:
 		void _setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, unsigned width, unsigned height, unsigned depth, void* _pixels);
 
-		unsigned zstride;
+		unsigned zstride{ 0 };
+		unsigned ystride{ 0 };
 		ColorType borderColor;
 		int minColor;
 		int maxColor;
