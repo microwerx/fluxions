@@ -6,7 +6,7 @@
 namespace Fluxions
 {
 	struct RendererShader : public RendererObject {
-		GLenum type = 0;
+		GLenum shaderType = 0;
 		GLuint shader = 0;
 		std::string source;
 		std::string infoLog;
@@ -18,7 +18,10 @@ namespace Fluxions
 
 		void init(const std::string& name, RendererObject* pparent, GLenum shaderType);
 		void kill() override;
+		const char* type() const noexcept override;
+
 		bool compileSource(const std::string& sourceCode);
+
 	private:
 		void create_shader(GLenum shaderType);
 		void delete_shader();
@@ -26,7 +29,7 @@ namespace Fluxions
 
 	using RendererShaderPtr = std::shared_ptr<RendererShader>;
 
-	RendererShaderPtr CompileShaderFromFile(RendererShaderPtr& shader, GLenum type, const std::string& filename);
+	bool CompileShaderFromFile(RendererShaderPtr& shader, GLenum type, const std::string& filename);
 } // namespace Fluxions
 
 #endif
