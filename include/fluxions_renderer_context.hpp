@@ -108,6 +108,9 @@ namespace Fluxions
 		void kill() override;
 		const char* type() const override;
 
+		// Resizes matching WxH render configurations to new sizes
+		void resize(int oldWidth, int oldHeight, int width, int height);
+
 		void loadShaders();
 		void loadTextures();
 

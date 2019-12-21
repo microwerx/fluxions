@@ -48,4 +48,18 @@ namespace Fluxions
 
 		return true;
 	}
+
+	void RendererConfig::updateViewport() {
+		viewportProjectionMatrix.LoadIdentity();
+		if (viewportFovInDegrees > 0) {
+			viewportProjectionMatrix.PerspectiveY(viewportFovInDegrees,
+												  viewportRect.aspectRatiof(),
+												  viewportZNear,
+												  viewportZFar);
+		}
+		else {
+			viewportProjectionMatrix.Ortho2D(0, viewportRect.w,
+											 0, viewportRect.h);
+		}
+	}
 }
