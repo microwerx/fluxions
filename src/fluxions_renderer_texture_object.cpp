@@ -21,7 +21,7 @@
 
 namespace Fluxions
 {
-	//RendererSamplerObject DefaultSamplerObject;
+	//RendererSampler DefaultSamplerObject;
 	//RendererTextureObject DefaultTextureObject;
 
 	std::wstring StringToWString(const std::string& str) {
@@ -56,8 +56,8 @@ namespace Fluxions
 		kill();
 	}
 
-	void RendererTextureObject::init(const std::string& name) {
-		kill();
+	void RendererTextureObject::init(const std::string& name, RendererObject* pparent) {
+		RendererObject::init(name, pparent);
 		name_ = name;
 		glGenTextures(1, &id);
 		HFLOGINFO("Creating texture '%s' = %i", name_.c_str(), id);
@@ -69,6 +69,11 @@ namespace Fluxions
 			glDeleteTextures(1, &id);
 			id = 0;
 		}
+		RendererObject::kill();
+	}
+
+	const char* RendererTextureObject::type() const noexcept {
+		return "RendererTextureObject";
 	}
 
 	void RendererTextureObject::bind(GLuint unit, bool applySamplerObjectSettings) {
@@ -79,7 +84,9 @@ namespace Fluxions
 
 		if (applySamplerObjectSettings != false) {
 			//samplerObject.ApplySettings(unit, id, target);
-			samplerObject.bind(unit);
+			if (cached.samplerObject) {
+				cached.samplerObject->bind(unit);
+			}
 			didApplySamplerSettings = true;
 		}
 
@@ -363,7 +370,6 @@ namespace Fluxions
 
 		this->image.setImageData(format, GL_UNSIGNED_BYTE, width, height, 6, data);
 
-		init(name_);
 		bind(0);
 		setTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, data, genMipMap);
 		FxBindDefaultTextureAndSampler(target);
@@ -522,7 +528,6 @@ namespace Fluxions
 			//	delete[] dst;
 			//}
 
-			init(name_);
 			bind(0);
 			setTextureCubeMap(format, GL_UNSIGNED_BYTE, width, height, (void**)data, genMipMap);
 			FxBindDefaultTextureAndSampler(target);
