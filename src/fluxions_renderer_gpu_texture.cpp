@@ -1,8 +1,99 @@
 #include "pch.hpp"
 #include <fluxions_renderer_gpu_texture.hpp>
+#include <fluxions_gte_image.hpp>
 
 namespace Fluxions
 {
+	// Image loading routines
+
+	bool gpuLoadTexture(RendererGpuTexture& t, const std::string& ext, const std::string& path, bool genMipMap) {
+		int width = 0;
+		int height = 0;
+		int internalformat = GL_RGBA;
+		int format = GL_RGB;
+		GLenum type = GL_UNSIGNED_BYTE;
+
+		Image4f image4;
+		if (ext == ".EXR") {
+			if (!image4.loadEXR(path))
+				return false;
+			type = GL_FLOAT;
+		}
+		else if (ext == ".PPM") {
+			if (!image4.loadPPM(path))
+				return false;
+		}
+		else if (ext == ".PFM") {
+			HFLOGERROR("PFM images not yet supported");
+			//if (!image4.loadPPM(path))
+			type = GL_FLOAT;
+			return false;
+		}
+		else if (ext == ".PNG" || ext == ".JPG") {
+			SDL_Surface* imageSurface = IMG_Load(path.c_str());
+			if (imageSurface == NULL) {
+				HFLOGERROR("IMG_GetError() reports: %s", IMG_GetError());
+				return false;
+			}
+
+			width = imageSurface->w;
+			height = imageSurface->h;
+			void* data = imageSurface->pixels;
+			int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB
+				: imageSurface->format->BitsPerPixel == 32 ? GL_RGBA
+				: 0;
+			//int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA8 : 0;
+			// int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_SRGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_SRGB_ALPHA : 0;
+			if (format == 0)
+				return false;
+			image4.setImageData(format, type, width, height, 1, data);
+			SDL_FreeSurface(imageSurface);
+		}
+		else {
+			return false;
+		}
+
+		bool isCube = false;
+		if (image4.width() == image4.height() * 6) {
+			isCube = true;
+			image4.convertRectToCubeMap();
+		}
+		else if (image4.width() * 4 == image4.height() * 3) {
+			HFLOGERROR("Cross cube images not yet supported");
+			// image4.convertCubeMapToCrossMap()
+			// image4.convertCrossMapToCubeMap()
+			isCube = true;
+			return false;
+		}
+
+		t.bind(0);
+		const int level = 0;
+		const int border = 0;
+		if (isCube) {
+			for (int i = 0; i < 6; i++) {
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+							 level, internalformat,
+							 width, height,
+							 border, format, type,
+							 image4.getImageData(i));
+			}
+		}
+		else {
+			glTexImage2D(GL_TEXTURE_2D,
+						 level, internalformat,
+						 width, height,
+						 border, format, type,
+						 image4.getImageData(0));
+		}
+		t.generateMipmap();
+		t.unbind();
+
+		return true;
+	}
+
+
+	// RendererGpuTexture /////////////////////////////////////////////
+
 	RendererGpuTexture::RendererGpuTexture(GLenum target) {
 		if (target != GL_TEXTURE_CUBE_MAP && target != GL_TEXTURE_2D)
 			throw "Unsupported Texture Target";
@@ -40,6 +131,12 @@ namespace Fluxions
 
 	const char* RendererGpuTexture::type() const {
 		return "RendererGpuTexture";
+	}
+
+	bool RendererGpuTexture::loadMap() {
+		FilePathInfo fpi(mappath);
+		toupper(fpi.ext);
+		return gpuLoadTexture(*this, fpi.ext, mappath, true);
 	}
 
 	void RendererGpuTexture::bind(int unit) {
