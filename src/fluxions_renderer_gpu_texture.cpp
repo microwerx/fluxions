@@ -1,4 +1,5 @@
 #include "pch.hpp"
+#include <hatchetfish_stopwatch.hpp>
 #include <fluxions_renderer_gpu_texture.hpp>
 #include <fluxions_gte_image.hpp>
 
@@ -7,6 +8,7 @@ namespace Fluxions
 	// Image loading routines
 
 	bool gpuLoadTexture(RendererGpuTexture& t, const std::string& ext, const std::string& path, bool genMipMap) {
+		Hf::StopWatch stopwatch;
 		int width = 0;
 		int height = 0;
 		int internalformat = GL_RGBA;
@@ -66,28 +68,49 @@ namespace Fluxions
 			return false;
 		}
 
+		while (glGetError()) HFLOGWARN("GL ERROR!");
 		t.bind(0);
 		const int level = 0;
 		const int border = 0;
 		if (isCube) {
+			GLubyte test[18] = {
+				255,   0,   0,
+				0,   255, 255,
+				0,   255,   0,
+				255,   0, 255,
+				0,     0, 255,
+				255, 255,   0
+			};
 			for (int i = 0; i < 6; i++) {
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-							 level, internalformat,
-							 width, height,
-							 border, format, type,
+							 level, GL_RGBA,
+							 image4.width(), image4.height(),
+							 border, GL_RGBA, GL_FLOAT,
 							 image4.getImageData(i));
+				//glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				//			 level, GL_RGBA,
+				//			 1, 1,
+				//			 border, GL_RGBA, GL_UNSIGNED_BYTE,
+				//			 test + i * 3);
 			}
+			while (glGetError()) HFLOGWARN("TexImage2D     GL ERROR!");
+			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+			while (glGetError()) HFLOGWARN("GenerateMipmap GL ERROR!");
 		}
 		else {
 			glTexImage2D(GL_TEXTURE_2D,
-						 level, internalformat,
-						 width, height,
-						 border, format, type,
+						 level, GL_RGBA,
+						 image4.width(), image4.height(),
+						 border, GL_RGBA, GL_FLOAT,
 						 image4.getImageData(0));
+			while (glGetError()) HFLOGWARN("TexImage2D     GL ERROR!");
+			glGenerateMipmap(GL_TEXTURE_2D);
+			while (glGetError()) HFLOGWARN("GenerateMipmap GL ERROR!");
 		}
-		t.generateMipmap();
 		t.unbind();
-
+		stopwatch.Stop();
+		t.buildTime = stopwatch.GetSecondsElapsed();
+		HFLOGINFO("Image '%s' took %3.2f secs to load", t.name(), t.buildTime);
 		return true;
 	}
 
