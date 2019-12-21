@@ -68,6 +68,8 @@ namespace Fluxions
 		void freeTexUnit(GLuint id);
 
 		std::string renderconfigname;
+		std::string renderskyboxname;
+		std::string rendercamera;
 	private:
 		std::string name_;
 		RendererGLES30Snapshot gles30StateSnapshot;
@@ -77,6 +79,7 @@ namespace Fluxions
 		RendererContext* pContext = nullptr;
 		RendererConfig* pRenderConfig = nullptr;
 		RendererProgram* pProgram = nullptr;
+		RendererTextureCube* pSkyboxCube{ nullptr };
 
 		Matrix4f projectionMatrix;
 		Matrix4f cameraMatrix;
