@@ -3,7 +3,7 @@
 
 #include <fluxions_renderer_object.hpp>
 #include <fluxions_renderer_program.hpp>
-#include <fluxions_renderer_framebuffe.hpp>
+#include <fluxions_renderer_framebuffer.hpp>
 
 namespace Fluxions
 {

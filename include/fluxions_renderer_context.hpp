@@ -23,7 +23,7 @@
 #include <fluxions_renderer_config.hpp>
 #include <damselfish.hpp>
 #include <fluxions_gte.hpp>
-#include <fluxions_renderer_sampler_object.hpp>
+#include <fluxions_renderer_sampler.hpp>
 #include <fluxions_renderer_texture_object.hpp>
 #include <fluxions_renderer_gles30.hpp>
 #include <fluxions_renderer_texture_2d.hpp>
