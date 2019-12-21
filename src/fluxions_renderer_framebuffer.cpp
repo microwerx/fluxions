@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include <fluxions_renderer_framebuffer_object.hpp>
+#include <fluxions_renderer_framebuffer.hpp>
 
 #define IFTOSTRING(thing, value) \
 	if ((thing) == (value))      \
