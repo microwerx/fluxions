@@ -257,15 +257,25 @@ namespace Fluxions
 					int dx, int dy, int dz,
 					TImage<ColorType>& dst) const;
 
+		// Converts Corona style 6x1 rectangle to cube map
 		bool convertRectToCubeMap();
+		// Converts cube map to Corona style 6x1 rectangle
 		bool convertCubeMapToRect();
+		// Converts Corona style 6x1 rectangle to cube map
 		bool convertRectToCubeMap(TImage<ColorType>& dst) const;
+		// Converts cube map to Corona style 6x1 rectangle
 		bool convertCubeMapToRect(TImage<ColorType>& dst) const;
+
+		// Converts either horizontal cross or vertical cross to cube map
 		bool convertCrossToCubeMap();
+		// Converse cube map to vertical cross format
 		bool convertCubeMapToCross();
+		// Converts either horizontal cross or vertical cross to cube map
 		bool convertCrossToCubeMap(TImage<ColorType>& dst) const;
+		// Converts cube map to vertical cross format
 		bool convertCubeMapToCross(TImage<ColorType>& dst) const;
 
+		// Copies GL_FLOAT or GL_UNSIGNED_BYTE raw data
 		void setImageData(unsigned int format, unsigned int type, unsigned width, unsigned height, unsigned depth, void* _pixels);
 
 	private:
