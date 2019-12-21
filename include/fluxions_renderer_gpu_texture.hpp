@@ -8,9 +8,14 @@ namespace Fluxions
 	struct RendererGpuTexture : public RendererObject {
 		GLint unit = 0;
 		GLint samplerId = 0;
-		//double buildTime = 0.0;
-		//float zfar = 0.0f;
-		//bool dirty = true;
+		
+		// This value is used to count how long it took to build this object
+		double buildTime = 0.0;
+		// This zfar is used to for rendering shadow maps
+		float zfar = 0.0f;
+		// This flag is used to signal an external process to rerender this texture
+		bool dirty = true;
+
 		std::string mappath;
 		std::string uniformname;
 		std::string samplername;
