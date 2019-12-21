@@ -814,7 +814,7 @@ namespace Fluxions
 		unsigned h = dw.max.y - dw.min.y + 1;
 		//Imf::Array2D<Imf::Rgba> filePixels;
 		std::vector<Imf::Rgba> filePixels((unsigned)w * h);
-		//filePixels.resizeErase(h, w);
+		//filePixels.resizeErase(h, range);
 		file.setFrameBuffer(&filePixels[0], 1, w);
 		file.readPixels(dw.min.y, dw.max.y);
 
@@ -877,6 +877,7 @@ namespace Fluxions
 		else
 			pixels.resize(pixelCount);
 		zstride = imageWidth * imageHeight;
+		ystride = imageWidth;
 	}
 
 	template <typename ColorType>
@@ -1073,34 +1074,78 @@ namespace Fluxions
 		blit3D(sx, sy, sz, width, height, 1, dx, dy, dz, dst);
 	}
 
+	// determines if incoming range is clipped out of image
+	inline bool range_clipped(int x, int w, unsigned rangeWidth) {
+		return (x + w <= 0 || x >= rangeWidth) ? true : false;
+	}
+
+	inline bool range_clipped(Vector3i x, Vector3i w, Vector3ui rangeWidth) {
+		return ((x + w <= Vector3i(0)).l1dist() || (x >= rangeWidth).l1dist()) ? true : false;
+	}
+
+	inline void clamp_range(int& x1, int& x2, unsigned rangeWidth) {
+		x1 = clamp<int>(x1, 0, (int)rangeWidth - 1);
+		x2 = clamp<int>(x2, 0, (int)rangeWidth - 1);
+	}
+
+	inline void clamp_range(Vector3i& x1, Vector3i& x2, Vector3ui rangeWidth) {
+		clamp_range(x1.x, x2.x, rangeWidth.x);
+		clamp_range(x1.y, x2.y, rangeWidth.y);
+		clamp_range(x1.z, x2.z, rangeWidth.z);
+	}
+
+	inline Vector3i tight_bounds(Vector3i& range1, Vector3i& range2) {
+		return Vector3i(std::min(range1.x, range2.x),
+						std::min(range1.y, range2.y),
+						std::min(range1.z, range2.z));
+	}
+
+	inline bool range_empty(const Vector3i& range) {
+		return (range.x <= 0 || range.y <= 0 || range.z <= 0);
+	}
+
 	template <typename ColorType>
 	void TImage<ColorType>::blit3D(int sx, int sy, int sz,
 								   int width, int height, int depth,
 								   int dx, int dy, int dz,
 								   TImage<ColorType>& dst) const {
-		if (sz + depth <= 0 || sz >= imageDepth) return;
-		if (dz + depth <= 0 || dz >= dst.imageDepth) return;
-		if (sx + width <= 0 || sx >= imageWidth) return;
-		if (sy + height <= 0 || sy >= imageHeight) return;
-		if (dx + width <= 0 || dx >= dst.imageWidth) return;
-		if (dy + height <= 0 || dy >= dst.imageHeight) return;
-		if (width < 0 || height < 0 || depth < 0) return;
+		// Look for out of bounds
+		Vector3i range{ width, height, depth };
+		Vector3ui srange{ imageWidth, imageHeight, imageDepth };
+		Vector3ui drange{ dst.imageWidth, dst.imageHeight, dst.imageDepth };
+		if (range_empty(srange) || range_empty(drange) || range_empty(range))
+			return;
 
-		int sx1 = clamp<int>(sx, 0, (int)imageWidth - 1);
-		int sy1 = clamp<int>(sy, 0, (int)imageHeight - 1);
-		int sz1 = clamp<int>(sz, 0, (int)imageDepth - 1);
-		int sx2 = clamp<int>(sx + width, 0, (int)imageWidth - 1);
-		int sy2 = clamp<int>(sy + height, 0, (int)imageHeight - 1);
-		int sz2 = clamp<int>(sz + depth, 0, (int)imageHeight - 1);
-		int w = sx2 - sx1 + 1;
-		int h = sy2 - sy1 + 1;
-		int d = sz2 - sz1 + 1;
+		// Clip source coordinates
+		Vector3 sx1{ sx, sy, sz };
+		if (range_clipped(sx1, range, srange))
+			return;
+		Vector3 sx2 = sx1 + range - 1;
+		clamp_range(sx1, sx2, srange);
 
-		for (int readZ = sz1; readZ < sz2; readZ++) {
-			for (int readY = sy1; readY < sy2; readY++) {
-				for (int readX = sx; readX < sx2; readX++) {
-				}
+		// Clip target coordinates
+		Vector3 dx1{ dx, dy, dz };
+		if (range_clipped(dx1, range, drange))
+			return;
+		Vector3 dx2 = d + range - 1;
+		clamp_range(sx1, sx2, drange);
+
+		// Determine smallest range and return if any are zero
+		range = tight_bounds(srange, drange);
+		if (range_empty(range)) return;
+
+		for (int readZ = 0; readZ < range.z; readZ++) {
+			int szoffset = sx1.z * zstride;
+			int dzoffset = dx1.z * dst.zstride;
+			for (int readY = 0; readY < range.y; readY++) {
+				value_type* src = &pixels[szoffset + sx1.y * ystride];
+				value_type* dst = &pixels[szoffset + dx1.y * dst.ystride];
+				memcpy(dst, src, sizeof(value_type) * range.x);
+				sx1.y++;
+				dx1.y++;
 			}
+			sx1.z++;
+			dx1.z++;
 		}
 	}
 
