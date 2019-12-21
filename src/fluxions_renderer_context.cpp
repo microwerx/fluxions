@@ -333,13 +333,15 @@ namespace Fluxions
 	void RendererContext::loadTextures() {
 		HFLOGINFO("Loading textures from renderconfig");
 		for (auto& [k, t] : texture2Ds) {
-			HFLOGINFO("Trying to load texture 2d '%s'",
-					  k.c_str());
+			HFLOGINFO("Trying to load texture 2d '%s' ... %s",
+					  k.c_str(),
+					  t.loadMap() ? "success" : "failed");
 		}
 
 		for (auto& [k, t] : textureCubes) {
-			HFLOGINFO("Trying to load texture cube '%s'",
-					  k.c_str());
+			HFLOGINFO("Trying to load texture cube '%s' ... %s",
+					  k.c_str(),
+					  t.loadMap() ? "success" : "failed");
 		}
 	}
 
@@ -1012,6 +1014,7 @@ namespace Fluxions
 		}
 		if (pcurTexture2D && svalarg1 && svalarg2) {
 			if (arg1 == "map") {
+				arg2 = FindPathIfExists(arg2, paths);
 				pcurTexture2D->mappath = arg2;
 				return true;
 			}
@@ -1036,7 +1039,7 @@ namespace Fluxions
 		std::string arg2;
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
-		bool svalarg2 = k_sval(args, 2, arg1);
+		bool svalarg2 = k_sval(args, 2, arg2);
 		if (svalarg1 && count == 2) {
 			textureCubes[arg1].init(arg1, this);
 			pcurTextureCube = &textureCubes[arg1];
@@ -1044,6 +1047,7 @@ namespace Fluxions
 		}
 		if (pcurTextureCube && svalarg1 && svalarg2) {
 			if (arg1 == "map") {
+				arg2 = FindPathIfExists(arg2, paths);
 				pcurTextureCube->mappath = arg2;
 				return true;
 			}
@@ -1078,6 +1082,12 @@ namespace Fluxions
 		if (pcurRenderer && svalarg1 && svalarg2) {
 			if (arg1 == "renderconfig" && rendererConfigs.count(arg2)) {
 				pcurRenderer->renderconfigname = arg2;
+			}
+			else if (arg1 == "skybox" && textureCubes.count(arg2)) {
+				pcurRenderer->renderskyboxname = arg2;
+			}
+			else if (arg1 == "camera") {
+				pcurRenderer->rendercamera = arg2;
 			}
 		}
 		return false;
