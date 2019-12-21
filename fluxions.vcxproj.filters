@@ -296,6 +296,7 @@
     <ClCompile Include="src\viperfish_animpath_window.cpp">
       <Filter>src\viperfish</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_image_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -709,6 +710,9 @@
     </ClInclude>
     <ClInclude Include="include\viperfish_animpath_window.hpp">
       <Filter>include\viperfish</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_image_loader.hpp">
+      <Filter>include\fluxions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

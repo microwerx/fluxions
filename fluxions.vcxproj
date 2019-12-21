@@ -169,6 +169,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\fluxions_image_loader.cpp" />
     <ClCompile Include="src\fluxions_renderer_gles30_snapshot.cpp" />
     <ClCompile Include="src\fluxions_renderer_object.cpp" />
     <ClCompile Include="src\fluxions_renderer_shader.cpp" />
@@ -644,6 +645,7 @@
     <ClInclude Include="include\fluxions_gte_vector3.hpp" />
     <ClInclude Include="include\fluxions_gte_vector4.hpp" />
     <ClInclude Include="include\fluxions_gte_vector_math.hpp" />
+    <ClInclude Include="include\fluxions_image_loader.hpp" />
     <ClInclude Include="include\fluxions_irenderer.hpp" />
     <ClInclude Include="include\fluxions_iscene.hpp" />
     <ClInclude Include="include\fluxions_renderer_framebuffer.hpp" />
