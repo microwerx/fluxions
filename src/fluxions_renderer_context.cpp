@@ -53,13 +53,14 @@ namespace Fluxions
 		pcurTexture2D = nullptr;
 		pcurTextureCube = nullptr;
 
-		fbos.clear();
-		programs.clear();
-		renderers.clear();
 		rendererConfigs.clear();
+		programs.clear();
+		fbos.clear();
 		samplers.clear();
+		textures.clear();
 		texture2Ds.clear();
 		textureCubes.clear();
+		renderers.clear();
 
 		killTexUnits();
 		RendererObject::kill();
@@ -504,9 +505,6 @@ namespace Fluxions
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
-		bool svalarg3 = k_sval(args, 3, arg3);
-		double dval;
-		int argc = (int)args.size();
 		static const std::string WRITEFBO{ "writefbo" };
 		static const std::string READFBO{ "readfbo" };
 		static const std::string PROGRAM{ "program" };
@@ -872,7 +870,6 @@ namespace Fluxions
 			GLenum attachment = glNameTranslator.getEnum(args[3].sval);
 			GLenum internalformat = glNameTranslator.getEnum(args[4].sval);
 			std::string mapName;
-			bool svalMapName = k_sval(args, 5, mapName);
 
 			static const std::vector<GLenum> targets{
 				GL_RENDERBUFFER,
@@ -1008,7 +1005,6 @@ namespace Fluxions
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
-		bool svalarg3 = k_sval(args, 3, arg3);
 		if (svalarg1 && count == 2) {
 			texture2Ds[arg1].init(arg1, this);
 			pcurTexture2D = &texture2Ds[arg1];
@@ -1039,8 +1035,6 @@ namespace Fluxions
 		std::string arg2;
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
-		bool svalarg2 = k_sval(args, 2, arg2);
-		bool svalarg3 = k_sval(args, 3, arg3);
 		if (svalarg1 && count == 2) {
 			textureCubes[arg1].init(arg1, this);
 			pcurTextureCube = &textureCubes[arg1];
@@ -1058,7 +1052,6 @@ namespace Fluxions
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
-		bool svalarg3 = k_sval(args, 3, arg3);
 		if (svalarg1 && count == 2) {
 			renderers[arg1].init(arg1, this);
 			pcurRenderer = &renderers[arg1];
