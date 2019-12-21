@@ -1021,6 +1021,7 @@ namespace Fluxions
 			}
 			else if (arg1 == "sampler" && samplers.count(arg2)) {
 				pcurTexture2D->samplername = arg2;
+				pcurTexture2D->samplerId = samplers[arg2].getId();
 				return true;
 			}
 		}
@@ -1035,10 +1036,26 @@ namespace Fluxions
 		std::string arg2;
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
+		bool svalarg2 = k_sval(args, 2, arg1);
 		if (svalarg1 && count == 2) {
 			textureCubes[arg1].init(arg1, this);
 			pcurTextureCube = &textureCubes[arg1];
 			return true;
+		}
+		if (pcurTextureCube && svalarg1 && svalarg2) {
+			if (arg1 == "map") {
+				pcurTextureCube->mappath = arg2;
+				return true;
+			}
+			else if (arg1 == "uniform") {
+				pcurTextureCube->uniformname = arg2;
+				return true;
+			}
+			else if (arg1 == "sampler" && samplers.count(arg2)) {
+				pcurTextureCube->samplername = arg2;
+				pcurTextureCube->samplerId = samplers[arg2].getId();
+				return true;
+			}
 		}
 		return false;
 	}
