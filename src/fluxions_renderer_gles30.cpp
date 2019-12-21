@@ -794,60 +794,28 @@ namespace Fluxions
 	}
 
 	void RendererGLES30::renderSkyBox() {
-		// GLuint vbo = 0;
-		GLint vloc = -1;
-		GLint tloc = -1;
-		GLuint programId = 0;
-		GLint uCubeTexture = -1;
-		GLint uWorldMatrix = -1;
-		GLint uCameraMatrix = -1;
-		GLint uProjectionMatrix = -1;
-		GLint uSunE0 = -1;
-		GLint uSunDirTo = -1;
-		GLint uGroundE0 = -1;
+		if (renderskyboxname.empty()) return;
 
-		auto it = renderer.programs.find("skybox");
-		if (it != renderer.programs.end()) {
-			programId = it->second->getProgram();
-			uCubeTexture = it->second->getUniformLocation("uCubeTexture");
-			uWorldMatrix = it->second->getUniformLocation("WorldMatrix");
-			uCameraMatrix = it->second->getUniformLocation("CameraMatrix");
-			uProjectionMatrix = it->second->getUniformLocation("ProjectionMatrix");
-			uSunE0 = it->second->getUniformLocation("SunE0");
-			uGroundE0 = it->second->getUniformLocation("GroundE0");
-			uSunDirTo = it->second->getUniformLocation("SunDirTo");
-		}
+		Matrix4f skyboxWorldMatrix;
 
-		if (programId == 0)
+		if (!pSkyboxCube) {
+			pSkyboxCube = &pContext->textureCubes[renderskyboxname];
 			return;
+		}
+		else {
+			pSkyboxCube->bind(0);
+		}
 
-		vloc = glGetAttribLocation(programId, "aPosition");
-		tloc = glGetAttribLocation(programId, "aTexCoord");
+		pProgram->use();
+		pProgram->applyUniform(pSkyboxCube->uniformname, 1);
+		pProgram->applyUniform("CameraMatrix", pSSG->camera.actualViewMatrix);
+		pProgram->applyUniform("ProjectionMatrix", pSSG->camera.projectionMatrix);
+		pProgram->applyUniform("WorldMatrix", skyboxWorldMatrix);
 
-		glUseProgram(programId);
-		if (uCubeTexture >= 0) {
-			FxBindTextureAndSampler(pSSG->environment.pbskyColorMapUnit, GL_TEXTURE_CUBE_MAP, pSSG->environment.pbskyColorMapId, pSSG->environment.pbskyColorMapSamplerId);
-			glUniform1i(uCubeTexture, pSSG->environment.pbskyColorMapUnit);
-		}
-		if (uProjectionMatrix >= 0) {
-			Matrix4f projectionMatrix_ = pSSG->camera.projectionMatrix;
-			//projectionMatrix_.MakePerspective(pSSG->camera.fov, aspectRatio, pSSG->camera.imageNearZ, pSSG->camera.imageFarZ);
-			glUniformMatrix4fv(uProjectionMatrix, 1, GL_FALSE, projectionMatrix_.ptr());
-		}
-		if (uCameraMatrix >= 0) {
-			Matrix4f viewMatrix = pRenderConfig->preCameraMatrix * pSSG->camera.viewMatrix;
-			viewMatrix.m14 = viewMatrix.m24 = viewMatrix.m34 = viewMatrix.m41 = viewMatrix.m42 = viewMatrix.m43 = 0.0f;
-			glUniformMatrix4fv(uCameraMatrix, 1, GL_FALSE, viewMatrix.const_ptr());
-		}
-		if (uWorldMatrix >= 0) {
-			Matrix4f worldMatrix;
-			glUniformMatrix4fv(uWorldMatrix, 1, GL_FALSE, worldMatrix.const_ptr());
-		}
-		if (uSunDirTo >= 0 && uSunE0 >= 0 && uGroundE0 >= 0) {
-			glUniform3fv(uSunDirTo, 1, pSSG->environment.curSunDirTo.const_ptr());
-			glUniform4fv(uSunE0, 1, pSSG->environment.curSunDiskRadiance.const_ptr());
-			glUniform4fv(uGroundE0, 1, pSSG->environment.curGroundRadiance.const_ptr());
-		}
+		const std::string VERTEX_LOCATION{ "aPosition" };
+		const std::string TEXCOORD_LOCATION{ "aTexCoord" };
+		int vloc = pProgram->getAttribLocation(VERTEX_LOCATION);
+		int tloc = pProgram->getAttribLocation(TEXCOORD_LOCATION);
 
 		glBindBuffer(GL_ARRAY_BUFFER, abo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
