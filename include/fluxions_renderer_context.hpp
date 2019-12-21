@@ -157,8 +157,8 @@ namespace Fluxions
 
 		std::map<std::string, RendererConfig> rendererConfigs;
 		std::map<std::string, RendererProgram> programs;
-		std::map<std::string, RendererFramebufferObject> fbos;
-		std::map<std::string, RendererSamplerObject> samplers;
+		std::map<std::string, RendererFramebuffer> fbos;
+		std::map<std::string, RendererSampler> samplers;
 		std::map<std::string, RendererTextureObject> textures;
 		std::map<std::string, RendererTexture2D> texture2Ds;
 		std::map<std::string, RendererTextureCube> textureCubes;
@@ -198,10 +198,10 @@ namespace Fluxions
 		RendererConfig* pcurRendererConfig{ nullptr };
 		RendererProgram* pcurProgram{ nullptr };
 		RendererGLES30* pcurRenderer{ nullptr };
-		RendererSamplerObject* pcurSampler{ nullptr };
+		RendererSampler* pcurSampler{ nullptr };
 		RendererTexture2D* pcurTexture2D{ nullptr };
 		RendererTextureCube* pcurTextureCube{ nullptr };
-		RendererFramebufferObject* pcurFBO{ nullptr };
+		RendererFramebuffer* pcurFBO{ nullptr };
 
 		//virtual bool new_renderconfig(const std::string& name);
 		//virtual bool use_renderconfig(const std::string& name);

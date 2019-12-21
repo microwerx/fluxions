@@ -3,7 +3,7 @@
 
 #include <fluxions_renderer_object.hpp>
 #include <fluxions_renderer_program.hpp>
-#include <fluxions_renderer_framebuffer_object.hpp>
+#include <fluxions_renderer_framebuffe.hpp>
 
 namespace Fluxions
 {
@@ -48,8 +48,8 @@ namespace Fluxions
 		RendererProgram* pprogram{ nullptr };
 
 		bool renderToFBO{ false };
-		RendererFramebufferObject fbo;
-		using string_fboptr_pair = std::pair<std::string, RendererFramebufferObject*>;
+		RendererFramebuffer fbo;
+		using string_fboptr_pair = std::pair<std::string, RendererFramebuffer*>;
 		using string_fboptr_vector = std::vector<string_fboptr_pair>;
 		string_fboptr_vector writeFBOs;
 		string_fboptr_vector readFBOs;

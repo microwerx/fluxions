@@ -1,8 +1,8 @@
 #include "pch.hpp"
-#include <fluxions_renderer_sampler_object.hpp>
+#include <fluxions_renderer_sampler.hpp>
 
 namespace Fluxions {
-	RendererSamplerObject::RendererSamplerObject() {
+	RendererSampler::RendererSampler() {
 		wrapS = GL_REPEAT;
 		wrapT = GL_REPEAT;
 		wrapR = GL_REPEAT;
@@ -15,18 +15,17 @@ namespace Fluxions {
 		id = 0;
 	}
 
-	RendererSamplerObject::~RendererSamplerObject() {
+	RendererSampler::~RendererSampler() {
 		kill();
 	}
 
-	void RendererSamplerObject::init(const std::string& newname, RendererObject* pparent) {
+	void RendererSampler::init(const std::string& newname, RendererObject* pparent) {
 		RendererObject::init(newname, pparent);
-		kill();
 		glGenSamplers(1, &id);
 		HFLOGINFO("Creating sampler '%s' = %i", name(), id);
 	}
 
-	void RendererSamplerObject::kill() {
+	void RendererSampler::kill() {
 		if (id != 0) {
 			HFLOGINFO("Deleting sampler '%s' = %i", name(), id);
 			glDeleteSamplers(1, &id);
@@ -35,38 +34,42 @@ namespace Fluxions {
 		RendererObject::kill();
 	}
 
-	void RendererSamplerObject::bind(GLuint unit) {
+	const char* RendererSampler::type() const noexcept {
+		return "RendererSampler";
+	}
+
+	void RendererSampler::bind(GLuint unit) {
 		if (id == 0 || unit == 0 || (int)unit > g_MaxCombinedTextureUnits)
 			return;
 		FxBindSampler(unit, id);
 		lastBoundUnit = unit;
 	}
 
-	void RendererSamplerObject::unbind() {
+	void RendererSampler::unbind() {
 		if (lastBoundUnit > 0)
 			glBindSampler(lastBoundUnit, 0);
 		lastBoundUnit = 0;
 	}
 
-	void RendererSamplerObject::setWrapS(GLint param) {
+	void RendererSampler::setWrapS(GLint param) {
 		wrapS = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_S, param);
 	}
 
-	void RendererSamplerObject::setWrapT(GLint param) {
+	void RendererSampler::setWrapT(GLint param) {
 		wrapT = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_T, param);
 	}
 
-	void RendererSamplerObject::setWrapR(GLint param) {
+	void RendererSampler::setWrapR(GLint param) {
 		wrapR = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_R, param);
 	}
 
-	void RendererSamplerObject::setWrapST(GLint S, GLint T) {
+	void RendererSampler::setWrapST(GLint S, GLint T) {
 		wrapS = S;
 		wrapT = T;
 		if (id != 0)
@@ -75,7 +78,7 @@ namespace Fluxions {
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_T, T);
 	}
 
-	void RendererSamplerObject::setWrapTR(GLint T, GLint R) {
+	void RendererSampler::setWrapTR(GLint T, GLint R) {
 		wrapT = T;
 		wrapR = R;
 		if (id != 0)
@@ -84,7 +87,7 @@ namespace Fluxions {
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_R, R);
 	}
 
-	void RendererSamplerObject::setWrapSTR(GLint S, GLint T, GLint R) {
+	void RendererSampler::setWrapSTR(GLint S, GLint T, GLint R) {
 		wrapS = S;
 		wrapT = T;
 		wrapR = R;
@@ -96,48 +99,48 @@ namespace Fluxions {
 			glSamplerParameteri(id, GL_TEXTURE_WRAP_R, R);
 	}
 
-	void RendererSamplerObject::setMinFilter(GLint param) {
+	void RendererSampler::setMinFilter(GLint param) {
 		minFilter = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, minFilter);
 	}
 
-	void RendererSamplerObject::setMagFilter(GLint param) {
+	void RendererSampler::setMagFilter(GLint param) {
 		magFilter = param;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, param);
 	}
 
-	void RendererSamplerObject::setMinMagFilters(GLint newMinFilter, GLint newMagFilter) {
+	void RendererSampler::setMinMagFilters(GLint newMinFilter, GLint newMagFilter) {
 		setMinFilter(newMinFilter);
 		setMagFilter(newMagFilter);
 	}
 
-	void RendererSamplerObject::setCompareFunction(GLint func) {
+	void RendererSampler::setCompareFunction(GLint func) {
 		compareFunc = func;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, func);
 	}
 
-	void RendererSamplerObject::setCompareMode(GLint mode) {
+	void RendererSampler::setCompareMode(GLint mode) {
 		compareMode = mode;
 		if (id != 0)
 			glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, mode);
 	}
 
-	void RendererSamplerObject::setMinLOD(GLfloat lod) {
+	void RendererSampler::setMinLOD(GLfloat lod) {
 		minLOD = lod;
 		if (id != 0)
 			glSamplerParameterf(id, GL_TEXTURE_MIN_LOD, lod);
 	}
 
-	void RendererSamplerObject::setMaxLOD(GLfloat lod) {
+	void RendererSampler::setMaxLOD(GLfloat lod) {
 		maxLOD = lod;
 		if (id != 0)
 			glSamplerParameterf(id, GL_TEXTURE_MAX_LOD, lod);
 	}
 
-	void RendererSamplerObject::applySettings(GLuint unit, GLuint texture, GLenum target) {
+	void RendererSampler::applySettings(GLuint unit, GLuint texture, GLenum target) {
 		if (!FxBindTexture(unit, target, texture))
 			return;
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapS);
@@ -152,7 +155,7 @@ namespace Fluxions {
 		FxBindTexture(0, target, 0);
 	}
 
-	void RendererSamplerObject::use(GLenum unit, GLuint texture, GLenum target) {
+	void RendererSampler::use(GLenum unit, GLuint texture, GLenum target) {
 		if (!FxBindTexture(unit, target, texture))
 			return;
 		glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapS);
