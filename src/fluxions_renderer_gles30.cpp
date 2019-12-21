@@ -388,6 +388,8 @@ namespace Fluxions
 		if (!areBuffersBuilt)
 			buildBuffers();
 
+		saveGLState();
+
 		if (!applyRenderConfig())
 			return;
 
