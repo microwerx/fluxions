@@ -38,7 +38,7 @@ namespace Fluxions
 		abo = 0;
 		eabo = 0;
 		pSSG = nullptr;
-		pRenderConfig = nullptr;
+		pRendererConfig = nullptr;
 		pProgram = nullptr;
 		projectionMatrix.LoadIdentity();
 		cameraMatrix.LoadIdentity();
@@ -48,8 +48,8 @@ namespace Fluxions
 		if (pSSG)
 			pSSG = nullptr;
 
-		if (pRenderConfig)
-			pRenderConfig = nullptr;
+		if (pRendererConfig)
+			pRendererConfig = nullptr;
 
 		if (pProgram)
 			pProgram = nullptr;
@@ -87,53 +87,69 @@ namespace Fluxions
 		if (pProgram->isLinked() == false)
 			return false;
 
-		if (pRenderConfig->renderToFBO)
-			pRenderConfig->fbo.use();
+		if (pRendererConfig->renderToFBO)
+			pRendererConfig->fbo.use();
 
 		pProgram->use();
 		locs.getMaterialProgramLocations(*pProgram);
 		applyGlobalSettingsToCurrentProgram();
 		applySpheresToCurrentProgram();
 
-		if (pRenderConfig->enableDepthTest) {
+		if (pRendererConfig->setViewport) {
+			glViewport(pRendererConfig->viewportRect.x,
+					   pRendererConfig->viewportRect.y,
+					   pRendererConfig->viewportRect.w,
+					   pRendererConfig->viewportRect.h);
+		}
+
+		if (pRendererConfig->enableScissorTest) {
+			glScissor(pRendererConfig->scissorRect.x,
+					  pRendererConfig->scissorRect.y,
+					  pRendererConfig->scissorRect.w,
+					  pRendererConfig->scissorRect.h);
+			glEnable(GL_SCISSOR_TEST);
+		}
+
+		if (pRendererConfig->enableDepthTest) {
 			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(pRenderConfig->depthComparisonTest);
+			glDepthFunc(pRendererConfig->depthComparisonTest);
 		}
 
-		if (pRenderConfig->clearColorBuffer) {
-			glClearColor(pRenderConfig->clearColor.r, pRenderConfig->clearColor.g, pRenderConfig->clearColor.b, pRenderConfig->clearColor.a);
+		if (pRendererConfig->clearColorBuffer) {
+			glClearColor(pRendererConfig->clearColor.r, pRendererConfig->clearColor.g, pRendererConfig->clearColor.b, pRendererConfig->clearColor.a);
 		}
 
-		if (pRenderConfig->getClearBits())
-			glClear(pRenderConfig->getClearBits());
+		if (pRendererConfig->getClearBits())
+			glClear(pRendererConfig->getClearBits());
 
 		Matrix4f projectionMatrix_;
 		Matrix4f cameraMatrix_;
 
-		if (pRenderConfig->useSceneCamera) {
+		if (pRendererConfig->useSceneCamera) {
 			projectionMatrix_.LoadIdentity();
 			projectionMatrix_.PerspectiveY(
-				(float)pSSG->camera.fov,
-				pRenderConfig->viewportRect.aspectRatiof(),
-				(float)pSSG->camera.imageNearZ,
-				(float)pSSG->camera.imageFarZ);
-			cameraMatrix_ = pRenderConfig->preCameraMatrix *
-				pSSG->camera.viewMatrix * pRenderConfig->postCameraMatrix;
+				pSSG->camera.fov,
+				pRendererConfig->viewportRect.aspectRatiof(),
+				pSSG->camera.imageNearZ,
+				pSSG->camera.imageFarZ);
+			cameraMatrix_ = pRendererConfig->preCameraMatrix *
+				pSSG->camera.viewMatrix * pRendererConfig->postCameraMatrix;
 		}
 		else {
-			projectionMatrix_.LoadIdentity();
-			projectionMatrix_.PerspectiveY((float)pRenderConfig->fov, pRenderConfig->viewportRect.aspectRatiof(), (float)pRenderConfig->znear, (float)pRenderConfig->zfar);
-			cameraMatrix_ = pRenderConfig->preCameraMatrix * pRenderConfig->postCameraMatrix;
+			projectionMatrix_ = pRendererConfig->viewportProjectionMatrix;
+			cameraMatrix_ = pRendererConfig->preCameraMatrix * pRendererConfig->postCameraMatrix;
 		}
-		pRenderConfig->cameraMatrix = cameraMatrix_;
+		pRendererConfig->projectionMatrix = projectionMatrix_;
+		pRendererConfig->cameraMatrix = cameraMatrix_;
 
-		glViewport(pRenderConfig->viewportRect.x, pRenderConfig->viewportRect.y, pRenderConfig->viewportRect.w, pRenderConfig->viewportRect.h);
-
-		if (pRenderConfig->recomputeProjectionMatrix) {
-			pRenderConfig->projectionMatrix.LoadIdentity();
-			pRenderConfig->projectionMatrix.PerspectiveY(pRenderConfig->fov, (float)pRenderConfig->viewportRect.aspectRatio(), pRenderConfig->znear, pRenderConfig->zfar);
+		if (pRendererConfig->recomputeProjectionMatrix) {
+			pRendererConfig->projectionMatrix.LoadIdentity();
+			pRendererConfig->projectionMatrix.PerspectiveY(pRendererConfig->viewportFovInDegrees,
+														   pRendererConfig->viewportRect.aspectRatiof(),
+														   pRendererConfig->viewportZNear,
+														   pRendererConfig->viewportZFar);
 		}
-		projectionMatrix_ = pRenderConfig->projectionMatrix;
+		projectionMatrix_ = pRendererConfig->projectionMatrix;
 
 		pProgram->applyUniform("CameraPosition", (RendererUniform)(cameraMatrix_.AsInverse()).col4());
 		pProgram->applyUniform("CameraMatrix", (RendererUniform)cameraMatrix_);
@@ -150,8 +166,8 @@ namespace Fluxions
 	bool RendererGLES30::restoreGLState() {
 		pProgram = nullptr;
 
-		if (pRenderConfig->renderToFBO)
-			pRenderConfig->fbo.restoreGLState();
+		if (pRendererConfig->renderToFBO)
+			pRendererConfig->fbo.restoreGLState();
 
 		gles30StateSnapshot.restore();
 
@@ -161,24 +177,24 @@ namespace Fluxions
 	void RendererGLES30::setRenderConfig(RendererConfig* rc) {
 		if (!rc) return;
 
-		pRenderConfig = rc;
+		pRendererConfig = rc;
 		pProgram = nullptr;
 
 		if (pContext && pContext->programs.count(rc->rc_program)) {
 			pProgram = &pContext->programs[rc->rc_program];
 		}
-		//else if (pRenderConfig->useZOnly) {
-		//	if (pRenderConfig->zShaderProgram != nullptr) {
-		//		pProgram = pRenderConfig->zShaderProgram;
+		//else if (pRendererConfig->useZOnly) {
+		//	if (pRendererConfig->zShaderProgram != nullptr) {
+		//		pProgram = pRendererConfig->zShaderProgram;
 		//	}
 		//}
-		//else if (pRenderConfig->shaderProgram != nullptr) {
-		//	pProgram = pRenderConfig->shaderProgram;
+		//else if (pRendererConfig->shaderProgram != nullptr) {
+		//	pProgram = pRendererConfig->shaderProgram;
 		//}
 	}
 
 	RendererConfig* RendererGLES30::getRenderConfig() {
-		return pRenderConfig;
+		return pRendererConfig;
 	}
 
 	void RendererGLES30::setContext(RendererContext* pcontext) {
@@ -187,7 +203,7 @@ namespace Fluxions
 
 	void RendererGLES30::render() {
 		if (!validate()) return;
-		if (pRenderConfig->isCubeMap)
+		if (pRendererConfig->isCubeMap)
 			renderCubeImages();
 		else
 			renderSingleImage();
@@ -329,15 +345,15 @@ namespace Fluxions
 		if (!validate())
 			return;
 
-		pRenderConfig->shaderProgram->use();
-		pRenderConfig->shaderProgram->applyUniform("ModelViewMatrix", (RendererUniform)modelViewMatrix);
-		pRenderConfig->shaderProgram->applyUniform("WorldMatrix", (RendererUniform)modelViewMatrix);
+		pRendererConfig->shaderProgram->use();
+		pRendererConfig->shaderProgram->applyUniform("ModelViewMatrix", (RendererUniform)modelViewMatrix);
+		pRendererConfig->shaderProgram->applyUniform("WorldMatrix", (RendererUniform)modelViewMatrix);
 
 		// create a vbo
 		BufferObject abo_(GL_ARRAY_BUFFER, (GLsizei)mesh.GetVertexDataSize(), mesh.GetVertexData(), GL_STATIC_DRAW);
 		BufferObject eabo_(GL_ELEMENT_ARRAY_BUFFER, (GLsizei)mesh.GetIndexDataSize(), mesh.GetIndexData(), GL_STATIC_DRAW);
 
-		VertexArrayObject vao(mesh, pRenderConfig->shaderProgram->getProgram(), abo_.buffer, eabo_.buffer);
+		VertexArrayObject vao(mesh, pRendererConfig->shaderProgram->getProgram(), abo_.buffer, eabo_.buffer);
 		vao.Draw();
 	}
 
@@ -345,41 +361,41 @@ namespace Fluxions
 		if (!areBuffersBuilt)
 			buildBuffers();
 
-		GLsizei s = pRenderConfig->viewportRect.w;
+		GLsizei s = pRendererConfig->viewportRect.w;
 
-		pRenderConfig->viewportRect.x = 0;
-		pRenderConfig->viewportRect.y = s;
-		pRenderConfig->defaultCubeFace = 1;
+		pRendererConfig->viewportRect.x = 0;
+		pRendererConfig->viewportRect.y = s;
+		pRendererConfig->defaultCubeFace = 1;
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderSingleImage();
 
-		pRenderConfig->viewportRect.x = 2 * s;
-		pRenderConfig->viewportRect.y = s;
-		pRenderConfig->defaultCubeFace = 0;
+		pRendererConfig->viewportRect.x = 2 * s;
+		pRendererConfig->viewportRect.y = s;
+		pRendererConfig->defaultCubeFace = 0;
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderSingleImage();
 
-		pRenderConfig->viewportRect.x = s;
-		pRenderConfig->viewportRect.y = 2 * s;
-		pRenderConfig->defaultCubeFace = 2;
+		pRendererConfig->viewportRect.x = s;
+		pRendererConfig->viewportRect.y = 2 * s;
+		pRendererConfig->defaultCubeFace = 2;
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderSingleImage();
 
-		pRenderConfig->viewportRect.x = s;
-		pRenderConfig->viewportRect.y = 0;
-		pRenderConfig->defaultCubeFace = 3;
+		pRendererConfig->viewportRect.x = s;
+		pRendererConfig->viewportRect.y = 0;
+		pRendererConfig->defaultCubeFace = 3;
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderSingleImage();
 
-		pRenderConfig->viewportRect.x = s;
-		pRenderConfig->viewportRect.y = s;
-		pRenderConfig->defaultCubeFace = 4;
+		pRendererConfig->viewportRect.x = s;
+		pRendererConfig->viewportRect.y = s;
+		pRendererConfig->defaultCubeFace = 4;
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderSingleImage();
 
-		pRenderConfig->viewportRect.x = 3 * s;
-		pRenderConfig->viewportRect.y = s;
-		pRenderConfig->defaultCubeFace = 5;
+		pRendererConfig->viewportRect.x = 3 * s;
+		pRendererConfig->viewportRect.y = s;
+		pRendererConfig->defaultCubeFace = 5;
 		glClear(GL_DEPTH_BUFFER_BIT);
 		renderSingleImage();
 	}
@@ -393,33 +409,35 @@ namespace Fluxions
 		if (!applyRenderConfig())
 			return;
 
-		if (pRenderConfig->isCubeMap) {
+		if (pRendererConfig->isCubeMap) {
 			projectionMatrix.LoadIdentity();
-			projectionMatrix.Perspective(90.0f, 1.0f, pRenderConfig->znear, pRenderConfig->zfar);
+			projectionMatrix.Perspective(90.0f, 1.0f,
+										 pRendererConfig->viewportZNear,
+										 pRendererConfig->viewportZFar);
 			Vector4f cameraPosition(0, 0, 0, 1);
 			cameraPosition = cameraMatrix * cameraPosition;
-			if (pRenderConfig->defaultCubeFace >= 0 && pRenderConfig->defaultCubeFace < 6) {
+			if (pRendererConfig->defaultCubeFace >= 0 && pRendererConfig->defaultCubeFace < 6) {
 				cameraMatrix.LoadIdentity();
-				cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + pRenderConfig->defaultCubeFace);
+				cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + pRendererConfig->defaultCubeFace);
 				cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-				render(pProgram, pRenderConfig->useMaterials, pRenderConfig->useMaps, pRenderConfig->useZOnly, projectionMatrix, cameraMatrix);
+				render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
 			}
 			else {
 				for (int i = 0; i < 6; i++) {
 					cameraMatrix.LoadIdentity();
 					cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 					cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
-					render(pProgram, pRenderConfig->useMaterials, pRenderConfig->useMaps, pRenderConfig->useZOnly, projectionMatrix, cameraMatrix);
+					render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
 				}
 			}
 		}
 		else {
-			render(pProgram, pRenderConfig->useMaterials, pRenderConfig->useMaps, pRenderConfig->useZOnly, projectionMatrix, cameraMatrix);
+			render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
 		}
 
 		glUseProgram(0);
 
-		if (pRenderConfig->renderSkyBox) {
+		if (pRendererConfig->renderSkyBox) {
 			glEnable(GL_DEPTH_TEST);
 			renderSkyBox();
 			glDisable(GL_DEPTH_TEST);
@@ -813,9 +831,9 @@ namespace Fluxions
 		}
 
 		pProgram->use();
-		pProgram->applyUniform(pSkyboxCube->uniformname, 1);
-		pProgram->applyUniform("CameraMatrix", pSSG->camera.viewMatrix);
-		pProgram->applyUniform("ProjectionMatrix", pSSG->camera.projectionMatrix);
+		pProgram->applyUniform(pSkyboxCube->uniformname, 0);
+		pProgram->applyUniform("CameraMatrix", pSSG->camera.viewMatrix);// pRendererConfig->cameraMatrix);
+		pProgram->applyUniform("ProjectionMatrix", pRendererConfig->projectionMatrix);
 		pProgram->applyUniform("WorldMatrix", skyboxWorldMatrix);
 
 		const std::string VERTEX_LOCATION{ "aPosition" };
