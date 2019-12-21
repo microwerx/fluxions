@@ -744,7 +744,7 @@ namespace Fluxions
 					clamp<int>((int)(c[1] * scale), minValue, maxValue),
 					clamp<int>((int)(c[2] * scale), minValue, maxValue)
 					);
-					fout << color.r << " " << color.g << " " << color.b << std::endl;
+					fout << color.r << " " << color.g << " " << color.b << "\n";
 			}
 		}
 
