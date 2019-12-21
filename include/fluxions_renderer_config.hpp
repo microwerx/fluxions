@@ -9,12 +9,12 @@ namespace Fluxions
 {
 	class RendererConfig : public RendererObject {
 	public:
-		bool useMaps = true;
-		bool useMaterials = true;
+		bool useMaps = false;
+		bool useMaterials = false;
 		bool useZOnly = false;
-		bool useSceneCamera = true;
+		bool useSceneCamera = false;
 		bool isCubeMap = false;
-		bool recomputeProjectionMatrix = true;
+		bool recomputeProjectionMatrix = false;
 		bool renderSkyBox = true;
 		int defaultCubeFace = -1;
 		int shaderDebugChoice = 0;
@@ -26,18 +26,15 @@ namespace Fluxions
 		bool enableCullFace = false;
 		GLenum cullFaceMode = GL_BACK;
 
-		bool enableSRGB = true;
+		bool enableSRGB = false;
 
 		bool clearDepthBuffer = false;
-		bool enableDepthTest = true;
+		bool enableDepthTest = false;
 		GLenum depthComparisonTest = GL_LESS;
 
 		bool enableBlend = false;
 		GLenum blendFuncSrcFactor = GL_SRC_ALPHA;
 		GLenum blendFuncDstFactor = GL_ONE_MINUS_SRC_ALPHA;
-
-		bool setViewport = true;
-		bool setScissor = false;
 
 		RendererProgramPtr zShaderProgram{ nullptr };
 		RendererProgramPtr shaderProgram{ nullptr };
@@ -60,22 +57,26 @@ namespace Fluxions
 		GLint fbo_color_map = 0;
 		GLint fbo_depth_map = 0;
 
-		GLfloat fov = 45.0f;
-		//GLsizei X = 0;
-		//GLsizei y = 0;
-		//GLsizei width = 64;
-		//GLsizei height = 64;
+		bool setViewport = false;
 		Recti viewportRect = Recti(0, 0, 64, 64);
+		GLfloat viewportFovInDegrees = 45.0f;
+		GLfloat viewportZNear = 1.0f;
+		GLfloat viewportZFar = 100.0f;
+		Matrix4f viewportProjectionMatrix;
+		void updateViewport();
+
+		bool enableScissorTest = false;
 		Recti scissorRect = viewportRect;
-		GLfloat znear = 0.01f;
-		GLfloat zfar = 1000.0f;
 
 		bool clearColorBuffer = false;
 		Color4f clearColor;
 
-		Matrix4f projectionMatrix;
 		Matrix4f preCameraMatrix;
 		Matrix4f postCameraMatrix;
+
+		// Updated by renderer
+
+		Matrix4f projectionMatrix;	// the actual projection matrix used...
 		Matrix4f cameraMatrix;   // the actual camera matrix used...
 		Vector4f cameraPosition; // the actual camera position used...
 
