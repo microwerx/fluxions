@@ -743,8 +743,8 @@ namespace Fluxions
 					clamp<int>((int)(c[0] * scale), minValue, maxValue),
 					clamp<int>((int)(c[1] * scale), minValue, maxValue),
 					clamp<int>((int)(c[2] * scale), minValue, maxValue)
-					);
-					fout << color.r << " " << color.g << " " << color.b << "\n";
+				);
+				fout << color.r << " " << color.g << " " << color.b << "\n";
 			}
 		}
 
@@ -1042,7 +1042,7 @@ namespace Fluxions
 		if (empty() || imageWidth != imageHeight)
 			return false;
 
-		std::vector<ColorType> tmp(imageWidth * imageHeight);
+		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
 		unsigned size = imageWidth;
 		//unsigned zstride = imageWidth * imageHeight;
 		unsigned zoffset = zstride * z;
@@ -1052,7 +1052,7 @@ namespace Fluxions
 				int sy = (int)(size - x - 1);
 				unsigned dst_offset = y * size + x;
 				unsigned src_offset = sy * size + sx;
-				tmp[dst_offset] = pixels[zoffset + src_offset];
+				tmp[dst_offset] = pixels[(size_t)zoffset + src_offset];
 			}
 		}
 
@@ -1064,6 +1064,46 @@ namespace Fluxions
 
 		return true;
 	}
+
+	template <typename ColorType>
+	void TImage<ColorType>::blit2D(int sx, int sy, int sz,
+								   int width, int height,
+								   int dx, int dy, int dz,
+								   TImage<ColorType>& dst) const {
+		blit3D(sx, sy, sz, width, height, 1, dx, dy, dz, dst);
+	}
+
+	template <typename ColorType>
+	void TImage<ColorType>::blit3D(int sx, int sy, int sz,
+								   int width, int height, int depth,
+								   int dx, int dy, int dz,
+								   TImage<ColorType>& dst) const {
+		if (sz + depth <= 0 || sz >= imageDepth) return;
+		if (dz + depth <= 0 || dz >= dst.imageDepth) return;
+		if (sx + width <= 0 || sx >= imageWidth) return;
+		if (sy + height <= 0 || sy >= imageHeight) return;
+		if (dx + width <= 0 || dx >= dst.imageWidth) return;
+		if (dy + height <= 0 || dy >= dst.imageHeight) return;
+		if (width < 0 || height < 0 || depth < 0) return;
+
+		int sx1 = clamp<int>(sx, 0, (int)imageWidth - 1);
+		int sy1 = clamp<int>(sy, 0, (int)imageHeight - 1);
+		int sz1 = clamp<int>(sz, 0, (int)imageDepth - 1);
+		int sx2 = clamp<int>(sx + width, 0, (int)imageWidth - 1);
+		int sy2 = clamp<int>(sy + height, 0, (int)imageHeight - 1);
+		int sz2 = clamp<int>(sz + depth, 0, (int)imageHeight - 1);
+		int w = sx2 - sx1 + 1;
+		int h = sy2 - sy1 + 1;
+		int d = sz2 - sz1 + 1;
+
+		for (int readZ = sz1; readZ < sz2; readZ++) {
+			for (int readY = sy1; readY < sy2; readY++) {
+				for (int readX = sx; readX < sx2; readX++) {
+				}
+			}
+		}
+	}
+
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertRectToCubeMap() {
@@ -1220,6 +1260,64 @@ namespace Fluxions
 
 		return true;
 	}
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertCrossToCubeMap() {
+		return true;
+	}
+
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertCubeMapToCross() {
+		return true;
+	}
+
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertCrossToCubeMap(TImage<ColorType>& dst) const {
+		return true;
+	}
+
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertCubeMapToCross(TImage<ColorType>& dst) const {
+		if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
+			return false;
+
+		TImage<ColorType> src(*this);
+		src.rotateLeft90(2);
+		src.rotateRight90(3);
+
+		int size = (int)imageWidth;
+		dst.resize(size * 6, size, 1);
+
+		int swizzle[6] = {
+			4, // POSITIVE Z
+			5, // NEGATIVE Z
+			2, // POSITIVE Y
+			3, // NEGATIVE Y
+			1, // POSITIVE X
+			0, // NEGATIVE X
+		};
+
+		for (int i = 0; i < 6; i++) {
+			int k = swizzle[i];
+			// demultiplex the data
+			unsigned src_offset = i * size * size;
+			unsigned dst_offset = k * size;
+			for (int y = 0; y < size; y++) {
+				auto srcit = src.pixels.cbegin() + src_offset;
+				auto dstit = dst.pixels.begin() + dst_offset;
+				std::copy_n(srcit, size, dstit);
+				src_offset += size;
+				dst_offset += 6 * size;
+			}
+		}
+		src.resize(1, 1, 1);
+
+		return true;
+	}
+
 
 	template <typename ColorType>
 	double TImage<ColorType>::getTotalIntensity() const {
