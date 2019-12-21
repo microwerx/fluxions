@@ -58,14 +58,14 @@ namespace Fluxions
 {
 	inline std::string& tolower(std::string& str) {
 		for (auto& c : str) {
-			c = std::tolower(c);
+			c = (char)std::tolower(c);
 		}
 		return str;
 	}
 
 	inline std::string& toupper(std::string& str) {
 		for (auto& c : str) {
-			c = std::toupper(c);
+			c = (char)std::toupper(c);
 		}
 		return str;
 	}
