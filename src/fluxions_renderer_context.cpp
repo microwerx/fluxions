@@ -70,6 +70,20 @@ namespace Fluxions
 		return "RendererContext";
 	}
 
+	void RendererContext::resize(int oldWidth, int oldHeight, int width, int height) {
+		vars.set_var("@SCREENWIDTH", width);
+		vars.set_var("@SCREENHEIGHT", height);
+
+		for (auto& [k, rc] : rendererConfigs) {
+			if (rc.viewportRect.w == oldWidth &&
+				rc.viewportRect.h == oldHeight) {
+				rc.viewportRect.w = width;
+				rc.viewportRect.h = height;
+				rc.updateViewport();
+			}
+		}
+	}
+
 	bool RendererContext::loadConfig(const std::string& filename) {
 		FilePathInfo fpi(filename);
 		basepath = fpi.dir;
@@ -520,6 +534,9 @@ namespace Fluxions
 		static const std::string CAMERA{ "camera" };
 		static const std::string PROJECTION{ "projection" };
 		static const std::string CLEARCOLOR{ "clearcolor" };
+		static const std::string VIEWPORT{ "viewport" };
+		static const std::string SCISSOR{ "scissor" };
+		static const std::string PERSPECTIVE{ "perspective" };
 
 		if (svalarg1) {
 			if (pcurRendererConfig && count == 6 && arg1 == CLEARCOLOR) {
@@ -533,12 +550,50 @@ namespace Fluxions
 				return true;
 			}
 			else if (pcurRendererConfig && arg1 == ZNEAR && count == 3) {
-				pcurRendererConfig->znear = (float)args[2].dval;
+				pcurRendererConfig->viewportZNear = (float)args[2].dval;
 				return true;
 			}
 			else if (pcurRendererConfig && arg1 == ZFAR && count == 3) {
-				pcurRendererConfig->zfar = (float)args[2].dval;
+				pcurRendererConfig->viewportZFar = (float)args[2].dval;
 				return true;
+			}
+			else if (pcurRendererConfig && arg1 == VIEWPORT && count == 4) {
+				int w = k_ivalue(args, 2);
+				int h = k_ivalue(args, 3);
+				if (w > 0 && h > 0) {
+					pcurRendererConfig->setViewport = true;
+					pcurRendererConfig->viewportRect.w = w;
+					pcurRendererConfig->viewportRect.h = h;
+					pcurRendererConfig->updateViewport();
+					return true;
+				}
+			}
+			else if (pcurRendererConfig && arg1 == SCISSOR && count == 6) {
+				int x = k_ivalue(args, 2);
+				int y = k_ivalue(args, 3);
+				int w = k_ivalue(args, 4);
+				int h = k_ivalue(args, 5);
+				if (w > 0 && h > 0) {
+					pcurRendererConfig->enableScissorTest = true;
+					pcurRendererConfig->scissorRect.w = y;
+					pcurRendererConfig->scissorRect.h = h;
+					pcurRendererConfig->scissorRect.w = w;
+					pcurRendererConfig->scissorRect.h = h;
+					return true;
+				}
+			}
+			else if (pcurRendererConfig && arg1 == PERSPECTIVE && count == 5) {
+				float fovInDegrees = (float)k_dvalue(args, 2);
+				float znear = (float)k_dvalue(args, 3);
+				float zfar = (float)k_dvalue(args, 4);
+				if (fovInDegrees > 0 && znear > 0 && zfar > znear) {
+					pcurRendererConfig->setViewport = true;
+					pcurRendererConfig->viewportFovInDegrees = fovInDegrees;
+					pcurRendererConfig->viewportZNear = znear;
+					pcurRendererConfig->viewportZFar = zfar;
+					pcurRendererConfig->updateViewport();
+					return true;
+				}
 			}
 			else if (pcurRendererConfig && svalarg2) {
 				tolower(arg1);
@@ -577,13 +632,13 @@ namespace Fluxions
 							  arg2.c_str());
 					return true;
 				}
-				else if (arg1 == PROJECTION) {
-					pcurRendererConfig->ssg_projection = arg2;
-					HFLOGINFO("rendererconfig '%s' adding projection '%s'",
-							  pcurRendererConfig->name(),
-							  arg2.c_str());
-					return true;
-				}
+				//else if (arg1 == PROJECTION) {
+				//	pcurRendererConfig->ssg_projection = arg2;
+				//	HFLOGINFO("rendererconfig '%s' adding projection '%s'",
+				//			  pcurRendererConfig->name(),
+				//			  arg2.c_str());
+				//	return true;
+				//}
 
 				bool arg2TrueFalse = false;
 				if (arg2 == TRUESTRING) arg2TrueFalse = true;
