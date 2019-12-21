@@ -27,6 +27,8 @@ namespace Fluxions
 		void kill() override;
 		const char* type() const override;
 
+		bool loadMap();
+
 		void bind(int unit);
 		void unbind();
 		void createStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type);
