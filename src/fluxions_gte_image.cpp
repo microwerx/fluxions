@@ -1076,7 +1076,7 @@ namespace Fluxions
 
 	// determines if incoming range is clipped out of image
 	inline bool range_clipped(int x, int w, unsigned rangeWidth) {
-		return (x + w <= 0 || x >= rangeWidth) ? true : false;
+		return (x + w <= 0 || x >= (int)rangeWidth) ? true : false;
 	}
 
 	inline bool range_clipped(Vector3i x, Vector3i w, Vector3ui rangeWidth) {
@@ -1094,14 +1094,14 @@ namespace Fluxions
 		clamp_range(x1.z, x2.z, rangeWidth.z);
 	}
 
-	inline Vector3i tight_bounds(Vector3i& range1, Vector3i& range2) {
+	inline Vector3i tight_bounds(Vector3ui& range1, Vector3ui& range2) {
 		return Vector3i(std::min(range1.x, range2.x),
 						std::min(range1.y, range2.y),
 						std::min(range1.z, range2.z));
 	}
 
-	inline bool range_empty(const Vector3i& range) {
-		return (range.x <= 0 || range.y <= 0 || range.z <= 0);
+	inline bool range_empty(const Vector3ui& range) {
+		return (range.x == 0 || range.y == 0 || range.z == 0);
 	}
 
 	template <typename ColorType>
@@ -1117,35 +1117,38 @@ namespace Fluxions
 			return;
 
 		// Clip source coordinates
-		Vector3 sx1{ sx, sy, sz };
+		Vector3i sx1{ sx, sy, sz };
 		if (range_clipped(sx1, range, srange))
 			return;
-		Vector3 sx2 = sx1 + range - 1;
+		Vector3i sx2 = sx1 + range - 1;
 		clamp_range(sx1, sx2, srange);
 
 		// Clip target coordinates
-		Vector3 dx1{ dx, dy, dz };
+		Vector3i dx1{ dx, dy, dz };
 		if (range_clipped(dx1, range, drange))
 			return;
-		Vector3 dx2 = d + range - 1;
+		Vector3i dx2 = dx1 + range - 1;
 		clamp_range(sx1, sx2, drange);
 
 		// Determine smallest range and return if any are zero
 		range = tight_bounds(srange, drange);
 		if (range_empty(range)) return;
 
-		for (int readZ = 0; readZ < range.z; readZ++) {
-			int szoffset = sx1.z * zstride;
-			int dzoffset = dx1.z * dst.zstride;
-			for (int readY = 0; readY < range.y; readY++) {
-				value_type* src = &pixels[szoffset + sx1.y * ystride];
-				value_type* dst = &pixels[szoffset + dx1.y * dst.ystride];
-				memcpy(dst, src, sizeof(value_type) * range.x);
-				sx1.y++;
-				dx1.y++;
+		int szoffset = sx1.z * zstride;
+		int dzoffset = dx1.z * dst.zstride;
+		int syoffset = sx1.y * ystride;
+		int dyoffset = dx1.y * dst.ystride;
+		size_t row_size = sizeof(value_type) * range.x;
+		while (range.z-- > 0) {
+			while (range.y-- > 0) {
+				const void* srcmem = &pixels[szoffset + syoffset + sx1.x];
+				void* dstmem = &dst.pixels[szoffset + dyoffset + dx1.x];
+				memcpy(dstmem, srcmem, row_size);
+				syoffset += ystride;
+				dyoffset += dst.ystride;
 			}
-			sx1.z++;
-			dx1.z++;
+			szoffset += zstride;
+			dzoffset += dst.zstride;
 		}
 	}
 
@@ -1308,18 +1311,44 @@ namespace Fluxions
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCrossToCubeMap() {
-		return true;
+		TImage<ColorType> tmp = *this;
+		return tmp.convertCrossToCubeMap(*this);
 	}
 
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCubeMapToCross() {
+		TImage<ColorType> tmp = *this;
+		return tmp.convertCubeMapToCross(*this);
 		return true;
 	}
 
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCrossToCubeMap(TImage<ColorType>& dst) const {
+		// check for cross orientation
+		// HORIZONTAL is 4x3 aspect ratio
+		bool horizontal = (imageWidth * 3 == imageHeight * 4 && imageDepth == 1);
+		// VERTICAL is 3x4 aspect ratio
+		bool vertical = (imageWidth * 4 == imageHeight * 3 && imageDepth == 1);
+
+		if (!horizontal && !vertical) return false;
+
+		int size = (int)(horizontal ? (imageHeight >> 2) : (imageWidth >> 2));
+		dst.resize(size, size, 6);
+
+		int hh[6] = { 2,0,3,1,1,1 };
+		int hv[6] = { 1,1,1,1,2,0 };
+		int vh[6] = { 2,0,1,1,1,1 };
+		int vv[6] = { 1,1,3,1,2,0 };
+
+		int* h = horizontal ? hh : vh;
+		int* v = horizontal ? hv : vv;
+
+		for (int i = 0; i < 6; i++) {
+			blit2D(h[0] * size, v[0] * size, 0, size, size, 0, 0, i, dst);
+		}
+
 		return true;
 	}
 
