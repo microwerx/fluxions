@@ -588,7 +588,7 @@ namespace Fluxions
 				if (pMap) {
 					if (pMap->cached.unitId <= 0)
 						pMap->cached.unitId = getTexUnit();
-					pMap->cached.samplerId = pMap->cached.textureObject.samplerObject.getId();
+					pMap->cached.samplerId = pMap->cached.textureObject.getSamplerId();
 					pMap->cached.textureId = pMap->cached.textureObject.getTextureId();
 					pMap->cached.textureObject.bind(pMap->cached.unitId, false);
 					glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0);

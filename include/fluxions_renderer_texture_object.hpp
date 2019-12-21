@@ -68,14 +68,14 @@ namespace Fluxions
 
 		constexpr GLuint getTextureId() const { return id; }
 		constexpr GLenum getTarget() const { return target; }
+		unsigned getSamplerId() { if (!cached.samplerObject) return 0; return cached.samplerObject->getId(); }
 
 		inline void freeMemory() noexcept { image.reset(); }
 		inline Image4f& getImage() noexcept { return image; }
 
 		struct {
-			RendererSampler* samplerObject{ nullptr };
+			RendererSampler* samplerObject{ nullptr };			
 		} cached;
-
 	private:
 		GLuint id;
 		GLenum target;
