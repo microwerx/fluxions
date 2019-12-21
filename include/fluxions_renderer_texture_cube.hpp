@@ -19,6 +19,7 @@ namespace Fluxions
 
 		//void init(const std::string& name) override;
 		//void kill() override;
+		const char* type() const noexcept override;
 	};
 } // namespace Fluxions
 

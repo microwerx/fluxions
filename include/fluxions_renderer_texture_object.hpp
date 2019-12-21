@@ -21,18 +21,20 @@
 
 #include <fluxions_gte_image.hpp>
 #include <fluxions_opengl.hpp>
-#include <fluxions_renderer_sampler_object.hpp>
+#include <fluxions_renderer_object.hpp>
+#include <fluxions_renderer_sampler.hpp>
 
 namespace Fluxions
 {
-	class RendererTextureObject
-	{
+	class RendererTextureObject : RendererObject {
 	public:
 		RendererTextureObject(GLenum whichTarget = GL_TEXTURE_2D);
 		~RendererTextureObject();
 
-		void init(const std::string& name);
-		void kill();
+		void init(const std::string& name, RendererObject* pparent) override;
+		void kill() override;
+		const char* type() const noexcept override;
+
 		void bind(GLuint unit, bool applySamplerObjectSettings = false);
 		void unbind();
 		void enable(GLuint unit);
@@ -70,7 +72,9 @@ namespace Fluxions
 		inline void freeMemory() noexcept { image.reset(); }
 		inline Image4f& getImage() noexcept { return image; }
 
-		RendererSamplerObject samplerObject;
+		struct {
+			RendererSampler* samplerObject{ nullptr };
+		} cached;
 
 	private:
 		GLuint id;
@@ -80,11 +84,11 @@ namespace Fluxions
 
 		bool didApplySamplerSettings = false;
 		GLuint lastBoundUnit = 0;
-		
+
 		std::string name_;
 	};
 
-	//extern RendererSamplerObject DefaultSamplerObject;
+	//extern RendererSampler DefaultSamplerObject;
 	//extern RendererTextureObject DefaultTextureObject;
 } // namespace Fluxions
 
