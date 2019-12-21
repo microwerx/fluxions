@@ -60,7 +60,7 @@ namespace Fluxions
 		bool validate() const {
 			return (pSSG != nullptr
 					&& pContext != nullptr
-					&& pRenderConfig != nullptr
+					&& pRendererConfig != nullptr
 					&& pProgram != nullptr);
 		}
 
@@ -77,7 +77,7 @@ namespace Fluxions
 		//SimpleSceneGraph emptySSG;
 		SimpleSceneGraph* pSSG = nullptr;
 		RendererContext* pContext = nullptr;
-		RendererConfig* pRenderConfig = nullptr;
+		RendererConfig* pRendererConfig = nullptr;
 		RendererProgram* pProgram = nullptr;
 		RendererTextureCube* pSkyboxCube{ nullptr };
 
