@@ -347,7 +347,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_framebuffer_object.cpp">
+    <ClCompile Include="src\fluxions_renderer_framebuffer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
@@ -414,7 +414,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_sampler_object.cpp" />
+    <ClCompile Include="src\fluxions_renderer_sampler.cpp" />
     <ClCompile Include="src\fluxions_simple_scene_graph.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -646,7 +646,7 @@
     <ClInclude Include="include\fluxions_gte_vector_math.hpp" />
     <ClInclude Include="include\fluxions_irenderer.hpp" />
     <ClInclude Include="include\fluxions_iscene.hpp" />
-    <ClInclude Include="include\fluxions_renderer_framebuffer_object.hpp" />
+    <ClInclude Include="include\fluxions_renderer_framebuffer.hpp" />
     <ClInclude Include="include\fluxions_opengl.hpp" />
     <ClInclude Include="include\fluxions_pbsky.hpp" />
     <ClInclude Include="include\fluxions_precompiled_models.hpp" />
@@ -674,7 +674,7 @@
     <ClInclude Include="include\fluxions_simple_renderer.hpp" />
     <ClInclude Include="include\fluxions_simple_renderer_plugin.hpp" />
     <ClInclude Include="include\fluxions_renderer_config.hpp" />
-    <ClInclude Include="include\fluxions_renderer_sampler_object.hpp" />
+    <ClInclude Include="include\fluxions_renderer_sampler.hpp" />
     <ClInclude Include="include\fluxions_simple_scene_graph.hpp" />
     <ClInclude Include="include\fluxions_obj_static_model.hpp" />
     <ClInclude Include="include\fluxions_renderer_shader.hpp" />

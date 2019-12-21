@@ -244,9 +244,6 @@
     <ClCompile Include="src\fluxions_simple_renderer.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_sampler_object.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_file_path_info.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
@@ -266,9 +263,6 @@
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_renderer_program.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_framebuffer_object.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_renderer_gpu_texture.cpp">
@@ -296,6 +290,12 @@
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_renderer_utilities.cpp" />
+    <ClCompile Include="src\fluxions_renderer_sampler.cpp">
+      <Filter>src\fluxions-renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_renderer_framebuffer.cpp">
+      <Filter>src\fluxions-renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -583,9 +583,6 @@
     <ClInclude Include="include\fluxions_file_reader_writer.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_sampler_object.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
@@ -629,9 +626,6 @@
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_renderer_uniform.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_framebuffer_object.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_simple_material.hpp">
@@ -710,6 +704,12 @@
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp" />
+    <ClInclude Include="include\fluxions_renderer_sampler.hpp">
+      <Filter>include\fluxions-renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_renderer_framebuffer.hpp">
+      <Filter>include\fluxions-renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
