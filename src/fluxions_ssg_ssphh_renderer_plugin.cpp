@@ -10,6 +10,12 @@ namespace Fluxions
 		pssg = pointerToSSG;
 	}
 
+	SSG_SSPHHRendererPlugin::~SSG_SSPHHRendererPlugin() {
+		if (pssg) {
+			pssg->userdata = nullptr;
+		}
+	}
+
 	bool SSG_SSPHHRendererPlugin::reset() {
 		ssphhLights.clear();
 		ssphhLights.reserve(16);
