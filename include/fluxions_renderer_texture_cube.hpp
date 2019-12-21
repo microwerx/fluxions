@@ -8,17 +8,7 @@ namespace Fluxions
 {
 	struct RendererTextureCube : public RendererGpuTexture
 	{
-		GLint unit = 0;
-		GLint samplerId = 0;
-		double buildTime = 0.0;
-		float zfar = 0.0f;
-		//RendererGpuTexture texture{ GL_TEXTURE_CUBE_MAP };
-		bool dirty = true;
-		
 		RendererTextureCube();
-
-		//void init(const std::string& name) override;
-		//void kill() override;
 		const char* type() const noexcept override;
 	};
 } // namespace Fluxions

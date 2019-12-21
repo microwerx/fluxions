@@ -6,6 +6,15 @@
 namespace Fluxions
 {
 	struct RendererGpuTexture : public RendererObject {
+		GLint unit = 0;
+		GLint samplerId = 0;
+		//double buildTime = 0.0;
+		//float zfar = 0.0f;
+		//bool dirty = true;
+		std::string mappath;
+		std::string uniformname;
+		std::string samplername;
+
 		RendererGpuTexture(GLenum target);
 		~RendererGpuTexture();
 
