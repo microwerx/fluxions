@@ -7,10 +7,10 @@
 
 namespace Fluxions
 {
-	class RendererProgram : RendererObject {
+	class RendererProgram : public RendererObject {
 	private:
 		GLuint program = 0;
-		std::vector<RendererShaderPtr> shaders;
+		std::vector<RendererShaderPtr> attachedShaders;
 
 		GLint linkStatus_ = 0;
 		bool linked = false;
@@ -41,9 +41,10 @@ namespace Fluxions
 		std::map<std::string, AttribUniformInfo> activeAttributes;
 		std::map<std::string, AttribUniformInfo> activeUniforms;
 
-		std::string vertshaderpath;
-		std::string fragshaderpath;
-		std::string geomshaderpath;
+		//std::string vertshaderpath;
+		//std::string fragshaderpath;
+		//std::string geomshaderpath;
+		std::map<std::string, std::pair<std::string, GLenum>> shaderpaths;
 
 		RendererProgram();
 		~RendererProgram();
@@ -57,6 +58,7 @@ namespace Fluxions
 		void applyUniforms(const RendererUniformMap& uniforms) const;
 		bool applyUniform(const std::string& uniformName, RendererUniform uniform) const;
 
+		void detachShaders();
 		void loadShaders();
 		void attachShaders(RendererShaderPtr& shaderPtr);
 		void bindAttribLocation(GLuint index, const char* name);
@@ -68,7 +70,7 @@ namespace Fluxions
 		const std::string& getInfoLog() const;
 		GLuint getProgram() const;
 	private:
-		void loadShader(std::string& path, GLenum type);
+		void loadShader(const std::string& path, GLenum type);
 
 		void create_program();
 		void delete_program();

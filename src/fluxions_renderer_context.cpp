@@ -710,8 +710,8 @@ namespace Fluxions
 		bool svalarg1 = k_sval(args, 1, arg1);
 		if (svalarg1) {
 			if (pcurProgram) {
-				arg1 = Fluxions::FindPathIfExists(arg1, paths);
-				pcurProgram->vertshaderpath = arg1;
+				std::string path = Fluxions::FindPathIfExists(arg1, paths);
+				pcurProgram->shaderpaths[arg1] = { path, GL_VERTEX_SHADER };
 				return true;
 			}
 		}
@@ -724,8 +724,8 @@ namespace Fluxions
 		bool svalarg1 = k_sval(args, 1, arg1);
 		if (svalarg1) {
 			if (pcurProgram) {
-				arg1 = Fluxions::FindPathIfExists(arg1, paths);
-				pcurProgram->fragshaderpath = arg1;
+				std::string path = Fluxions::FindPathIfExists(arg1, paths);
+				pcurProgram->shaderpaths[arg1] = { path, GL_FRAGMENT_SHADER };
 				return true;
 			}
 		}
@@ -738,8 +738,8 @@ namespace Fluxions
 		bool svalarg1 = k_sval(args, 1, arg1);
 		if (svalarg1) {
 			if (pcurProgram) {
-				arg1 = Fluxions::FindPathIfExists(arg1, paths);
-				pcurProgram->geomshaderpath = arg1;
+				std::string path = Fluxions::FindPathIfExists(arg1, paths);
+				pcurProgram->shaderpaths[arg1] = { path, GL_GEOMETRY_SHADER };
 				return true;
 			}
 		}

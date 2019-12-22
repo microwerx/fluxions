@@ -131,8 +131,8 @@ TBoundingBox<T> &TBoundingBox<T>::operator=(const TBoundingBox<T> &bbox)
 template <typename T>
 void TBoundingBox<T>::reset()
 {
-	maxBounds = TVector3<int>(DefaultMinValue, DefaultMinValue, DefaultMinValue);
-	minBounds = TVector3<int>(DefaultMaxValue, DefaultMaxValue, DefaultMaxValue);
+	maxBounds = TVector3<T>(DefaultMinValue, DefaultMinValue, DefaultMinValue);
+	minBounds = TVector3<T>(DefaultMaxValue, DefaultMaxValue, DefaultMaxValue);
 }
 
 template <typename T>
