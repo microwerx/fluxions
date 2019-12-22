@@ -252,6 +252,7 @@ namespace Fluxions
 
 		bool flipX(int z = 0);
 		bool flipY(int z = 0);
+		bool flipXY(int z = 0);
 		bool rotateLeft90(int z = 0);
 		bool rotateRight90(int z = 0);
 
