@@ -94,6 +94,16 @@ namespace Fluxions
 		void clear(const ColorType& clearcolor);
 		bool empty() const noexcept { return pixels.empty(); }
 		bool IsCubeMap() const noexcept { return imageWidth == imageHeight && imageDepth == 6; }
+
+		bool isLikely61CubeMap() const noexcept {
+			return imageWidth == imageHeight * 6;
+		}
+
+		bool isLikelyCross() const noexcept {
+			return (imageWidth * 3 == imageHeight * 4) ||
+				(imageWidth * 4) == (imageHeight * 3);
+		}
+
 		TImage<ColorType>& ToSRGB();
 		TImage<ColorType>& ReverseSRGB();
 		TImage<ColorType>& ToneMap(float exposure);
@@ -269,11 +279,11 @@ namespace Fluxions
 		// Converts either horizontal cross or vertical cross to cube map
 		bool convertCrossToCubeMap();
 		// Converse cube map to vertical cross format
-		bool convertCubeMapToCross();
+		bool convertCubeMapToCross(bool horizontal = false);
 		// Converts either horizontal cross or vertical cross to cube map
 		bool convertCrossToCubeMap(TImage<ColorType>& dst) const;
 		// Converts cube map to vertical cross format
-		bool convertCubeMapToCross(TImage<ColorType>& dst) const;
+		bool convertCubeMapToCross(TImage<ColorType>& dst, bool horizontal = false) const;
 
 		// Copies GL_FLOAT or GL_UNSIGNED_BYTE raw data
 		void setImageData(unsigned int format, unsigned int type, unsigned width, unsigned height, unsigned depth, void* _pixels);
@@ -281,8 +291,8 @@ namespace Fluxions
 	private:
 		void _setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, unsigned width, unsigned height, unsigned depth, void* _pixels);
 
-		unsigned zstride{ 0 };
-		unsigned ystride{ 0 };
+		unsigned zstride;
+		unsigned ystride;
 		ColorType borderColor;
 		int minColor;
 		int maxColor;

@@ -6,6 +6,39 @@
 namespace Fluxions
 {
 	// Image loading routines
+	void saveCubeMapVariations(const std::string& path, const Image4f& image4) {
+		{Image4f tmp;
+		image4.convertCubeMapToRect(tmp);
+		tmp.savePPM(path + "-cube-converted.ppm"); }
+		{Image4f tmp;
+		image4.convertCubeMapToCross(tmp, false);
+		tmp.savePPM(path + "-vcross-converted.ppm"); }
+		{Image4f tmp;
+		image4.convertCubeMapToCross(tmp, true);
+		tmp.savePPM(path + "-hcross-converted.ppm"); }
+	}
+
+	bool loadIMG(const std::string& path, Image4f& image4) {
+		SDL_Surface* imageSurface = IMG_Load(path.c_str());
+		if (imageSurface == NULL) {
+			HFLOGERROR("IMG_GetError() reports: %s", IMG_GetError());
+			return false;
+		}
+
+		unsigned width = imageSurface->w;
+		unsigned height = imageSurface->h;
+		void* data = imageSurface->pixels;
+		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB
+			: imageSurface->format->BitsPerPixel == 32 ? GL_RGBA
+			: 0;
+		//int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA8 : 0;
+		// int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_SRGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_SRGB_ALPHA : 0;
+		if (format == 0)
+			return false;
+		image4.setImageData(format, GL_UNSIGNED_BYTE, width, height, 1, data);
+		SDL_FreeSurface(imageSurface);
+		return true;
+	}
 
 	bool gpuLoadTexture(RendererGpuTexture& t, const std::string& ext, const std::string& path, bool genMipMap) {
 		Hf::StopWatch stopwatch;
@@ -21,77 +54,44 @@ namespace Fluxions
 				return false;
 			type = GL_FLOAT;
 		}
+		else if (ext == ".PFM") {
+			if (!image4.loadPFM(path))
+				return false;
+			type = GL_FLOAT;
+		}
 		else if (ext == ".PPM") {
 			if (!image4.loadPPM(path))
 				return false;
 		}
-		else if (ext == ".PFM") {
-			HFLOGERROR("PFM images not yet supported");
-			//if (!image4.loadPPM(path))
-			type = GL_FLOAT;
-			return false;
-		}
 		else if (ext == ".PNG" || ext == ".JPG") {
-			SDL_Surface* imageSurface = IMG_Load(path.c_str());
-			if (imageSurface == NULL) {
-				HFLOGERROR("IMG_GetError() reports: %s", IMG_GetError());
+			if (!loadIMG(path, image4))
 				return false;
-			}
-
-			width = imageSurface->w;
-			height = imageSurface->h;
-			void* data = imageSurface->pixels;
-			int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB
-				: imageSurface->format->BitsPerPixel == 32 ? GL_RGBA
-				: 0;
-			//int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA8 : 0;
-			// int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_SRGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_SRGB_ALPHA : 0;
-			if (format == 0)
-				return false;
-			image4.setImageData(format, type, width, height, 1, data);
-			SDL_FreeSurface(imageSurface);
 		}
 		else {
 			return false;
 		}
 
 		bool isCube = false;
-		if (image4.width() == image4.height() * 6) {
+		if (image4.isLikely61CubeMap()) {
 			isCube = true;
 			image4.convertRectToCubeMap();
+			saveCubeMapVariations(path, image4);
 		}
-		else if (image4.width() * 4 == image4.height() * 3) {
-			HFLOGERROR("Cross cube images not yet supported");
-			// image4.convertCubeMapToCrossMap()
-			// image4.convertCrossMapToCubeMap()
+		else if (image4.isLikelyCross()) {
 			isCube = true;
-			return false;
+			image4.convertCrossToCubeMap();
+			saveCubeMapVariations(path, image4);
 		}
 
 		while (glGetError()) HFLOGWARN("GL ERROR!");
 		t.bind(0);
-		const int level = 0;
-		const int border = 0;
 		if (isCube) {
-			GLubyte test[18] = {
-				255,   0,   0,
-				0,   255, 255,
-				0,   255,   0,
-				255,   0, 255,
-				0,     0, 255,
-				255, 255,   0
-			};
 			for (int i = 0; i < 6; i++) {
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-							 level, GL_RGBA,
+							 0, GL_RGBA,
 							 image4.width(), image4.height(),
-							 border, GL_RGBA, GL_FLOAT,
+							 0, GL_RGBA, GL_FLOAT,
 							 image4.getImageData(i));
-				//glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-				//			 level, GL_RGBA,
-				//			 1, 1,
-				//			 border, GL_RGBA, GL_UNSIGNED_BYTE,
-				//			 test + i * 3);
 			}
 			while (glGetError()) HFLOGWARN("TexImage2D     GL ERROR!");
 			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
@@ -99,9 +99,9 @@ namespace Fluxions
 		}
 		else {
 			glTexImage2D(GL_TEXTURE_2D,
-						 level, GL_RGBA,
+						 0, GL_RGBA,
 						 image4.width(), image4.height(),
-						 border, GL_RGBA, GL_FLOAT,
+						 0, GL_RGBA, GL_FLOAT,
 						 image4.getImageData(0));
 			while (glGetError()) HFLOGWARN("TexImage2D     GL ERROR!");
 			glGenerateMipmap(GL_TEXTURE_2D);

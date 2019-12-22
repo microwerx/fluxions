@@ -654,7 +654,7 @@ namespace Fluxions
 			imageColorRange = std::max(maxColorFound, 255.0f);
 		}
 		else if (std::is_floating_point_v<scalar_type>) {
-			imageColorRange = std::floor(std::max(maxColorFound, 1.0f) * 255.99f);
+			imageColorRange = std::min(65535, (int)std::floor(std::max(maxColorFound, 1.0f) * 255.99f));
 		}
 
 		// Typical cases:
@@ -804,6 +804,110 @@ namespace Fluxions
 		return false;
 	}
 
+	float read_float_reversebytes(std::ifstream& fin) {
+		unsigned v;
+		fin.read((char*)&v, 4);
+		v = _byteswap_ulong(v);
+		return *reinterpret_cast<float*>(&v);
+	}
+
+	inline void reverse_bytes1(float* f) {
+		unsigned long u = _byteswap_ulong(*reinterpret_cast<int*>(f));
+		*f = *reinterpret_cast<float*>(&u);
+	}
+
+	inline void reverse_bytes3(float* f) {
+		reverse_bytes1(f);
+		reverse_bytes1(f + 1);
+		reverse_bytes1(f + 2);
+	}
+
+	inline bool same_byte_order(int byte_order) {
+		union {
+			unsigned i;
+			char c[4];
+		} endianness = { 0x01020304 };
+		return
+			((endianness.c[0] == 1) && (byte_order > 0)) ||
+			((endianness.c[0] == 4) && (byte_order < 0));
+	}
+
+	inline void reverse_donothing(float*) {}
+
+	template <typename ColorType>
+	bool TImage<ColorType>::loadPFM(const std::string& path) {
+		std::ifstream fin(path, std::ios::binary);
+		if (!fin) return false;
+		std::string input;
+		int newline_count = 0;
+		while (newline_count < 3) {
+			char c = 0;
+			fin.read(&c, 1);
+			if (c == 0x0a) newline_count++;
+			input.push_back(c);
+			if (!fin) {
+				return false;
+			}
+		}
+		std::istringstream istr(input);
+		std::string type;
+		int xres = 0;
+		int yres = 0;
+		double byte_order = 0;
+		int stride = 0;
+		istr >> type >> xres >> yres >> byte_order;
+		if (type == "PF") stride = 12;
+		else if (type == "Pf") stride = 4;
+		else return false;
+		const int count = (stride == 12 ? 3 : 1);
+		resize(xres, yres, 1);
+
+		auto rb = same_byte_order((int)byte_order) ? reverse_donothing :
+			stride == 4 ? reverse_bytes1 : reverse_bytes3;
+
+		constexpr float to_scalar_type = color_from_float_factor<scalar_type>();
+		float v[3]{ 0.0f, 0.0f, 0.0f };
+		for (auto& p : pixels) {
+			fin.read((char*)v, stride);
+			rb(v);
+			p.r = (scalar_type)(v[0] * to_scalar_type);
+			p.g = (scalar_type)(v[1] * to_scalar_type);
+			p.b = (scalar_type)(v[2] * to_scalar_type);
+		}
+
+		//if (!same_byte_order((int)byte_order)) {
+		//	if (stride == 4) {
+		//		for (auto& p : pixels) {
+		//			reverse_bytes1((float*)&p.r);
+		//		}
+		//	}
+		//	else {
+		//		for (auto& p : pixels) {
+		//			reverse_bytes3((float*)&p.r);
+		//		}
+		//	}
+		//}
+
+		return true;
+	}
+
+	template <typename ColorType>
+	bool TImage<ColorType>::savePFM(const std::string& path) const {
+		std::ofstream fout(path, std::ios::binary);
+		if (!fout) return false;
+		std::ostringstream ostr;
+		ostr << "PF" << char(0xa);
+		ostr << imageWidth << char(0x20);
+		ostr << imageHeight << char(0xa);
+		ostr << (same_byte_order(-1) ? -1.0 : 1.0) << char(0xa);
+		const float tofloat = color_to_float_factor<scalar_type>();
+		for (const auto& p : pixels) {
+			Color3f output{ p.r * tofloat, p.g * tofloat, p.b * tofloat };
+			fout.write((char*)&output.r, 12);
+		}
+		return true;
+	}
+
 	template <typename ColorType>
 	bool TImage<ColorType>::loadEXR(const std::string& path) {
 #ifdef FLUXIONS_GTE_USEOPENEXR
@@ -926,7 +1030,7 @@ namespace Fluxions
 			for (unsigned i = 0; i < count; i++) {
 				PixelValueType* v = pixels[i].ptr();
 				for (unsigned j = 0; j < components; j++) {
-					v[j] = (PixelValueType)clamp((int)(scaleFactor_itof * data[j]), 0, 255);
+					v[j] = scaleFactor_itof * data[j];
 				}
 				data += fromstride;
 			}
@@ -1109,8 +1213,19 @@ namespace Fluxions
 								   int width, int height, int depth,
 								   int dx, int dy, int dz,
 								   TImage<ColorType>& dst) const {
+		HFLOGDEBUG("Copying (%i, %i, %i) cube from (%i, %i, %i)/(%i, %i, %i) to (%i, %i, %i)/(%i, %i, %i)",
+				   width, height, depth,
+				   sx, sy, sz,
+				   imageWidth, imageHeight, imageDepth,
+				   dx, dy, dz,
+				   dst.imageWidth, dst.imageHeight, dst.imageDepth
+		);
+
 		// Look for out of bounds
-		Vector3i range{ width, height, depth };
+		Vector3ui range{
+			(unsigned)std::max(0, width),
+			(unsigned)std::max(0, height),
+			(unsigned)std::max(0, depth) };
 		Vector3ui srange{ imageWidth, imageHeight, imageDepth };
 		Vector3ui drange{ dst.imageWidth, dst.imageHeight, dst.imageDepth };
 		if (range_empty(srange) || range_empty(drange) || range_empty(range))
@@ -1128,69 +1243,85 @@ namespace Fluxions
 		if (range_clipped(dx1, range, drange))
 			return;
 		Vector3i dx2 = dx1 + range - 1;
-		clamp_range(sx1, sx2, drange);
+		clamp_range(dx1, dx2, drange);
 
 		// Determine smallest range and return if any are zero
-		range = tight_bounds(srange, drange);
+		range = tight_bounds(srange, range);
+		range = tight_bounds(drange, range);
 		if (range_empty(range)) return;
 
-		int szoffset = sx1.z * zstride;
-		int dzoffset = dx1.z * dst.zstride;
-		int syoffset = sx1.y * ystride;
-		int dyoffset = dx1.y * dst.ystride;
+		HFLOGDEBUG("Actual->(%i, %i, %i) cube from (%i, %i, %i) to (%i, %i, %i)",
+				   range.x, range.y, range.z,
+				   sx1.x, sx1.y, sx1.z,
+				   dx1.x, dx1.y, dx1.z
+		);
+
+		size_t szdiff = (size_t)imageWidth * imageHeight;
+		size_t dzdiff = (size_t)dst.imageWidth * dst.imageHeight;
+		size_t sydiff = imageWidth;
+		size_t dydiff = dst.imageWidth;
+		size_t szoffset = sx1.z * szdiff;
+		size_t dzoffset = dx1.z * dzdiff;
+		size_t syoffset = sx1.y * sydiff;
+		size_t dyoffset = dx1.y * dydiff;
 		size_t row_size = sizeof(value_type) * range.x;
-		while (range.z-- > 0) {
-			while (range.y-- > 0) {
+
+		unsigned zcount = range.z;
+		while (zcount-- > 0) {
+			unsigned ycount = range.y;
+			while (ycount-- > 0) {
 				const void* srcmem = &pixels[szoffset + syoffset + sx1.x];
-				void* dstmem = &dst.pixels[szoffset + dyoffset + dx1.x];
+				void* dstmem = &dst.pixels[dzoffset + dyoffset + dx1.x];
 				memcpy(dstmem, srcmem, row_size);
-				syoffset += ystride;
-				dyoffset += dst.ystride;
+				syoffset += sydiff;
+				dyoffset += dydiff;
 			}
-			szoffset += zstride;
-			dzoffset += dst.zstride;
+			szoffset += szdiff;
+			dzoffset += dzdiff;
 		}
 	}
 
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertRectToCubeMap() {
-		if (empty() || imageWidth != 6 * imageHeight)
-			return false;
-
 		// savePPMi("blah.ppm", 255.99f, 0, 255, 0);
+		TImage<ColorType> tmp = *this;
+		return tmp.convertRectToCubeMap(*this);
 
-		int swizzle[6] = {
-			4, // POSITIVE Z
-			5, // NEGATIVE Z
-			2, // POSITIVE Y
-			3, // NEGATIVE Y
-			1, // POSITIVE X
-			0, // NEGATIVE X
-		};
-		int size = (int)imageHeight;
-		std::vector<ColorType> src = pixels;
-		resize(size, size, 6);
+		//if (empty() || imageWidth != 6 * imageHeight)
+		//	return false;
 
-		for (unsigned i = 0; i < 6; i++) {
-			unsigned k = swizzle[i];
-			// demultiplex the data
-			unsigned dst_offset = i * zstride;
-			unsigned src_offset = k * size;
-			for (int y = 0; y < size; y++) {
-				void* pdst = &pixels[dst_offset];
-				void* psrc = &src[src_offset];
-				unsigned n = size * sizeof(ColorType);
-				memcpy(pdst, psrc, n);
-				dst_offset += size;
-				src_offset += 6 * size;
-			}
-		}
+		//int swizzle[6] = {
+		//	4, // POSITIVE Z
+		//	5, // NEGATIVE Z
+		//	2, // POSITIVE Y
+		//	3, // NEGATIVE Y
+		//	1, // POSITIVE X
+		//	0, // NEGATIVE X
+		//};
+		//int size = (int)imageHeight;
+		//std::vector<ColorType> src = pixels;
+		//resize(size, size, 6);
 
-		rotateRight90(3);
-		rotateLeft90(2);
+		//for (unsigned i = 0; i < 6; i++) {
+		//	unsigned k = swizzle[i];
+		//	// demultiplex the data
+		//	unsigned dst_offset = i * zstride;
+		//	unsigned src_offset = k * size;
+		//	for (int y = 0; y < size; y++) {
+		//		void* pdst = &pixels[dst_offset];
+		//		void* psrc = &src[src_offset];
+		//		unsigned n = size * sizeof(ColorType);
+		//		memcpy(pdst, psrc, n);
+		//		dst_offset += size;
+		//		src_offset += 6 * size;
+		//	}
+		//}
 
-		return true;
+		//rotateRight90(3);
+		//rotateLeft90(2);
+
+		//return true;
 	}
 
 	template <typename ColorType>
@@ -1198,7 +1329,7 @@ namespace Fluxions
 		if (empty() || imageWidth != 6 * imageHeight)
 			return false;
 
-		int swizzle[6] = {
+		int corona_swizzle[6] = {
 			4, // POSITIVE Z
 			5, // NEGATIVE Z
 			2, // POSITIVE Y
@@ -1206,68 +1337,58 @@ namespace Fluxions
 			1, // POSITIVE X
 			0, // NEGATIVE X
 		};
-		int size = (int)imageHeight;
-		const std::vector<ColorType>& src = pixels;
-		dst.resize(size, size, 6);
+		int normal_swizzle[6] = {
+			0, // POSITIVE X
+			1, // NEGATIVE X
+			2, // POSITIVE Y
+			3, // NEGATIVE Y
+			4, // POSITIVE Z
+			5, // NEGATIVE Z
+		};
+		constexpr bool use_corona_swizzle = false;
+		int* swizzle = use_corona_swizzle ? corona_swizzle : normal_swizzle;
 
-		for (int i = 0; i < 6; i++) {
-			int k = swizzle[i];
-			// demultiplex the data
-			unsigned dst_offset = i * zstride;
-			unsigned src_offset = k * size;
-			for (int y = 0; y < size; y++) {
-				void* pdst = &dst.pixels[dst_offset];
-				const void* psrc = &src[src_offset];
-				unsigned n = size * sizeof(ColorType);
-				memcpy(pdst, psrc, n);
-				dst_offset += size;
-				src_offset += 6 * size;
+		int size = (int)imageHeight;
+		dst.resize(size, size, 6);
+		if (use_corona_swizzle) {			
+			const std::vector<ColorType>& src = pixels;			
+
+			unsigned zdiff = imageWidth * imageHeight;
+			for (int i = 0; i < 6; i++) {
+				int k = swizzle[i];
+				// demultiplex the data
+				unsigned dst_offset = i * zdiff;
+				unsigned src_offset = k * size;
+				for (int y = 0; y < size; y++) {
+					void* pdst = &dst.pixels[dst_offset];
+					const void* psrc = &src[src_offset];
+					unsigned n = size * sizeof(ColorType);
+					memcpy(pdst, psrc, n);
+					dst_offset += size;
+					src_offset += 6 * size;
+				}
+			}
+		}
+		else {
+			int h[6] = { 0,1,2,3,4,5 };
+			int v[6] = { 0,0,0,0,0,0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
 			}
 		}
 
-		dst.rotateRight90(3);
-		dst.rotateLeft90(2);
+		if (use_corona_swizzle) {
+			dst.rotateRight90(3);
+			dst.rotateLeft90(2);
+		}
 
 		return true;
 	}
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCubeMapToRect() {
-		if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
-			return false;
-
-		rotateLeft90(2);
-		rotateRight90(3);
-
-		unsigned size = imageWidth;
-		std::vector<ColorType> tmp = pixels;
-		resize(size * 6, size, 1);
-
-		unsigned swizzle[6] = {
-			4, // POSITIVE Z
-			5, // NEGATIVE Z
-			2, // POSITIVE Y
-			3, // NEGATIVE Y
-			1, // POSITIVE X
-			0, // NEGATIVE X
-		};
-
-		for (unsigned i = 0; i < 6; i++) {
-			unsigned k = swizzle[i];
-			// demultiplex the data
-			unsigned src_offset = i * size * size;
-			unsigned dst_offset = k * size;
-			for (unsigned y = 0; y < size; y++) {
-				void* pdst = &pixels[dst_offset];
-				void* psrc = &tmp[src_offset];
-				unsigned n = size * sizeof(ColorType);
-				memcpy(pdst, psrc, n);
-				src_offset += size;
-				dst_offset += 6 * size;
-			}
-		}
-
-		return true;
+		TImage<ColorType> tmp(*this);
+		return tmp.convertCubeMapToRect(*this);
 	}
 
 	template <typename ColorType>
@@ -1275,14 +1396,17 @@ namespace Fluxions
 		if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
 			return false;
 
-		TImage<ColorType> src(*this);
-		src.rotateLeft90(2);
-		src.rotateRight90(3);
+		constexpr bool use_corona_swizzle = false;
+		if (use_corona_swizzle) {
+			//rotateLeft90(2);
+			//rotateRight90(3);
+		}
 
-		int size = (int)imageWidth;
+		unsigned size = imageWidth;
+		std::vector<ColorType> tmp = pixels;
 		dst.resize(size * 6, size, 1);
 
-		int swizzle[6] = {
+		int corona_swizzle[6] = {
 			4, // POSITIVE Z
 			5, // NEGATIVE Z
 			2, // POSITIVE Y
@@ -1290,23 +1414,76 @@ namespace Fluxions
 			1, // POSITIVE X
 			0, // NEGATIVE X
 		};
+		int normal_swizzle[6] = {
+			0, // POSITIVE X
+			1, // NEGATIVE X
+			2, // POSITIVE Y
+			3, // NEGATIVE Y
+			4, // POSITIVE Z
+			5, // NEGATIVE Z
+		};
+		int* swizzle = use_corona_swizzle ? corona_swizzle : normal_swizzle;
 
-		for (int i = 0; i < 6; i++) {
-			int k = swizzle[i];
+		if (use_corona_swizzle) {
+			for (unsigned i = 0; i < 6; i++) {
+			unsigned k = swizzle[i];
 			// demultiplex the data
 			unsigned src_offset = i * size * size;
 			unsigned dst_offset = k * size;
-			for (int y = 0; y < size; y++) {
-				auto srcit = src.pixels.cbegin() + src_offset;
-				auto dstit = dst.pixels.begin() + dst_offset;
-				std::copy_n(srcit, size, dstit);
+			for (unsigned y = 0; y < size; y++) {
+				void* pdst = &dst.pixels[dst_offset];
+				const void* psrc = &pixels[src_offset];
+				unsigned n = size * sizeof(ColorType);
+				memcpy(pdst, psrc, n);
 				src_offset += size;
 				dst_offset += 6 * size;
 			}
 		}
-		src.resize(1, 1, 1);
+		}
+		else {
+			int h[6] = { 0,1,2,3,4,5 };
+			int v[6] = { 0,0,0,0,0,0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
+			}
+		}
 
 		return true;
+		//if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
+		//	return false;
+
+		//TImage<ColorType> src(*this);
+		//src.rotateLeft90(2);
+		//src.rotateRight90(3);
+
+		//int size = (int)imageWidth;
+		//dst.resize(size * 6, size, 1);
+
+		//int swizzle[6] = {
+		//	4, // POSITIVE Z
+		//	5, // NEGATIVE Z
+		//	2, // POSITIVE Y
+		//	3, // NEGATIVE Y
+		//	1, // POSITIVE X
+		//	0, // NEGATIVE X
+		//};
+
+		//for (int i = 0; i < 6; i++) {
+		//	int k = swizzle[i];
+		//	// demultiplex the data
+		//	unsigned src_offset = i * size * size;
+		//	unsigned dst_offset = k * size;
+		//	for (int y = 0; y < size; y++) {
+		//		auto srcit = src.pixels.cbegin() + src_offset;
+		//		auto dstit = dst.pixels.begin() + dst_offset;
+		//		std::copy_n(srcit, size, dstit);
+		//		src_offset += size;
+		//		dst_offset += 6 * size;
+		//	}
+		//}
+		//src.resize(1, 1, 1);
+
+		//return true;
 	}
 
 	template <typename ColorType>
@@ -1317,9 +1494,9 @@ namespace Fluxions
 
 
 	template <typename ColorType>
-	bool TImage<ColorType>::convertCubeMapToCross() {
+	bool TImage<ColorType>::convertCubeMapToCross(bool horizontal) {
 		TImage<ColorType> tmp = *this;
-		return tmp.convertCubeMapToCross(*this);
+		return tmp.convertCubeMapToCross(*this, horizontal);
 		return true;
 	}
 
@@ -1334,8 +1511,41 @@ namespace Fluxions
 
 		if (!horizontal && !vertical) return false;
 
-		int size = (int)(horizontal ? (imageHeight >> 2) : (imageWidth >> 2));
+		int size = (int)(vertical ? (imageHeight >> 2) : (imageWidth >> 2));
 		dst.resize(size, size, 6);
+
+		int hh[6] = { 2,0,1,1,1,3 };
+		int hv[6] = { 1,1,0,2,1,1 };
+		int vh[6] = { 2,0,1,1,1,1 };
+		int vv[6] = { 1,1,0,2,1,3 };
+
+		int* h = horizontal ? hh : vh;
+		int* v = horizontal ? hv : vv;
+
+		for (int i = 0; i < 6; i++) {
+			blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
+		}
+
+		dst.flipX(5);
+		dst.flipY(5);
+
+		return true;
+	}
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertCubeMapToCross(TImage<ColorType>& dst, bool horizontal) const {
+		if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
+			return false;
+
+		//TImage<ColorType> src(*this);
+		//src.rotateLeft90(2);
+		//src.rotateRight90(3);
+
+		int size = (int)imageWidth;
+		if (horizontal)
+			dst.resize(size * 4, size * 3, 1);
+		else
+			dst.resize(size * 3, size * 4, 1);
 
 		int hh[6] = { 2,0,3,1,1,1 };
 		int hv[6] = { 1,1,1,1,2,0 };
@@ -1346,48 +1556,8 @@ namespace Fluxions
 		int* v = horizontal ? hv : vv;
 
 		for (int i = 0; i < 6; i++) {
-			blit2D(h[0] * size, v[0] * size, 0, size, size, 0, 0, i, dst);
+			blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
 		}
-
-		return true;
-	}
-
-
-	template <typename ColorType>
-	bool TImage<ColorType>::convertCubeMapToCross(TImage<ColorType>& dst) const {
-		if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
-			return false;
-
-		TImage<ColorType> src(*this);
-		src.rotateLeft90(2);
-		src.rotateRight90(3);
-
-		int size = (int)imageWidth;
-		dst.resize(size * 6, size, 1);
-
-		int swizzle[6] = {
-			4, // POSITIVE Z
-			5, // NEGATIVE Z
-			2, // POSITIVE Y
-			3, // NEGATIVE Y
-			1, // POSITIVE X
-			0, // NEGATIVE X
-		};
-
-		for (int i = 0; i < 6; i++) {
-			int k = swizzle[i];
-			// demultiplex the data
-			unsigned src_offset = i * size * size;
-			unsigned dst_offset = k * size;
-			for (int y = 0; y < size; y++) {
-				auto srcit = src.pixels.cbegin() + src_offset;
-				auto dstit = dst.pixels.begin() + dst_offset;
-				std::copy_n(srcit, size, dstit);
-				src_offset += size;
-				dst_offset += 6 * size;
-			}
-		}
-		src.resize(1, 1, 1);
 
 		return true;
 	}

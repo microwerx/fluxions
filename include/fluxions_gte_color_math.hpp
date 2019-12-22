@@ -64,6 +64,20 @@ namespace Fluxions
 			return 0.0f;
 	}
 
+	template<typename T>
+	constexpr float color_from_float_factor() {
+		bool is_int = std::is_integral_v<T>;
+		bool is_flt = std::is_floating_point_v<T>;
+		if (is_int && sizeof(T) == 1)
+			return float(255.99);
+		else if (is_int && sizeof(T) >= 2)
+			return float(65535.99);
+		else if (is_flt)
+			return 1.0f;
+		else
+			return 0.0f;
+	}
+
 	template <typename T>
 	constexpr TColor3<float> ToColor3f(TColor3<T>& src) noexcept {
 		return TColor3<float>(
