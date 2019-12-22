@@ -31,6 +31,10 @@ namespace Hf
 
 		void Start();
 		void Stop();
+		double Stop_s() { Stop(); return GetSecondsElapsed(); }
+		double Stop_ms() { Stop(); return GetMillisecondsElapsed(); }
+		float Stop_sf() { Stop(); return (float)GetSecondsElapsed(); }
+		float Stop_msf() { Stop(); return (float)GetMillisecondsElapsed(); }
 		double GetMillisecondsElapsed();
 		double GetSecondsElapsed();
 
