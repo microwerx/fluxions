@@ -1073,17 +1073,17 @@ namespace Fluxions
 		if (empty() || imageWidth != imageHeight)
 			return false;
 
-		std::vector<ColorType> tmp((unsigned)imageWidth * imageHeight);
+		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
 		unsigned size = imageWidth;
-		//unsigned zstride = imageWidth * imageHeight;
-		unsigned zoffset = zstride * z;
+		unsigned _zstride = imageWidth * imageHeight;
+		unsigned zoffset = _zstride * z;
 		for (unsigned x = 0; x < size; x++) {
 			for (unsigned y = 0; y < size; y++) {
 				unsigned sx = size - x - 1;
 				unsigned sy = y;
 				unsigned dst_offset = y * size + x;
 				unsigned src_offset = sy * size + sx;
-				tmp[dst_offset] = pixels[(unsigned)zoffset + src_offset];
+				tmp[dst_offset] = pixels[(size_t)zoffset + src_offset];
 			}
 		}
 		copy(tmp.begin(), tmp.end(), pixels.begin() + zoffset);
@@ -1096,17 +1096,40 @@ namespace Fluxions
 		if (empty() || imageWidth != imageHeight)
 			return false;
 
-		std::vector<ColorType> tmp(imageWidth * imageHeight);
+		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
 		unsigned size = imageWidth;
-		//unsigned zstride = imageWidth * imageHeight;
-		unsigned zoffset = zstride * z;
+		unsigned _zstride = imageWidth * imageHeight;
+		unsigned zoffset = _zstride * z;
 		for (unsigned x = 0; x < size; x++) {
 			for (unsigned y = 0; y < size; y++) {
 				unsigned sx = x;
 				unsigned sy = size - y - 1;
 				unsigned dst_offset = y * size + x;
 				unsigned src_offset = sy * size + sx;
-				tmp[dst_offset] = pixels[zoffset + src_offset];
+				tmp[dst_offset] = pixels[(size_t)zoffset + src_offset];
+			}
+		}
+		copy(tmp.begin(), tmp.end(), pixels.begin() + zoffset);
+
+		return true;
+	}
+
+	template <typename ColorType>
+	bool TImage<ColorType>::flipXY(int z) {
+		if (empty() || imageWidth != imageHeight)
+			return false;
+
+		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
+		unsigned size = imageWidth;
+		unsigned _zstride = imageWidth * imageHeight;
+		unsigned zoffset = _zstride * z;
+		for (unsigned x = 0; x < size; x++) {
+			for (unsigned y = 0; y < size; y++) {
+				unsigned sx = size - x - 1;
+				unsigned sy = size - y - 1;
+				unsigned dst_offset = y * size + x;
+				unsigned src_offset = sy * size + sx;
+				tmp[dst_offset] = pixels[(size_t)zoffset + src_offset];
 			}
 		}
 		copy(tmp.begin(), tmp.end(), pixels.begin() + zoffset);
@@ -1213,13 +1236,13 @@ namespace Fluxions
 								   int width, int height, int depth,
 								   int dx, int dy, int dz,
 								   TImage<ColorType>& dst) const {
-		HFLOGDEBUG("Copying (%i, %i, %i) cube from (%i, %i, %i)/(%i, %i, %i) to (%i, %i, %i)/(%i, %i, %i)",
-				   width, height, depth,
-				   sx, sy, sz,
-				   imageWidth, imageHeight, imageDepth,
-				   dx, dy, dz,
-				   dst.imageWidth, dst.imageHeight, dst.imageDepth
-		);
+		//HFLOGDEBUG("Copying (%i, %i, %i) cube from (%i, %i, %i)/(%i, %i, %i) to (%i, %i, %i)/(%i, %i, %i)",
+		//		   width, height, depth,
+		//		   sx, sy, sz,
+		//		   imageWidth, imageHeight, imageDepth,
+		//		   dx, dy, dz,
+		//		   dst.imageWidth, dst.imageHeight, dst.imageDepth
+		//);
 
 		// Look for out of bounds
 		Vector3ui range{
@@ -1250,11 +1273,11 @@ namespace Fluxions
 		range = tight_bounds(drange, range);
 		if (range_empty(range)) return;
 
-		HFLOGDEBUG("Actual->(%i, %i, %i) cube from (%i, %i, %i) to (%i, %i, %i)",
-				   range.x, range.y, range.z,
-				   sx1.x, sx1.y, sx1.z,
-				   dx1.x, dx1.y, dx1.z
-		);
+		//HFLOGDEBUG("Actual->(%i, %i, %i) cube from (%i, %i, %i) to (%i, %i, %i)",
+		//		   range.x, range.y, range.z,
+		//		   sx1.x, sx1.y, sx1.z,
+		//		   dx1.x, dx1.y, dx1.z
+		//);
 
 		size_t szdiff = (size_t)imageWidth * imageHeight;
 		size_t dzdiff = (size_t)dst.imageWidth * dst.imageHeight;
@@ -1526,8 +1549,7 @@ namespace Fluxions
 			blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
 		}
 
-		dst.flipX(5);
-		dst.flipY(5);
+		if (!horizontal) dst.flipXY(5);
 
 		return true;
 	}
@@ -1537,7 +1559,7 @@ namespace Fluxions
 		if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
 			return false;
 
-		//TImage<ColorType> src(*this);
+		TImage<ColorType> src(*this);
 		//src.rotateLeft90(2);
 		//src.rotateRight90(3);
 
@@ -1547,16 +1569,21 @@ namespace Fluxions
 		else
 			dst.resize(size * 3, size * 4, 1);
 
-		int hh[6] = { 2,0,3,1,1,1 };
-		int hv[6] = { 1,1,1,1,2,0 };
+		//int hh[6] = { 2,0,3,1,1,1 };
+		//int hv[6] = { 1,1,1,1,2,0 };
+		int hh[6] = { 2,0,1,1,1,3 };
+		int hv[6] = { 1,1,0,2,1,1 };
+		//int vh[6] = { 2,0,1,1,1,1 };
+		//int vv[6] = { 1,1,3,1,2,0 };
 		int vh[6] = { 2,0,1,1,1,1 };
-		int vv[6] = { 1,1,3,1,2,0 };
+		int vv[6] = { 1,1,0,2,1,3 };
 
 		int* h = horizontal ? hh : vh;
 		int* v = horizontal ? hv : vv;
 
+		if (!horizontal) src.flipXY(5);
 		for (int i = 0; i < 6; i++) {
-			blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
+			src.blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
 		}
 
 		return true;
