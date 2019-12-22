@@ -167,10 +167,10 @@ namespace Fluxions
 			HFLOGINFO("program %d deleted.", program);
 			glDeleteProgram(program);
 			program = 0;
-			for (RendererShaderPtr& s : shaders) {
+			for (RendererShaderPtr& s : attachedShaders) {
 				s.reset();
 			}
-			shaders.clear();
+			attachedShaders.clear();
 		}
 	}
 
@@ -233,7 +233,7 @@ namespace Fluxions
 		}
 	}
 
-	void RendererProgram::loadShader(std::string& path, GLenum type) {
+	void RendererProgram::loadShader(const std::string& path, GLenum type) {
 		if (path.empty()) return;
 		FilePathInfo fpi(path);
 		RendererShaderPtr shader = std::make_shared<RendererShader>();
@@ -243,10 +243,21 @@ namespace Fluxions
 		else HFLOGERROR("shader '%s' compile failed", path.c_str());
 	}
 
+	void RendererProgram::detachShaders() {
+		for (auto& shader : attachedShaders) {
+			glDetachShader(program, shader->shader);
+		}
+		attachedShaders.clear();
+		linked = false;
+	}
+
 	void RendererProgram::loadShaders() {
-		loadShader(vertshaderpath, GL_VERTEX_SHADER);
-		loadShader(fragshaderpath, GL_FRAGMENT_SHADER);
-		loadShader(geomshaderpath, GL_GEOMETRY_SHADER);
+		for (auto& [k, v] : shaderpaths) {
+			loadShader(v.first, v.second);
+		}
+		//loadShader(vertshaderpath, GL_VERTEX_SHADER);
+		//loadShader(fragshaderpath, GL_FRAGMENT_SHADER);
+		//loadShader(geomshaderpath, GL_GEOMETRY_SHADER);
 	}
 
 	void RendererProgram::attachShaders(RendererShaderPtr& shaderPtr) {
@@ -255,7 +266,7 @@ namespace Fluxions
 		if (!shaderPtr->didCompile)
 			return;
 		shaderPtr->setParent(this);
-		shaders.push_back(shaderPtr);
+		attachedShaders.push_back(shaderPtr);
 		linked = false;
 	}
 
@@ -277,7 +288,7 @@ namespace Fluxions
 			return false;
 		}
 
-		for (auto& shaderIt : shaders) {
+		for (auto& shaderIt : attachedShaders) {
 			glAttachShader(program, shaderIt->shader);
 		}
 
