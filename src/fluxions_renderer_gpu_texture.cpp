@@ -75,12 +75,12 @@ namespace Fluxions
 		if (image4.isLikely61CubeMap()) {
 			isCube = true;
 			image4.convertRectToCubeMap();
-			saveCubeMapVariations(path, image4);
+			//saveCubeMapVariations(path, image4);
 		}
 		else if (image4.isLikelyCross()) {
 			isCube = true;
 			image4.convertCrossToCubeMap();
-			saveCubeMapVariations(path, image4);
+			//saveCubeMapVariations(path, image4);
 		}
 
 		while (glGetError()) HFLOGWARN("GL ERROR!");
