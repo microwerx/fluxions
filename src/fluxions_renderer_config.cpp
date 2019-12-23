@@ -58,8 +58,8 @@ namespace Fluxions
 												  viewportZFar);
 		}
 		else {
-			viewportProjectionMatrix.Ortho2D(0, viewportRect.w,
-											 0, viewportRect.h);
+			viewportProjectionMatrix.Ortho2D(0, (float)viewportRect.w,
+											 0, (float)viewportRect.h);
 		}
 	}
 }

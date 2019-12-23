@@ -66,6 +66,10 @@ namespace Fluxions {
 		return didCompile;
 	}
 
+	const char* RendererShader::status() const {
+		return didCompile ? "compiled" : hadError ? "had error" : "not compiled";
+	}
+
 	void RendererShader::create_shader(GLenum shaderType_) {
 		if (shader)
 			delete_shader();

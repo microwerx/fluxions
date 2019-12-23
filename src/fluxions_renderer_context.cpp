@@ -30,29 +30,12 @@ namespace Fluxions
 	void RendererContext::init(const std::string& name,
 							   RendererObject* pparent) {
 		RendererObject::init(name, pparent);
+		set_default_parameters();
 		initTexUnits();
 	}
 
 	void RendererContext::kill() {
-		//TODO: remove old renderer code
-		//pcur_program = nullptr;
-		//pcur_renderconfig = nullptr;
-		//Programs.clear();
-		//RenderConfigs.clear();
-		//Textures.clear();
-		//Samplers.clear();
-		//Framebuffers.clear();
-		//Renderbuffers.clear();
 		paths.clear();
-
-		pcurFBO = nullptr;
-		pcurProgram = nullptr;
-		pcurRenderer = nullptr;
-		pcurRendererConfig = nullptr;
-		pcurSampler = nullptr;
-		pcurTexture2D = nullptr;
-		pcurTextureCube = nullptr;
-
 		rendererConfigs.clear();
 		programs.clear();
 		fbos.clear();
@@ -70,13 +53,28 @@ namespace Fluxions
 		return "RendererContext";
 	}
 
-	void RendererContext::resize(int oldWidth, int oldHeight, int width, int height) {
+	void RendererContext::set_default_parameters() {
+		pcurFBO = nullptr;
+		pcurProgram = nullptr;
+		pcurRenderer = nullptr;
+		pcurRendererConfig = nullptr;
+		pcurSampler = nullptr;
+		pcurTexture2D = nullptr;
+		pcurTextureCube = nullptr;
+
+		debugClearScreen = false;
+		vars.set_var("@SCREENWIDTH", defaultScreenWidth);
+		vars.set_var("@SCREENHEIGHT", defaultScreenHeight);
+	}
+
+	void RendererContext::resize(int width, int height) {
+		defaultScreenWidth = width;
+		defaultScreenHeight = height;
 		vars.set_var("@SCREENWIDTH", width);
 		vars.set_var("@SCREENHEIGHT", height);
 
 		for (auto& [k, rc] : rendererConfigs) {
-			if (rc.viewportRect.w == oldWidth &&
-				rc.viewportRect.h == oldHeight) {
+			if (rc.viewportAutoresize) {
 				rc.viewportRect.w = width;
 				rc.viewportRect.h = height;
 				rc.updateViewport();
@@ -111,7 +109,8 @@ namespace Fluxions
 			{"geomshader",   11},
 			{"renderer",     12},
 			{"texture2D",    13},
-			{"textureCube",  14}
+			{"textureCube",  14},
+			{"debug",        15}
 		};
 
 		size_t lineno = 0;
@@ -181,6 +180,10 @@ namespace Fluxions
 					break;
 				case 14:
 					result = k_textureCube(tokens);
+					break;
+				case 15:
+					result = k_debug(tokens);
+					break;
 				default:
 					processed = false;
 					break;
@@ -277,6 +280,13 @@ namespace Fluxions
 		glVertex2f((GLfloat)r.x2(), (GLfloat)r.y1());
 		glVertex2f((GLfloat)r.x2(), (GLfloat)r.y2());
 		glEnd();
+	}
+
+	bool RendererContext::findPath(std::string& path) {
+		std::string foundPath = FindPathIfExists(path, paths);
+		if (foundPath.empty()) return false;
+		path = foundPath;
+		return true;
 	}
 
 	void RendererContext::loadShaders() {
@@ -513,6 +523,15 @@ namespace Fluxions
 		else return args[i].dval;
 	}
 
+	bool RendererContext::k_debug(const Df::TokenVector& args) {
+		std::string arg1;
+		bool svalarg1 = k_sval(args, 1, arg1);
+		if (svalarg1 && arg1 == "clearscreen") {
+			debugClearScreen = true;
+		}
+		return false;
+	}
+
 	bool RendererContext::k_renderconfig(const Df::TokenVector& args) {
 		if (!k_check(args, 2, "renderconfig")) return false;
 		const int count = (int)args.size();
@@ -537,9 +556,14 @@ namespace Fluxions
 		static const std::string VIEWPORT{ "viewport" };
 		static const std::string SCISSOR{ "scissor" };
 		static const std::string PERSPECTIVE{ "perspective" };
+		static const std::string AUTORESIZE{ "autoresize" };
 
 		if (svalarg1) {
-			if (pcurRendererConfig && count == 6 && arg1 == CLEARCOLOR) {
+			if (pcurRendererConfig && arg1 == AUTORESIZE) {
+				pcurRendererConfig->viewportAutoresize = true;
+				return true;
+			}
+			else if (pcurRendererConfig && count == 6 && arg1 == CLEARCOLOR) {
 				pcurRendererConfig->clearColor.reset(
 					(float)args[2].dval,
 					(float)args[3].dval,
@@ -614,14 +638,16 @@ namespace Fluxions
 				else if (arg1 == PROGRAM) {
 					if (programs.count(arg2)) {
 						pcurRendererConfig->rc_program = arg2;
+						pcurRendererConfig->rc_program_ptr = &programs[arg2];
 						HFLOGINFO("rendererconfig '%s' adding program '%s'",
 								  pcurRendererConfig->name(),
 								  arg2.c_str());
 						return true;
 					}
 					else {
-						HFLOGERROR("program '%s' not defined",
-								   arg2.c_str());
+						HFLOGERROR("program '%s' not defined", arg2.c_str());
+						pcurRendererConfig->rc_program.clear();
+						pcurRendererConfig->rc_program_ptr = nullptr;
 						return false;
 					}
 				}

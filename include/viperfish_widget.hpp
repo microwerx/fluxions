@@ -19,22 +19,17 @@
 #ifndef VIPERFISH_WIDGET_HPP
 #define VIPERFISH_WIDGET_HPP
 
-#include <memory>
-#include <vector>
-#include <string>
-#include <stdexcept>
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_gte_rect.hpp>
 #include <viperfish_mouse.hpp>
 #include <viperfish_keyboard.hpp>
 #include <viperfish_gamepad.hpp>
-//#include <kasl_json.hpp>
 #include <hatchetfish.hpp>
 
 namespace Vf
 {
 	// Use the decorator pattern
-	class Widget : public std::enable_shared_from_this<Widget>
-	{
+	class Widget : public std::enable_shared_from_this<Widget> {
 	public:
 		using SharedPtr = std::shared_ptr<Widget>;
 		using UniquePtr = std::unique_ptr<Widget>;
@@ -43,16 +38,16 @@ namespace Vf
 
 		// this is required to enable shared_from_this() to work properly
 		Widget();
-		Widget(const Widget &) = default;	// default copy constructor
-		Widget(Widget &&) = default;		// default move constructor
+		Widget(const Widget&) = default;	// default copy constructor
+		Widget(Widget&&) = default;		// default move constructor
 
 		// Constructors
-		explicit Widget(const std::string &name) noexcept;
+		explicit Widget(const std::string& name) noexcept;
 		virtual ~Widget();
 
 		// Imperative functions
 
-		void Init(int argc, char **argv);
+		void Init(int argc, char** argv);
 		void Init(std::vector<std::string> args);
 		void Kill();
 		void MainLoop();
@@ -68,8 +63,8 @@ namespace Vf
 		inline void clear() noexcept { children_.clear(); }
 		inline size_t size() const noexcept { if (leaf_) return 0; return children_.size(); }
 		inline bool empty() const noexcept { if (leaf_) return true; return children_.empty(); }
-		inline void push_back(const SharedPtr &child_) noexcept { if (leaf_) return; children_.push_back(child_); child_->parent_ = shared_from_this(); }
-		inline void emplace_back(SharedPtr &&child_) noexcept { if (leaf_) return; children_.emplace_back(child_); child_->parent_ = shared_from_this(); }
+		inline void push_back(const SharedPtr& child_) noexcept { if (leaf_) return; children_.push_back(child_); child_->parent_ = shared_from_this(); }
+		inline void emplace_back(SharedPtr&& child_) noexcept { if (leaf_) return; children_.emplace_back(child_); child_->parent_ = shared_from_this(); }
 		inline void pop_back() noexcept { if (!empty()) children_.pop_back(); }
 		inline SharedPtr operator[](size_t _Pos) noexcept { if (leaf_) return SharedPtr(nullptr); return children_.at(_Pos); }
 		inline const SharedPtr operator[](size_t _Pos) const noexcept { if (leaf_) return SharedPtr(nullptr); return children_.at(_Pos); }
@@ -79,18 +74,18 @@ namespace Vf
 		inline const_iterator end() const noexcept { return children_.end(); }
 		inline const_iterator cbegin() const noexcept { if (leaf_) return children_.cend(); return children_.cbegin(); }
 		inline const_iterator cend() const noexcept { return children_.cend(); }
-		inline const value_type &at(const size_t _Pos) const { throwIfLeaf(); return children_.at(_Pos); }
-		inline value_type &at(const size_t _Pos) { throwIfLeaf(); return children_.at(_Pos); }
-		inline value_type *data() noexcept { if (leaf_) return nullptr; return children_.data(); }
-		inline const value_type *data() const noexcept { if (leaf_) return nullptr; return children_.data(); }
+		inline const value_type& at(const size_t _Pos) const { throwIfLeaf(); return children_.at(_Pos); }
+		inline value_type& at(const size_t _Pos) { throwIfLeaf(); return children_.at(_Pos); }
+		inline value_type* data() noexcept { if (leaf_) return nullptr; return children_.data(); }
+		inline const value_type* data() const noexcept { if (leaf_) return nullptr; return children_.data(); }
 
 		// Properties
-		inline const SharedPtr &decoratee() const noexcept { return decoratorWidget_; }
-		inline SharedPtr &decoratee() noexcept { return decoratorWidget_; }
-		inline const SharedPtr &decorator() const noexcept { return decorateeWidget_; }
-		inline SharedPtr &decorator() noexcept { return decorateeWidget_; }
-		inline const SharedPtr &parent() const noexcept { return parent_; }
-		inline SharedPtr &parent() noexcept { return parent_; }
+		inline const SharedPtr& decoratee() const noexcept { return decoratorWidget_; }
+		inline SharedPtr& decoratee() noexcept { return decoratorWidget_; }
+		inline const SharedPtr& decorator() const noexcept { return decorateeWidget_; }
+		inline SharedPtr& decorator() noexcept { return decorateeWidget_; }
+		inline const SharedPtr& parent() const noexcept { return parent_; }
+		inline SharedPtr& parent() noexcept { return parent_; }
 
 		inline bool decorateWith(std::shared_ptr<Widget> decorator) noexcept {
 			if (!decorator) return false;
@@ -106,14 +101,19 @@ namespace Vf
 
 		inline bool is_decorated() const noexcept { return (bool)decoratorWidget_; }
 
-		inline const std::string &name() const noexcept { return name_; }
+		inline const std::string& name() const noexcept { return name_; }
 
 		inline float getX() const { return windowRect_.x; }
 		inline float getY() const { return windowRect_.y; }
 		inline float getHeight() const { return windowRect_.w; }
 		inline float getWidth() const { return windowRect_.h; }
-		inline const Rectf &windowRect() const { return windowRect_; }
-		inline Rectf &windowRect() { return windowRect_; }
+		inline int getXi() const { return (int)windowRect_.x; }
+		inline int getYi() const { return (int)windowRect_.y; }
+		inline int getHeighti() const { return (int)windowRect_.w; }
+		inline int getWidthi() const { return (int)windowRect_.h; }
+		inline const Rectf& windowRect() const { return windowRect_; }
+		inline const Recti& windowRecti() const { return windowRect_; }
+		inline Rectf& windowRect() { return windowRect_; }
 
 		inline bool isVisible() const { return visible_; }
 		inline bool isOrphan() const { return !parent_; }
@@ -129,31 +129,31 @@ namespace Vf
 		inline void ResetStopwatch() { stopwatchTimeT0 = t1; }
 		inline void ResetClock() { baseTime = t1; t0 = t1; }
 
-		inline const std::string &caption() const noexcept { return caption_; }
-		inline std::string &caption() noexcept { return caption_; }
-		inline const std::string &style() const noexcept { return style_; }
+		inline const std::string& caption() const noexcept { return caption_; }
+		inline std::string& caption() noexcept { return caption_; }
+		inline const std::string& style() const noexcept { return style_; }
 		// inline const Df::JSONPtr jsonStyle() const noexcept { return jsonStyle_; }
 		// inline Df::JSONPtr jsonStyle() noexcept { return jsonStyle_; }
 		// inline Df::JSONPtr setStyle(const std::string &style) noexcept { processStyle(style); return jsonStyle_; }
 
-		virtual void OnInit(const std::vector<std::string> &args);
+		virtual void OnInit(const std::vector<std::string>& args);
 		virtual void OnKill();
 		virtual void OnUpdate(double timeStamp);
-		virtual void OnKeyDown(const std::string &key, int keymod);
-		virtual void OnKeyUp(const std::string &key, int keymod);
+		virtual void OnKeyDown(const std::string& key, int keymod);
+		virtual void OnKeyUp(const std::string& key, int keymod);
 		virtual void OnMouseButtonDown(int button);
 		virtual void OnMouseButtonUp(int button);
 		virtual void OnMouseMove(int x, int y);
-		virtual void OnMouseClick(int button, const MouseClickState &mcs);
-		virtual void OnMouseDoubleClick(int button, const MouseDoubleClickState &mdcs);
-		virtual void OnMouseDrag(int button, const MouseDragState &mds);
+		virtual void OnMouseClick(int button, const MouseClickState& mcs);
+		virtual void OnMouseDoubleClick(int button, const MouseDoubleClickState& mdcs);
+		virtual void OnMouseDrag(int button, const MouseDragState& mds);
 		virtual void OnMouseEnter();
 		virtual void OnMouseLeave();
 		virtual void OnMultiEnter(int id);
 		virtual void OnMultiLeave(int id);
-		virtual void OnMultiButtonDown(int id, int button, const MouseState &ms);
-		virtual void OnMultiButtonUp(int id, int button, const MouseState &ms);
-		virtual void OnMultiMove(int x, int y, const MouseState &ms);
+		virtual void OnMultiButtonDown(int id, int button, const MouseState& ms);
+		virtual void OnMultiButtonUp(int id, int button, const MouseState& ms);
+		virtual void OnMultiMove(int x, int y, const MouseState& ms);
 		virtual void OnGainFocus();
 		virtual void OnLostFocus();
 		virtual void OnInitContext();
@@ -162,9 +162,9 @@ namespace Vf
 		virtual void OnWindowMove(int x, int y);
 		virtual void OnWindowVisible();
 		virtual void OnWindowHidden();
-		virtual void OnGamepadAxis(int axis, float value, const GamepadState &gs);
-		virtual void OnGamepadButtonDown(int button, float value, const GamepadState &gs);
-		virtual void OnGamepadButtonUp(int button, float value, const GamepadState &gs);
+		virtual void OnGamepadAxis(int axis, float value, const GamepadState& gs);
+		virtual void OnGamepadButtonDown(int button, float value, const GamepadState& gs);
+		virtual void OnGamepadButtonUp(int button, float value, const GamepadState& gs);
 		virtual void OnReshape(int width, int height);
 
 		//virtual void display();
@@ -185,7 +185,7 @@ namespace Vf
 		std::vector<SharedPtr> children_;
 
 		std::string name_;
-		void common_constructor(const std::string &name) noexcept;
+		void common_constructor(const std::string& name) noexcept;
 
 		bool leaveMainLoop_ = false;
 
@@ -203,14 +203,14 @@ namespace Vf
 		double t1 = 0.0;
 
 		void PollGamepads();
-		void HandleKey(const std::string &key, int keymod, bool pressed);
+		void HandleKey(const std::string& key, int keymod, bool pressed);
 		void HandleMouseButton(int button, bool pressed);
 		void HandleMouseMove(int x, int y);
-		void HandleMouseClick(const MouseClickState &mcs);
-		void HandleMouseDoubleClick(const MouseDoubleClickState &mdcs);
-		void HandleMouseDrag(const MouseDragState &mds);
+		void HandleMouseClick(const MouseClickState& mcs);
+		void HandleMouseDoubleClick(const MouseDoubleClickState& mdcs);
+		void HandleMouseDrag(const MouseDragState& mds);
 
-		virtual bool processStyle(const std::string &style);
+		virtual bool processStyle(const std::string& style);
 
 	protected:
 		GamepadState gamepads[4];

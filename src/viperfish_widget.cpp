@@ -533,8 +533,8 @@ void Widget::OnGamepadButtonUp(int button, float value, const GamepadState& gs) 
 
 void Widget::OnReshape(int width, int height) {
 	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
-	windowRect_.w = (float)width;
-	windowRect_.h = (float)height;
+	windowRect_.w = (float)Fluxions::clamp(width, 1, 16384);
+	windowRect_.h = (float)Fluxions::clamp(height, 1, 16384);
 	if (decoratorWidget_)
 		decoratorWidget_->OnReshape(width, height);
 	for (auto& w : children_) {

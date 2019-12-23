@@ -70,9 +70,9 @@ namespace Fluxions
 		return false;
 	}
 
-	bool SSG_SSPHHRendererPlugin::readUniformLocs(RendererProgram* pprogram) {
-		if (!pprogram) return false;
-		RendererProgram& program = *pprogram;
+	bool SSG_SSPHHRendererPlugin::readUniformLocs(RendererProgram* rc_program_ptr) {
+		if (!rc_program_ptr) return false;
+		RendererProgram& program = *rc_program_ptr;
 
 		for (int i = 0; i < 16; i++) {
 			char name[64];
