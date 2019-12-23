@@ -19,8 +19,14 @@ namespace Fluxions {
 		// RendererObject::reset() should only be called if this object has been initialized
 		virtual void reset();
 
+		// RendererObject::set_default_parameters() can do a "soft reset" for class parameters
+		virtual void set_default_parameters();
+
 		// type() returns an RTTI string of the type of object
 		virtual const char* type() const;
+
+		// status() returns some message about the current state of the object
+		virtual const char* status() const;
 
 		const char* name() const noexcept { return name_.c_str(); };
 		const bool initialized() const noexcept { return initialized_; }

@@ -45,8 +45,16 @@ namespace Fluxions
 		init(name(), parent_);
 	}
 
+	void RendererObject::set_default_parameters() {
+
+	}
+
 	const char* RendererObject::type() const {
 		return "RendererObject";
+	}
+
+	const char* RendererObject::status() const {
+		return "no status";
 	}
 
 	void RendererObject::setParent(RendererObject* pparent) {
