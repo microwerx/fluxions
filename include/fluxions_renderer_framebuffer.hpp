@@ -17,6 +17,8 @@ namespace Fluxions
 		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
 		const char* type() const override;
+		const char* status() const override;
+		bool usable() const override;
 
 		bool make();
 		void useForWriting();
@@ -46,6 +48,7 @@ namespace Fluxions
 		static constexpr int DefaultSamples = 4;
 
 		bool dirty = false;
+		unsigned fbo_status = 0;
 		GLuint fbo = 0;
 		GLint width = DefaultWidth;
 		GLint height = DefaultHeight;
@@ -81,7 +84,7 @@ namespace Fluxions
 		void setDefaultParameters();
 	};
 
-	std::string GetFramebufferStatusAsString(GLenum status);
+	const char* GetFramebufferStatusAsString(GLenum status);
 } // namespace Fluxions
 
 #endif

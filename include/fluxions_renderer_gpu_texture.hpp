@@ -1,6 +1,7 @@
 #ifndef FLUXIONS_SIMPLE_GPU_TEXTURE_HPP
 #define FLUXIONS_SIMPLE_GPU_TEXTURE_HPP
 
+#include <fluxions_gte_image.hpp>
 #include <fluxions_renderer_object.hpp>
 
 namespace Fluxions
@@ -15,6 +16,8 @@ namespace Fluxions
 		float zfar = 0.0f;
 		// This flag is used to signal an external process to rerender this texture
 		bool dirty = true;
+		// This flag is used to determine whether to build mip maps
+		bool useMipMaps = true;
 
 		std::string mappath;
 		std::string uniformname;
@@ -37,13 +40,27 @@ namespace Fluxions
 		void createTextureShadow2D(GLsizei width = 64, GLsizei height = 64);
 		void createTextureCube(GLsizei size = 64);
 		void createTextureShadowCube(GLsizei size = 64);
+		void setTextureCube(const Image3f& image);
+		void setTextureCube(const Image3ub& image);
+		void setTextureCube(const Image3us& image);
+		void setTextureCube(const Image4f& image);
+		void setTextureCube(const Image4ub& image);
+		void setTextureCube(const Image4us& image);
+		void setTexture2D(const Image3f& image, unsigned arrayElement = 0);
+		void setTexture2D(const Image3ub& image, unsigned arrayElement = 0);
+		void setTexture2D(const Image3us& image, unsigned arrayElement = 0);
+		void setTexture2D(const Image4f& image, unsigned arrayElement = 0);
+		void setTexture2D(const Image4ub& image, unsigned arrayElement = 0);
+		void setTexture2D(const Image4us& image, unsigned arrayElement = 0);
 		void setDefaultParameters(GLenum minFilter = GL_NEAREST, GLenum magFilter = GL_NEAREST, GLenum wrapMode = GL_CLAMP_TO_EDGE);
 		void generateMipmap();
 		GLuint getTexture() const;
 	private:
+		void _setTexture2D(int width, int height, unsigned format, unsigned type, unsigned arrayElement, const void* data);
 		GLenum target_ = GL_TEXTURE_CUBE_MAP;
 		int lastUnitBound_ = -1;
 		bool created_ = false;
+		bool usable_ = false;
 		std::shared_ptr<GLuint> texture_;
 	}; // class RendererGpuTexture
 } // namespace Fluxions

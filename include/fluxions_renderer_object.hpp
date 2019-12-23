@@ -28,12 +28,17 @@ namespace Fluxions {
 		// status() returns some message about the current state of the object
 		virtual const char* status() const;
 
+		// usable() returns true or false (default is true) if the current object is usable for rendering
+		virtual bool usable() const;
+
 		const char* name() const noexcept { return name_.c_str(); };
 		const bool initialized() const noexcept { return initialized_; }
 
 		void setParent(RendererObject* pparent);
 		RendererObject* parent();
 		const RendererObject* parent() const;
+	protected:
+		bool usable_{ false };
 	private:
 		bool initialized_ = false;
 		std::string name_;

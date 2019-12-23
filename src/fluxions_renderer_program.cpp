@@ -248,7 +248,7 @@ namespace Fluxions
 			glDetachShader(program, shader->shader);
 		}
 		attachedShaders.clear();
-		linked = false;
+		usable_ = linked = false;
 	}
 
 	void RendererProgram::loadShaders() {
@@ -267,12 +267,12 @@ namespace Fluxions
 			return;
 		shaderPtr->setParent(this);
 		attachedShaders.push_back(shaderPtr);
-		linked = false;
+		usable_ = linked = false;
 	}
 
 	void RendererProgram::bindAttribLocation(GLuint index, const char* name) {
 		glBindAttribLocation(program, index, name);
-		linked = false;
+		usable_ = linked = false;
 	}
 
 	void LogGLEWError() {
@@ -309,7 +309,7 @@ namespace Fluxions
 
 		linkStatus_ = 0;
 		glGetProgramiv(program, GL_LINK_STATUS, &linkStatus_);
-		linked = (linkStatus_ == GL_TRUE);
+		usable_ = linked = (linkStatus_ == GL_TRUE);
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufSize);
 		infoLog.resize(bufSize);
 		if (bufSize > 0) {

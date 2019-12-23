@@ -42,16 +42,13 @@ namespace Fluxions
 
 	bool gpuLoadTexture(RendererGpuTexture& t, const std::string& ext, const std::string& path, bool genMipMap) {
 		Hf::StopWatch stopwatch;
-		int width = 0;
-		int height = 0;
-		int internalformat = GL_RGBA;
-		int format = GL_RGB;
 		GLenum type = GL_UNSIGNED_BYTE;
 
 		Image4f image4;
 		if (ext == ".EXR") {
-			if (!image4.loadEXR(path))
+			if (!image4.loadEXR(path)) {				
 				return false;
+			}
 			type = GL_FLOAT;
 		}
 		else if (ext == ".PFM") {
@@ -83,32 +80,13 @@ namespace Fluxions
 			//saveCubeMapVariations(path, image4);
 		}
 
-		while (glGetError()) HFLOGWARN("GL ERROR!");
-		t.create();
-		t.bind(0);
+		t.useMipMaps = genMipMap;
 		if (isCube) {
-			for (int i = 0; i < 6; i++) {
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-							 0, GL_RGBA,
-							 image4.width(), image4.height(),
-							 0, GL_RGBA, GL_FLOAT,
-							 image4.getImageData(i));
-			}
-			while (glGetError()) HFLOGWARN("TexImage2D     GL ERROR!");
-			glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-			while (glGetError()) HFLOGWARN("GenerateMipmap GL ERROR!");
+			t.setTextureCube(image4);
 		}
 		else {
-			glTexImage2D(GL_TEXTURE_2D,
-						 0, GL_RGBA,
-						 image4.width(), image4.height(),
-						 0, GL_RGBA, GL_FLOAT,
-						 image4.getImageData(0));
-			while (glGetError()) HFLOGWARN("TexImage2D     GL ERROR!");
-			glGenerateMipmap(GL_TEXTURE_2D);
-			while (glGetError()) HFLOGWARN("GenerateMipmap GL ERROR!");
+			t.setTexture2D(image4);
 		}
-		t.unbind();
 		stopwatch.Stop();
 		t.buildTime = stopwatch.GetSecondsElapsed();
 		HFLOGINFO("Image '%s' took %3.2f secs to load", t.name(), t.buildTime);
@@ -129,24 +107,15 @@ namespace Fluxions
 	void RendererGpuTexture::init(const std::string& name,
 								  RendererObject* pparent) {
 		RendererObject::init(name, pparent);
-		try {
-			texture_ = std::make_shared<GLuint>(0);
-			GLuint texture;
-			glGenTextures(1, &texture);
-			*texture_ = texture;
-			FxDebugBindTexture(target_, *texture_);
-			FxDebugBindTexture(target_, 0);
-			HFLOGINFO("Created texture %d", *texture_);
-		}
-		catch (...) {
-			HFLOGERROR("glGenTextures() failed");
-		}
+		usable_ = false;
+		texture_ = std::make_shared<GLuint>(0);
 	}
 
 	void RendererGpuTexture::kill() {
 		if (texture_.use_count() == 1) {
 			GLuint texture = *texture_;
-			glDeleteTextures(1, &texture);
+			if (texture != 0)
+				glDeleteTextures(1, &texture);
 			HFLOGINFO("Deleted texture %d", *texture_);
 			texture_.reset();
 		}
@@ -163,12 +132,12 @@ namespace Fluxions
 		return gpuLoadTexture(*this, fpi.ext, mappath, true);
 	}
 
-	void RendererGpuTexture::bind(int unit) {
+	void RendererGpuTexture::bind(int whichunit) {
 		if (!texture_)
 			return;
 		unbind();
-		lastUnitBound_ = unit;
-		glActiveTexture(GL_TEXTURE0 + unit);
+		lastUnitBound_ = whichunit;
+		glActiveTexture(GL_TEXTURE0 + whichunit);
 		FxDebugBindTexture(target_, *texture_);
 	}
 
@@ -193,6 +162,7 @@ namespace Fluxions
 		}
 		glGenTextures(1, &texture);
 		*texture_ = texture;
+		usable_ = false;
 		FxDebugBindTexture(target_, *texture_);
 		FxDebugBindTexture(target_, 0);
 		HFLOGINFO("Created texture %i", *texture_);
@@ -237,6 +207,123 @@ namespace Fluxions
 		setDefaultParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	}
 
+	void RendererGpuTexture::setTextureCube(const Image3f& image) {
+		if (!image.IsCubeMap()) { usable_ = false; return; }
+		create();
+		bind(0);
+		for (int i = 0; i < 6; i++) {
+			_setTexture2D((int)image.width(), (int)image.height(), GL_RGB, GL_FLOAT, i, image.getImageData(i));
+		}
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTextureCube(const Image3ub& image) {
+		if (!image.IsCubeMap()) { usable_ = false; return; }
+		create();
+		bind(0);
+		for (int i = 0; i < 6; i++) {
+			_setTexture2D((int)image.width(), (int)image.height(), GL_RGB, GL_UNSIGNED_BYTE, i, image.getImageData(i));
+		}
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTextureCube(const Image3us& image) {
+		if (!image.IsCubeMap()) { usable_ = false; return; }
+		create();
+		bind(0);
+		for (int i = 0; i < 6; i++) {
+			_setTexture2D((int)image.width(), (int)image.height(), GL_RGB, GL_UNSIGNED_SHORT, i, image.getImageData(i));
+		}
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTextureCube(const Image4f& image) {
+		if (!image.IsCubeMap()) { usable_ = false; return; }
+		create();
+		bind(0);
+		for (int i = 0; i < 6; i++) {
+			_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_FLOAT, i, image.getImageData(i));
+		}
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTextureCube(const Image4ub& image) {
+		if (!image.IsCubeMap()) { usable_ = false; return; }
+		create();
+		bind(0);
+		for (int i = 0; i < 6; i++) {
+			_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_UNSIGNED_BYTE, i, image.getImageData(i));
+		}
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTextureCube(const Image4us& image) {
+		if (!image.IsCubeMap()) { usable_ = false; return; }
+		create();
+		bind(0);
+		for (int i = 0; i < 6; i++) {
+			_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_UNSIGNED_SHORT, i, image.getImageData(i));
+		}
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTexture2D(const Image3f& image, unsigned arrayElement) {
+		create();
+		bind(0);
+		_setTexture2D((int)image.width(), (int)image.height(), GL_RGB, GL_FLOAT, arrayElement, image.getImageData(arrayElement));
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTexture2D(const Image3ub& image, unsigned arrayElement) {
+		create();
+		bind(0);
+		_setTexture2D((int)image.width(), (int)image.height(), GL_RGB, GL_UNSIGNED_BYTE, arrayElement, image.getImageData(arrayElement));
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTexture2D(const Image3us& image, unsigned arrayElement) {
+		create();
+		bind(0);
+		_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_UNSIGNED_SHORT, arrayElement, image.getImageData(arrayElement));
+		generateMipmap();
+	}
+	
+	void RendererGpuTexture::setTexture2D(const Image4f& image, unsigned arrayElement) {
+		create();
+		bind(0);
+		_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_FLOAT, arrayElement, image.getImageData(arrayElement));
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTexture2D(const Image4ub& image, unsigned arrayElement) {
+		create();
+		bind(0);
+		_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_UNSIGNED_BYTE, arrayElement, image.getImageData(arrayElement));
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::setTexture2D(const Image4us& image, unsigned arrayElement) {
+		create();
+		bind(0);
+		_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_UNSIGNED_SHORT, arrayElement, image.getImageData(arrayElement));
+		generateMipmap();
+	}
+
+	void RendererGpuTexture::_setTexture2D(int width, int height, unsigned format, unsigned type, unsigned arrayElement, const void* data) {
+		while (glGetError() != GL_NO_ERROR);
+		usable_ = true;
+
+		unsigned target = target_;
+		if (target_ == GL_TEXTURE_CUBE_MAP) {
+			target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + arrayElement;
+		}
+		glTexImage2D(target, 0, format, width, height, 0, format, type, data);
+
+		while (glGetError() != GL_NO_ERROR) {
+			usable_ = false;
+		}
+	}
+
 	void RendererGpuTexture::setDefaultParameters(GLenum minFilter, GLenum magFilter, GLenum wrapMode) {
 		if (!texture_)
 			return;
@@ -250,7 +337,7 @@ namespace Fluxions
 	}
 
 	void RendererGpuTexture::generateMipmap() {
-		if (!texture_)
+		if (!texture_ || !usable_ || !useMipMaps)
 			return;
 		bind(0);
 		glGenerateMipmap(target_);

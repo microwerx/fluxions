@@ -369,6 +369,12 @@ namespace Fluxions
 		}
 	}
 
+	void RendererContext::makeFramebuffers() {
+		for (auto& [k, fbo] : fbos) {
+			fbo.make();
+		}
+	}
+
 	RendererConfig* RendererContext::getRendererConfig(const std::string& name) {
 		auto it = rendererConfigs.find(name);
 		if (it == rendererConfigs.end()) return nullptr;
@@ -622,14 +628,16 @@ namespace Fluxions
 			else if (pcurRendererConfig && svalarg2) {
 				tolower(arg1);
 				if (arg1 == WRITEFBO) {
-					pcurRendererConfig->writeFBOs.push_back({ arg2, nullptr });
+					if (!fbos.count(arg2)) return false;
+					pcurRendererConfig->writeFBOs.push_back({ arg2, &fbos[arg2] });
 					HFLOGINFO("rendererconfig '%s' adding write fbo '%s'",
 							  pcurRendererConfig->name(),
 							  arg2.c_str());
 					return true;
 				}
 				else if (arg1 == READFBO) {
-					pcurRendererConfig->readFBOs.push_back({ arg2, nullptr });
+					if (!fbos.count(arg2)) return false;
+					pcurRendererConfig->readFBOs.push_back({ arg2, &fbos[arg2] });
 					HFLOGINFO("rendererconfig '%s' adding read fbo '%s'",
 							  pcurRendererConfig->name(),
 							  arg2.c_str());
@@ -974,6 +982,12 @@ namespace Fluxions
 			static const std::vector<GLenum> attachments{
 				GL_COLOR_ATTACHMENT0,
 				GL_COLOR_ATTACHMENT1,
+				GL_COLOR_ATTACHMENT2,
+				GL_COLOR_ATTACHMENT3,
+				GL_COLOR_ATTACHMENT4,
+				GL_COLOR_ATTACHMENT5,
+				GL_COLOR_ATTACHMENT6,
+				GL_COLOR_ATTACHMENT7,
 				GL_DEPTH_ATTACHMENT,
 				GL_STENCIL_ATTACHMENT,
 				GL_DEPTH_STENCIL_ATTACHMENT

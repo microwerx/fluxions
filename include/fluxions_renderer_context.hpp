@@ -117,6 +117,7 @@ namespace Fluxions
 
 		void loadShaders();
 		void loadTextures();
+		void makeFramebuffers();
 
 		// Render Configurations
 		bool loadConfig(const std::string& filename);

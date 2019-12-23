@@ -3,17 +3,18 @@
 
 #define IFTOSTRING(thing, value) \
 	if ((thing) == (value))      \
-		return std::string(#value);
+		return (#value);
 
 namespace Fluxions
 {
-	std::string GetFramebufferStatusAsString(GLenum status) {
+	const char* GetFramebufferStatusAsString(GLenum status) {
 		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT);
 		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER);
 		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER);
 		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT);
 		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE);
-		return std::string();
+		IFTOSTRING(status, GL_FRAMEBUFFER_COMPLETE);
+		return "unknown status";
 	}
 
 	RendererFramebuffer::RendererFramebuffer() {}
@@ -34,6 +35,14 @@ namespace Fluxions
 
 	const char* RendererFramebuffer::type() const {
 		return "RendererFramebuffer";
+	}
+
+	const char* RendererFramebuffer::status() const {
+		return GetFramebufferStatusAsString(fbo_status);
+	}
+
+	bool RendererFramebuffer::usable() const {
+		return fbo_status == GL_FRAMEBUFFER_COMPLETE;
 	}
 
 	void RendererFramebuffer::setDefaultParameters() {
@@ -139,16 +148,16 @@ namespace Fluxions
 			}
 		}
 
-		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		std::string msg = GetFramebufferStatusAsString(status);
+		fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		std::string msg = GetFramebufferStatusAsString(fbo_status);
 
-		if (status != GL_FRAMEBUFFER_COMPLETE)
+		if (fbo_status != GL_FRAMEBUFFER_COMPLETE)
 			result = false;
 		else
 			result = true;
 
 		if (!result) {
-			Hf::Log.error("%s(): Framebuffer is not complete!", __FUNCTION__);
+			HFLOGERROR("Framebuffer is not complete!");
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

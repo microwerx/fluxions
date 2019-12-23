@@ -57,6 +57,10 @@ namespace Fluxions
 		return "no status";
 	}
 
+	bool RendererObject::usable() const {
+		return usable_;
+	}
+
 	void RendererObject::setParent(RendererObject* pparent) {
 		if (!pparent) {
 			HFLOGWARN("Renderer object [%s] '%s' does not have a parent", type(), name());
