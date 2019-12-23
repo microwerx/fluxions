@@ -107,9 +107,13 @@ namespace Fluxions
 		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
 		const char* type() const override;
+		void set_default_parameters() override;
 
 		// Resizes matching WxH render configurations to new sizes
-		void resize(int oldWidth, int oldHeight, int width, int height);
+		void resize(int width, int height);
+
+		std::vector<std::string> paths;
+		bool findPath(std::string& path);
 
 		void loadShaders();
 		void loadTextures();
@@ -149,13 +153,19 @@ namespace Fluxions
 		virtual const Recti& getDeferredRect() const;
 		virtual void renderDeferred(Quadrant quadrant = Recti::UpperLeft);
 
+		// DEBUG FLAGS/DEFAULTS FOR EXTERNAL PURPOSES /////////////////
+		bool debugClearScreen{ false };
+		int defaultScreenWidth{ 1280 };
+		int defaultScreenHeight{ 720 };
+		///////////////////////////////////////////////////////////////
+
 		//std::vector<RendererProgramPtr> Programs;
 		//std::map<std::string, RenderConfigPtr> RenderConfigs;
 		//std::map<std::string, Texture> Textures;
 		//std::map<std::string, Sampler> Samplers;
 		//std::map<std::string, Framebuffer> Framebuffers;
 		//std::map<std::string, Renderbuffer> Renderbuffers;
-		std::vector<std::string> paths;
+
 		Df::VariableList vars;
 
 		std::map<std::string, RendererConfig> rendererConfigs;
@@ -247,6 +257,7 @@ namespace Fluxions
 		bool k_glenum(const Df::TokenVector& args,
 					  int i, GLenum& enumValue);
 
+		bool k_debug(const Df::TokenVector& args);
 		bool k_renderconfig(const Df::TokenVector& args);
 		bool k_path(const Df::TokenVector& args);
 		bool k_program(const Df::TokenVector& args);
