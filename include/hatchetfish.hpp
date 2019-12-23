@@ -72,6 +72,10 @@ namespace Hf
 		mutable std::chrono::time_point<std::chrono::high_resolution_clock> t1;
 
 		std::vector<std::string> history;
+		std::vector<const char*> history_cstr;
+
+		void _addHistory(const std::string& line);
+		void _trimHistory();
 		size_t maxHistoryLines = 10;
 
 	public:
@@ -139,6 +143,8 @@ namespace Hf
 		std::string& makeTimeStamp();
 		std::string& makeDTG();
 		const std::vector<std::string>& getHistory() const { return history; }
+		const char** getHistoryItems() const { return (const char**)&history_cstr[0]; }
+		int getHistoryItemsSize() const { return (int)history_cstr.size(); }
 		void setMaxHistory(size_t lines) { maxHistoryLines = lines > 100 ? 100 : lines; }
 
 		void setOutputFile(FILE* fileStream = NULL);

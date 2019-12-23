@@ -125,12 +125,24 @@ namespace Hf
 		ostr << "[" << timeStamp << ":" << category << "] " << buffer;
 		lastMessage = ostr.str();
 
-		//size_t lines = std::min(history.size(), maxHistoryLines);
-		if (history.size() > maxHistoryLines)
-			history.erase(history.begin(), history.end() - maxHistoryLines + 1);
-		history.push_back(lastMessage);
+		_addHistory(lastMessage);
 
 		return lastMessage;
+	}
+
+	void Hatchetfish::_addHistory(const std::string& line) {
+		_trimHistory();
+		history.push_back(lastMessage);
+		history_cstr.push_back(history.back().c_str());
+	}
+
+	void Hatchetfish::_trimHistory() {
+		if (history.size() < maxHistoryLines) return;
+		history.erase(history.begin(), history.end() - maxHistoryLines + 1);
+		history_cstr.clear();
+		for (auto& h : history) {
+			history_cstr.push_back(h.c_str());
+		}
 	}
 
 	const std::string& Hatchetfish::makeMessagefn(const char* category, const char* fn, const char* msg, va_list args) {

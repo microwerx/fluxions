@@ -21,6 +21,11 @@
 
 #include <chrono>
 
+#define HFCLOCKSf(timevariable, timeexpression) { Hf::StopWatch sw; timeexpression; timevariable = sw.Stop_sf(); }
+#define HFCLOCKMSf(timevariable, timeexpression) { Hf::StopWatch sw; timeexpression; timevariable = sw.Stop_msf(); }
+#define HFCLOCKSd(timevariable, timeexpression) { Hf::StopWatch sw; timeexpression; timevariable = sw.Stop_s(); }
+#define HFCLOCKMSd(timevariable, timeexpression) { Hf::StopWatch sw; timeexpression; timevariable = sw.Stop_ms(); }
+
 namespace Hf
 {
 	class StopWatch
