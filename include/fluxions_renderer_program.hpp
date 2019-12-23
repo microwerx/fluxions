@@ -10,7 +10,6 @@ namespace Fluxions
 	class RendererProgram : public RendererObject {
 	private:
 		GLuint program = 0;
-		std::vector<RendererShaderPtr> attachedShaders;
 
 		GLint linkStatus_ = 0;
 		bool linked = false;
@@ -36,8 +35,9 @@ namespace Fluxions
 			GLenum type;
 			GLint index;
 
-			const char* GetNameOfType();
+			const char* GetNameOfType() const;
 		};
+		std::vector<RendererShaderPtr> attachedShaders;
 		std::map<std::string, AttribUniformInfo> activeAttributes;
 		std::map<std::string, AttribUniformInfo> activeUniforms;
 

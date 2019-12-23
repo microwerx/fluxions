@@ -37,7 +37,7 @@ namespace Fluxions
 		return "RendererProgram";
 	}
 
-	const char* RendererProgram::AttribUniformInfo::GetNameOfType() {
+	const char* RendererProgram::AttribUniformInfo::GetNameOfType() const {
 		switch (type) {
 		case GL_INT:
 			return "GL_INT";
