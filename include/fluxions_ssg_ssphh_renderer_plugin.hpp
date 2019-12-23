@@ -34,7 +34,7 @@ namespace Fluxions
 		std::vector<SimpleSSPHHLight> ssphhLights;
 
 		bool read(const std::string& cmd, std::istringstream& istr) override;
-		bool readUniformLocs(RendererProgram* pprogram) override;
+		bool readUniformLocs(RendererProgram* rc_program_ptr) override;
 		bool prog() override;
 		bool draw() override;
 		bool init() override;
