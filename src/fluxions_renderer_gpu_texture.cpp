@@ -84,6 +84,7 @@ namespace Fluxions
 		}
 
 		while (glGetError()) HFLOGWARN("GL ERROR!");
+		t.create();
 		t.bind(0);
 		if (isCube) {
 			for (int i = 0; i < 6; i++) {
@@ -179,6 +180,22 @@ namespace Fluxions
 		glBindTexture(target_, *texture_);
 		glActiveTexture(GL_TEXTURE0);
 		lastUnitBound_ = -1;
+	}
+
+	void RendererGpuTexture::create() {
+		if (!texture_) {
+			texture_ = std::make_shared<GLuint>(0);
+		}
+		GLuint texture = *texture_;
+		if (texture != 0) {
+			HFLOGINFO("Deleted texture %i", texture);
+			glDeleteTextures(1, &texture);
+		}
+		glGenTextures(1, &texture);
+		*texture_ = texture;
+		FxDebugBindTexture(target_, *texture_);
+		FxDebugBindTexture(target_, 0);
+		HFLOGINFO("Created texture %i", *texture_);
 	}
 
 	void RendererGpuTexture::createStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type) {

@@ -31,6 +31,7 @@ namespace Fluxions
 
 		void bind(int unit);
 		void unbind();
+		void create();
 		void createStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type);
 		void createTexture2D(GLsizei width = 64, GLsizei height = 64);
 		void createTextureShadow2D(GLsizei width = 64, GLsizei height = 64);
