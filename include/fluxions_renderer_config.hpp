@@ -36,13 +36,16 @@ namespace Fluxions
 		GLenum blendFuncSrcFactor = GL_SRC_ALPHA;
 		GLenum blendFuncDstFactor = GL_ONE_MINUS_SRC_ALPHA;
 
+		// DEPRECATED
 		RendererProgramPtr zShaderProgram{ nullptr };
+		// DEPRECATED
 		RendererProgramPtr shaderProgram{ nullptr };
 		
 		std::string rc_program;
+		RendererProgram* rc_program_ptr{ nullptr };
+
 		std::string ssg_camera;
 		std::string ssg_projection;
-		RendererProgram* pprogram{ nullptr };
 
 		bool renderToFBO{ false };
 		RendererFramebuffer fbo;
@@ -58,6 +61,7 @@ namespace Fluxions
 		GLint fbo_depth_map = 0;
 
 		bool setViewport = false;
+		bool viewportAutoresize = false;
 		Recti viewportRect = Recti(0, 0, 64, 64);
 		GLfloat viewportFovInDegrees = 45.0f;
 		GLfloat viewportZNear = 1.0f;
