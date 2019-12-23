@@ -64,8 +64,8 @@ namespace Fluxions
 					&& pProgram != nullptr);
 		}
 
-		GLuint getTexUnit();
-		void freeTexUnit(GLuint id);
+		int getTexUnit();
+		void freeTexUnit(int id);
 
 		std::string renderconfigname;
 		std::string renderskyboxname;
@@ -86,13 +86,14 @@ namespace Fluxions
 
 		__ShaderProgramLocations locs;
 		std::map<std::string, SimpleMap*> currentTextures;
-		TSimpleResourceManager<GLuint> textureUnits;
+		TSimpleResourceManager<int> textureUnits;
 		SimpleRenderer_GLuint renderer;
 		bool areBuffersBuilt = false;
 
-		// for skybox
-		GLuint abo = 0;
-		GLuint eabo = 0;
+		GLuint skybox_abo = 0;
+		GLuint skybox_eabo = 0;
+
+		GLuint post_abo = 0;
 
 		void renderSingleImage();
 		void renderCubeImages();
@@ -102,8 +103,11 @@ namespace Fluxions
 		void applyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
 		void disableCurrentTextures();
 
-		void initSkyBox();
-		void renderSkyBox();
+		bool _initSkyBox();
+		void _renderSkyBox();
+		bool _initPost();
+		void _renderPost();
+		void _renderSceneGraph();
 	};
 } // namespace Fluxions
 

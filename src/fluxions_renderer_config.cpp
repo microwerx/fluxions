@@ -17,6 +17,11 @@ namespace Fluxions
 	void RendererConfig::kill() {
 		shaderProgram.reset();
 		zShaderProgram.reset();
+		readFBOs.clear();
+		writeFBOs.clear();
+		textures.clear();
+		rc_program = "";
+		rc_program_ptr = nullptr;
 
 		RendererObject::kill();
 	}

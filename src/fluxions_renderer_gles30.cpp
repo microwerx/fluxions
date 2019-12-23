@@ -17,11 +17,17 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
+#include <cmath>
 #include <fluxions_renderer_gles30.hpp>
 #include <fluxions_renderer_context.hpp>
 
 namespace Fluxions
 {
+	void FxDeleteBuffers(GLuint* p) {
+		if (*p == 0) return;
+		glDeleteBuffers(1, p);
+		*p = 0;
+	}
 
 	//////////////////////////////////////////////////////////////////////
 	// RendererGLES30 ////////////////////////////////////////////////////
@@ -35,13 +41,19 @@ namespace Fluxions
 							  RendererObject* pparent) {
 		RendererObject::init(name, pparent);
 
-		abo = 0;
-		eabo = 0;
+		skybox_abo = 0;
+		skybox_eabo = 0;
+		post_abo = 0;
 		pSSG = nullptr;
 		pRendererConfig = nullptr;
 		pProgram = nullptr;
 		projectionMatrix.LoadIdentity();
 		cameraMatrix.LoadIdentity();
+
+		for (int i = 0; i < 32; i++) {
+			int id = 16 + i;
+			textureUnits.Add(id);
+		}
 	}
 
 	void RendererGLES30::kill() {
@@ -54,15 +66,9 @@ namespace Fluxions
 		if (pProgram)
 			pProgram = nullptr;
 
-		if (abo) {
-			glDeleteBuffers(1, &abo);
-			abo = 0;
-		}
-
-		if (eabo) {
-			glDeleteBuffers(1, &eabo);
-			eabo = 0;
-		}
+		FxDeleteBuffers(&skybox_abo);
+		FxDeleteBuffers(&skybox_eabo);
+		FxDeleteBuffers(&post_abo);
 
 		RendererObject::kill();
 	}
@@ -87,8 +93,12 @@ namespace Fluxions
 		if (pProgram->isLinked() == false)
 			return false;
 
-		if (pRendererConfig->renderToFBO)
-			pRendererConfig->fbo.use();
+		//if (pRendererConfig->renderToFBO)
+		//	pRendererConfig->fbo.use();
+
+		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
+			fbo->useForWriting();
+		}
 
 		pProgram->use();
 		locs.getMaterialProgramLocations(*pProgram);
@@ -155,6 +165,16 @@ namespace Fluxions
 		pProgram->applyUniform("CameraMatrix", (RendererUniform)cameraMatrix_);
 		pProgram->applyUniform("ProjectionMatrix", (RendererUniform)projectionMatrix_);
 
+		for (auto& [map, t] : pRendererConfig->textures) {
+			if (!pProgram->activeUniforms.count(map) || !t->usable()) {
+				t->unit = -1;
+				continue;
+			}
+			t->unit = getTexUnit();
+			t->bind(t->unit);
+			pProgram->applyUniform(map, t->unit);
+		}
+
 		return true;
 	}
 
@@ -166,8 +186,19 @@ namespace Fluxions
 	bool RendererGLES30::restoreGLState() {
 		pProgram = nullptr;
 
-		if (pRendererConfig->renderToFBO)
-			pRendererConfig->fbo.restoreGLState();
+		//if (pRendererConfig->renderToFBO)
+		//	pRendererConfig->fbo.restoreGLState();
+
+		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
+			fbo->restoreGLState();
+		}
+
+		for (auto& [map, t] : pRendererConfig->textures) {
+			if (t->unit < 0) continue;
+			t->unbind();
+			freeTexUnit(t->unit);
+			t->unit = -1;
+		}
 
 		gles30StateSnapshot.restore();
 
@@ -401,48 +432,21 @@ namespace Fluxions
 	}
 
 	void RendererGLES30::renderSingleImage() {
-		if (!areBuffersBuilt)
-			buildBuffers();
-
 		saveGLState();
 
-		if (!applyRenderConfig())
-			return;
-
-		if (pRendererConfig->isCubeMap) {
-			projectionMatrix.LoadIdentity();
-			projectionMatrix.Perspective(90.0f, 1.0f,
-										 pRendererConfig->viewportZNear,
-										 pRendererConfig->viewportZFar);
-			Vector4f cameraPosition(0, 0, 0, 1);
-			cameraPosition = cameraMatrix * cameraPosition;
-			if (pRendererConfig->defaultCubeFace >= 0 && pRendererConfig->defaultCubeFace < 6) {
-				cameraMatrix.LoadIdentity();
-				cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + pRendererConfig->defaultCubeFace);
-				cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-				render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
-			}
-			else {
-				for (int i = 0; i < 6; i++) {
-					cameraMatrix.LoadIdentity();
-					cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-					cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
-					render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
-				}
-			}
-		}
-		else {
-			render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
-		}
-
-		glUseProgram(0);
+		if (!applyRenderConfig()) return;
 
 		if (pRendererConfig->renderSkyBox) {
-			glEnable(GL_DEPTH_TEST);
-			renderSkyBox();
-			glDisable(GL_DEPTH_TEST);
+			_renderSkyBox();
 		}
 
+		if (pRendererConfig->renderSceneGraph) {
+			_renderSceneGraph();
+		}
+
+		if (pRendererConfig->renderPost) {
+			_renderPost();
+		}
 		restoreGLState();
 	}
 
@@ -741,36 +745,18 @@ namespace Fluxions
 		currentTextures.clear();
 	}
 
-	GLuint RendererGLES30::getTexUnit() {
+	int RendererGLES30::getTexUnit() {
 		return textureUnits.Create();
 	}
 
-	void RendererGLES30::freeTexUnit(GLuint id) {
+	void RendererGLES30::freeTexUnit(int id) {
 		textureUnits.Delete(id);
 	}
 
-	void RendererGLES30::initSkyBox() {
-		GLfloat size = 50.0f;
-		// GLfloat v[] = {
-		//     -size, size, -size,
-		//     size, size, -size,
-		//     size, -size, -size,
-		//     -size, -size, -size,
-		//     size, size, size,
-		//     -size, size, size,
-		//     -size, -size, size,
-		//     size, -size, size};
+	bool RendererGLES30::_initSkyBox() {
+		if (skybox_abo && skybox_eabo) return true;
 
-		// GLfloat texcoords[] = {
-		//     -1.0f, 1.0f, -1.0f,
-		//     1.0f, 1.0f, -1.0f,
-		//     1.0f, -1.0f, -1.0f,
-		//     -1.0f, -1.0f, -1.0f,
-		//     1.0f, 1.0f, 1.0f,
-		//     -1.0f, 1.0f, 1.0f,
-		//     -1.0f, -1.0f, 1.0f,
-		//     1.0f, -1.0f, 1.0f};
-
+		constexpr GLfloat size = 50.0f;
 		GLfloat buffer[] = {
 			-size, size, -size, -1.0f, 1.0f, -1.0f,
 			size, size, -size, 1.0f, 1.0f, -1.0f,
@@ -801,20 +787,21 @@ namespace Fluxions
 			2, 1, 0,
 			0, 3, 2 };
 
-		if (abo == 0) {
-			glGenBuffers(1, &abo);
-			glGenBuffers(1, &eabo);
-			glBindBuffer(GL_ARRAY_BUFFER, abo);
+		if (skybox_abo == 0) {
+			glGenBuffers(1, &skybox_abo);
+			glGenBuffers(1, &skybox_eabo);
+			glBindBuffer(GL_ARRAY_BUFFER, skybox_abo);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_STATIC_DRAW);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skybox_eabo);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 		}
+
+		return (skybox_abo && skybox_eabo);
 	}
 
-	void RendererGLES30::renderSkyBox() {
+	void RendererGLES30::_renderSkyBox() {
+		if (!_initSkyBox()) return;
 		if (renderskyboxname.empty()) return;
-
-		while (glGetError()) HFLOGWARN("SKYBOX PRE GL ERROR!");
 
 		Matrix4f skyboxCameraMatrix;
 		Matrix4f skyboxProjectionMatrix;
@@ -832,7 +819,7 @@ namespace Fluxions
 
 		pProgram->use();
 		pProgram->applyUniform(pSkyboxCube->uniformname, 0);
-		pProgram->applyUniform("CameraMatrix", pSSG->camera.viewMatrix);// pRendererConfig->cameraMatrix);
+		pProgram->applyUniform("CameraMatrix", pSSG->camera.viewMatrix);
 		pProgram->applyUniform("ProjectionMatrix", pRendererConfig->projectionMatrix);
 		pProgram->applyUniform("WorldMatrix", skyboxWorldMatrix);
 
@@ -841,8 +828,8 @@ namespace Fluxions
 		int vloc = pProgram->getAttribLocation(VERTEX_LOCATION);
 		int tloc = pProgram->getAttribLocation(TEXCOORD_LOCATION);
 
-		glBindBuffer(GL_ARRAY_BUFFER, abo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
+		glBindBuffer(GL_ARRAY_BUFFER, skybox_abo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skybox_eabo);
 		if (vloc >= 0) glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
 		if (tloc >= 0) glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
 		if (vloc >= 0) glEnableVertexAttribArray(vloc);
@@ -853,8 +840,120 @@ namespace Fluxions
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glUseProgram(0);
+	}
 
-		while (glGetError()) HFLOGWARN("SKYBOX POST GL ERROR!");
+	bool RendererGLES30::_initPost() {
+		if (post_abo) return true;
+		if (!pRendererConfig) return false;
+
+		constexpr float w = 1.0f;
+		constexpr float h = 1.0f;
+		constexpr float x = 0.0f;
+		constexpr float y = 0.0f;
+		constexpr float z = 0.0f;
+		constexpr float s1 = 0.0f;
+		constexpr float t1 = 0.0f;
+		constexpr float s2 = 1.0f;
+		constexpr float t2 = 1.0f;
+		GLfloat buffer[] = {
+			x, h, z, s1, t2, 0.0f,
+			x, y, z, s1, t1, 0.0f,
+			w, h, z, s2, t2, 0.0f,
+			w, y, z, s2, t1, 0.0f
+		};
+
+		if (post_abo == 0) {
+			glGenBuffers(1, &post_abo);
+		}
+		if (post_abo) {
+			glBindBuffer(GL_ARRAY_BUFFER, post_abo);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_DYNAMIC_DRAW);
+		}
+		return (post_abo != 0);
+	}
+
+	void RendererGLES30::_renderPost() {
+		if (!_initPost()) return;
+
+		pProgram->use();
+		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
+			if (!fbo->usable()) continue;
+			for (auto& [target, rt] : fbo->renderTargets) {
+				if (rt.mapName.empty() || !rt.pGpuTexture) continue;
+				if (!pProgram->activeUniforms.count(rt.mapName)) continue;
+				int unit = getTexUnit();
+				rt.pGpuTexture->unit = unit;
+				rt.pGpuTexture->bind(unit);
+				pProgram->applyUniform(rt.mapName, unit);
+			}
+		}
+		const std::string VERTEX_LOCATION{ "aPosition" };
+		const std::string TEXCOORD_LOCATION{ "aTexCoord" };
+		int vloc = pProgram->getAttribLocation(VERTEX_LOCATION);
+		int tloc = pProgram->getAttribLocation(TEXCOORD_LOCATION);
+
+		pProgram->applyUniform("ToneMapExposure", pRendererConfig->renderPostToneMapExposure);
+		pProgram->applyUniform("ToneMapGamma", pRendererConfig->renderPostToneMapGamma);
+		pProgram->applyUniform("FilmicHighlights", pRendererConfig->renderPostFilmicHighlights);
+		pProgram->applyUniform("FilmicShadows", pRendererConfig->renderPostFilmicShadows);
+
+		glBindBuffer(GL_ARRAY_BUFFER, post_abo);
+		if (vloc >= 0) glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
+		if (tloc >= 0) glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
+		if (vloc >= 0) glEnableVertexAttribArray(vloc);
+		if (tloc >= 0) glEnableVertexAttribArray(tloc);
+		if (vloc >= 0) glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		if (vloc >= 0) glDisableVertexAttribArray(vloc);
+		if (tloc >= 0) glDisableVertexAttribArray(tloc);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		while (glGetError()) HFLOGERROR("3 ERRORS");
+
+		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
+			if (!fbo->usable()) continue;
+			for (auto& [target, rt] : fbo->renderTargets) {
+				if (rt.mapName.empty() || !rt.pGpuTexture) continue;
+				freeTexUnit(rt.unit);
+				rt.unit = -1;
+				rt.pGpuTexture->unbind();
+			}
+		}
+		while (glGetError()) HFLOGERROR("4 ERRORS");
+
+		glUseProgram(0);
+	}
+
+	void RendererGLES30::_renderSceneGraph() {
+		if (!areBuffersBuilt) buildBuffers();
+		if (!applyRenderConfig()) return;
+
+		if (pRendererConfig->isCubeMap) {
+			projectionMatrix.LoadIdentity();
+			projectionMatrix.Perspective(90.0f, 1.0f,
+										 pRendererConfig->viewportZNear,
+										 pRendererConfig->viewportZFar);
+			Vector4f cameraPosition(0, 0, 0, 1);
+			cameraPosition = cameraMatrix * cameraPosition;
+			if (pRendererConfig->defaultCubeFace >= 0 && pRendererConfig->defaultCubeFace < 6) {
+				cameraMatrix.LoadIdentity();
+				cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + pRendererConfig->defaultCubeFace);
+				cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+				render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
+			}
+			else {
+				for (int i = 0; i < 6; i++) {
+					cameraMatrix.LoadIdentity();
+					cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+					cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
+					render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
+				}
+			}
+		}
+		else {
+			render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
+		}
+
+		glUseProgram(0);
 	}
 
 	void RendererGLES30::buildBuffers() {
@@ -873,7 +972,7 @@ namespace Fluxions
 		renderer.AssignMaterialIds(pSSG->materials);
 		renderer.SetCurrentMtlLibName("");
 		renderer.SetCurrentMtlLibId(0);
-		initSkyBox();
+		_initSkyBox();
 		areBuffersBuilt = true;
 	}
 } // namespace Fluxions

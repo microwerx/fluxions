@@ -5,7 +5,8 @@
 
 namespace Fluxions
 {
-	struct RendererTexture2D : public RendererGpuTexture {
+	class RendererTexture2D : public RendererGpuTexture {
+	public:
 		RendererTexture2D();
 
 		const char* type() const override;

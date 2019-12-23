@@ -6,6 +6,8 @@
 
 namespace Fluxions
 {
+	class RendererGpuTexture;
+
 	class RendererFramebuffer : public RendererObject
 	{
 		GLint lastBoundUnit = 0;
@@ -46,10 +48,15 @@ namespace Fluxions
 		static constexpr int DefaultWidth = 64;
 		static constexpr int DefaultHeight = 64;
 		static constexpr int DefaultSamples = 4;
+		static constexpr int LowQuality = 0;	// Use GL_UNSIGNED_BYTE and GL_DEPTH_COMPONENT16
+		static constexpr int MediumQuality = 1; // Use GL_UNSIGNED_SHORT and GL_DEPTH_COMPONENT24
+		static constexpr int HighQuality = 2;	// Use GL_FLOAT and GL_DEPTH_COMPONENT32F
+		static constexpr int DefaultQuality = MediumQuality;
 
 		bool dirty = false;
 		unsigned fbo_status = 0;
 		GLuint fbo = 0;
+		GLint quality = DefaultQuality;
 		GLint width = DefaultWidth;
 		GLint height = DefaultHeight;
 		GLsizei samples = DefaultSamples;
@@ -60,12 +67,17 @@ namespace Fluxions
 
 		struct RenderTarget {
 			std::string mapName;
-			GLuint object = 0;
-			GLenum target = 0;
-			GLenum attachment = 0;
-			GLenum internalformat = 0;
-			GLsizei width = 0;
-			GLsizei height = 0;
+			RendererGpuTexture* pGpuTexture{ nullptr };
+			GLuint object{ 0 };
+			GLenum target{ 0 };
+			GLsizei width{ 0 };
+			GLsizei height{ 0 };
+
+			GLenum attachment{ 0 };
+			GLenum internalformat{ 0 };
+			GLenum format{ 0 };
+			GLenum type{ 0 };
+
 			GLint levels = 0;
 			GLenum currentCubeFace = 0;
 			bool useMultisamples = false;
@@ -73,9 +85,11 @@ namespace Fluxions
 			GLenum readBufferTarget = 0;
 			bool generateMipmaps = false;
 			Matrix4f projectionViewMatrix;
-			GLuint unit = 0;
-			GLuint sampler = 0;
+			int unit = 0;
+			int sampler = 0;
 		};
+
+		void _setFormats(RenderTarget& rt);
 
 	public:
 		std::vector<std::pair<GLenum, RenderTarget>> renderTargets;

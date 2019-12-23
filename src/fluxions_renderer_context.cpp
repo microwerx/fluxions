@@ -294,6 +294,7 @@ namespace Fluxions
 		for (auto& [k, p] : programs) {
 			HFLOGINFO("Trying to load shader program '%s'",
 					  k.c_str());
+			p.detachShaders();
 			p.loadShaders();
 			p.link();
 		}
@@ -563,13 +564,31 @@ namespace Fluxions
 		static const std::string SCISSOR{ "scissor" };
 		static const std::string PERSPECTIVE{ "perspective" };
 		static const std::string AUTORESIZE{ "autoresize" };
+		static const std::string DRAW{ "draw" };
+		static const std::string POST{ "post" };
+		static const std::string SCENE{ "scene" };
+		static const std::string SKYBOX{ "skybox" };
+		static const std::string TEXTURE2D{ "texture2D" };
+		static const std::string TEXTURECUBE{ "textureCube" };
 
-		if (svalarg1) {
-			if (pcurRendererConfig && arg1 == AUTORESIZE) {
+		if (svalarg1 && pcurRendererConfig) {
+			if (arg1 == ZONLY) {
+				pcurRendererConfig->useZOnly = true;
+				return true;
+			}
+			else if (arg1 == CUBEMAP) {
+				pcurRendererConfig->isCubeMap = true;
+				return true;
+			}
+			else if (arg1 == SRGB) {
+				pcurRendererConfig->enableSRGB = true;
+				return true;
+			}
+			else if (arg1 == AUTORESIZE) {
 				pcurRendererConfig->viewportAutoresize = true;
 				return true;
 			}
-			else if (pcurRendererConfig && count == 6 && arg1 == CLEARCOLOR) {
+			else if (arg1 == CLEARCOLOR && count == 6) {
 				pcurRendererConfig->clearColor.reset(
 					(float)args[2].dval,
 					(float)args[3].dval,
@@ -579,15 +598,15 @@ namespace Fluxions
 				pcurRendererConfig->clearColorBuffer = true;
 				return true;
 			}
-			else if (pcurRendererConfig && arg1 == ZNEAR && count == 3) {
+			else if (arg1 == ZNEAR && count == 3) {
 				pcurRendererConfig->viewportZNear = (float)args[2].dval;
 				return true;
 			}
-			else if (pcurRendererConfig && arg1 == ZFAR && count == 3) {
+			else if (arg1 == ZFAR && count == 3) {
 				pcurRendererConfig->viewportZFar = (float)args[2].dval;
 				return true;
 			}
-			else if (pcurRendererConfig && arg1 == VIEWPORT && count == 4) {
+			else if (arg1 == VIEWPORT && count == 4) {
 				int w = k_ivalue(args, 2);
 				int h = k_ivalue(args, 3);
 				if (w > 0 && h > 0) {
@@ -598,7 +617,22 @@ namespace Fluxions
 					return true;
 				}
 			}
-			else if (pcurRendererConfig && arg1 == SCISSOR && count == 6) {
+			else if (arg1 == VIEWPORT && count == 6) {
+				int x = k_ivalue(args, 2);
+				int y = k_ivalue(args, 3);
+				int w = k_ivalue(args, 4);
+				int h = k_ivalue(args, 5);
+				if (w > 0 && h > 0) {
+					pcurRendererConfig->setViewport = true;
+					pcurRendererConfig->viewportRect.x = x;
+					pcurRendererConfig->viewportRect.y = y;
+					pcurRendererConfig->viewportRect.w = w;
+					pcurRendererConfig->viewportRect.h = h;
+					pcurRendererConfig->updateViewport();
+					return true;
+				}
+			}
+			else if (arg1 == SCISSOR && count == 6) {
 				int x = k_ivalue(args, 2);
 				int y = k_ivalue(args, 3);
 				int w = k_ivalue(args, 4);
@@ -612,7 +646,7 @@ namespace Fluxions
 					return true;
 				}
 			}
-			else if (pcurRendererConfig && arg1 == PERSPECTIVE && count == 5) {
+			else if (arg1 == PERSPECTIVE && count == 5) {
 				float fovInDegrees = (float)k_dvalue(args, 2);
 				float znear = (float)k_dvalue(args, 3);
 				float zfar = (float)k_dvalue(args, 4);
@@ -625,9 +659,20 @@ namespace Fluxions
 					return true;
 				}
 			}
-			else if (pcurRendererConfig && svalarg2) {
-				tolower(arg1);
-				if (arg1 == WRITEFBO) {
+			else if (svalarg2) {
+				if (arg1 == DRAW && arg2 == SKYBOX) {
+					pcurRendererConfig->renderSkyBox = true;
+					return true;
+				}
+				else if (arg1 == DRAW && arg2 == SCENE) {
+					pcurRendererConfig->renderSceneGraph = true;
+					return true;
+				}
+				else if (arg1 == DRAW && arg2 == POST) {
+					pcurRendererConfig->renderPost = true;
+					return true;
+				}
+				else if (arg1 == WRITEFBO) {
 					if (!fbos.count(arg2)) return false;
 					pcurRendererConfig->writeFBOs.push_back({ arg2, &fbos[arg2] });
 					HFLOGINFO("rendererconfig '%s' adding write fbo '%s'",
@@ -666,41 +711,25 @@ namespace Fluxions
 							  arg2.c_str());
 					return true;
 				}
-				//else if (arg1 == PROJECTION) {
-				//	pcurRendererConfig->ssg_projection = arg2;
-				//	HFLOGINFO("rendererconfig '%s' adding projection '%s'",
-				//			  pcurRendererConfig->name(),
-				//			  arg2.c_str());
-				//	return true;
-				//}
-
-				bool arg2TrueFalse = false;
-				if (arg2 == TRUESTRING) arg2TrueFalse = true;
-				else if (arg2 == FALSESTRING) arg2TrueFalse = false;
-				else {
-					HFLOGWARN("Use 'true' for flags");
-				}
-
-				if (arg1 == ZONLY) {
-					pcurRendererConfig->useZOnly = arg2TrueFalse;
+				else if (arg1 == TEXTURE2D && count == 4) {
+					if (!texture2Ds.count(arg2)) return false;
+					if (arg3.empty()) return false;
+					RendererGpuTexture* texture = (RendererGpuTexture*)&texture2Ds[arg2];
+					pcurRendererConfig->textures.push_back({ arg3, texture });
 					return true;
 				}
-				else if (arg1 == CUBEMAP) {
-					pcurRendererConfig->isCubeMap = arg2TrueFalse;
+				else if (arg1 == TEXTURECUBE && count == 4) {
+					if (!textureCubes.count(arg2)) return false;
+					if (arg3.empty()) return false;
+					RendererGpuTexture* texture = (RendererGpuTexture*)&textureCubes[arg2];
+					pcurRendererConfig->textures.push_back({ arg3, texture });
 					return true;
 				}
-				else if (arg1 == SRGB) {
-					pcurRendererConfig->enableSRGB = arg2TrueFalse;
-					return true;
-				}
-			}
-			else {
-				rendererConfigs[arg1].init(arg1, this);
-				pcurRendererConfig = &rendererConfigs[arg1];
-				return true;
 			}
 		}
-		return false;
+		rendererConfigs[arg1].init(arg1, this);
+		pcurRendererConfig = &rendererConfigs[arg1];
+		return true;
 	}
 
 	bool RendererContext::k_path(const Df::TokenVector& args) {
@@ -961,6 +990,9 @@ namespace Fluxions
 			GLenum attachment = glNameTranslator.getEnum(args[3].sval);
 			GLenum internalformat = glNameTranslator.getEnum(args[4].sval);
 			std::string mapName;
+			if (!k_sval(args, 5, mapName)) {
+				HFLOGWARN("Warning FBO does not have a MapName associated with it");
+			}
 
 			static const std::vector<GLenum> targets{
 				GL_RENDERBUFFER,
@@ -1006,11 +1038,16 @@ namespace Fluxions
 
 			static const std::vector<GLenum> internalformats{
 				GL_DEPTH24_STENCIL8,
+				GL_DEPTH32F_STENCIL8,
 				GL_DEPTH_COMPONENT16,
 				GL_DEPTH_COMPONENT24,
 				GL_DEPTH_COMPONENT32F,
 				GL_RGB8,
-				GL_RGB32F
+				GL_RGBA8,
+				GL_RGB16F,
+				GL_RGBA16F,
+				GL_RGB32F,
+				GL_RGBA32F
 			};
 
 			if (std::find(internalformats.begin(),
@@ -1177,6 +1214,7 @@ namespace Fluxions
 		if (pcurRenderer && svalarg1 && svalarg2) {
 			if (arg1 == "renderconfig" && rendererConfigs.count(arg2)) {
 				pcurRenderer->renderconfigname = arg2;
+				pcurRenderer->setRenderConfig(&rendererConfigs[arg2]);
 			}
 			else if (arg1 == "skybox" && textureCubes.count(arg2)) {
 				pcurRenderer->renderskyboxname = arg2;

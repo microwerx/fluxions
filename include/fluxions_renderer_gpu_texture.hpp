@@ -6,7 +6,8 @@
 
 namespace Fluxions
 {
-	struct RendererGpuTexture : public RendererObject {
+	class RendererGpuTexture : public RendererObject {
+	public:
 		GLint unit = 0;
 		GLint samplerId = 0;
 		
@@ -55,12 +56,12 @@ namespace Fluxions
 		void setDefaultParameters(GLenum minFilter = GL_NEAREST, GLenum magFilter = GL_NEAREST, GLenum wrapMode = GL_CLAMP_TO_EDGE);
 		void generateMipmap();
 		GLuint getTexture() const;
+		GLuint getTarget() const { return target_; }
 	private:
 		void _setTexture2D(int width, int height, unsigned format, unsigned type, unsigned arrayElement, const void* data);
 		GLenum target_ = GL_TEXTURE_CUBE_MAP;
 		int lastUnitBound_ = -1;
 		bool created_ = false;
-		bool usable_ = false;
 		std::shared_ptr<GLuint> texture_;
 	}; // class RendererGpuTexture
 } // namespace Fluxions

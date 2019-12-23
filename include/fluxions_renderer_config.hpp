@@ -7,6 +7,8 @@
 
 namespace Fluxions
 {
+	class RendererGpuTexture;
+
 	class RendererConfig : public RendererObject {
 	public:
 		bool useMaps = false;
@@ -15,7 +17,16 @@ namespace Fluxions
 		bool useSceneCamera = false;
 		bool isCubeMap = false;
 		bool recomputeProjectionMatrix = false;
-		bool renderSkyBox = true;
+		
+		bool renderSkyBox = false;
+		bool renderSceneGraph = false;
+		bool renderPost = false;
+
+		float renderPostToneMapExposure = 0.0f;
+		float renderPostToneMapGamma = 0.0f;
+		float renderPostFilmicHighlights = 0.0f;
+		float renderPostFilmicShadows = 0.0f;
+
 		int defaultCubeFace = -1;
 		int shaderDebugChoice = 0;
 		int shaderDebugLight = -1;
@@ -53,6 +64,9 @@ namespace Fluxions
 		using string_fboptr_vector = std::vector<string_fboptr_pair>;
 		string_fboptr_vector writeFBOs;
 		string_fboptr_vector readFBOs;
+
+		// textures
+		std::vector<std::pair<std::string, RendererGpuTexture*>> textures;
 
 		//std::string fbo;
 		bool fbo_gen_color = false;

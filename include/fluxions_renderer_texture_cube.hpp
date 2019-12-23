@@ -6,8 +6,9 @@
 
 namespace Fluxions
 {
-	struct RendererTextureCube : public RendererGpuTexture
+	class RendererTextureCube : public RendererGpuTexture
 	{
+	public:
 		RendererTextureCube();
 		const char* type() const noexcept override;
 	};

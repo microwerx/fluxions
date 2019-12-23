@@ -46,7 +46,7 @@ namespace Fluxions
 
 		Image4f image4;
 		if (ext == ".EXR") {
-			if (!image4.loadEXR(path)) {				
+			if (!image4.loadEXR(path)) {
 				return false;
 			}
 			type = GL_FLOAT;
@@ -171,20 +171,22 @@ namespace Fluxions
 	void RendererGpuTexture::createStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type) {
 		if (!texture_)
 			return;
+		while (glGetError() != GL_NO_ERROR);
 		if (target_ == GL_TEXTURE_2D) {
-			created_ = true;
+			usable_ = created_ = true;
 			bind(0);
 			glTexImage2D(target_, 0, internalformat, width, height, 0, format, type, nullptr);
 			unbind();
 		}
 		else if (target_ == GL_TEXTURE_CUBE_MAP) {
-			created_ = true;
+			usable_ = created_ = true;
 			bind(0);
 			for (int i = 0; i < 6; i++) {
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalformat, width, height, 0, format, type, nullptr);
 			}
 			unbind();
 		}
+		while (glGetError() != GL_NO_ERROR) { usable_ = false; }
 	}
 
 	void RendererGpuTexture::createTexture2D(GLsizei width, GLsizei height) {
@@ -287,7 +289,7 @@ namespace Fluxions
 		_setTexture2D((int)image.width(), (int)image.height(), GL_RGBA, GL_UNSIGNED_SHORT, arrayElement, image.getImageData(arrayElement));
 		generateMipmap();
 	}
-	
+
 	void RendererGpuTexture::setTexture2D(const Image4f& image, unsigned arrayElement) {
 		create();
 		bind(0);

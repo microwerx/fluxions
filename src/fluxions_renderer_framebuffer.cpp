@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include <fluxions_renderer_framebuffer.hpp>
+#include <fluxions_renderer_gpu_texture.hpp>
 
 #define IFTOSTRING(thing, value) \
 	if ((thing) == (value))      \
@@ -22,7 +23,7 @@ namespace Fluxions
 	RendererFramebuffer::~RendererFramebuffer() {}
 
 	void RendererFramebuffer::init(const std::string& name,
-										 RendererObject* pparent) {
+								   RendererObject* pparent) {
 		RendererObject::init(name, pparent);
 		setDefaultParameters();
 	}
@@ -43,6 +44,59 @@ namespace Fluxions
 
 	bool RendererFramebuffer::usable() const {
 		return fbo_status == GL_FRAMEBUFFER_COMPLETE;
+	}
+
+	void RendererFramebuffer::_setFormats(RenderTarget& rt) {
+		switch (rt.internalformat) {
+		case GL_DEPTH24_STENCIL8:
+			rt.format = GL_DEPTH_COMPONENT;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_DEPTH32F_STENCIL8:
+			rt.format = GL_DEPTH_COMPONENT;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_DEPTH_COMPONENT16:
+			rt.format = GL_DEPTH_COMPONENT;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_DEPTH_COMPONENT24:
+			rt.format = GL_DEPTH_COMPONENT;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_DEPTH_COMPONENT32F:
+			rt.format = GL_DEPTH_COMPONENT;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_RGB8:
+			rt.format = GL_RGB;
+			rt.type = GL_UNSIGNED_BYTE;
+			break;
+		case GL_RGBA8:
+			rt.format = GL_RGBA;
+			rt.type = GL_UNSIGNED_BYTE;
+			break;
+		case GL_RGB16F:
+			rt.format = GL_RGB;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_RGBA16F:
+			rt.format = GL_RGBA;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_RGB32F:
+			rt.format = GL_RGB;
+			rt.type = GL_FLOAT;
+			break;
+		case GL_RGBA32F:
+			rt.format = GL_RGBA;
+			rt.type = GL_FLOAT;
+			break;
+		default:
+			rt.internalformat = GL_RGBA8;
+			rt.format = GL_RGBA;
+			rt.type = GL_UNSIGNED_BYTE;
+		}
 	}
 
 	void RendererFramebuffer::setDefaultParameters() {
@@ -78,7 +132,7 @@ namespace Fluxions
 		bool result = false;
 
 		if (fbo || dirty) {
-			deleteBuffers();			
+			deleteBuffers();
 		}
 
 		glGenFramebuffers(1, &fbo);
@@ -97,48 +151,41 @@ namespace Fluxions
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, rt.attachment, rt.target, rt.object);
 			}
 			else {
-				glGenTextures(1, &rt.object);
-				FxBindTexture(0, rt.target, rt.object);
-				if (rt.target == GL_TEXTURE_CUBE_MAP) {
-					GLenum format = GL_RGBA;
-					GLenum type = GL_UNSIGNED_BYTE;
-					if (rt.attachment == GL_DEPTH_ATTACHMENT) {
-						format = GL_DEPTH_COMPONENT;
-						switch (rt.internalformat) {
-						case GL_DEPTH_COMPONENT32F:
-							type = GL_FLOAT;
-							break;
-						case GL_DEPTH_COMPONENT24:
-							type = GL_DEPTH_COMPONENT24;
-							break;
-						case GL_DEPTH_COMPONENT16:
-							type = GL_DEPTH_COMPONENT16;
-							break;
+				if (rt.pGpuTexture) {
+					rt.pGpuTexture->create();
+					rt.object = rt.pGpuTexture->getTexture();
+					rt.target = rt.pGpuTexture->getTarget();
+
+					rt.pGpuTexture->createStorage(rt.internalformat, rt.width, rt.height, rt.format, rt.type);
+				}
+				else {
+					glGenTextures(1, &rt.object);
+					FxBindTexture(0, rt.target, rt.object);
+					if (rt.target == GL_TEXTURE_CUBE_MAP) {
+						for (int face = 0; face < 6; face++) {
+							glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, rt.format, rt.width, rt.height, 0, rt.format, rt.type, nullptr);
 						}
 					}
-					for (int face = 0; face < 6; face++) {
-						glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, format, rt.width, rt.height, 0, format, type, nullptr);
+					if (rt.target == GL_TEXTURE_2D) {
+						if (rt.useMultisamples)
+							glTexStorage2DMultisample(rt.target, rt.samples, rt.internalformat, rt.width, rt.height, GL_TRUE);
+						else
+							glTexStorage2D(rt.target, rt.levels, rt.internalformat, rt.width, rt.height);
 					}
+					glTexParameterf(rt.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+					glTexParameterf(rt.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+					glTexParameterf(rt.target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+					glTexParameterf(rt.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameterf(rt.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					if (rt.attachment == GL_DEPTH_ATTACHMENT ||
+						rt.attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
+						glTexParameterf(rt.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						glTexParameterf(rt.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+						//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+						//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+					}
+					FxBindDefaultTextureAndSampler(rt.target);
 				}
-				if (rt.target == GL_TEXTURE_2D) {
-					if (rt.useMultisamples)
-						glTexStorage2DMultisample(rt.target, rt.samples, rt.internalformat, rt.width, rt.height, GL_TRUE);
-					else
-						glTexStorage2D(rt.target, rt.levels, rt.internalformat, rt.width, rt.height);
-				}
-				glTexParameterf(rt.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameterf(rt.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-				glTexParameterf(rt.target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-				glTexParameterf(rt.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameterf(rt.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				if (rt.attachment == GL_DEPTH_ATTACHMENT ||
-					rt.attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
-					glTexParameterf(rt.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-					glTexParameterf(rt.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-					//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-					//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-				}
-				FxBindDefaultTextureAndSampler(rt.target);
 				if (rt.target == GL_TEXTURE_CUBE_MAP) {
 					glFramebufferTexture(GL_FRAMEBUFFER, rt.attachment, rt.object, 0);
 				}
@@ -223,6 +270,14 @@ namespace Fluxions
 	void RendererFramebuffer::setDimensions(GLsizei newWidth, GLsizei newHeight) {
 		width = newWidth;
 		height = newHeight;
+		if (renderTargets.empty()) return;
+		renderTargets.back().second.width = newWidth;
+		renderTargets.back().second.height = newHeight;
+	}
+
+	void RendererFramebuffer::setMapName(const std::string& mapName) {
+		if (renderTargets.empty()) return;
+		renderTargets.back().second.mapName = mapName;
 	}
 
 	void RendererFramebuffer::setMultisamples(GLsizei newSamples, bool newUseMultisamples) {
@@ -266,6 +321,7 @@ namespace Fluxions
 		RenderTarget rt;
 		rt.attachment = whichAttachment;
 		rt.internalformat = whichInternalformat;
+		_setFormats(rt);
 		rt.target = GL_RENDERBUFFER;
 		rt.width = width;
 		rt.height = height;
@@ -280,7 +336,9 @@ namespace Fluxions
 	void RendererFramebuffer::addTexture2D(GLenum attachment, GLenum target, GLenum whichInternalformat, bool generateMipmaps) {
 		RenderTarget rt;
 		rt.attachment = attachment;
+		rt.pGpuTexture = new RendererGpuTexture(GL_TEXTURE_2D);
 		rt.internalformat = whichInternalformat;
+		_setFormats(rt);
 		rt.generateMipmaps = generateMipmaps;
 		rt.levels = generateMipmaps ? (int)(log(std::max(width, height)) / log(2.0)) : 1;
 		rt.levels = std::max(1, rt.levels);
@@ -299,7 +357,9 @@ namespace Fluxions
 	void RendererFramebuffer::addTextureCubeMap(GLenum attachment, GLenum target, GLenum whichInternalformat, bool generateMipmaps) {
 		RenderTarget rt;
 		rt.attachment = attachment;
+		rt.pGpuTexture = new RendererGpuTexture(GL_TEXTURE_CUBE_MAP);
 		rt.internalformat = whichInternalformat;
+		_setFormats(rt);
 		rt.generateMipmaps = generateMipmaps;
 		rt.levels = generateMipmaps ? (int)(log(std::max(width, height)) / log(2.0)) : 1;
 		rt.levels = std::max(1, rt.levels);
@@ -313,10 +373,5 @@ namespace Fluxions
 		rt.projectionViewMatrix = projectionViewMatrix;
 		renderTargets.push_back(std::pair<GLenum, RenderTarget>(whichInternalformat, rt));
 		dirty = true;
-	}
-
-	void RendererFramebuffer::setMapName(const std::string& mapName) {
-		if (renderTargets.empty()) return;
-		renderTargets.back().second.mapName = mapName;
 	}
 } // namespace Fluxions
