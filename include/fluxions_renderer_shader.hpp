@@ -21,6 +21,7 @@ namespace Fluxions
 		const char* type() const noexcept override;
 
 		bool compileSource(const std::string& sourceCode);
+		const char* status() const override;
 
 	private:
 		void create_shader(GLenum shaderType);
