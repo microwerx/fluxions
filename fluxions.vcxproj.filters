@@ -295,9 +295,11 @@
     <ClCompile Include="src\viperfish_animpath_window.cpp">
       <Filter>src\viperfish</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_image_loader.cpp" />
     <ClCompile Include="src\fluxions_renderer_utilities.cpp">
       <Filter>src\fluxions-renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_image_loader.cpp">
+      <Filter>src\fluxions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -703,7 +705,6 @@
     <ClInclude Include="include\fluxions_obj_static_model.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp" />
     <ClInclude Include="include\fluxions_renderer_sampler.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
@@ -715,6 +716,9 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_image_loader.hpp">
       <Filter>include\fluxions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp">
+      <Filter>src\fluxions-ssg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

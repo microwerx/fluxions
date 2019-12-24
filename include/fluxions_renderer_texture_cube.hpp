@@ -10,6 +10,7 @@ namespace Fluxions
 	{
 	public:
 		RendererTextureCube();
+		~RendererTextureCube() override;
 		const char* type() const noexcept override;
 	};
 } // namespace Fluxions

@@ -116,9 +116,10 @@ namespace Fluxions
 	void RendererGpuTexture::kill() {
 		if (texture_.use_count() == 1) {
 			GLuint texture = *texture_;
-			if (texture != 0)
+			if (texture != 0) {
 				glDeleteTextures(1, &texture);
-			HFLOGINFO("Deleted texture %d", *texture_);
+				HFLOGINFO("Deleted texture %d", *texture_);
+			}
 			texture_.reset();
 		}
 		RendererObject::kill();
@@ -128,10 +129,18 @@ namespace Fluxions
 		return "RendererGpuTexture";
 	}
 
+	bool RendererGpuTexture::loadMap(const std::string& path, bool generateMipMaps) {
+		mappath = path;
+		maploaded = false;
+		return loadMap();
+	}
+
 	bool RendererGpuTexture::loadMap() {
+		if (maploaded) return true;
 		FilePathInfo fpi(mappath);
 		toupper(fpi.ext);
-		return gpuLoadTexture(*this, fpi.ext, mappath, true);
+		maploaded = gpuLoadTexture(*this, fpi.ext, mappath, true);
+		return maploaded;
 	}
 
 	void RendererGpuTexture::bind(int whichunit) {

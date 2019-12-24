@@ -390,7 +390,10 @@ namespace Fluxions
 		}
 		else {
 			for (auto testPathIt : pathsToTry) {
-				std::string testPath = testPathIt + "/" + fpi.fullfname;
+				std::string testPath = testPathIt;
+				if (testPath.back() != '/' && testPath.back() != '\\')
+					testPath += "/";
+				testPath += fpi.fullfname;
 				if (TestIfFileExists(testPath)) {
 					output = testPath;
 					break;

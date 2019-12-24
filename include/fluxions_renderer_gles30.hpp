@@ -122,8 +122,8 @@ namespace Fluxions
 		RendererProgram* pProgram = nullptr;
 		RendererTextureCube* pSkyboxCube{ nullptr };
 
-		Matrix4f projectionMatrix;
-		Matrix4f cameraMatrix;
+		//Matrix4f projectionMatrix;
+		//Matrix4f cameraMatrix;
 
 		__ShaderProgramLocations locs;
 		std::map<std::string, SimpleMap*> currentTextures;

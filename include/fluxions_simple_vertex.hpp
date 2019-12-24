@@ -32,6 +32,13 @@ namespace Fluxions
 	};
 
 	// 32 bytes/vertex
+	struct SimpleMediumVertex {
+		Vector3f aPosition;
+		Vector3f aNormal;
+		Vector2f aTexCoord;
+	};
+
+	// 32 bytes/vertex
 	struct SimpleFastVertex
 	{
 		GLshort position[4] = { 0, 0, 0, 0 };
@@ -41,18 +48,39 @@ namespace Fluxions
 		GLshort attrib[4] = { 0, 0, 0, 0 };
 	};
 
-	// new type 48 bytes/vertex
-	struct SimpleVertex
+	// 64 bytes/vertex
+	struct SimpleVertex {
+		Vector3f aPosition;
+		Vector3f aNormal;
+		Vector2f aTexCoord;
+		Color4f aColor;
+		Vector4f aAttrib;
+	};
+
+	// new type 64 bytes/vertex
+	struct SimpleBoneVertex
 	{
-		Vector3f position;
-		Vector3f normal;
-		Vector2f texcoord;
-		Color4f color;
+		Vector3f aPosition;   // 12 bytes
+		Vector3f aNormal;     // 12 bytes
+		Vector2f aTexCoord;   //  8 bytes
+		Vector4s aAttrib;     //  8 bytes
+		Color4ub aColor;      //  4 bytes
+		Vector4ub aBoneIndex; //  4 bytes
+		Vector4f aBoneWeight; // 16 bytes
 	};
 
 	// 128 bytes/vertex
 	struct SimpleSlowVertex
 	{
+		//static constexpr int aPosition = 0;
+		//static constexpr int aNormal = 1;
+		//static constexpr int aTexCoord = 2;
+		//static constexpr int aAttrib = 3;
+		//static constexpr int aColor = 4;
+		//static constexpr int aBoneIndex = 5;
+		//static constexpr int aBoneWeight = 6;
+		//static constexpr int aAttrib2 = 7;
+
 		GLfloat attrib[8][4] = { 0.0f };
 
 		SimpleSlowVertex() {

@@ -32,7 +32,10 @@ namespace Fluxions
 		msphLightProbeTexture.init("msphLightProbe");
 	}
 
-	SimpleSSPHHLight::~SimpleSSPHHLight() {}
+	SimpleSSPHHLight::~SimpleSSPHHLight() {
+		ptrcLightProbeTexture.kill();
+		msphLightProbeTexture.kill();
+	}
 
 	void SimpleSSPHHLight::makeDirty() {
 		dirty = true;

@@ -118,6 +118,7 @@ namespace Fluxions
 
 		void loadShaders();
 		void loadTextures();
+		void loadMaps(const std::map<std::string, std::string>& maps_paths);
 		void makeFramebuffers();
 
 		// Render Configurations
@@ -174,7 +175,7 @@ namespace Fluxions
 		std::map<std::string, RendererProgram> programs;
 		std::map<std::string, RendererFramebuffer> fbos;
 		std::map<std::string, RendererSampler> samplers;
-		std::map<std::string, RendererTextureObject> textures;
+		//std::map<std::string, RendererTextureObject> textures;
 		std::map<std::string, RendererTexture2D> texture2Ds;
 		std::map<std::string, RendererTextureCube> textureCubes;
 		std::map<std::string, RendererGLES30> renderers;

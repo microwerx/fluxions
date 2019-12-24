@@ -98,7 +98,11 @@ namespace Fluxions
 
 		bool AddMap(const std::string& path, const std::string& filename);
 		bool AddMapShader(const std::string& name, const std::string& shader);
-		void LoadMaps();
+		void FindMapPaths(const std::vector<std::string>& pathsToTry);
+
+		// return list of maps that need to be loaded
+		const std::map<std::string, std::string>& GetMapPaths() const { return maps_paths; }
+
 		SimpleMap* GetTextureMap(const std::string& name);
 		const SimpleMap* GetTextureMap(const std::string& name) const;
 

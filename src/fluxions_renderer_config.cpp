@@ -15,8 +15,8 @@ namespace Fluxions
 	}
 
 	void RendererConfig::kill() {
-		shaderProgram.reset();
-		zShaderProgram.reset();
+		//shaderProgram.reset();
+		//zShaderProgram.reset();
 		readFBOs.clear();
 		writeFBOs.clear();
 		textures.clear();
@@ -42,17 +42,17 @@ namespace Fluxions
 	}
 
 	bool RendererConfig::check() const {
-		if (!zShaderProgram && !shaderProgram) {
-			return false;
-		}
+		//if (!zShaderProgram && !shaderProgram) {
+		//	return false;
+		//}
 
-		if (zShaderProgram && !zShaderProgram->isLinked()) {
-			return false;
-		}
+		//if (zShaderProgram && !zShaderProgram->isLinked()) {
+		//	return false;
+		//}
 
-		if (shaderProgram && !shaderProgram->isLinked()) {
-			return false;
-		}
+		//if (shaderProgram && !shaderProgram->isLinked()) {
+		//	return false;
+		//}
 
 		return true;
 	}

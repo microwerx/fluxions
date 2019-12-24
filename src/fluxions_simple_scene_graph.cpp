@@ -327,7 +327,7 @@ namespace Fluxions
 		fin.close();
 
 		// Load Images
-		materials.LoadMaps();
+		materials.FindMapPaths(pathsToTry);
 
 		return true;
 	}
@@ -496,60 +496,55 @@ namespace Fluxions
 	}
 
 	bool SimpleSceneGraph::ReadMaterialLibrary(const std::string& type, std::istream& istr) {
-		std::string mtllibFilename = ReadString(istr);
-		FilePathInfo fpi(mtllibFilename);
-		std::string filenameToTry;
-		fpi.FindFileIfExists(pathsToTry, filenameToTry);
-		if (filenameToTry.empty()) {
-			HFLOGERROR("MTLLIB %s was not found.", mtllibFilename.c_str());
+		std::string filename = ReadString(istr);
+		std::string path = FindPathIfExists(filename, pathsToTry);
+		FilePathInfo fpi(path);
+		if (path.empty()) {
+			HFLOGERROR("MTLLIB %s was not found.", filename.c_str());
+			return false;
 		}
-		else {
-			if (materials.Load(fpi.fname, filenameToTry)) {
-				HFLOGINFO("MTLLIB %s loaded", mtllibFilename.c_str());
-			}
-			else {
-				HFLOGERROR("MTLLIB error loading %s", mtllibFilename.c_str());
-			}
+		if (!materials.Load(fpi.fname, path)) {
+			HFLOGERROR("MTLLIB error loading %s", filename.c_str());
+			return false;
 		}
+		HFLOGINFO("MTLLIB %s loaded", filename.c_str());
 		return true;
 	}
 
 	bool SimpleSceneGraph::ReadGeometryGroup(const std::string& type, std::istream& istr) {
-		std::string geoFilename = ReadString(istr);
-		std::string path = FindPathIfExists(geoFilename, pathsToTry);
+		std::string filename = ReadString(istr);
+		std::string path = FindPathIfExists(filename, pathsToTry);
 		FilePathInfo fpi(path);
 		if (path.empty()) {
-			HFLOGERROR("OBJ file %s was not found.", geoFilename.c_str());
+			HFLOGERROR("OBJ file %s was not found.", filename.c_str());
 			return false;
 		}
-		else {
-			if (ReadObjFile(path, fpi.fname)) {
-				GLuint id = geometry.Create(fpi.fname);
-
-				SimpleGeometryGroup geometryGroup;
-				geometryGroup.transform = currentTransform;
-				geometryGroup.mtllibName = materials.GetLibraryName();
-				geometryGroup.mtllibId = materials.GetLibraryId();
-				geometryGroup.objectName = fpi.fname;
-				geometryGroup.objectId = id;
-				geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
-
-				geometry[id] = geometryGroup;
-				HFLOGINFO("OBJ file %s loaded.", fpi.fname.c_str());
-
-				// Transform the bounding box of the model into world coordinates
-				Vector4f tminBound = geometryGroup.transform *
-					Vector4f(geometryGroup.bbox.minBounds, 1.0f);
-				Vector4f tmaxBound = geometryGroup.transform *
-					Vector4f(geometryGroup.bbox.maxBounds, 1.0f);
-
-				boundingBox += tminBound.xyz();
-				boundingBox += tmaxBound.xyz();
-			}
-			else {
-				HFLOGERROR("OBJ file %s had an error while loading", geoFilename.c_str());
-			}
+		if (!ReadObjFile(path, fpi.fname)) {
+			HFLOGERROR("OBJ file %s had an error while loading", filename.c_str());
+			return false;
 		}
+		GLuint id = geometry.Create(fpi.fname);
+
+		SimpleGeometryGroup geometryGroup;
+		geometryGroup.transform = currentTransform;
+		geometryGroup.mtllibName = materials.GetLibraryName();
+		geometryGroup.mtllibId = materials.GetLibraryId();
+		geometryGroup.objectName = fpi.fname;
+		geometryGroup.objectId = id;
+		geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
+
+		geometry[id] = geometryGroup;
+
+		// Transform the bounding box of the model into world coordinates
+		Vector4f tminBound = geometryGroup.transform *
+			Vector4f(geometryGroup.bbox.minBounds, 1.0f);
+		Vector4f tmaxBound = geometryGroup.transform *
+			Vector4f(geometryGroup.bbox.maxBounds, 1.0f);
+
+		boundingBox += tminBound.xyz();
+		boundingBox += tmaxBound.xyz();
+
+		HFLOGINFO("OBJ file %s loaded.", filename.c_str());
 		return true;
 	}
 
@@ -763,7 +758,7 @@ namespace Fluxions
 		pointLights.push_back(spl);
 		return true;
 	}
-	
+
 	bool SimpleSceneGraph::ReadSphere(const std::string& type, std::istream& istr) {
 		std::string mtlName = ReadString(istr);
 

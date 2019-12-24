@@ -16,7 +16,7 @@ namespace Fluxions {
 			GLint unitId = 0; // we're not using GLenum here because unitId can be < 0 and no overflow is expected.
 			GLint map_loc = 0;
 			GLint map_mix_loc = 0;
-			RendererTextureObject textureObject;
+			// RendererTextureObject textureObject;
 		} cached;
 	};
 

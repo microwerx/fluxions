@@ -42,8 +42,8 @@ namespace Fluxions
 		pSSG = nullptr;
 		pRendererConfig = nullptr;
 		pProgram = nullptr;
-		projectionMatrix.LoadIdentity();
-		cameraMatrix.LoadIdentity();
+		//projectionMatrix.LoadIdentity();
+		//cameraMatrix.LoadIdentity();
 
 		for (int i = 0; i < 32; i++) {
 			int id = 16 + i;
@@ -93,32 +93,35 @@ namespace Fluxions
 		if (pProgram->isLinked() == false)
 			return false;
 
-		//if (pRendererConfig->renderToFBO)
-		//	pRendererConfig->fbo.use();
-
 		int writeFBOCount = 0;
 		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
 			if (fbo->unusable()) break;
-			fbo->useForWriting();
+			fbo->use();
 			glViewport(0, 0, fbo->width(), fbo->height());
-			glClearColor(0.5f, 0.1f, 0.2f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
 			writeFBOCount++;
-			return true;
 		}
 
 		pProgram->use();
 		locs.getMaterialProgramLocations(*pProgram);
-		applyGlobalSettingsToCurrentProgram();
-		applySpheresToCurrentProgram();
+
+		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
+			if (fbo->unusable()) continue;
+			for (auto& [type, rt] : fbo->renderTargets) {
+				rt.unit = -1;
+				if (rt.target == GL_RENDERBUFFER) continue;
+				if (rt.mapName.empty() || rt.pGpuTexture->unusable()) continue;
+				if (!pProgram->activeUniforms.count(rt.mapName)) continue;
+				rt.unit = getTexUnit();
+				rt.pGpuTexture->bind(rt.unit);
+				pProgram->applyUniform(rt.mapName, rt.unit);
+			}
+		}
 
 		if (!writeFBOCount) {
-			if (pRendererConfig->setViewport) {
-				glViewport(pRendererConfig->viewportRect.x,
-						   pRendererConfig->viewportRect.y,
-						   pRendererConfig->viewportRect.w,
-						   pRendererConfig->viewportRect.h);
-			}
+			glViewport(pRendererConfig->viewportRect.x,
+					   pRendererConfig->viewportRect.y,
+					   pRendererConfig->viewportRect.w,
+					   pRendererConfig->viewportRect.h);
 		}
 
 		if (pRendererConfig->enableScissorTest) {
@@ -143,36 +146,37 @@ namespace Fluxions
 
 		Matrix4f projectionMatrix_;
 		Matrix4f cameraMatrix_;
+		Matrix4f worldMatrix_;
 
-		if (pRendererConfig->useSceneCamera) {
+		if (pRendererConfig->useSceneProjection) {
 			projectionMatrix_.LoadIdentity();
 			projectionMatrix_.PerspectiveY(
 				pSSG->camera.fov,
 				pRendererConfig->viewportRect.aspectRatiof(),
 				pSSG->camera.imageNearZ,
 				pSSG->camera.imageFarZ);
-			cameraMatrix_ = pRendererConfig->preCameraMatrix *
-				pSSG->camera.viewMatrix * pRendererConfig->postCameraMatrix;
 		}
 		else {
 			projectionMatrix_ = pRendererConfig->viewportProjectionMatrix;
-			cameraMatrix_ = pRendererConfig->preCameraMatrix * pRendererConfig->postCameraMatrix;
 		}
+
+		if (pRendererConfig->useSceneCamera) {
+			cameraMatrix_ *= pRendererConfig->preCameraMatrix;
+			cameraMatrix_ *= pSSG->camera.viewMatrix;
+			cameraMatrix_ *= pRendererConfig->postCameraMatrix;
+		}
+		else {
+			cameraMatrix_ *= pRendererConfig->preCameraMatrix;
+			cameraMatrix_ *= pRendererConfig->postCameraMatrix;
+		}
+
 		pRendererConfig->projectionMatrix = projectionMatrix_;
 		pRendererConfig->cameraMatrix = cameraMatrix_;
 
-		if (pRendererConfig->recomputeProjectionMatrix) {
-			pRendererConfig->projectionMatrix.LoadIdentity();
-			pRendererConfig->projectionMatrix.PerspectiveY(pRendererConfig->viewportFovInDegrees,
-														   pRendererConfig->viewportRect.aspectRatiof(),
-														   pRendererConfig->viewportZNear,
-														   pRendererConfig->viewportZFar);
-		}
-		projectionMatrix_ = pRendererConfig->projectionMatrix;
-
+		pProgram->applyUniform("ProjectionMatrix", (RendererUniform)projectionMatrix_);
 		pProgram->applyUniform("CameraPosition", (RendererUniform)(cameraMatrix_.AsInverse()).col4());
 		pProgram->applyUniform("CameraMatrix", (RendererUniform)cameraMatrix_);
-		pProgram->applyUniform("ProjectionMatrix", (RendererUniform)projectionMatrix_);
+		pProgram->applyUniform("WorldMatrix", (RendererUniform)worldMatrix_);
 
 		for (auto& [map, t] : pRendererConfig->textures) {
 			if (!pProgram->activeUniforms.count(map) || !t->usable()) {
@@ -195,9 +199,6 @@ namespace Fluxions
 	bool RendererGLES30::restoreGLState() {
 		pProgram = nullptr;
 
-		//if (pRendererConfig->renderToFBO)
-		//	pRendererConfig->fbo.restoreGLState();
-
 		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
 			fbo->unbind();
 		}
@@ -207,6 +208,16 @@ namespace Fluxions
 			t->unbind();
 			freeTexUnit(t->unit);
 			t->unit = -1;
+		}
+
+		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
+			if (fbo->unusable()) continue;
+			for (auto& [type, rt] : fbo->renderTargets) {
+				if (rt.unit < 0) continue;
+				rt.pGpuTexture->unbind();
+				freeTexUnit(rt.unit);
+				rt.unit = -1;
+			}
 		}
 
 		gles30StateSnapshot.restore();
@@ -385,15 +396,14 @@ namespace Fluxions
 		if (!validate())
 			return;
 
-		pRendererConfig->shaderProgram->use();
-		pRendererConfig->shaderProgram->applyUniform("ModelViewMatrix", (RendererUniform)modelViewMatrix);
-		pRendererConfig->shaderProgram->applyUniform("WorldMatrix", (RendererUniform)modelViewMatrix);
+		pProgram->use();
+		pProgram->applyUniform("WorldMatrix", (RendererUniform)modelViewMatrix);
 
 		// create a vbo
 		BufferObject abo_(GL_ARRAY_BUFFER, (GLsizei)mesh.GetVertexDataSize(), mesh.GetVertexData(), GL_STATIC_DRAW);
 		BufferObject eabo_(GL_ELEMENT_ARRAY_BUFFER, (GLsizei)mesh.GetIndexDataSize(), mesh.GetIndexData(), GL_STATIC_DRAW);
 
-		VertexArrayObject vao(mesh, pRendererConfig->shaderProgram->getProgram(), abo_.buffer, eabo_.buffer);
+		VertexArrayObject vao(mesh, pProgram->getProgram(), abo_.buffer, eabo_.buffer);
 		vao.Draw();
 	}
 
@@ -443,20 +453,23 @@ namespace Fluxions
 	void RendererGLES30::renderSingleImage() {
 		saveGLState();
 
+		while (glGetError()) HFLOGERROR("BEFORE ERRORS");
 		if (!applyRenderConfig()) return;
-
+		while (glGetError()) HFLOGERROR("APPLY ERRORS");
 		if (pRendererConfig->renderSkyBox) {
 			_renderSkyBox();
 		}
-
+		while (glGetError()) HFLOGERROR("SKYBOX ERRORS");
 		if (pRendererConfig->renderSceneGraph) {
 			_renderSceneGraph();
 		}
-
+		while (glGetError()) HFLOGERROR("SCENE ERRORS");
 		if (pRendererConfig->renderPost) {
 			_renderPost();
 		}
+		while (glGetError()) HFLOGERROR("POST ERRORS");
 		restoreGLState();
+		while (glGetError()) HFLOGERROR("RESTORE ERRORS");
 	}
 
 	void RendererGLES30::applyGlobalSettingsToCurrentProgram() {
@@ -519,63 +532,57 @@ namespace Fluxions
 	}
 
 	void RendererGLES30::render(RendererProgram* program_, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix_, Matrix4f& cameraMatrix_) {
-		Matrix4f inverseCameraMatrix = cameraMatrix_.AsInverse();
-		Vector4f cameraPosition(0, 0, 0, 1);
-		cameraPosition = inverseCameraMatrix * cameraPosition;
+		//Matrix4f inverseCameraMatrix = cameraMatrix_.AsInverse();
+		//Vector4f cameraPosition(0, 0, 0, 1);
+		//cameraPosition = inverseCameraMatrix * cameraPosition;
 
-		RendererUniform InverseCameraMatrix = cameraMatrix_.AsInverse();
-		RendererUniform CameraMatrix = cameraMatrix_;
-		RendererUniform ProjectionMatrix = projectionMatrix_;
-		RendererUniform CameraPosition = cameraPosition;
+		//RendererUniform InverseCameraMatrix = cameraMatrix_.AsInverse();
+		//RendererUniform CameraMatrix = cameraMatrix_;
+		//RendererUniform ProjectionMatrix = projectionMatrix_;
+		//RendererUniform CameraPosition = cameraPosition;
 
-		program_->applyUniform("ProjectionMatrix", ProjectionMatrix);
-		program_->applyUniform("CameraMatrix", CameraMatrix);
-		program_->applyUniform("InverseCameraMatrix", (RendererUniform)cameraMatrix_.AsInverse());
-		program_->applyUniform("CameraPosition", CameraPosition);
+		//program_->applyUniform("ProjectionMatrix", ProjectionMatrix);
+		//program_->applyUniform("CameraMatrix", CameraMatrix);
+		//program_->applyUniform("InverseCameraMatrix", (RendererUniform)cameraMatrix_.AsInverse());
+		//program_->applyUniform("CameraPosition", CameraPosition);
 
 		// apply each material separately (use the idea that material state changes are worse than geometry ones
-		for (auto libIt = pSSG->materials.begin(); libIt != pSSG->materials.end(); libIt++) {
-			SimpleMaterialLibrary& mtllib = libIt->second;
-			std::string mtllibName = mtllib.name;
+		for (auto& [index, mtllib] : pSSG->materials) {
 			GLuint mtllibId = pSSG->materials.GetLibraryId(mtllib.name);
 			pSSG->materials.SetLibrary(mtllib.name);
 
 			// loop through each material
-			for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end(); mtlIt++) {
-				GLuint mtlId = mtlIt->first;
+			for (auto& [mtlId, mtl] : mtllib.mtls) {
 				std::string mtlName = pSSG->materials.GetMaterialName(mtlId);
-				SimpleMaterial& mtl = mtlIt->second;
 				pSSG->materials.SetMaterial(mtlName);
 
-				if (useMaterials)
-					applyMaterialToCurrentProgram(mtl, useMaps);
+				if (useMaterials) applyMaterialToCurrentProgram(mtl, useMaps);
 
 				// loop through each geometry object
-				for (auto geoIt = pSSG->geometry.begin(); geoIt != pSSG->geometry.end(); geoIt++) {
-					SimpleGeometryGroup& geo = geoIt->second;
+				for (auto& [geoId, geo] : pSSG->geometry) {
 					GLuint objectId = geo.objectId;
 					GLuint groupId = 0;
-					renderer.ApplyIdToMtlNames(mtlName, mtlIt->first);
+					renderer.ApplyIdToMtlNames(mtlName, mtlId);
 
 					// Apply object specific uniforms like transformation matrices
-					RendererUniform ModelViewMatrix;
-					RendererUniform SunShadowBiasMatrix;
-					RendererUniform SunShadowProjectionMatrix;
-					RendererUniform SunShadowViewMatrix;
-					RendererUniform SunShadowInverseViewMatrix;
+					RendererUniform WorldMatrix;
+					//RendererUniform SunShadowBiasMatrix;
+					//RendererUniform SunShadowProjectionMatrix;
+					//RendererUniform SunShadowViewMatrix;
+					//RendererUniform SunShadowInverseViewMatrix;
 					Matrix4f totalTransform = geo.transform * geo.addlTransform;
-					ModelViewMatrix = totalTransform;
+					WorldMatrix = totalTransform;
 
-					SunShadowBiasMatrix = pSSG->environment.sunShadowBiasMatrix;
-					SunShadowProjectionMatrix = pSSG->environment.sunShadowProjectionMatrix;
-					SunShadowViewMatrix = pSSG->environment.sunShadowViewMatrix;
-					SunShadowInverseViewMatrix = pSSG->environment.sunShadowInverseViewMatrix;
+					//SunShadowBiasMatrix = pSSG->environment.sunShadowBiasMatrix;
+					//SunShadowProjectionMatrix = pSSG->environment.sunShadowProjectionMatrix;
+					//SunShadowViewMatrix = pSSG->environment.sunShadowViewMatrix;
+					//SunShadowInverseViewMatrix = pSSG->environment.sunShadowInverseViewMatrix;
 
-					program_->applyUniform("ModelViewMatrix", ModelViewMatrix);
-					program_->applyUniform("SunShadowBiasMatrix", SunShadowBiasMatrix);
-					program_->applyUniform("SunShadowProjectionMatrix", SunShadowProjectionMatrix);
-					program_->applyUniform("SunShadowViewMatrix", SunShadowViewMatrix);
-					program_->applyUniform("SunShadowInverseViewMatrix", SunShadowInverseViewMatrix);
+					program_->applyUniform("WorldMatrix", WorldMatrix);
+					//program_->applyUniform("SunShadowBiasMatrix", SunShadowBiasMatrix);
+					//program_->applyUniform("SunShadowProjectionMatrix", SunShadowProjectionMatrix);
+					//program_->applyUniform("SunShadowViewMatrix", SunShadowViewMatrix);
+					//program_->applyUniform("SunShadowInverseViewMatrix", SunShadowInverseViewMatrix);
 
 					// Now iterate through each object and render it with this material
 					if (objectId && groupId && mtllibId && mtlId)
@@ -621,18 +628,19 @@ namespace Fluxions
 				if (pMap) {
 					if (pMap->cached.unitId <= 0)
 						pMap->cached.unitId = getTexUnit();
-					pMap->cached.samplerId = pMap->cached.textureObject.getSamplerId();
-					pMap->cached.textureId = pMap->cached.textureObject.getTextureId();
-					pMap->cached.textureObject.bind(pMap->cached.unitId, false);
-					glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0);
+					// TODO: Renable texture mapping
+					//pMap->cached.samplerId = pMap->cached.textureObject.getSamplerId();
+					//pMap->cached.textureId = pMap->cached.textureObject.getTextureId();
+					//pMap->cached.textureObject.bind(pMap->cached.unitId, false);
+					//glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0);
 
-					if (pMap->cached.samplerId == 0) {
-						glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);
-						glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);
-						glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_WRAP_R, GL_REPEAT);
-						glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-						glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					}
+					//if (pMap->cached.samplerId == 0) {
+					//	glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);
+					//	glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);
+					//	glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_WRAP_R, GL_REPEAT);
+					//	glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					//	glTexParameterf(pMap->cached.textureObject.getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					//}
 
 					pMap->cached.map_loc = -1;
 					pMap->cached.map_mix_loc = -1;
@@ -738,7 +746,8 @@ namespace Fluxions
 		for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
 			SimpleMap* pMap = tmapIt->second;
 			if (pMap) {
-				FxBindTexture(pMap->cached.unitId, pMap->cached.textureObject.getTarget(), 0);
+				//FxBindTexture(pMap->cached.unitId, pMap->cached.textureObject.getTarget(), 0);
+				// TODO: Bind Texture
 
 				glUniform1i(pMap->cached.map_loc, 0);
 				glUniform1f(pMap->cached.map_mix_loc, 0.0f);
@@ -860,8 +869,8 @@ namespace Fluxions
 		if (!post.abo) {
 			constexpr float w = 1.0f;
 			constexpr float h = 1.0f;
-			constexpr float x = 0.0f;
-			constexpr float y = 0.0f;
+			constexpr float x = -1.0f;
+			constexpr float y = -1.0f;
 			constexpr float z = 0.0f;
 			constexpr float s1 = 0.0f;
 			constexpr float t1 = 0.0f;
@@ -900,7 +909,7 @@ namespace Fluxions
 		if (!pRendererConfig->rc_program_ptr) post.usable_ = false;
 		if (!post.abo) post.usable_ = false;
 		if (!post.program) post.usable_ = false;
-		if (!post.vloc < 0) post.usable_ = false;
+		if (post.vloc < 0) post.usable_ = false;
 		return post.usable_;
 	}
 
@@ -949,31 +958,36 @@ namespace Fluxions
 	void RendererGLES30::_renderSceneGraph() {
 		Hf::StopWatch stopwatch;
 		if (!areBuffersBuilt) buildBuffers();
-		if (!applyRenderConfig()) return;
+
+		pProgram->use();
+		applyGlobalSettingsToCurrentProgram();
+		applySpheresToCurrentProgram();
 
 		if (pRendererConfig->isCubeMap) {
-			projectionMatrix.LoadIdentity();
-			projectionMatrix.Perspective(90.0f, 1.0f,
-										 pRendererConfig->viewportZNear,
-										 pRendererConfig->viewportZFar);
-			Vector4f cameraPosition(0, 0, 0, 1);
-			cameraPosition = cameraMatrix * cameraPosition;
-			if (pRendererConfig->defaultCubeFace >= 0 && pRendererConfig->defaultCubeFace < 6) {
-				cameraMatrix.LoadIdentity();
-				cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + pRendererConfig->defaultCubeFace);
-				cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-				render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
-			}
-			else {
-				for (int i = 0; i < 6; i++) {
-					cameraMatrix.LoadIdentity();
-					cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-					cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
-					render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
-				}
-			}
+			//projectionMatrix.LoadIdentity();
+			//projectionMatrix.Perspective(90.0f, 1.0f,
+			//							 pRendererConfig->viewportZNear,
+			//							 pRendererConfig->viewportZFar);
+			//Vector4f cameraPosition(0, 0, 0, 1);
+			//cameraPosition = cameraMatrix * cameraPosition;
+			//if (pRendererConfig->defaultCubeFace >= 0 && pRendererConfig->defaultCubeFace < 6) {
+			//	cameraMatrix.LoadIdentity();
+			//	cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + pRendererConfig->defaultCubeFace);
+			//	cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+			//	render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
+			//}
+			//else {
+			//	for (int i = 0; i < 6; i++) {
+			//		cameraMatrix.LoadIdentity();
+			//		cameraMatrix.Translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+			//		cameraMatrix.CubeMatrix(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
+			//		render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
+			//	}
+			//}
 		}
 		else {
+			Matrix4f cameraMatrix;
+			Matrix4f projectionMatrix;
 			render(pProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly, projectionMatrix, cameraMatrix);
 		}
 
@@ -984,15 +998,15 @@ namespace Fluxions
 	void RendererGLES30::buildBuffers() {
 		if (!validate()) return;
 		renderer.reset();
-		for (auto it = pSSG->geometry.begin(); it != pSSG->geometry.end(); it++) {
-			SimpleGeometryGroup& geo = it->second;
+		for (auto& [geoindex, geo] : pSSG->geometry) {
 			renderer.SetCurrentObjectId(geo.objectId);
 			renderer.SetCurrentMtlLibId(geo.mtllibId);
 			renderer.SetCurrentObjectName(geo.objectName);
 			renderer.SetCurrentMtlLibName(geo.mtllibName);
 			renderer.NewObject();
-			// pSSG->geometryObjects[geo.objectId].Render(renderer);
-			HFLOGDEBUGFIRSTRUNCOUNTMSG(5, "NEED TO RENDER OBJ_STATIC_MODEL");
+			renderer.DrawOBJ(pSSG->geometryObjects[geo.objectId]);
+			//pSSG->geometryObjects[geo.objectId].Render(renderer);
+			//HFLOGDEBUGFIRSTRUNCOUNTMSG(5, "NEED TO RENDER OBJ_STATIC_MODEL");
 		}
 		renderer.AssignMaterialIds(pSSG->materials);
 		renderer.SetCurrentMtlLibName("");

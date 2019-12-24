@@ -77,7 +77,7 @@ namespace Fluxions
 					if (Surfaces.size() != 0) {
 						Surfaces[curSurface].count = (int)faceList.size() * 3;
 
-						Hf::Log.info("%s(): %s ... adding %d new faces starting at %d to %s", __FUNCTION__, fpi.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
+						HFLOGINFO("%s ... adding %d new faces starting at %d to %s", fpi.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
 
 						// 2. add indices (triangles)
 						for (auto it = faceList.begin(); it != faceList.end(); it++) {
@@ -97,12 +97,12 @@ namespace Fluxions
 				if (str == "o") {
 					linecount = 0;
 					istr >> objectName;
-					Hf::Log.info("%s(): %s ... adding new object %s", __FUNCTION__, fpi_orig.fname.c_str(), objectName.c_str());
+					HFLOGINFO("%s ... adding new object %s", fpi_orig.fname.c_str(), objectName.c_str());
 				}
 				else if (str == "g") {
 					linecount = 0;
 					istr >> surfaceName;
-					Hf::Log.info("%s(): %s ... changing surface name to %s", __FUNCTION__, fpi_orig.fname.c_str(), surfaceName.c_str());
+					HFLOGINFO("%s ... changing surface name to %s", fpi_orig.fname.c_str(), surfaceName.c_str());
 					Surfaces[curSurface].surfaceName = surfaceName;
 				}
 				else if (str == "usemtl") {
@@ -112,7 +112,7 @@ namespace Fluxions
 					if (Surfaces.size() != 0 && !faceList.empty()) {
 						Surfaces[curSurface].count = (int)faceList.size() * 3;
 
-						Hf::Log.info("%s(): %s ... adding %d new faces startnig at %d to %s", __FUNCTION__, fpi_orig.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
+						HFLOGINFO("%s ... adding %d new faces starting at %d to %s", fpi_orig.fname.c_str(), faceList.size(), first, Surfaces[curSurface].surfaceName.c_str());
 
 						// 2. add indices (triangles)
 						for (auto it = faceList.begin(); it != faceList.end(); it++) {
@@ -136,11 +136,11 @@ namespace Fluxions
 
 					istr >> str;
 					Surfaces[curSurface].materialName = str;
-					Hf::Log.info("%s(): %s ... using material %s", __FUNCTION__, fpi_orig.fname.c_str(), str.c_str());
+					HFLOGINFO("%s ... using material %s", fpi_orig.fname.c_str(), str.c_str());
 				}
 				else if (str == "mtllib") {
 					istr >> materialLibrary;
-					Hf::Log.info("%s(): %s ... ignoring mtllib %s", __FUNCTION__, fpi_orig.fname.c_str(), materialLibrary.c_str());
+					HFLOGINFO("%s ... ignoring mtllib %s", fpi_orig.fname.c_str(), materialLibrary.c_str());
 				}
 				else if (str == "v") {
 					istr >> v[0] >> v[1] >> v[2];
@@ -247,7 +247,7 @@ namespace Fluxions
 			if (size < 0)
 				scale = (float)(-2 * size / BoundingBox.MaxSize());
 
-			Hf::Log.info("%s(): %s ... scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), scale);
+			HFLOGINFO("%s ... scale is %f", fpi_orig.fname.c_str(), scale);
 			for (auto it = vertexMap.begin(); it != vertexMap.end(); it++) {
 				if (size < 0)
 					it->second.position -= BoundingBox.Center();
@@ -274,7 +274,7 @@ namespace Fluxions
 
 				Vertices.push_back(it->second);
 			}
-			Hf::Log.info("%s(): %s ... max uniform scale is %f", __FUNCTION__, fpi_orig.fname.c_str(), BoundingBox.MaxSize());
+			HFLOGINFO("%s ... max uniform scale is %f", fpi_orig.fname.c_str(), BoundingBox.MaxSize());
 
 			ComputeTangentVectors();
 		}
@@ -333,7 +333,7 @@ namespace Fluxions
 
 		if (cacheDoesNotExist) {
 			// save a cache
-			Hf::Log.infofn(__FUNCTION__, "Writing cache %s", cache_filename.c_str());
+			HFLOGINFO("Writing cache %s", cache_filename.c_str());
 
 			std::ofstream fout(cache_filename, std::ios::binary);
 
@@ -367,14 +367,14 @@ namespace Fluxions
 			}
 
 			fout.close();
-			Hf::Log.info("%s(): %s is finished loading.", __FUNCTION__, fpi_orig.fname.c_str());
+			HFLOGINFO("%s is finished loading.", fpi_orig.fname.c_str());
 		}
 
 		return true;
 	}
 
 	bool OBJStaticModel::SaveOBJ(const std::string& filename) const {
-		Hf::Log.infofn(__FUNCTION__, "Writing OBJ %s", filename.c_str());
+		HFLOGINFO("Writing OBJ %s", filename.c_str());
 
 		std::ofstream fout(filename.c_str());
 		// 1. Output Vertices
@@ -413,7 +413,7 @@ namespace Fluxions
 	}
 
 	//void OBJStaticModel::SavePrecompiled(const std::string& filename, const std::string objname) const {
-	//	Hf::Log.infofn(__FUNCTION__, "Writing precompiled %s", filename.c_str());
+	//	HFLOGINFO("Writing precompiled %s", filename.c_str());
 
 	//	std::string outFilename = filename + ".cpp";
 	//	std::ofstream fout(outFilename.c_str());

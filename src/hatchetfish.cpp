@@ -162,10 +162,7 @@ namespace Hf
 		ostr << buffer;
 		lastMessage = ostr.str();
 
-		//size_t lines = std::min(history.size(), maxHistoryLines);
-		if (history.size() > maxHistoryLines)
-			history.erase(history.begin(), history.end() - maxHistoryLines + 1);
-		history.push_back(lastMessage);
+		_addHistory(lastMessage);
 
 		return lastMessage;
 	}

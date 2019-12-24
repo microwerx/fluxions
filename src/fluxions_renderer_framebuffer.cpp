@@ -131,6 +131,7 @@ namespace Fluxions
 			else {
 				rt.pGpuTexture->create();
 				rt.pGpuTexture->createStorage(rt.internalformat, width_, height_, rt.format, rt.type);
+				rt.pGpuTexture->setDefaultParameters();
 				rt.object = rt.pGpuTexture->getTexture();
 				if (rt.target == GL_TEXTURE_CUBE_MAP) {
 					glFramebufferTexture(GL_FRAMEBUFFER, rt.attachment, rt.object, 0);

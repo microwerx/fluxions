@@ -130,14 +130,14 @@ namespace Fluxions
 				std::string name = ReadString(istr);
 				std::string shader = ReadString(istr);
 				AddMapShader(name, shader);
-				Hf::Log.info("%s(): newmap %s", __FUNCTION__, shader.c_str());
+				HFLOGINFO("newmap %s", shader.c_str());
 			}
 			else if (str == "newmtl") {
 				std::string name = ReadString(istr);
 				CreateMaterial(name);
 				SetMaterialDefaults(mtls[name]);
 				curmtl = currentMtlPtr;
-				Hf::Log.info("%s(): newmtl %s", __FUNCTION__, name.c_str());
+				HFLOGINFO("newmtl %s", name.c_str());
 			}
 			else if (curmtl == nullptr) {
 			} // do nothing from now on because we're null
@@ -421,7 +421,7 @@ namespace Fluxions
 		GLuint id = currentMtlLibPtr->maps.Create(filename);
 		currentMtlLibPtr->maps[id].mapId = id;
 		currentMtlLibPtr->maps[id].mapName = filename;
-		if (TestIfFileExists(path + "/" + filename))
+		if (path.back() != '/' && TestIfFileExists(path + "/" + filename))
 			currentMtlLibPtr->maps[id].pathname = path + "/" + filename;
 		else if (TestIfFileExists(path + filename))
 			currentMtlLibPtr->maps[id].pathname = path + filename;
@@ -566,17 +566,20 @@ namespace Fluxions
 		return handle;
 	}
 
-	void SimpleMaterialSystem::LoadMaps() {
+	void SimpleMaterialSystem::FindMapPaths(const std::vector<std::string>& pathsToTry) {
 		maps_paths.clear();
 
 		//for (auto libIt = mtllibs.begin(); libIt != mtllibs.end(); libIt++) {
 		for (auto& [mtllibk, mtllib]: mtllibs) {
 			//for (auto mapIt = libIt->second.maps.begin(); mapIt != libIt->second.maps.end(); mapIt++) {
 			for (auto& [mapk, map]: mtllib.maps) {
-				if (!map.pathname.empty()) {
-					map.cached.textureObject.loadTexture2D(map.pathname);
-					map.cached.textureId = map.cached.textureObject.getTextureId();
-					maps_paths[map.mapName] = map.pathname;
+				if (map.pathname.empty()) continue;
+				std::string path = FindPathIfExists(map.pathname, pathsToTry);
+				if (!path.empty()) {
+					// TODO: Renable texture mapping
+					//map.cached.textureObject.loadTexture2D(map.pathname);
+					//map.cached.textureId = map.cached.textureObject.getTextureId();
+					maps_paths[map.mapName] = path;
 				}
 			}
 		}

@@ -35,12 +35,18 @@ namespace Fluxions
 	}
 
 	void RendererContext::kill() {
+		for (auto& ro : rendererConfigs) { ro.second.kill(); }
+		for (auto& ro : programs) { ro.second.kill(); }
+		for (auto& ro : fbos) { ro.second.kill(); }
+		for (auto& ro : texture2Ds) { ro.second.kill(); }
+		for (auto& ro : textureCubes) { ro.second.kill(); }
+		for (auto& ro : renderers) { ro.second.kill(); }
+
 		paths.clear();
 		rendererConfigs.clear();
 		programs.clear();
 		fbos.clear();
 		samplers.clear();
-		textures.clear();
 		texture2Ds.clear();
 		textureCubes.clear();
 		renderers.clear();
@@ -378,6 +384,15 @@ namespace Fluxions
 		}
 	}
 
+	void RendererContext::loadMaps(const std::map<std::string, std::string>& maps_paths) {
+		for (auto& [map, path] : maps_paths) {
+			if (texture2Ds.count(map)) continue;
+			texture2Ds[map].init(map, this);
+			texture2Ds[map].mappath = path;
+		}
+		loadTextures();
+	}
+
 	void RendererContext::makeFramebuffers() {
 		for (auto& [k, fbo] : fbos) {
 			fbo.make();
@@ -556,6 +571,7 @@ namespace Fluxions
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
+		bool svalarg3 = k_sval(args, 3, arg3);
 		static const std::string WRITEFBO{ "writefbo" };
 		static const std::string READFBO{ "readfbo" };
 		static const std::string PROGRAM{ "program" };
@@ -568,7 +584,9 @@ namespace Fluxions
 		static const std::string ZFAR{ "zfar" };
 		static const std::string CAMERA{ "camera" };
 		static const std::string PROJECTION{ "projection" };
+		static const std::string CLEARDEPTH{ "cleardepth" };
 		static const std::string CLEARCOLOR{ "clearcolor" };
+		static const std::string DEPTHTEST{ "depthtest" };
 		static const std::string VIEWPORT{ "viewport" };
 		static const std::string SCISSOR{ "scissor" };
 		static const std::string PERSPECTIVE{ "perspective" };
@@ -579,6 +597,8 @@ namespace Fluxions
 		static const std::string SKYBOX{ "skybox" };
 		static const std::string TEXTURE2D{ "texture2D" };
 		static const std::string TEXTURECUBE{ "textureCube" };
+		static const std::string PRETRANSFORM{ "pretransform" };
+		static const std::string POSTTRANSFORM{ "posttransform" };
 
 		if (svalarg1 && pcurRendererConfig) {
 			if (arg1 == ZONLY) {
@@ -595,6 +615,10 @@ namespace Fluxions
 			}
 			else if (arg1 == AUTORESIZE) {
 				pcurRendererConfig->viewportAutoresize = true;
+				return true;
+			}
+			else if (arg1 == CLEARDEPTH) {
+				pcurRendererConfig->clearDepthBuffer = true;
 				return true;
 			}
 			else if (arg1 == CLEARCOLOR && count == 6) {
@@ -619,7 +643,8 @@ namespace Fluxions
 				int w = k_ivalue(args, 2);
 				int h = k_ivalue(args, 3);
 				if (w > 0 && h > 0) {
-					pcurRendererConfig->setViewport = true;
+					pcurRendererConfig->viewportRect.x = 0;
+					pcurRendererConfig->viewportRect.y = 0;
 					pcurRendererConfig->viewportRect.w = w;
 					pcurRendererConfig->viewportRect.h = h;
 					pcurRendererConfig->updateViewport();
@@ -632,7 +657,6 @@ namespace Fluxions
 				int w = k_ivalue(args, 4);
 				int h = k_ivalue(args, 5);
 				if (w > 0 && h > 0) {
-					pcurRendererConfig->setViewport = true;
 					pcurRendererConfig->viewportRect.x = x;
 					pcurRendererConfig->viewportRect.y = y;
 					pcurRendererConfig->viewportRect.w = w;
@@ -640,6 +664,13 @@ namespace Fluxions
 					pcurRendererConfig->updateViewport();
 					return true;
 				}
+			}
+			else if (arg1 == DEPTHTEST && count == 3) {
+				GLenum compare = glNameTranslator.getEnum(arg2);
+				if (compare < GL_LESS || compare > GL_ALWAYS) return false;
+				pcurRendererConfig->enableDepthTest = true;
+				pcurRendererConfig->depthComparisonTest = compare;
+				return true;
 			}
 			else if (arg1 == SCISSOR && count == 6) {
 				int x = k_ivalue(args, 2);
@@ -660,13 +691,33 @@ namespace Fluxions
 				float znear = (float)k_dvalue(args, 3);
 				float zfar = (float)k_dvalue(args, 4);
 				if (fovInDegrees > 0 && znear > 0 && zfar > znear) {
-					pcurRendererConfig->setViewport = true;
+					pcurRendererConfig->useSceneProjection = false;
 					pcurRendererConfig->viewportFovInDegrees = fovInDegrees;
 					pcurRendererConfig->viewportZNear = znear;
 					pcurRendererConfig->viewportZFar = zfar;
 					pcurRendererConfig->updateViewport();
 					return true;
 				}
+			}
+			else if (arg1 == PRETRANSFORM && count == 18) {
+				pcurRendererConfig->useSceneCamera = false;
+				pcurRendererConfig->preCameraMatrix = Matrix4f(
+					(float)args[2].dval, (float)args[3].dval, (float)args[4].dval, (float)args[5].dval,
+					(float)args[6].dval, (float)args[7].dval, (float)args[8].dval, (float)args[9].dval,
+					(float)args[10].dval, (float)args[11].dval, (float)args[12].dval, (float)args[13].dval,
+					(float)args[14].dval, (float)args[15].dval, (float)args[16].dval, (float)args[17].dval
+				);
+				return true;
+			}
+			else if (arg1 == POSTTRANSFORM && count == 18) {
+				pcurRendererConfig->useSceneCamera = false;
+				pcurRendererConfig->postCameraMatrix = Matrix4f(
+					(float)args[2].dval, (float)args[3].dval, (float)args[4].dval, (float)args[5].dval,
+					(float)args[6].dval, (float)args[7].dval, (float)args[8].dval, (float)args[9].dval,
+					(float)args[10].dval, (float)args[11].dval, (float)args[12].dval, (float)args[13].dval,
+					(float)args[14].dval, (float)args[15].dval, (float)args[16].dval, (float)args[17].dval
+				);
+				return true;
 			}
 			else if (svalarg2) {
 				if (arg1 == DRAW && arg2 == SKYBOX) {

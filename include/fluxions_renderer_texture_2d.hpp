@@ -8,6 +8,7 @@ namespace Fluxions
 	class RendererTexture2D : public RendererGpuTexture {
 	public:
 		RendererTexture2D();
+		~RendererTexture2D() override;
 
 		const char* type() const override;
 	};

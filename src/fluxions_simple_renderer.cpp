@@ -94,6 +94,34 @@ namespace Fluxions
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
+	void SimpleRenderer<IndexType, GLIndexType>::DrawOBJ(const OBJStaticModel& obj) {
+		int curIndex;
+
+		vertexCount += (int)obj.Vertices.size();
+
+		Begin(GL_TRIANGLES, true);
+		curIndex = 0;
+		for (const auto& vertex : obj.Vertices) {
+			VertexAttrib4f(1, vertex.normal.x, vertex.normal.y, vertex.normal.z, 1.0f);
+			VertexAttrib4f(2, vertex.texcoord.x, vertex.texcoord.y, 0.0f, 1.0f);
+			VertexAttrib4f(0, vertex.position.x, vertex.position.y, vertex.position.z, 1.0f);
+			curIndex++;
+		}
+		End();
+
+		for (const auto& surface : obj.Surfaces) {
+			triangleCount += surface.count / 3;
+			SetCurrentMtlName(surface.materialName);
+			Begin(GL_TRIANGLES, true);
+			for (unsigned i = surface.first; i < surface.first + surface.count; i++) {
+				Index((IndexType)obj.Indices[i]);
+			}
+			End();
+		}
+		SetCurrentMtlName("");
+	}
+
+	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::ApplyIdToObjectNames(const std::string& objectName, GLuint id) {
 		for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++) {
 			if (surface->objectName == objectName) {
@@ -210,7 +238,7 @@ namespace Fluxions
 		// a baseIndex of < 0 means to use the current surface first vertex as 0
 		for_each(indices.begin(), indices.end(), [&](IndexType i) {
 			Index(i);
-			});
+				 });
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -489,8 +517,7 @@ namespace Fluxions
 		currentProgramId = 0;
 
 		for (auto& [pname, program] : programs) {
-			if (program.use_count() > 1)
-			{
+			if (program.use_count() > 1) {
 				HFLOGWARN("Program count not 1: %i", program->getProgram());
 			}
 			program.reset();

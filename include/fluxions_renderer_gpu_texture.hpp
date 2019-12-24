@@ -21,16 +21,18 @@ namespace Fluxions
 		bool useMipMaps = true;
 
 		std::string mappath;
+		bool maploaded{ false };
 		std::string uniformname;
 		std::string samplername;
 
 		RendererGpuTexture(GLenum target);
-		~RendererGpuTexture();
+		~RendererGpuTexture() override;
 
 		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
 		const char* type() const override;
 
+		bool loadMap(const std::string& path, bool generateMipmaps);
 		bool loadMap();
 
 		void bind(int unit);

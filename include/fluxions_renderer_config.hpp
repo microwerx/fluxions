@@ -14,9 +14,11 @@ namespace Fluxions
 		bool useMaps = false;
 		bool useMaterials = false;
 		bool useZOnly = false;
-		bool useSceneCamera = false;
 		bool isCubeMap = false;
-		bool recomputeProjectionMatrix = false;
+		// bool recomputeProjectionMatrix = false;
+
+		bool useSceneProjection = true;
+		bool useSceneCamera = true;
 
 		bool renderSkyBox = false;
 		bool renderSceneGraph = false;
@@ -48,9 +50,9 @@ namespace Fluxions
 		GLenum blendFuncDstFactor = GL_ONE_MINUS_SRC_ALPHA;
 
 		// DEPRECATED
-		RendererProgramPtr zShaderProgram{ nullptr };
+		//RendererProgramPtr zShaderProgram{ nullptr };
 		// DEPRECATED
-		RendererProgramPtr shaderProgram{ nullptr };
+		//RendererProgramPtr shaderProgram{ nullptr };
 
 		std::string rc_program;
 		RendererProgram* rc_program_ptr{ nullptr };
@@ -58,8 +60,8 @@ namespace Fluxions
 		std::string ssg_camera;
 		std::string ssg_projection;
 
-		bool renderToFBO{ false };
-		RendererFramebuffer fbo;
+		//bool renderToFBO{ false };
+		//RendererFramebuffer fbo;
 		using string_fboptr_pair = std::pair<std::string, RendererFramebuffer*>;
 		using string_fboptr_vector = std::vector<string_fboptr_pair>;
 		string_fboptr_vector writeFBOs;
@@ -74,7 +76,6 @@ namespace Fluxions
 		GLint fbo_color_map = 0;
 		GLint fbo_depth_map = 0;
 
-		bool setViewport = false;
 		bool viewportAutoresize = false;
 		Recti viewportRect = Recti(0, 0, 64, 64);
 		GLfloat viewportFovInDegrees = 45.0f;

@@ -6,6 +6,8 @@ namespace Fluxions
 	RendererTextureCube::RendererTextureCube()
 		: RendererGpuTexture(GL_TEXTURE_CUBE_MAP) {}
 
+	RendererTextureCube::~RendererTextureCube() {}
+
 	const char* RendererTextureCube::type() const noexcept {
 		return "RendererTextureCube";
 	}
