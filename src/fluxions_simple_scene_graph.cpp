@@ -267,22 +267,16 @@ namespace Fluxions
 		pathsToTry.push_back("./");
 
 		// proceed to parse the file and read each line.
-		int linecount = 0;
-		int totallinecount = 0;
-		while (1) {
+		while (fin) {
 			std::string line;
 			// read a line from the file and set up a string stream.
 			getline(fin, line);
+			if (!fin && !fin.eof())	break;
+
 			if (line.empty()) continue;
 			if (line[0] == '#') continue;
 
 			sceneFileLines.push_back(line);
-			linecount++;
-			totallinecount++;
-
-			if (!fin) {
-				break;
-			}
 
 			std::istringstream istr(line);
 			std::string token;
@@ -522,14 +516,14 @@ namespace Fluxions
 
 	bool SimpleSceneGraph::ReadGeometryGroup(const std::string& type, std::istream& istr) {
 		std::string geoFilename = ReadString(istr);
-		FilePathInfo fpi(geoFilename);
-		std::string filenameToTry;
-		fpi.FindFileIfExists(pathsToTry, filenameToTry);
-		if (filenameToTry.empty()) {
+		std::string path = FindPathIfExists(geoFilename, pathsToTry);
+		FilePathInfo fpi(path);
+		if (path.empty()) {
 			HFLOGERROR("OBJ file %s was not found.", geoFilename.c_str());
+			return false;
 		}
 		else {
-			if (ReadObjFile(filenameToTry, fpi.fname)) {
+			if (ReadObjFile(path, fpi.fname)) {
 				GLuint id = geometry.Create(fpi.fname);
 
 				SimpleGeometryGroup geometryGroup;
@@ -541,8 +535,7 @@ namespace Fluxions
 				geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
 
 				geometry[id] = geometryGroup;
-				Hf::Log.info("%s(): OBJ file %s loaded.", __FUNCTION__,
-							 fpi.fname.c_str());
+				HFLOGINFO("OBJ file %s loaded.", fpi.fname.c_str());
 
 				// Transform the bounding box of the model into world coordinates
 				Vector4f tminBound = geometryGroup.transform *
@@ -756,6 +749,7 @@ namespace Fluxions
 			Vector3f(0, 1, 0));
 		environment.sunShadowInverseViewMatrix =
 			environment.sunShadowViewMatrix.AsInverse();
+		return true;
 	}
 
 	bool SimpleSceneGraph::ReadPointLight(const std::string& type, std::istream& istr) {
@@ -767,6 +761,7 @@ namespace Fluxions
 		spl.position = ReadVector3f(istr);
 
 		pointLights.push_back(spl);
+		return true;
 	}
 	
 	bool SimpleSceneGraph::ReadSphere(const std::string& type, std::istream& istr) {
@@ -781,6 +776,7 @@ namespace Fluxions
 		sphere.mtlId = materials.GetMaterialId(mtlName);
 		sphere.objectId = id;
 		spheres[id] = sphere;
+		return true;
 	}
 
 	//void SimpleSceneGraph::initTexUnits() {
