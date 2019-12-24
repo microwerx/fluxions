@@ -31,6 +31,46 @@ namespace Fluxions
 {
 	class RendererContext;
 
+	struct unit_manager {
+		static constexpr int MaxUnits = 16;
+		int count{ 0 };
+		int index{ 0 };
+		int targets[MaxUnits]{ 0 };
+		int units[MaxUnits]{ 0 };
+		unsigned textures[16]{ 0 };
+		int ulocs[MaxUnits]{ 0 };
+
+		unit_manager() { clear(); }
+
+		void unit(int u) { units[index] = u; }
+		int unit() const { return units[index]; }
+		int unit(int i) const { return units[i]; }
+
+		void target(int t) { targets[index] = t; }
+		int target() const { return targets[index]; }
+		int target(int i) const { return targets[i]; }
+
+		void uniform_location(int loc) { ulocs[index] = loc; }
+		int uniform_location() const { return ulocs[index]; }
+		int uniform_location(int i) const { return units[i]; }
+
+		void texture(unsigned t) { textures[index] = t; }
+		unsigned texture() { return textures[index]; }
+		unsigned texture(int i) { return textures[i]; }
+
+		void add() { index = count; count++; }
+		void add(int unit_, int target_, unsigned texture_) {
+			add();
+			unit(unit_);
+			target(target_);
+			texture(texture_);
+		}
+
+		void first() { index = 0; }
+		void next() { index++; }
+		void clear() { memset((void*)this, 0, sizeof(this)); }
+	};
+
 	class RendererGLES30 : public RendererObject {
 	public:
 		RendererGLES30();
@@ -39,6 +79,7 @@ namespace Fluxions
 		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
 		const char* type() const override;
+		void invalidate_caches() override;
 
 		void buildBuffers();
 		void render();
@@ -93,7 +134,16 @@ namespace Fluxions
 		GLuint skybox_abo = 0;
 		GLuint skybox_eabo = 0;
 
-		GLuint post_abo = 0;
+		struct POSTINFO {
+			bool usable_ = false;
+			unsigned abo = 0;
+			unsigned program = 0;
+			int vloc = -1;
+			int tloc = -1;
+			~POSTINFO() { FxDeleteBuffer(&abo); }
+		} post;
+
+		unit_manager post_units;
 
 		void renderSingleImage();
 		void renderCubeImages();

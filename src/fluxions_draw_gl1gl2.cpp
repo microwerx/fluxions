@@ -208,6 +208,23 @@ GLsizei FxGetSizeOfBaseType(GLenum type) {
 	return 0;
 }
 
+const char* FxGetFramebufferStatusAsString(GLenum status) {
+#define IFTOSTRING(thing, value) \
+	if ((thing) == (value))      \
+		return (#value);
+
+	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT);
+	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER);
+	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER);
+	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT);
+	IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE);
+	IFTOSTRING(status, GL_FRAMEBUFFER_COMPLETE);
+	return "unknown status";
+
+#undef IFTOSTRING
+}
+
+
 GLint FxSetActiveTexture(GLint unit) {
 	if (g_MaxCombinedTextureUnits == 0) {
 		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &g_MaxCombinedTextureUnits);
@@ -254,10 +271,9 @@ bool FxBindSampler(GLint unit, GLuint sampler) {
 }
 
 bool FxDebugBindTexture(GLenum target, GLuint texture) {
-	GLenum e = glGetError();
+	while (glGetError() != GL_NO_ERROR);
 	glBindTexture(target, texture);
-	e = glGetError();
-	if (e != GL_NO_ERROR) {
+	while (glGetError() != GL_NO_ERROR) {
 		GLint id1, id2;
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &id1);
 		glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &id2);
@@ -267,6 +283,71 @@ bool FxDebugBindTexture(GLenum target, GLuint texture) {
 	}
 
 	return true;
+}
+
+bool FxCreateBuffer(GLenum target, unsigned& abo, GLsizeiptr size, const void* data, unsigned usage) {
+	if (!abo) {
+		glGenBuffers(1, &abo);
+	}
+	if (abo) {
+		glBindBuffer(target, abo);
+		glBufferData(target, size, data, usage);
+	}
+	return abo != 0;
+}
+
+void FxDeleteBuffer(GLuint* p) {
+	if (*p == 0) return;
+	glDeleteBuffers(1, p);
+	*p = 0;
+}
+
+void FxCreateRenderbuffer(GLuint* p) {
+	if (*p) {
+		FxDeleteRenderbuffer(p);
+	}
+	glGenRenderbuffers(1, p);
+	HFLOGDEBUG("Creating renderbuffer %i", *p);
+	glBindRenderbuffer(GL_FRAMEBUFFER, *p);
+}
+
+void FxDeleteRenderbuffer(GLuint* p) {
+	if (*p == 0) return;
+	HFLOGDEBUG("Deleting renderbuffer %i", *p);
+	glDeleteRenderbuffers(1, p);
+	*p = 0;
+}
+
+void FxCreateFramebuffer(GLuint* p) {
+	if (*p) {
+		FxDeleteFramebuffer(p);
+	}
+	glGenFramebuffers(1, p);
+	HFLOGDEBUG("Creating framebuffer %i", *p);
+	glBindFramebuffer(GL_FRAMEBUFFER, *p);
+}
+
+void FxDeleteFramebuffer(GLuint* p) {
+	if (*p == 0) return;
+	HFLOGDEBUG("Deleting framebuffer %i", *p);
+	glDeleteFramebuffers(1, p);
+	*p = 0;
+}
+
+GLuint FxCheckFramebufferStatus() {
+	GLuint fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+	if (fbo_status != GL_FRAMEBUFFER_COMPLETE) {
+		std::string msg = FxGetFramebufferStatusAsString(fbo_status);
+		HFLOGERROR("Framebuffer is not complete! --> %s", msg.c_str());
+	}
+
+	return fbo_status;
+}
+
+void FxClearScreenRgb(GLfloat r, GLfloat g, GLfloat b) {
+	glClearColor(r, g, b, 1.0f);
+	glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
 void FxGlutTestLitSolidTeapotScene(double fovy, double aspect) {

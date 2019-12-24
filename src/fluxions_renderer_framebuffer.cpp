@@ -2,25 +2,15 @@
 #include <fluxions_renderer_framebuffer.hpp>
 #include <fluxions_renderer_gpu_texture.hpp>
 
-#define IFTOSTRING(thing, value) \
-	if ((thing) == (value))      \
-		return (#value);
-
 namespace Fluxions
 {
-	const char* GetFramebufferStatusAsString(GLenum status) {
-		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT);
-		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER);
-		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER);
-		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT);
-		IFTOSTRING(status, GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE);
-		IFTOSTRING(status, GL_FRAMEBUFFER_COMPLETE);
-		return "unknown status";
-	}
-
 	RendererFramebuffer::RendererFramebuffer() {}
 
-	RendererFramebuffer::~RendererFramebuffer() {}
+	RendererFramebuffer::~RendererFramebuffer() {
+		for (auto& [k, rt] : renderTargets) {
+			delete rt.pGpuTexture;
+		}
+	}
 
 	void RendererFramebuffer::init(const std::string& name,
 								   RendererObject* pparent) {
@@ -39,7 +29,7 @@ namespace Fluxions
 	}
 
 	const char* RendererFramebuffer::status() const {
-		return GetFramebufferStatusAsString(fbo_status);
+		return FxGetFramebufferStatusAsString(fbo_status);
 	}
 
 	bool RendererFramebuffer::usable() const {
@@ -94,15 +84,15 @@ namespace Fluxions
 			break;
 		default:
 			rt.internalformat = GL_RGBA8;
-			rt.format = GL_RGBA;
+			rt.format = GL_BGRA;
 			rt.type = GL_UNSIGNED_BYTE;
 		}
 	}
 
 	void RendererFramebuffer::setDefaultParameters() {
 		projectionViewMatrix.LoadIdentity();
-		width = DefaultWidth;
-		height = DefaultHeight;
+		width_ = DefaultWidth;
+		height_ = DefaultHeight;
 		samples = DefaultSamples;
 		useMultisamples = false;
 		internalformat = GL_RGBA8;
@@ -112,80 +102,36 @@ namespace Fluxions
 	void RendererFramebuffer::deleteBuffers() {
 		if (fbo == 0)
 			return;
-		for (auto it = renderTargets.begin(); it != renderTargets.end(); it++) {
-			if (it->second.target == GL_RENDERBUFFER) {
-				glDeleteRenderbuffers(1, &(it->second.object));
-				it->second.object = 0;
-			}
-			else {
-				glDeleteTextures(1, &(it->second.object));
-				it->second.object = 0;
+		for (auto& [type, rt] : renderTargets) {
+			if (type == GL_RENDERBUFFER) {
+				FxDeleteRenderbuffer(&rt.object);
 			}
 		}
 		HFLOGDEBUG("Deleting framebuffer %i", fbo);
-		glDeleteFramebuffers(1, &fbo);
-		fbo = 0;
+		FxDeleteFramebuffer(&fbo);
 		dirty = false;
 	}
 
 	bool RendererFramebuffer::make() {
-		bool result = false;
-
 		if (fbo || dirty) {
 			deleteBuffers();
 		}
 
-		glGenFramebuffers(1, &fbo);
-		HFLOGDEBUG("Creating framebuffer %i", fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		FxCreateFramebuffer(&fbo);
 
-		for (auto it = renderTargets.begin(); it != renderTargets.end(); it++) {
-			RenderTarget& rt = it->second;
+		for (auto& [type, rt] : renderTargets) {
 			if (rt.target == GL_RENDERBUFFER) {
-				glGenRenderbuffers(1, &rt.object);
-				glBindRenderbuffer(rt.target, rt.object);
+				FxCreateRenderbuffer(&rt.object);
 				if (rt.useMultisamples)
-					glRenderbufferStorageMultisample(rt.target, rt.samples, rt.internalformat, rt.width, rt.height);
+					glRenderbufferStorageMultisample(rt.target, rt.samples, rt.internalformat, width_, height_);
 				else
-					glRenderbufferStorage(rt.target, rt.internalformat, rt.width, rt.height);
+					glRenderbufferStorage(rt.target, rt.internalformat, width_, height_);
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, rt.attachment, rt.target, rt.object);
 			}
 			else {
-				if (rt.pGpuTexture) {
-					rt.pGpuTexture->create();
-					rt.object = rt.pGpuTexture->getTexture();
-					rt.target = rt.pGpuTexture->getTarget();
-
-					rt.pGpuTexture->createStorage(rt.internalformat, rt.width, rt.height, rt.format, rt.type);
-				}
-				else {
-					glGenTextures(1, &rt.object);
-					FxBindTexture(0, rt.target, rt.object);
-					if (rt.target == GL_TEXTURE_CUBE_MAP) {
-						for (int face = 0; face < 6; face++) {
-							glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, rt.format, rt.width, rt.height, 0, rt.format, rt.type, nullptr);
-						}
-					}
-					if (rt.target == GL_TEXTURE_2D) {
-						if (rt.useMultisamples)
-							glTexStorage2DMultisample(rt.target, rt.samples, rt.internalformat, rt.width, rt.height, GL_TRUE);
-						else
-							glTexStorage2D(rt.target, rt.levels, rt.internalformat, rt.width, rt.height);
-					}
-					glTexParameterf(rt.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-					glTexParameterf(rt.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-					glTexParameterf(rt.target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-					glTexParameterf(rt.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-					glTexParameterf(rt.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					if (rt.attachment == GL_DEPTH_ATTACHMENT ||
-						rt.attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
-						glTexParameterf(rt.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-						glTexParameterf(rt.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-						//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-						//glTexEnvf(rt.target, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-					}
-					FxBindDefaultTextureAndSampler(rt.target);
-				}
+				rt.pGpuTexture->create();
+				rt.pGpuTexture->createStorage(rt.internalformat, width_, height_, rt.format, rt.type);
+				rt.object = rt.pGpuTexture->getTexture();
 				if (rt.target == GL_TEXTURE_CUBE_MAP) {
 					glFramebufferTexture(GL_FRAMEBUFFER, rt.attachment, rt.object, 0);
 				}
@@ -195,22 +141,10 @@ namespace Fluxions
 			}
 		}
 
-		fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		std::string msg = GetFramebufferStatusAsString(fbo_status);
-
-		if (fbo_status != GL_FRAMEBUFFER_COMPLETE)
-			result = false;
-		else
-			result = true;
-
-		if (!result) {
-			HFLOGERROR("Framebuffer is not complete!");
-		}
-
+		fbo_status = FxCheckFramebufferStatus();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 		dirty = false;
-		return result;
+		return usable();
 	}
 
 	void RendererFramebuffer::useForReading() {
@@ -225,12 +159,8 @@ namespace Fluxions
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	}
 
-	void RendererFramebuffer::restoreGLState() {
-		FxSetErrorMessage(__FILE__, __LINE__, "restoreGLState()");
-		// GLenum defaultBuffer = GL_BACK;
+	void RendererFramebuffer::unbind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		//glDrawBuffer(GL_BACK);// glDrawBuffers(1, &defaultBuffer);
-		FxSetDefaultErrorMessage();
 	}
 
 	void RendererFramebuffer::generateMipmaps() {
@@ -268,11 +198,10 @@ namespace Fluxions
 	}
 
 	void RendererFramebuffer::setDimensions(GLsizei newWidth, GLsizei newHeight) {
-		width = newWidth;
-		height = newHeight;
+		width_ = newWidth;
+		height_ = newHeight;
 		if (renderTargets.empty()) return;
-		renderTargets.back().second.width = newWidth;
-		renderTargets.back().second.height = newHeight;
+		dirty = true;
 	}
 
 	void RendererFramebuffer::setMapName(const std::string& mapName) {
@@ -323,8 +252,8 @@ namespace Fluxions
 		rt.internalformat = whichInternalformat;
 		_setFormats(rt);
 		rt.target = GL_RENDERBUFFER;
-		rt.width = width;
-		rt.height = height;
+		width_ = width_;
+		height_ = height_;
 		rt.samples = samples;
 		rt.useMultisamples = useMultisamples;
 		rt.object = 0;
@@ -337,14 +266,13 @@ namespace Fluxions
 		RenderTarget rt;
 		rt.attachment = attachment;
 		rt.pGpuTexture = new RendererGpuTexture(GL_TEXTURE_2D);
+		rt.pGpuTexture->init("fbo", this);
 		rt.internalformat = whichInternalformat;
 		_setFormats(rt);
 		rt.generateMipmaps = generateMipmaps;
-		rt.levels = generateMipmaps ? (int)(log(std::max(width, height)) / log(2.0)) : 1;
+		rt.levels = generateMipmaps ? (int)(log(std::max(width_, height_)) / log(2.0)) : 1;
 		rt.levels = std::max(1, rt.levels);
 		rt.object = 0;
-		rt.width = width;
-		rt.height = height;
 		rt.samples = samples;
 		rt.currentCubeFace = currentCubeFace;
 		rt.useMultisamples = useMultisamples;
@@ -361,11 +289,11 @@ namespace Fluxions
 		rt.internalformat = whichInternalformat;
 		_setFormats(rt);
 		rt.generateMipmaps = generateMipmaps;
-		rt.levels = generateMipmaps ? (int)(log(std::max(width, height)) / log(2.0)) : 1;
+		rt.levels = generateMipmaps ? (int)(log(std::max(width_, height_)) / log(2.0)) : 1;
 		rt.levels = std::max(1, rt.levels);
 		rt.object = 0;
-		rt.width = width;
-		rt.height = height;
+		width_ = width_;
+		height_ = height_;
 		rt.samples = samples;
 		rt.currentCubeFace = currentCubeFace;
 		rt.useMultisamples = useMultisamples;

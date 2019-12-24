@@ -20,15 +20,10 @@
 #include <cmath>
 #include <fluxions_renderer_gles30.hpp>
 #include <fluxions_renderer_context.hpp>
+#include <hatchetfish_stopwatch.hpp>
 
 namespace Fluxions
 {
-	void FxDeleteBuffers(GLuint* p) {
-		if (*p == 0) return;
-		glDeleteBuffers(1, p);
-		*p = 0;
-	}
-
 	//////////////////////////////////////////////////////////////////////
 	// RendererGLES30 ////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -43,7 +38,7 @@ namespace Fluxions
 
 		skybox_abo = 0;
 		skybox_eabo = 0;
-		post_abo = 0;
+		memset(&post, 0, sizeof(post));
 		pSSG = nullptr;
 		pRendererConfig = nullptr;
 		pProgram = nullptr;
@@ -66,15 +61,20 @@ namespace Fluxions
 		if (pProgram)
 			pProgram = nullptr;
 
-		FxDeleteBuffers(&skybox_abo);
-		FxDeleteBuffers(&skybox_eabo);
-		FxDeleteBuffers(&post_abo);
+		FxDeleteBuffer(&skybox_abo);
+		FxDeleteBuffer(&skybox_eabo);
+		FxDeleteBuffer(&post.abo);
 
 		RendererObject::kill();
 	}
 
 	const char* RendererGLES30::type() const {
 		return "RendererGLES30";
+	}
+
+	void RendererGLES30::invalidate_caches() {
+		post = POSTINFO();
+		post_units.clear();
 	}
 
 	void RendererGLES30::setSceneGraph(SimpleSceneGraph* pSSG_) {
@@ -96,8 +96,15 @@ namespace Fluxions
 		//if (pRendererConfig->renderToFBO)
 		//	pRendererConfig->fbo.use();
 
+		int writeFBOCount = 0;
 		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
+			if (fbo->unusable()) break;
 			fbo->useForWriting();
+			glViewport(0, 0, fbo->width(), fbo->height());
+			glClearColor(0.5f, 0.1f, 0.2f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			writeFBOCount++;
+			return true;
 		}
 
 		pProgram->use();
@@ -105,11 +112,13 @@ namespace Fluxions
 		applyGlobalSettingsToCurrentProgram();
 		applySpheresToCurrentProgram();
 
-		if (pRendererConfig->setViewport) {
-			glViewport(pRendererConfig->viewportRect.x,
-					   pRendererConfig->viewportRect.y,
-					   pRendererConfig->viewportRect.w,
-					   pRendererConfig->viewportRect.h);
+		if (!writeFBOCount) {
+			if (pRendererConfig->setViewport) {
+				glViewport(pRendererConfig->viewportRect.x,
+						   pRendererConfig->viewportRect.y,
+						   pRendererConfig->viewportRect.w,
+						   pRendererConfig->viewportRect.h);
+			}
 		}
 
 		if (pRendererConfig->enableScissorTest) {
@@ -190,7 +199,7 @@ namespace Fluxions
 		//	pRendererConfig->fbo.restoreGLState();
 
 		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
-			fbo->restoreGLState();
+			fbo->unbind();
 		}
 
 		for (auto& [map, t] : pRendererConfig->textures) {
@@ -754,7 +763,7 @@ namespace Fluxions
 	}
 
 	bool RendererGLES30::_initSkyBox() {
-		if (skybox_abo && skybox_eabo) return true;
+		if (skybox_abo && skybox_eabo && pSkyboxCube) return true;
 
 		constexpr GLfloat size = 50.0f;
 		GLfloat buffer[] = {
@@ -796,32 +805,32 @@ namespace Fluxions
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 		}
 
-		return (skybox_abo && skybox_eabo);
+		if (!pSkyboxCube && !renderskyboxname.empty()) {
+			pSkyboxCube = &pContext->textureCubes[renderskyboxname];
+		}
+
+		return (skybox_abo && skybox_eabo && pSkyboxCube);
 	}
 
 	void RendererGLES30::_renderSkyBox() {
+		Hf::StopWatch stopwatch;
 		if (!_initSkyBox()) return;
-		if (renderskyboxname.empty()) return;
 
 		Matrix4f skyboxCameraMatrix;
 		Matrix4f skyboxProjectionMatrix;
 		Matrix4f skyboxWorldMatrix;
 
+		static const std::string CameraMatrix{ "CameraMatrix" };
+		static const std::string ProjectionMatrix{ "ProjectionMatrix" };
+		static const std::string WorldMatrix{ "WorldMatrix" };
+
 		skyboxProjectionMatrix.PerspectiveY(90.0, 1.0, 1.0, 1000.0);
-
-		if (!pSkyboxCube) {
-			pSkyboxCube = &pContext->textureCubes[renderskyboxname];
-			return;
-		}
-		else {
-			pSkyboxCube->bind(0);
-		}
-
+		pSkyboxCube->bind(0);
 		pProgram->use();
 		pProgram->applyUniform(pSkyboxCube->uniformname, 0);
-		pProgram->applyUniform("CameraMatrix", pSSG->camera.viewMatrix);
-		pProgram->applyUniform("ProjectionMatrix", pRendererConfig->projectionMatrix);
-		pProgram->applyUniform("WorldMatrix", skyboxWorldMatrix);
+		pProgram->applyUniform(CameraMatrix, pSSG->camera.viewMatrix);
+		pProgram->applyUniform(ProjectionMatrix, pRendererConfig->projectionMatrix);
+		pProgram->applyUniform(WorldMatrix, skyboxWorldMatrix);
 
 		const std::string VERTEX_LOCATION{ "aPosition" };
 		const std::string TEXCOORD_LOCATION{ "aTexCoord" };
@@ -840,90 +849,105 @@ namespace Fluxions
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glUseProgram(0);
+		pSkyboxCube->unbind();
+		pRendererConfig->metrics_skybox_ms = stopwatch.Stop_msf();
 	}
 
 	bool RendererGLES30::_initPost() {
-		if (post_abo) return true;
+		if (post.usable_) return true;
 		if (!pRendererConfig) return false;
 
-		constexpr float w = 1.0f;
-		constexpr float h = 1.0f;
-		constexpr float x = 0.0f;
-		constexpr float y = 0.0f;
-		constexpr float z = 0.0f;
-		constexpr float s1 = 0.0f;
-		constexpr float t1 = 0.0f;
-		constexpr float s2 = 1.0f;
-		constexpr float t2 = 1.0f;
-		GLfloat buffer[] = {
-			x, h, z, s1, t2, 0.0f,
-			x, y, z, s1, t1, 0.0f,
-			w, h, z, s2, t2, 0.0f,
-			w, y, z, s2, t1, 0.0f
-		};
-
-		if (post_abo == 0) {
-			glGenBuffers(1, &post_abo);
+		if (!post.abo) {
+			constexpr float w = 1.0f;
+			constexpr float h = 1.0f;
+			constexpr float x = 0.0f;
+			constexpr float y = 0.0f;
+			constexpr float z = 0.0f;
+			constexpr float s1 = 0.0f;
+			constexpr float t1 = 0.0f;
+			constexpr float s2 = 1.0f;
+			constexpr float t2 = 1.0f;
+			GLfloat buffer[] = {
+				x, h, z, s1, t2, 0.0f,
+				x, y, z, s1, t1, 0.0f,
+				w, h, z, s2, t2, 0.0f,
+				w, y, z, s2, t1, 0.0f
+			};
+			FxCreateBuffer(GL_ARRAY_BUFFER, post.abo, sizeof(buffer), buffer, GL_STATIC_DRAW);
 		}
-		if (post_abo) {
-			glBindBuffer(GL_ARRAY_BUFFER, post_abo);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_DYNAMIC_DRAW);
-		}
-		return (post_abo != 0);
-	}
 
-	void RendererGLES30::_renderPost() {
-		if (!_initPost()) return;
-
-		pProgram->use();
+		post.program = pRendererConfig->rc_program_ptr->getProgram();
+		post_units.clear();
 		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
-			if (!fbo->usable()) continue;
+			if (fbo->unusable()) continue;
 			for (auto& [target, rt] : fbo->renderTargets) {
 				if (rt.mapName.empty() || !rt.pGpuTexture) continue;
 				if (!pProgram->activeUniforms.count(rt.mapName)) continue;
-				int unit = getTexUnit();
-				rt.pGpuTexture->unit = unit;
-				rt.pGpuTexture->bind(unit);
-				pProgram->applyUniform(rt.mapName, unit);
+				post_units.add();
+				post_units.unit(getTexUnit());
+				post_units.target(rt.target);
+				post_units.texture(rt.pGpuTexture->getTexture());
+				post_units.uniform_location(pProgram->activeUniforms[rt.mapName].index);
 			}
 		}
+
 		const std::string VERTEX_LOCATION{ "aPosition" };
 		const std::string TEXCOORD_LOCATION{ "aTexCoord" };
-		int vloc = pProgram->getAttribLocation(VERTEX_LOCATION);
-		int tloc = pProgram->getAttribLocation(TEXCOORD_LOCATION);
+		post.vloc = pProgram->getAttribLocation(VERTEX_LOCATION);
+		post.tloc = pProgram->getAttribLocation(TEXCOORD_LOCATION);
+
+		post.usable_ = true;
+		if (!pRendererConfig->rc_program_ptr) post.usable_ = false;
+		if (!post.abo) post.usable_ = false;
+		if (!post.program) post.usable_ = false;
+		if (!post.vloc < 0) post.usable_ = false;
+		return post.usable_;
+	}
+
+
+	void RendererGLES30::_renderPost() {
+		Hf::StopWatch stopwatch;
+		if (!_initPost()) return;
+		while (glGetError()) HFLOGERROR("1 ERRORS");
+
+		glUseProgram(post.program);
+		post_units.first();
+		for (int i = 0; i < post_units.count; i++) {
+			glUniform1i(post_units.uniform_location(), post_units.unit());
+			glActiveTexture(GL_TEXTURE0 + post_units.unit());
+			glBindTexture(post_units.target(), post_units.texture());
+			post_units.next();
+		}
 
 		pProgram->applyUniform("ToneMapExposure", pRendererConfig->renderPostToneMapExposure);
 		pProgram->applyUniform("ToneMapGamma", pRendererConfig->renderPostToneMapGamma);
 		pProgram->applyUniform("FilmicHighlights", pRendererConfig->renderPostFilmicHighlights);
 		pProgram->applyUniform("FilmicShadows", pRendererConfig->renderPostFilmicShadows);
 
-		glBindBuffer(GL_ARRAY_BUFFER, post_abo);
-		if (vloc >= 0) glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
-		if (tloc >= 0) glVertexAttribPointer(tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
-		if (vloc >= 0) glEnableVertexAttribArray(vloc);
-		if (tloc >= 0) glEnableVertexAttribArray(tloc);
-		if (vloc >= 0) glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		if (vloc >= 0) glDisableVertexAttribArray(vloc);
-		if (tloc >= 0) glDisableVertexAttribArray(tloc);
+		glBindBuffer(GL_ARRAY_BUFFER, post.abo);
+		glVertexAttribPointer(post.vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
+		if (post.tloc >= 0) glVertexAttribPointer(post.tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
+		if (post.vloc >= 0) glEnableVertexAttribArray(post.vloc);
+		if (post.tloc >= 0) glEnableVertexAttribArray(post.tloc);
+		if (post.vloc >= 0) glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		if (post.vloc >= 0) glDisableVertexAttribArray(post.vloc);
+		if (post.tloc >= 0) glDisableVertexAttribArray(post.tloc);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 		while (glGetError()) HFLOGERROR("3 ERRORS");
 
-		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
-			if (!fbo->usable()) continue;
-			for (auto& [target, rt] : fbo->renderTargets) {
-				if (rt.mapName.empty() || !rt.pGpuTexture) continue;
-				freeTexUnit(rt.unit);
-				rt.unit = -1;
-				rt.pGpuTexture->unbind();
-			}
+		post_units.first();
+		for (int i = 0; i < post_units.count; i++) {
+			glActiveTexture(GL_TEXTURE0 + post_units.unit());
+			glBindTexture(post_units.target(), 0);
+			post_units.next();
 		}
 		while (glGetError()) HFLOGERROR("4 ERRORS");
-
 		glUseProgram(0);
+		pRendererConfig->metrics_posttime_ms = stopwatch.Stop_msf();
 	}
 
 	void RendererGLES30::_renderSceneGraph() {
+		Hf::StopWatch stopwatch;
 		if (!areBuffersBuilt) buildBuffers();
 		if (!applyRenderConfig()) return;
 
@@ -954,6 +978,7 @@ namespace Fluxions
 		}
 
 		glUseProgram(0);
+		pRendererConfig->metrics_scene_ms = stopwatch.Stop_msf();
 	}
 
 	void RendererGLES30::buildBuffers() {

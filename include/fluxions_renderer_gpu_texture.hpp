@@ -64,6 +64,12 @@ namespace Fluxions
 		bool created_ = false;
 		std::shared_ptr<GLuint> texture_;
 	}; // class RendererGpuTexture
+
+	inline void DeleteRendererGpuTexture(RendererGpuTexture** t) {
+		if (!*t) return;
+		delete t;
+		*t = nullptr;
+	}
 } // namespace Fluxions
 
 #endif

@@ -36,7 +36,10 @@ namespace Fluxions
 		void setMapName(const std::string& mapName);
 
 		// Used by Renderer{GLES30, ...}
-		void restoreGLState();
+		void unbind();
+
+		int width() const { return width_; }
+		int height() const { return height_; }
 	private:
 		void deleteBuffers();
 		void bindTextures(int unit);
@@ -57,8 +60,8 @@ namespace Fluxions
 		unsigned fbo_status = 0;
 		GLuint fbo = 0;
 		GLint quality = DefaultQuality;
-		GLint width = DefaultWidth;
-		GLint height = DefaultHeight;
+		GLint width_ = DefaultWidth;
+		GLint height_ = DefaultHeight;
 		GLsizei samples = DefaultSamples;
 		bool useMultisamples = false;
 		GLenum internalformat = 0;
@@ -70,8 +73,8 @@ namespace Fluxions
 			RendererGpuTexture* pGpuTexture{ nullptr };
 			GLuint object{ 0 };
 			GLenum target{ 0 };
-			GLsizei width{ 0 };
-			GLsizei height{ 0 };
+			//GLsizei width{ 0 };
+			//GLsizei height{ 0 };
 
 			GLenum attachment{ 0 };
 			GLenum internalformat{ 0 };
@@ -97,8 +100,6 @@ namespace Fluxions
 	private:
 		void setDefaultParameters();
 	};
-
-	const char* GetFramebufferStatusAsString(GLenum status);
 } // namespace Fluxions
 
 #endif

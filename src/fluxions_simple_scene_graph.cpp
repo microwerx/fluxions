@@ -35,8 +35,8 @@ namespace Fluxions
 #endif
 
 	void async_pbsky_compute(Fluxions::PhysicallyBasedSky* pbsky, bool genCubeMap,
-		bool genCylMap, bool* completed,
-		double* timeElapsed = nullptr) {
+							 bool genCylMap, bool* completed,
+							 double* timeElapsed = nullptr) {
 		Hf::StopWatch stopwatch;
 
 		if (genCubeMap) {
@@ -104,7 +104,7 @@ namespace Fluxions
 			sunShadowMapNearZ, sunShadowMapFarZ);
 		sunShadowViewMatrix.LoadIdentity();
 		sunShadowViewMatrix.LookAt(sunShadowMapOrigin, sunShadowMapTarget,
-			sunShadowMapUp);
+								   sunShadowMapUp);
 		sunShadowInverseViewMatrix = sunShadowViewMatrix.AsInverse();
 
 		if (isSkyComputed && pbskyColorMapId != 0) {
@@ -114,7 +114,7 @@ namespace Fluxions
 				GLsizei size = (GLsizei)pbsky.generatedCubeMap.width();
 				void* pixels = pbsky.generatedCubeMap.getPixels(i);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA32F, size,
-					size, 0, GL_RGBA, GL_FLOAT, pixels);
+							 size, 0, GL_RGBA, GL_FLOAT, pixels);
 			}
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -136,7 +136,7 @@ namespace Fluxions
 		lastSkyGenTime = 0.0;
 		auto handle =
 			async(std::launch::async, async_pbsky_compute, &pbsky, pbskyGenCubeMap,
-				pbskyGenCylMap, &isSkyComputed, &lastSkyGenTime);
+				  pbskyGenCylMap, &isSkyComputed, &lastSkyGenTime);
 	}
 
 	struct SimpleRendererUniforms {
@@ -269,13 +269,14 @@ namespace Fluxions
 		// proceed to parse the file and read each line.
 		int linecount = 0;
 		int totallinecount = 0;
-		std::string str;
-		std::istringstream istr;
 		while (1) {
+			std::string line;
 			// read a line from the file and set up a string stream.
-			str.clear();
-			getline(fin, str);
-			sceneFileLines.push_back(str);
+			getline(fin, line);
+			if (line.empty()) continue;
+			if (line[0] == '#') continue;
+
+			sceneFileLines.push_back(line);
 			linecount++;
 			totallinecount++;
 
@@ -283,291 +284,49 @@ namespace Fluxions
 				break;
 			}
 
-			istr.clear();
-			istr.str(str);
-			str.clear();
-			istr >> str;
+			std::istringstream istr(line);
+			std::string token;
+			istr >> token;
 
-			if (str == "transform") {
+			if (token == "transform") {
 				currentTransform = ReadAffineMatrix4f(istr);
 			}
-			else if (str == "mtllib") {
-				std::string mtllibFilename = ReadString(istr);
-				FilePathInfo fpi(mtllibFilename);
-				std::string filenameToTry;
-				fpi.FindFileIfExists(pathsToTry, filenameToTry);
-				if (filenameToTry.empty()) {
-					HFLOGERROR("MTLLIB %s was not found.", mtllibFilename.c_str());
-				}
-				else {
-					if (materials.Load(fpi.fname, filenameToTry)) {
-						HFLOGINFO("MTLLIB %s loaded", mtllibFilename.c_str());
-					}
-					else {
-						HFLOGERROR("MTLLIB error loading %s", mtllibFilename.c_str());
-					}
-				}
+			else if (token == "mtllib") {
+				ReadMaterialLibrary(token, istr);
 			}
-			else if (str == "geometryGroup") {
-				std::string geoFilename = ReadString(istr);
-				FilePathInfo fpi(geoFilename);
-				std::string filenameToTry;
-				fpi.FindFileIfExists(pathsToTry, filenameToTry);
-				if (filenameToTry.empty()) {
-					HFLOGERROR("OBJ file %s was not found.", geoFilename.c_str());
-				}
-				else {
-					if (ReadObjFile(filenameToTry, fpi.fname)) {
-						GLuint id = geometry.Create(fpi.fname);
-
-						SimpleGeometryGroup geometryGroup;
-						geometryGroup.transform = currentTransform;
-						geometryGroup.mtllibName = materials.GetLibraryName();
-						geometryGroup.mtllibId = materials.GetLibraryId();
-						geometryGroup.objectName = fpi.fname;
-						geometryGroup.objectId = id;
-						geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
-
-						geometry[id] = geometryGroup;
-						Hf::Log.info("%s(): OBJ file %s loaded.", __FUNCTION__,
-							fpi.fname.c_str());
-
-						// Transform the bounding box of the model into world coordinates
-						Vector4f tminBound = geometryGroup.transform *
-							Vector4f(geometryGroup.bbox.minBounds, 1.0f);
-						Vector4f tmaxBound = geometryGroup.transform *
-							Vector4f(geometryGroup.bbox.maxBounds, 1.0f);
-
-						boundingBox += tminBound.xyz();
-						boundingBox += tmaxBound.xyz();
-					}
-					else {
-						Hf::Log.errorfn(__FUNCTION__,
-							"OBJ file %s had an error while loading",
-							geoFilename.c_str());
-					}
-				}
+			else if (token == "geometryGroup") {
+				ReadGeometryGroup(token, istr);
 			}
-			else if (str == "enviro") {
-				istr >> str;
-				if (str == "color") {
-					environment.hasColor = true;
-					environment.color = ReadVector3f(istr);
-				}
-				else if (str == "texmap") {
-					environment.hasTexmap = true;
-					environment.texmap = ReadString(istr);
-				}
+			else if (token == "enviro") {
+				ReadEnviro(token, istr);
 			}
-			else if (str == "pbsky") {
-				Color4f groundAlbedo;
-				float turbidity;
-				float latitude;
-				float longitude;
-				int samples;
-				istr >> turbidity;
-				istr >> latitude;
-				istr >> longitude;
-				istr >> samples;
-				istr >> groundAlbedo.r;
-				istr >> groundAlbedo.g;
-				istr >> groundAlbedo.b;
-
-				environment.pbsky.SetNumSamples(samples);
-				environment.pbsky.SetLocation(latitude, longitude);
-				environment.pbsky.SetTurbidity(turbidity);
-				environment.pbsky.SetGroundAlbedo(groundAlbedo.r, groundAlbedo.g,
-					groundAlbedo.b);
+			else if (token == "pbsky") {
+				ReadEnviroPbsky(token, istr);
 			}
-			else if (str == "datetime") {
-				int month = 7;
-				int day = 1;
-				int year = 2017;
-				int hours = 12;
-				int minutes = 0;
-				int seconds = 0;
-				int isdst = 1;
-				istr >> month;
-				istr >> day;
-				istr >> year;
-				istr >> hours;
-				istr >> minutes;
-				istr >> seconds;
-				istr >> isdst;
-
-				environment.pbsky.SetLocalDate(day, month, year, isdst != 0, 0);
-				environment.pbsky.SetLocalTime(hours, minutes, seconds, 0.0f);
+			else if (token == "datetime") {
+				ReadEnviroDatetime(token, istr);
 			}
-			else if (str == "camera") {
-				std::string type = ReadString(istr);
-				bool isBadCamera = true;
-				camera.projectionMatrix.LoadIdentity();
-				camera.viewMatrix.LoadIdentity();
-				if (type == "perspective_otrf") {
-					Vector3f origin = ReadVector3f(istr);
-					Vector3f target = ReadVector3f(istr);
-					Vector3f roll = ReadVector3f(istr);
-					float fov = ReadFloat(istr);
-					isBadCamera = false;
-					camera.isPerspective = true;
-					camera.isOrtho = false;
-					camera.fov = fov;
-					camera.projectionMatrix.LoadIdentity();
-					camera.projectionMatrix.PerspectiveY(camera.fov, camera.imageAspect,
-						camera.imageNearZ,
-						camera.imageFarZ);
-					camera.viewMatrix.LookAt(origin, target, roll);
-				}
-				else if (type == "perspective_tmf") {
-					Matrix4f tm = ReadAffineMatrix4f(istr);
-					float fov = ReadFloat(istr);
-					isBadCamera = false;
-					camera.isPerspective = true;
-					camera.isOrtho = false;
-					camera.fov = fov;
-					camera.projectionMatrix.LoadIdentity();
-					camera.projectionMatrix.Perspective(camera.fov, camera.imageAspect,
-						camera.imageNearZ,
-						camera.imageFarZ);
-					camera.viewMatrix = tm;
-				}
-				else if (type == "ortho_otrw") {
-					Vector3f origin = ReadVector3f(istr);
-					Vector3f target = ReadVector3f(istr);
-					Vector3f roll = ReadVector3f(istr);
-					float width = ReadFloat(istr);
-					isBadCamera = false;
-					camera.isPerspective = false;
-					camera.isOrtho = true;
-					camera.width = width;
-					// TODO (projection and view matrix)
-				}
-				else if (type == "ortho_tmw") {
-					Matrix4f tm = ReadMatrix4f(istr);
-					float width = ReadFloat(istr);
-					isBadCamera = false;
-					camera.isPerspective = false;
-					camera.isOrtho = true;
-					camera.width = (float)width;
-					camera.viewMatrix = tm;
-					// TODO (projection matrix)
-				}
-				else {
-					Hf::Log.error("%s(): unsupported camera format %s.", __FUNCTION__,
-						type.c_str());
-				}
-				if (!isBadCamera) {
-					float fstop = 16.0f;
-					float filmWidth = 35.0f;
-					float focalDist = 100.0f;
-					float bokehPolygonalBlades = 3.0f;
-					float bokehPolygonalRotation = 0.0f;
-					float regionStartX = 0.0f;
-					float regionStartY = 0.0f;
-					float regionEndX = 1.0f;
-					float regionEndY = 1.0f;
-					std::string bokehImg;
-
-					// read optional components
-					while (istr) {
-						istr >> str;
-						if (str == "fstop") {
-							fstop = ReadFloat(istr);
-						}
-						else if (str == "filmWidth") {
-							filmWidth = ReadFloat(istr);
-						}
-						else if (str == "focalDist") {
-							focalDist = ReadFloat(istr);
-						}
-						else if (str == "bokehPolygonal") {
-							bokehPolygonalBlades = ReadFloat(istr);
-							bokehPolygonalRotation = ReadFloat(istr);
-						}
-						else if (str == "region") {
-							regionStartX = ReadFloat(istr);
-							regionStartY = ReadFloat(istr);
-							regionEndX = ReadFloat(istr);
-							regionEndY = ReadFloat(istr);
-						}
-						else if (str == "bokehImg") {
-							bokehImg = ReadString(istr);
-						}
-					}
-
-					camera.fstop = fstop;
-					camera.filmWidth = filmWidth;
-					camera.focalDist = focalDist;
-					camera.bokehPolygonalBlades = bokehPolygonalBlades;
-					camera.bokehPolygonalRotation = bokehPolygonalRotation;
-					camera.bokehImg = bokehImg;
-					camera.regionStartX = regionStartX;
-					camera.regionStartY = regionStartY;
-					camera.regionEndX = regionEndX;
-					camera.regionEndY = regionEndY;
-				}
+			else if (token == "camera") {
+				ReadCamera(token, istr);
 			}
-			else if (str == "tonemap") {
+			else if (token == "tonemap") {
 				environment.toneMapScale = clamp(ReadFloat(istr), -20.0f, 20.0f);
 				environment.toneMapExposure = environment.toneMapScale;
 			}
-			else if (str == "gamma") {
+			else if (token == "gamma") {
 				environment.toneMapGamma = clamp(ReadFloat(istr), -6.0f, 6.0f);
 			}
-			else if (str == "sun") {
-				environment.hasSun = true;
-				str = ReadString(istr);
-				if (str == "dirTo") {
-					environment.sunDirTo = ReadVector3f(istr);
-				}
-				str = ReadString(istr);
-				if (str == "color") {
-					environment.sunColor = ReadVector3f(istr);
-				}
-				str = ReadString(istr);
-				if (str == "sizeMult") {
-					environment.sunSize = ReadFloat(istr);
-				}
-				environment.sunDirTo.normalize();
-				environment.curSunDirTo = environment.sunDirTo;
-				environment.sunShadowBiasMatrix.LoadIdentity();
-				environment.sunShadowBiasMatrix.ShadowBias();
-				environment.sunShadowProjectionMatrix.LoadIdentity();
-				environment.sunShadowProjectionMatrix.Perspective(90.0, 1.0, 1.0, 100.0);
-				// environment.sunShadowProjectionMatrix.Ortho(-200, 200, -200, 200, -200,
-				// 200);
-				environment.sunShadowViewMatrix.LoadIdentity();
-				environment.sunShadowViewMatrix.LookAt(
-					environment.curSunDirTo * environment.sunSize, Vector3f(0, 0, 0),
-					Vector3f(0, 1, 0));
-				environment.sunShadowInverseViewMatrix =
-					environment.sunShadowViewMatrix.AsInverse();
+			else if (token == "sun" || token == "moon") {
+				ReadDirectionalLight(token, istr);
 			}
-			else if (str == "sphere") {
-				std::string mtlName = ReadString(istr);
-
-				GLuint id = spheres.Create();
-				SimpleSphere sphere;
-				sphere.transform = currentTransform;
-				sphere.mtllibName = materials.GetLibraryName();
-				sphere.mtllibId = materials.GetLibraryId();
-				sphere.mtlName = mtlName;
-				sphere.mtlId = materials.GetMaterialId(mtlName);
-				sphere.objectId = id;
-				spheres[id] = sphere;
+			else if (token == "sphere") {
+				ReadSphere(token, istr);
 			}
-			else if (str == "pointLight" || str == "light") {
-				SimplePointLight spl;
-				spl.name = ReadString(istr);
-				spl.index = pointLights.size();
-				spl.E0 = ReadFloat(istr);
-				spl.falloffRadius = ReadFloat(istr);
-				spl.position = ReadVector3f(istr);
-
-				pointLights.push_back(spl);
+			else if (token == "pointLight" || token == "light") {
+				ReadPointLight(token, istr);
 			}
 			else if (userdata) {
-				userdata->read(str, istr);
+				userdata->read(token, istr);
 			}
 		}
 
@@ -575,11 +334,8 @@ namespace Fluxions
 
 		// Load Images
 		materials.LoadMaps();
-		
-		// TODO: remove renderer
-		//renderer.AssignMaterialIds(materials);
 
-		return false;
+		return true;
 	}
 
 	bool SimpleSceneGraph::Save(const std::string& filename) {
@@ -731,7 +487,7 @@ namespace Fluxions
 	//}
 
 	bool SimpleSceneGraph::ReadObjFile(const std::string& filename,
-		const std::string& geometryName) {
+									   const std::string& geometryName) {
 		if (geometryObjects.IsAHandle(filename))
 			return true;
 
@@ -745,12 +501,286 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSceneGraph::ReadCamera(std::istream& istr) {
-		std::string cameraType;
-		istr >> cameraType;
-		if (cameraType != "camera")
-			return false;
-		return false;
+	bool SimpleSceneGraph::ReadMaterialLibrary(const std::string& type, std::istream& istr) {
+		std::string mtllibFilename = ReadString(istr);
+		FilePathInfo fpi(mtllibFilename);
+		std::string filenameToTry;
+		fpi.FindFileIfExists(pathsToTry, filenameToTry);
+		if (filenameToTry.empty()) {
+			HFLOGERROR("MTLLIB %s was not found.", mtllibFilename.c_str());
+		}
+		else {
+			if (materials.Load(fpi.fname, filenameToTry)) {
+				HFLOGINFO("MTLLIB %s loaded", mtllibFilename.c_str());
+			}
+			else {
+				HFLOGERROR("MTLLIB error loading %s", mtllibFilename.c_str());
+			}
+		}
+		return true;
+	}
+
+	bool SimpleSceneGraph::ReadGeometryGroup(const std::string& type, std::istream& istr) {
+		std::string geoFilename = ReadString(istr);
+		FilePathInfo fpi(geoFilename);
+		std::string filenameToTry;
+		fpi.FindFileIfExists(pathsToTry, filenameToTry);
+		if (filenameToTry.empty()) {
+			HFLOGERROR("OBJ file %s was not found.", geoFilename.c_str());
+		}
+		else {
+			if (ReadObjFile(filenameToTry, fpi.fname)) {
+				GLuint id = geometry.Create(fpi.fname);
+
+				SimpleGeometryGroup geometryGroup;
+				geometryGroup.transform = currentTransform;
+				geometryGroup.mtllibName = materials.GetLibraryName();
+				geometryGroup.mtllibId = materials.GetLibraryId();
+				geometryGroup.objectName = fpi.fname;
+				geometryGroup.objectId = id;
+				geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
+
+				geometry[id] = geometryGroup;
+				Hf::Log.info("%s(): OBJ file %s loaded.", __FUNCTION__,
+							 fpi.fname.c_str());
+
+				// Transform the bounding box of the model into world coordinates
+				Vector4f tminBound = geometryGroup.transform *
+					Vector4f(geometryGroup.bbox.minBounds, 1.0f);
+				Vector4f tmaxBound = geometryGroup.transform *
+					Vector4f(geometryGroup.bbox.maxBounds, 1.0f);
+
+				boundingBox += tminBound.xyz();
+				boundingBox += tmaxBound.xyz();
+			}
+			else {
+				HFLOGERROR("OBJ file %s had an error while loading", geoFilename.c_str());
+			}
+		}
+		return true;
+	}
+
+	bool SimpleSceneGraph::ReadEnviro(const std::string& type, std::istream& istr) {
+		std::string envirotype;
+		istr >> envirotype;
+		if (envirotype == "color") {
+			environment.hasColor = true;
+			environment.color = ReadVector3f(istr);
+		}
+		else if (envirotype == "texmap") {
+			environment.hasTexmap = true;
+			environment.texmap = ReadString(istr);
+		}
+		return true;
+	}
+
+	bool SimpleSceneGraph::ReadEnviroPbsky(const std::string& type, std::istream& istr) {
+		Color4f groundAlbedo;
+		float turbidity;
+		float latitude;
+		float longitude;
+		int samples;
+		istr >> turbidity;
+		istr >> latitude;
+		istr >> longitude;
+		istr >> samples;
+		istr >> groundAlbedo.r;
+		istr >> groundAlbedo.g;
+		istr >> groundAlbedo.b;
+
+		environment.pbsky.SetNumSamples(samples);
+		environment.pbsky.SetLocation(latitude, longitude);
+		environment.pbsky.SetTurbidity(turbidity);
+		environment.pbsky.SetGroundAlbedo(groundAlbedo.r, groundAlbedo.g,
+										  groundAlbedo.b);
+		return true;
+	}
+
+	bool SimpleSceneGraph::ReadEnviroDatetime(const std::string& type, std::istream& istr) {
+		int month = 7;
+		int day = 1;
+		int year = 2017;
+		int hours = 12;
+		int minutes = 0;
+		int seconds = 0;
+		int isdst = 1;
+		istr >> month;
+		istr >> day;
+		istr >> year;
+		istr >> hours;
+		istr >> minutes;
+		istr >> seconds;
+		istr >> isdst;
+
+		environment.pbsky.SetLocalDate(day, month, year, isdst != 0, 0);
+		environment.pbsky.SetLocalTime(hours, minutes, seconds, 0.0f);
+		return true;
+	}
+
+	bool SimpleSceneGraph::ReadCamera(const std::string& type, std::istream& istr) {
+		std::string cameratype = ReadString(istr);
+		bool isBadCamera = true;
+		camera.projectionMatrix.LoadIdentity();
+		camera.viewMatrix.LoadIdentity();
+		if (cameratype == "perspective_otrf") {
+			Vector3f origin = ReadVector3f(istr);
+			Vector3f target = ReadVector3f(istr);
+			Vector3f roll = ReadVector3f(istr);
+			float fov = ReadFloat(istr);
+			isBadCamera = false;
+			camera.isPerspective = true;
+			camera.isOrtho = false;
+			camera.fov = fov;
+			camera.projectionMatrix.LoadIdentity();
+			camera.projectionMatrix.PerspectiveY(camera.fov, camera.imageAspect,
+												 camera.imageNearZ,
+												 camera.imageFarZ);
+			camera.viewMatrix.LookAt(origin, target, roll);
+		}
+		else if (cameratype == "perspective_tmf") {
+			Matrix4f tm = ReadAffineMatrix4f(istr);
+			float fov = ReadFloat(istr);
+			isBadCamera = false;
+			camera.isPerspective = true;
+			camera.isOrtho = false;
+			camera.fov = fov;
+			camera.projectionMatrix.LoadIdentity();
+			camera.projectionMatrix.Perspective(camera.fov, camera.imageAspect,
+												camera.imageNearZ,
+												camera.imageFarZ);
+			camera.viewMatrix = tm;
+		}
+		else if (cameratype == "ortho_otrw") {
+			Vector3f origin = ReadVector3f(istr);
+			Vector3f target = ReadVector3f(istr);
+			Vector3f roll = ReadVector3f(istr);
+			float width = ReadFloat(istr);
+			isBadCamera = false;
+			camera.isPerspective = false;
+			camera.isOrtho = true;
+			camera.width = width;
+			// TODO (projection and view matrix)
+		}
+		else if (cameratype == "ortho_tmw") {
+			Matrix4f tm = ReadMatrix4f(istr);
+			float width = ReadFloat(istr);
+			isBadCamera = false;
+			camera.isPerspective = false;
+			camera.isOrtho = true;
+			camera.width = (float)width;
+			camera.viewMatrix = tm;
+			// TODO (projection matrix)
+		}
+		else {
+			HFLOGERROR("unsupported camera format %s.", type.c_str());
+		}
+		//if (!isBadCamera) {
+		//	float fstop = 16.0f;
+		//	float filmWidth = 35.0f;
+		//	float focalDist = 100.0f;
+		//	float bokehPolygonalBlades = 3.0f;
+		//	float bokehPolygonalRotation = 0.0f;
+		//	float regionStartX = 0.0f;
+		//	float regionStartY = 0.0f;
+		//	float regionEndX = 1.0f;
+		//	float regionEndY = 1.0f;
+		//	std::string bokehImg;
+
+		//	// read optional components
+		//	while (istr) {
+		//		istr >> token;
+		//		if (str == "fstop") {
+		//			fstop = ReadFloat(istr);
+		//		}
+		//		else if (str == "filmWidth") {
+		//			filmWidth = ReadFloat(istr);
+		//		}
+		//		else if (str == "focalDist") {
+		//			focalDist = ReadFloat(istr);
+		//		}
+		//		else if (str == "bokehPolygonal") {
+		//			bokehPolygonalBlades = ReadFloat(istr);
+		//			bokehPolygonalRotation = ReadFloat(istr);
+		//		}
+		//		else if (str == "region") {
+		//			regionStartX = ReadFloat(istr);
+		//			regionStartY = ReadFloat(istr);
+		//			regionEndX = ReadFloat(istr);
+		//			regionEndY = ReadFloat(istr);
+		//		}
+		//		else if (str == "bokehImg") {
+		//			bokehImg = ReadString(istr);
+		//		}
+		//	}
+
+		//	camera.fstop = fstop;
+		//	camera.filmWidth = filmWidth;
+		//	camera.focalDist = focalDist;
+		//	camera.bokehPolygonalBlades = bokehPolygonalBlades;
+		//	camera.bokehPolygonalRotation = bokehPolygonalRotation;
+		//	camera.bokehImg = bokehImg;
+		//	camera.regionStartX = regionStartX;
+		//	camera.regionStartY = regionStartY;
+		//	camera.regionEndX = regionEndX;
+		//	camera.regionEndY = regionEndY;
+		//}
+		return true;
+	}
+
+	bool SimpleSceneGraph::ReadDirectionalLight(const std::string& type, std::istream& istr) {
+		std::string sunopt;
+		environment.hasSun = true;
+		sunopt = ReadString(istr);
+		if (sunopt == "dirTo") {
+			environment.sunDirTo = ReadVector3f(istr);
+		}
+		sunopt = ReadString(istr);
+		if (sunopt == "color") {
+			environment.sunColor = ReadVector3f(istr);
+		}
+		sunopt = ReadString(istr);
+		if (sunopt == "sizeMult") {
+			environment.sunSize = ReadFloat(istr);
+		}
+		environment.sunDirTo.normalize();
+		environment.curSunDirTo = environment.sunDirTo;
+		environment.sunShadowBiasMatrix.LoadIdentity();
+		environment.sunShadowBiasMatrix.ShadowBias();
+		environment.sunShadowProjectionMatrix.LoadIdentity();
+		environment.sunShadowProjectionMatrix.Perspective(90.0, 1.0, 1.0, 100.0);
+		// environment.sunShadowProjectionMatrix.Ortho(-200, 200, -200, 200, -200,
+		// 200);
+		environment.sunShadowViewMatrix.LoadIdentity();
+		environment.sunShadowViewMatrix.LookAt(
+			environment.curSunDirTo * environment.sunSize, Vector3f(0, 0, 0),
+			Vector3f(0, 1, 0));
+		environment.sunShadowInverseViewMatrix =
+			environment.sunShadowViewMatrix.AsInverse();
+	}
+
+	bool SimpleSceneGraph::ReadPointLight(const std::string& type, std::istream& istr) {
+		SimplePointLight spl;
+		spl.name = ReadString(istr);
+		spl.index = pointLights.size();
+		spl.E0 = ReadFloat(istr);
+		spl.falloffRadius = ReadFloat(istr);
+		spl.position = ReadVector3f(istr);
+
+		pointLights.push_back(spl);
+	}
+	
+	bool SimpleSceneGraph::ReadSphere(const std::string& type, std::istream& istr) {
+		std::string mtlName = ReadString(istr);
+
+		GLuint id = spheres.Create();
+		SimpleSphere sphere;
+		sphere.transform = currentTransform;
+		sphere.mtllibName = materials.GetLibraryName();
+		sphere.mtllibId = materials.GetLibraryId();
+		sphere.mtlName = mtlName;
+		sphere.mtlId = materials.GetMaterialId(mtlName);
+		sphere.objectId = id;
+		spheres[id] = sphere;
 	}
 
 	//void SimpleSceneGraph::initTexUnits() {

@@ -217,6 +217,15 @@ namespace Fluxions
 		}
 	}
 
+	bool RendererProgram::applyUniform(int loc, RendererUniform uniform) const {
+		if (!linked) return false;
+		if (loc >= 0) {
+			uniform.setProgramUniform(loc);
+			return true;
+		}
+		return false;
+	}
+
 	void RendererProgram::applyUniforms(const RendererUniformMap& uniforms) const {
 		if (!linked)
 			return;

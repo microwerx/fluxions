@@ -22,6 +22,9 @@ namespace Fluxions {
 		// RendererObject::set_default_parameters() can do a "soft reset" for class parameters
 		virtual void set_default_parameters();
 
+		// RendererObject::invalidate_caches() tips off objects that need to reevaluate cached objects
+		virtual void invalidate_caches();
+
 		// type() returns an RTTI string of the type of object
 		virtual const char* type() const;
 
@@ -30,6 +33,8 @@ namespace Fluxions {
 
 		// usable() returns true or false (default is true) if the current object is usable for rendering
 		virtual bool usable() const;
+
+		inline bool unusable() const { return !usable(); }
 
 		const char* name() const noexcept { return name_.c_str(); };
 		const bool initialized() const noexcept { return initialized_; }

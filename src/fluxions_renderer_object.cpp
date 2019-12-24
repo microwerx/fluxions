@@ -45,9 +45,9 @@ namespace Fluxions
 		init(name(), parent_);
 	}
 
-	void RendererObject::set_default_parameters() {
+	void RendererObject::set_default_parameters() {}
 
-	}
+	void RendererObject::invalidate_caches() {}
 
 	const char* RendererObject::type() const {
 		return "RendererObject";

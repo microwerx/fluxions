@@ -32,12 +32,25 @@ extern std::string g_CurrentDebugMessage;
 
 void FxSetErrorMessage(const char *filename, int line, const char *format, ...);
 void FxSetDefaultErrorMessage();
+
 GLint FxSetActiveTexture(GLint unit);
 bool FxBindDefaultTextureAndSampler(GLenum target);
 bool FxBindTextureAndSampler(GLint unit, GLenum target, GLuint texture, GLuint sampler);
 bool FxBindTexture(GLint unit, GLenum target, GLuint texture);
 bool FxBindSampler(GLint unit, GLuint sampler);
 bool FxDebugBindTexture(GLenum target, GLuint texture);
+
+bool FxCreateBuffer(GLenum target, unsigned& abo, GLsizeiptr size, const void* data, unsigned usage);
+void FxDeleteBuffer(GLuint* p);
+
+void FxCreateRenderbuffer(GLuint* p);
+void FxDeleteRenderbuffer(GLuint* p);
+void FxCreateFramebuffer(GLuint* p);
+void FxDeleteFramebuffer(GLuint* p);
+GLuint FxCheckFramebufferStatus();
+const char* FxGetFramebufferStatusAsString(GLenum status);
+
+void FxClearScreenRgb(GLfloat r, GLfloat g, GLfloat b);
 
 void FxGlutBitmapString(void *font, const char *str);
 void FxGlutStrokeString(void *font, const char *str);

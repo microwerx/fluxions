@@ -286,7 +286,6 @@
     <ClCompile Include="src\fluxions_renderer_shader.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_utilities.cpp" />
     <ClCompile Include="src\fluxions_renderer_sampler.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
@@ -297,6 +296,9 @@
       <Filter>src\viperfish</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_image_loader.cpp" />
+    <ClCompile Include="src\fluxions_renderer_utilities.cpp">
+      <Filter>src\fluxions-renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">

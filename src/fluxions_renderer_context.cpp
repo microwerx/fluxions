@@ -54,6 +54,14 @@ namespace Fluxions
 	}
 
 	void RendererContext::set_default_parameters() {
+		invalidate_caches();
+
+		debugClearScreen = false;
+		vars.set_var("@SCREENWIDTH", defaultScreenWidth);
+		vars.set_var("@SCREENHEIGHT", defaultScreenHeight);
+	}
+
+	void RendererContext::invalidate_caches() {
 		pcurFBO = nullptr;
 		pcurProgram = nullptr;
 		pcurRenderer = nullptr;
@@ -62,9 +70,9 @@ namespace Fluxions
 		pcurTexture2D = nullptr;
 		pcurTextureCube = nullptr;
 
-		debugClearScreen = false;
-		vars.set_var("@SCREENWIDTH", defaultScreenWidth);
-		vars.set_var("@SCREENHEIGHT", defaultScreenHeight);
+		for (auto& [k, r] : renderers) {
+			r.invalidate_caches();
+		}
 	}
 
 	void RendererContext::resize(int width, int height) {
@@ -374,6 +382,7 @@ namespace Fluxions
 		for (auto& [k, fbo] : fbos) {
 			fbo.make();
 		}
+		invalidate_caches();
 	}
 
 	RendererConfig* RendererContext::getRendererConfig(const std::string& name) {

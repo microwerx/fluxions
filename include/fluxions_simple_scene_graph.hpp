@@ -75,7 +75,15 @@ namespace Fluxions
 		//bool ReadConfFile(const std::string &filename);
 		bool ReadObjFile(const std::string& filename, const std::string& name);
 		//bool ReadTexmap(const std::string &name, const std::string &texmap);
-		bool ReadCamera(std::istream& istr);
+		bool ReadMaterialLibrary(const std::string& type, std::istream& istr);
+		bool ReadGeometryGroup(const std::string& type, std::istream& istr);
+		bool ReadEnviro(const std::string& type, std::istream& istr);
+		bool ReadEnviroPbsky(const std::string& type, std::istream& istr);
+		bool ReadEnviroDatetime(const std::string& type, std::istream& istr);
+		bool ReadCamera(const std::string& type, std::istream& istr);
+		bool ReadDirectionalLight(const std::string& type, std::istream& istr);
+		bool ReadPointLight(const std::string& type, std::istream& istr);
+		bool ReadSphere(const std::string& type, std::istream& istr);
 
 		// Rendering tools
 		//void ApplySpheresToCurrentProgram();

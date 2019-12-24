@@ -17,7 +17,7 @@ namespace Fluxions
 		bool useSceneCamera = false;
 		bool isCubeMap = false;
 		bool recomputeProjectionMatrix = false;
-		
+
 		bool renderSkyBox = false;
 		bool renderSceneGraph = false;
 		bool renderPost = false;
@@ -51,7 +51,7 @@ namespace Fluxions
 		RendererProgramPtr zShaderProgram{ nullptr };
 		// DEPRECATED
 		RendererProgramPtr shaderProgram{ nullptr };
-		
+
 		std::string rc_program;
 		RendererProgram* rc_program_ptr{ nullptr };
 
@@ -98,12 +98,19 @@ namespace Fluxions
 		Matrix4f cameraMatrix;   // the actual camera matrix used...
 		Vector4f cameraPosition; // the actual camera position used...
 
+		// METRICS
+		float metrics_total_ms{ 0.0f };
+		float metrics_skybox_ms{ 0.0f };
+		float metrics_scene_ms{ 0.0f };
+		float metrics_posttime_ms{ 0.0f };
+
 		RendererConfig();
 		~RendererConfig() override;
 
 		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
 		const char* type() const override;
+		void invalidate_caches() override;
 
 		GLbitfield getClearBits() const;
 		bool check() const;

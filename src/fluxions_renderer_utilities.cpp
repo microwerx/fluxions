@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include <hatchetfish.hpp>
+#include <hatchetfish_stopwatch.hpp>
 #include <fluxions_renderer_utilities.hpp>
 
 namespace Fluxions
@@ -8,6 +9,7 @@ namespace Fluxions
 					 SimpleSceneGraph& ssg,
 					 const std::string& rendererName,
 					 const std::string& rendererConfigName) {
+		Hf::StopWatch stopwatch;
 		RendererGLES30* renderer = rendererContext.getRenderer(rendererName);
 		if (!renderer) {
 			HFLOGERROR("Renderer '%s' not found", rendererName.c_str());
@@ -23,6 +25,7 @@ namespace Fluxions
 		if (!renderer->validate())
 			return false;
 		renderer->render();
+		rendererConfig->metrics_total_ms = stopwatch.Stop_msf();
 		return true;
 	}
 
@@ -71,7 +74,7 @@ namespace Fluxions
 			glReadBuffer(GL_NONE);
 		}
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-		std::string msg = GetFramebufferStatusAsString(status);
+		std::string msg = FxGetFramebufferStatusAsString(status);
 		bool fboComplete;
 
 		if (status != GL_FRAMEBUFFER_COMPLETE)

@@ -97,7 +97,9 @@ namespace Fluxions
 	// RendererGpuTexture /////////////////////////////////////////////
 
 	RendererGpuTexture::RendererGpuTexture(GLenum target) {
-		if (target != GL_TEXTURE_CUBE_MAP && target != GL_TEXTURE_2D)
+		if (target != GL_TEXTURE_CUBE_MAP
+			&& target != GL_TEXTURE_2D
+			&& target != GL_TEXTURE_RECTANGLE)
 			throw "Unsupported Texture Target";
 		target_ = target;
 	}
