@@ -39,6 +39,9 @@ namespace Vf
 		int key = 0;
 		int max_keys = 0;
 		bool set_key = false;
+		bool clear_animation = false;
+		bool save_animation = false;
+		bool load_animation = false;
 		std::vector<ImVec2> circles;
 		std::vector<ImVec2> points;
 		std::vector<std::pair<ImVec2, ImVec2>> lines;

@@ -57,6 +57,15 @@ namespace Vf
 
 		ImGui::SliderFloat("speed", &speed, 0.0f, 1.0f);
 		ImGui::Value("t", t);
+		
+		ImGui::Separator();
+
+		if (ImGui::Button("Clear")) { clear_animation = true; }
+		ImGui::SameLine();
+		if (ImGui::Button("Save")) { save_animation = true; }
+		ImGui::SameLine();
+		if (ImGui::Button("Load")) { load_animation = true; }
+
 		ImGui::Separator();
 
 		showv("p2", p2);
