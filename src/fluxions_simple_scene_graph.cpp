@@ -606,11 +606,11 @@ namespace Fluxions
 	}
 
 	bool SimpleSceneGraph::ReadCamera(const std::string& type, std::istream& istr) {
-		std::string cameratype = ReadString(istr);
+		std::string keyword = ReadString(istr);
 		bool isBadCamera = true;
 		camera.projectionMatrix.LoadIdentity();
 		camera.viewMatrix.LoadIdentity();
-		if (cameratype == "perspective_otrf") {
+		if (keyword == "perspective_otrf") {
 			Vector3f origin = ReadVector3f(istr);
 			Vector3f target = ReadVector3f(istr);
 			Vector3f roll = ReadVector3f(istr);
@@ -625,7 +625,7 @@ namespace Fluxions
 												 camera.imageFarZ);
 			camera.viewMatrix.LookAt(origin, target, roll);
 		}
-		else if (cameratype == "perspective_tmf") {
+		else if (keyword == "perspective_tmf") {
 			Matrix4f tm = ReadAffineMatrix4f(istr);
 			float fov = ReadFloat(istr);
 			isBadCamera = false;
@@ -638,7 +638,7 @@ namespace Fluxions
 												camera.imageFarZ);
 			camera.viewMatrix = tm;
 		}
-		else if (cameratype == "ortho_otrw") {
+		else if (keyword == "ortho_otrw") {
 			Vector3f origin = ReadVector3f(istr);
 			Vector3f target = ReadVector3f(istr);
 			Vector3f roll = ReadVector3f(istr);
@@ -649,7 +649,7 @@ namespace Fluxions
 			camera.width = width;
 			// TODO (projection and view matrix)
 		}
-		else if (cameratype == "ortho_tmw") {
+		else if (keyword == "ortho_tmw") {
 			Matrix4f tm = ReadMatrix4f(istr);
 			float width = ReadFloat(istr);
 			isBadCamera = false;
@@ -660,7 +660,7 @@ namespace Fluxions
 			// TODO (projection matrix)
 		}
 		else {
-			HFLOGERROR("unsupported camera format %s.", type.c_str());
+			istr >> camera.nodename_;
 		}
 		//if (!isBadCamera) {
 		//	float fstop = 16.0f;

@@ -15,6 +15,9 @@ namespace Fluxions
 
 		virtual const char* nodetype() const noexcept { return "SimpleSceneGraphNode"; }
 		virtual const char* nodename() const noexcept { return nodename_.c_str(); }
+
+		virtual bool read(const std::string& keyword, std::istream& istr);
+		virtual bool write(std::ostream& ostr);
 	};
 }
 

@@ -88,6 +88,7 @@ namespace Fluxions
 	}
 
 	bool RendererGLES30::applyRenderConfig() {
+		Hf::StopWatch stopwatch;
 		if (!validate()) return false;
 
 		if (pProgram->isLinked() == false)
@@ -187,7 +188,7 @@ namespace Fluxions
 			t->bind(t->unit);
 			pProgram->applyUniform(map, t->unit);
 		}
-
+		pRendererConfig->metrics_apply_ms = stopwatch.Stop_msf();
 		return true;
 	}
 
@@ -453,23 +454,21 @@ namespace Fluxions
 	void RendererGLES30::renderSingleImage() {
 		saveGLState();
 
-		while (glGetError()) HFLOGERROR("BEFORE ERRORS");
 		if (!applyRenderConfig()) return;
-		while (glGetError()) HFLOGERROR("APPLY ERRORS");
+
 		if (pRendererConfig->renderSkyBox) {
 			_renderSkyBox();
 		}
-		while (glGetError()) HFLOGERROR("SKYBOX ERRORS");
+
 		if (pRendererConfig->renderSceneGraph) {
 			_renderSceneGraph();
 		}
-		while (glGetError()) HFLOGERROR("SCENE ERRORS");
+
 		if (pRendererConfig->renderPost) {
 			_renderPost();
 		}
-		while (glGetError()) HFLOGERROR("POST ERRORS");
+
 		restoreGLState();
-		while (glGetError()) HFLOGERROR("RESTORE ERRORS");
 	}
 
 	void RendererGLES30::applyGlobalSettingsToCurrentProgram() {
@@ -825,21 +824,21 @@ namespace Fluxions
 		Hf::StopWatch stopwatch;
 		if (!_initSkyBox()) return;
 
-		Matrix4f skyboxCameraMatrix;
-		Matrix4f skyboxProjectionMatrix;
-		Matrix4f skyboxWorldMatrix;
+		//Matrix4f skyboxCameraMatrix;
+		//Matrix4f skyboxProjectionMatrix;
+		//Matrix4f skyboxWorldMatrix;
 
-		static const std::string CameraMatrix{ "CameraMatrix" };
-		static const std::string ProjectionMatrix{ "ProjectionMatrix" };
-		static const std::string WorldMatrix{ "WorldMatrix" };
+		//static const std::string CameraMatrix{ "CameraMatrix" };
+		//static const std::string ProjectionMatrix{ "ProjectionMatrix" };
+		//static const std::string WorldMatrix{ "WorldMatrix" };
 
-		skyboxProjectionMatrix.PerspectiveY(90.0, 1.0, 1.0, 1000.0);
-		pSkyboxCube->bind(0);
+		//skyboxProjectionMatrix.PerspectiveY(90.0, 1.0, 1.0, 1000.0);
+		//pSkyboxCube->bind(0);
 		pProgram->use();
-		pProgram->applyUniform(pSkyboxCube->uniformname, 0);
-		pProgram->applyUniform(CameraMatrix, pSSG->camera.viewMatrix);
-		pProgram->applyUniform(ProjectionMatrix, pRendererConfig->projectionMatrix);
-		pProgram->applyUniform(WorldMatrix, skyboxWorldMatrix);
+		//pProgram->applyUniform(pSkyboxCube->uniformname, 0);
+		//pProgram->applyUniform(CameraMatrix, pSSG->camera.viewMatrix);
+		//pProgram->applyUniform(ProjectionMatrix, pRendererConfig->projectionMatrix);
+		//pProgram->applyUniform(WorldMatrix, skyboxWorldMatrix);
 
 		const std::string VERTEX_LOCATION{ "aPosition" };
 		const std::string TEXCOORD_LOCATION{ "aTexCoord" };
@@ -858,7 +857,7 @@ namespace Fluxions
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glUseProgram(0);
-		pSkyboxCube->unbind();
+		//pSkyboxCube->unbind();
 		pRendererConfig->metrics_skybox_ms = stopwatch.Stop_msf();
 	}
 

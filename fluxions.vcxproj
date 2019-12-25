@@ -176,6 +176,7 @@
     <ClCompile Include="src\fluxions_renderer_texture_2d.cpp" />
     <ClCompile Include="src\fluxions_renderer_texture_cube.cpp" />
     <ClCompile Include="src\fluxions_renderer_utilities.cpp" />
+    <ClCompile Include="src\fluxions_simple_scene_graph_node.cpp" />
     <ClCompile Include="src\fluxions_scene_graph_reader.cpp" />
     <ClCompile Include="src\fluxions_scene_graph_writer.cpp" />
     <ClCompile Include="src\fluxions_astronomy.cpp">
@@ -399,6 +400,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\fluxions_simple_path_animation.cpp" />
     <ClCompile Include="src\fluxions_simple_property.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -670,6 +672,7 @@
     <ClInclude Include="include\fluxions_simple_materials.hpp" />
     <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp" />
     <ClInclude Include="include\fluxions_simple_material_library.hpp" />
+    <ClInclude Include="include\fluxions_simple_path_animation.hpp" />
     <ClInclude Include="include\fluxions_simple_point_light.hpp" />
     <ClInclude Include="include\fluxions_renderer_program.hpp" />
     <ClInclude Include="include\fluxions_simple_property.hpp" />

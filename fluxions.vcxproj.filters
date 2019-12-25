@@ -301,6 +301,10 @@
     <ClCompile Include="src\fluxions_image_loader.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_simple_path_animation.cpp" />
+    <ClCompile Include="src\fluxions_simple_scene_graph_node.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -717,8 +721,11 @@
     <ClInclude Include="include\fluxions_image_loader.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
+    <ClInclude Include="include\fluxions_simple_path_animation.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
     <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp">
-      <Filter>src\fluxions-ssg</Filter>
+      <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

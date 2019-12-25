@@ -100,6 +100,7 @@ namespace Fluxions
 		Vector4f cameraPosition; // the actual camera position used...
 
 		// METRICS
+		float metrics_apply_ms{ 0.0f };
 		float metrics_total_ms{ 0.0f };
 		float metrics_skybox_ms{ 0.0f };
 		float metrics_scene_ms{ 0.0f };
