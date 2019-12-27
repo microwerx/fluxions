@@ -12,6 +12,7 @@ namespace Fluxions
 		RendererTextureCube();
 		~RendererTextureCube() override;
 		const char* type() const noexcept override;
+		const char* keyword() const override { return "textureCube"; }
 	};
 } // namespace Fluxions
 

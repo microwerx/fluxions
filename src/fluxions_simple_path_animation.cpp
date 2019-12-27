@@ -127,7 +127,7 @@ namespace Fluxions
 		return false;
 	}
 
-	bool PathKeyframe::write(std::ostream& ostr) {
+	bool PathKeyframe::write(std::ostream& ostr) const {
 		ostr << "t " << t << "\n";
 		ostr << "a " << a << "\n";
 		ostr << "p ";
@@ -168,8 +168,8 @@ namespace Fluxions
 	}
 
 	bool SimplePathAnimation::read(const std::string& keyword, std::istream& istr) {
-		if (keyword == "path") {
-			istr >> nodename_;
+		if (keyword == this->keyword()) {
+			setName(ReadString(istr));
 			return true;
 		}
 		// time
@@ -189,8 +189,8 @@ namespace Fluxions
 		return false;
 	}
 
-	bool SimplePathAnimation::write(std::ostream& ostr) {
-		ostr << "path " << nodename_ << "\n";
+	bool SimplePathAnimation::write(std::ostream& ostr) const {
+		SimpleSceneGraphNode::write(ostr);
 		for (auto& kf : keyframes) {
 			kf.write(ostr);
 		}

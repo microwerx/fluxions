@@ -2,13 +2,14 @@
 #define FLUXIONS_RENDERER_OBJECT_HPP
 
 #include <fluxions_stdcxx.hpp>
+#include <fluxions_ibase_object.hpp>
 #include <fluxions_opengl.hpp>
 
 namespace Fluxions {
-	class RendererObject {
+	class RendererObject : public IBaseObject {
 	public:
 		RendererObject();
-		virtual ~RendererObject();
+		virtual ~RendererObject() override;
 
 		// RendererObject::init() should be called before other initialization code
 		virtual void init(const std::string& newname, RendererObject* pparent = nullptr);
@@ -26,17 +27,25 @@ namespace Fluxions {
 		virtual void invalidate_caches();
 
 		// type() returns an RTTI string of the type of object
-		virtual const char* type() const;
+		virtual const char* type() const override;
+
+		virtual const char* keyword() const override { return "unknown"; }
 
 		// status() returns some message about the current state of the object
-		virtual const char* status() const;
+		virtual const char* status() const override;
 
 		// usable() returns true or false (default is true) if the current object is usable for rendering
 		virtual bool usable() const;
 
+		// virtual read() from IBaseObject
+		bool read(const std::string& keyword, std::istream& istr) override;
+
+		// virtual write() from IBaseObject
+		bool write(std::ostream& ostr) const override;
+
 		inline bool unusable() const { return !usable(); }
 
-		const char* name() const noexcept { return name_.c_str(); };
+		// const char* name() const noexcept { return name_.c_str(); };
 		const bool initialized() const noexcept { return initialized_; }
 
 		void setParent(RendererObject* pparent);
@@ -46,7 +55,6 @@ namespace Fluxions {
 		bool usable_{ false };
 	private:
 		bool initialized_ = false;
-		std::string name_;
 		RendererObject* parent_{ nullptr };
 	};
 }

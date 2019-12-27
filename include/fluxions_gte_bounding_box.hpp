@@ -75,11 +75,12 @@ class TBoundingBox
 	// returns the smallest size of the box's X, Y, or Z dimensions
 	T MinSize() const { return min3(X(), Y(), Z()); }
 	T MinSizeRounded() const { return (T)(trunc(MinSize() + 0.5f)); }
-	// returns the 3D point of the center of the box
+	// returns the size of the sphere based on the size of the box
 	T Radius() const { return (T)(sqrt(0.75f) * MaxSize()); }
 	T Diameter() const { return (T)(sqrt(3.0f) * MaxSize()); }
 	T RadiusRounded() const { return (T)(trunc(Radius() + 0.5f)); }
 	T DiameterRounded() const { return (T)(trunc(Diameter() + 0.5f)); }
+	// returns the point at the center of the box
 	TVector3<T> Center() const;
 	// returns the smallest X coordinate of the box
 	T MinX() const { return minBounds.x; }

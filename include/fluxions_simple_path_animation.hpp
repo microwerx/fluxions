@@ -46,7 +46,7 @@ namespace Fluxions
 		void setAngleAxis(float angle, Vector3f axis);
 
 		bool read(const std::string& keyword, std::istream& istr);
-		bool write(std::ostream& ostr);
+		bool write(std::ostream& ostr) const;
 
 		Vector3f p() const;
 		Quaternionf q() const;
@@ -67,6 +67,9 @@ namespace Fluxions
 
 		std::vector<PathKeyframe> keyframes;
 
+		const char* type() const override { return "SimplePathAnimation"; }
+		const char* keyword() const override { return "path"; }
+
 		// reads format
 		// path "name"
 		// path t 0         # creates new key frame at time t
@@ -76,7 +79,7 @@ namespace Fluxions
 		// path euler yaw pitch roll          # sets industry standard
 		// path azel azimuth elevation twist  # az/el/twist
 		bool read(const std::string& keyword, std::istream& istr) override;
-		bool write(std::ostream& ostr) override;
+		bool write(std::ostream& ostr) const override;
 
 		unsigned size() const { return (unsigned)keyframes.size(); }
 		void sort() { std::sort(keyframes.begin(), keyframes.end()); }

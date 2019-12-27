@@ -63,8 +63,8 @@ namespace Fluxions
 		Vector3f aPosition;   // 12 bytes
 		Vector3f aNormal;     // 12 bytes
 		Vector2f aTexCoord;   //  8 bytes
-		Vector4s aAttrib;     //  8 bytes
 		Color4ub aColor;      //  4 bytes
+		Vector4s aAttrib1;     //  8 bytes
 		Vector4ub aBoneIndex; //  4 bytes
 		Vector4f aBoneWeight; // 16 bytes
 	};
@@ -75,8 +75,8 @@ namespace Fluxions
 		//static constexpr int aPosition = 0;
 		//static constexpr int aNormal = 1;
 		//static constexpr int aTexCoord = 2;
-		//static constexpr int aAttrib = 3;
-		//static constexpr int aColor = 4;
+		//static constexpr int aColor = 3;
+		//static constexpr int aAttrib1 = 4;
 		//static constexpr int aBoneIndex = 5;
 		//static constexpr int aBoneWeight = 6;
 		//static constexpr int aAttrib2 = 7;

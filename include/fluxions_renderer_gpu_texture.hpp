@@ -31,6 +31,7 @@ namespace Fluxions
 		void init(const std::string& name, RendererObject* pparent = nullptr) override;
 		void kill() override;
 		const char* type() const override;
+		const char* keyword() const override { return "texture"; }
 
 		bool loadMap(const std::string& path, bool generateMipmaps);
 		bool loadMap();

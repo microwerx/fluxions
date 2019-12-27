@@ -1,23 +1,23 @@
 #ifndef FLUXIONS_SIMPLE_SCENE_GRAPH_NODE_HPP
 #define FLUXIONS_SIMPLE_SCENE_GRAPH_NODE_HPP
 
-#include <fluxions_stdcxx.hpp>
+#include <fluxions_ibase_object.hpp>
 #include <fluxions_gte_matrix4.hpp>
 #include <fluxions_gte_bounding_box.hpp>
 
 namespace Fluxions
 {
-	struct SimpleSceneGraphNode {
+	struct SimpleSceneGraphNode : public IBaseObject {
 		Matrix4f transform;
 		Matrix4f addlTransform;
 		BoundingBoxf bbox;
-		std::string nodename_;
 
-		virtual const char* nodetype() const noexcept { return "SimpleSceneGraphNode"; }
-		virtual const char* nodename() const noexcept { return nodename_.c_str(); }
+		const char* type() const override { return "SimpleSceneGraphNode"; }
+		const char* keyword() const override { return "node"; }
+		const char* status() const override { return "unknown"; }
 
-		virtual bool read(const std::string& keyword, std::istream& istr);
-		virtual bool write(std::ostream& ostr);
+		bool read(const std::string& keyword, std::istream& istr) override;
+		bool write(std::ostream& ostr) const override;
 	};
 }
 

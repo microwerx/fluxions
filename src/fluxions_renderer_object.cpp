@@ -1,4 +1,5 @@
 #include "pch.hpp"
+#include <fluxions_fileio_iostream.hpp>
 #include <fluxions_renderer_object.hpp>
 #include <hatchetfish.hpp>
 
@@ -59,6 +60,20 @@ namespace Fluxions
 
 	bool RendererObject::usable() const {
 		return usable_;
+	}
+
+	bool RendererObject::read(const std::string& keyword, std::istream& istr) {
+		if (keyword == this->keyword()) {
+			setName(ReadString(istr));
+			return true;
+		}
+		return false;
+	}
+
+	bool RendererObject::write(std::ostream& ostr) const {
+		ostr << keyword() << " ";
+		WriteString(ostr, name()) << "\n";
+		return true;
 	}
 
 	void RendererObject::setParent(RendererObject* pparent) {

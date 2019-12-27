@@ -28,8 +28,7 @@ namespace Fluxions
 {
 
 	template <typename T>
-	class TMatrix4
-	{
+	class TMatrix4 {
 	public:
 		// normal access (column major)
 		T m11, m21, m31, m41;
@@ -637,21 +636,21 @@ namespace Fluxions
 			T t18 = m21 * m32 - m22 * m31;
 
 			return TMatrix4<T>(m22 * t3 - m23 * t2 + m24 * t1,
-				-m12 * t3 + m13 * t2 - m14 * t1,
-				m12 * t6 - m13 * t5 + m14 * t4,
-				-m12 * t9 + m13 * t8 - m14 * t7,
-				-m21 * t3 + m23 * t11 - m24 * t10,
-				m11 * t3 - m13 * t11 + m14 * t10,
-				-m11 * t6 + m13 * t13 - m14 * t12,
-				m11 * t9 - m13 * t15 + m14 * t14,
-				m21 * t2 - m22 * t11 + m24 * t16,
-				-m11 * t2 + m12 * t11 - m14 * t16,
-				m11 * t5 - m12 * t13 + m14 * t17,
-				-m11 * t8 + m12 * t15 - m14 * t18,
-				-m21 * t1 + m22 * t10 - m23 * t16,
-				m11 * t1 - m12 * t10 + m13 * t16,
-				-m11 * t4 + m12 * t12 - m13 * t17,
-				m11 * t7 - m12 * t14 + m13 * t18);
+							   -m12 * t3 + m13 * t2 - m14 * t1,
+							   m12 * t6 - m13 * t5 + m14 * t4,
+							   -m12 * t9 + m13 * t8 - m14 * t7,
+							   -m21 * t3 + m23 * t11 - m24 * t10,
+							   m11 * t3 - m13 * t11 + m14 * t10,
+							   -m11 * t6 + m13 * t13 - m14 * t12,
+							   m11 * t9 - m13 * t15 + m14 * t14,
+							   m21 * t2 - m22 * t11 + m24 * t16,
+							   -m11 * t2 + m12 * t11 - m14 * t16,
+							   m11 * t5 - m12 * t13 + m14 * t17,
+							   -m11 * t8 + m12 * t15 - m14 * t18,
+							   -m21 * t1 + m22 * t10 - m23 * t16,
+							   m11 * t1 - m12 * t10 + m13 * t16,
+							   -m11 * t4 + m12 * t12 - m13 * t17,
+							   m11 * t7 - m12 * t14 + m13 * t18);
 		}
 
 		constexpr TMatrix4<T> Adjugate() noexcept {
@@ -755,6 +754,10 @@ namespace Fluxions
 				0, 0, 0, 0,
 				0, 0, 0, 0);
 		}
+		
+		static constexpr TMatrix4<T> MakeRotation(T angleInDegrees, TVector3<T> v) noexcept {
+			return MakeRotation(angleInDegrees, v.x, v.y, v.z);
+		}
 
 		static constexpr TMatrix4<T> MakeRotation(T angleInDegrees, T x, T y, T z) noexcept {
 			T angleInRadians = static_cast<T>(angleInDegrees * FX_DEGREES_TO_RADIANS);
@@ -772,12 +775,24 @@ namespace Fluxions
 				0.0, 0.0, 0.0, 1.0);
 		}
 
+		static constexpr TMatrix4<T> MakeScaling(TVector3<T> v) noexcept {
+			return MakeScaling(v.x, v.y, v.z);
+		}
+
 		static constexpr TMatrix4<T> MakeScaling(T x, T y, T z) noexcept {
 			return TMatrix4<T>(
 				x, 0, 0, 0,
 				0, y, 0, 0,
 				0, 0, z, 0,
 				0, 0, 0, 1);
+		}
+
+		static constexpr TMatrix4<T> MakeTranslation(TVector3<T> v) noexcept {
+			return MakeTranslation(v.x, v.y, v.z);
+		}
+
+		static constexpr TMatrix4<T> MakeTranslation(TVector4<T> v) noexcept {
+			return MakeTranslation(v.x, v.y, v.z);
 		}
 
 		static constexpr TMatrix4<T> MakeTranslation(T x, T y, T z) noexcept {

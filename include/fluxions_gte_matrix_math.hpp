@@ -49,6 +49,21 @@ namespace Fluxions
 	}
 
 	template <typename T>
+	constexpr TVector2<T> operator*(const TMatrix4<T>& lhs, const TVector2<T>& rhs) noexcept {
+		return TVector2<T>(
+			lhs.m11 * rhs.x + lhs.m12 * rhs.y + lhs.m14,
+			lhs.m21 * rhs.x + lhs.m22 * rhs.y + lhs.m24);
+	}
+
+	template <typename T>
+	constexpr TVector3<T> operator*(const TMatrix4<T>& lhs, const TVector3<T>& rhs) noexcept {
+		return TVector3<T>(
+			lhs.m11 * rhs.x + lhs.m12 * rhs.y + lhs.m13 * rhs.z + lhs.m14,
+			lhs.m21 * rhs.x + lhs.m22 * rhs.y + lhs.m23 * rhs.z + lhs.m24,
+			lhs.m31 * rhs.x + lhs.m32 * rhs.y + lhs.m33 * rhs.z + lhs.m34);
+	}
+
+	template <typename T>
 	constexpr TColor4<T> operator*(const TMatrix4<T>& lhs, const TColor4<T>& rhs) noexcept {
 		return TColor4<T>(
 			lhs.m11 * rhs.r + lhs.m12 * rhs.g + lhs.m13 * rhs.b + lhs.m14 * rhs.a,

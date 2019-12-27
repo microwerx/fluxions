@@ -46,7 +46,7 @@ namespace Fluxions
 	struct SceneGraphWriter;
 	struct ISimpleRendererPlugin;
 
-	class SimpleSceneGraph {
+	class SimpleSceneGraph : public IBaseObject {
 	public:
 		std::string name;
 		std::vector<std::string> sceneFileLines;
@@ -63,9 +63,9 @@ namespace Fluxions
 		TResourceManager<SimpleGeometryGroup> geometry;
 		// TODO: Change OBJStaticModel to SimpleGeometryMesh
 		TResourceManager<OBJStaticModel> geometryObjects;
-		std::vector<SimplePointLight> pointLights;
+		TResourceManager<SimplePointLight> pointLights;
 		TResourceManager<SimplePathAnimation> paths;
-		std::vector<SimpleSceneGraphNode*> nodes;
+		TResourceManager<SimpleSceneGraphNode*> nodes;
 
 		SimpleMaterialSystem materials;
 		//mutable SimpleRenderer_GLuint renderer;
@@ -94,6 +94,13 @@ namespace Fluxions
 		//void ApplyGlobalSettingsToCurrentProgram();
 		//void ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
 		//void DisableCurrentTextures();
+
+		const char* type() const override { return "SimpleSceneGraph"; }
+		const char* keyword() const override { return "scenegraph"; }
+		const char* status() const override { return "unknown"; }
+	private:
+		bool read(const std::string& keyword, std::istream& istr) override;
+		bool write(std::ostream & ostr) const override;
 
 	private:
 		BoundingBoxf boundingBox;

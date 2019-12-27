@@ -27,6 +27,26 @@
 #include <fluxions_shader_program_locations.hpp>
 #include <fluxions_simple_renderer.hpp>
 
+namespace FxColors3
+{
+	const Fluxions::Color3f Black{       0.000f, 0.000f, 0.000f };
+	const Fluxions::Color3f Gray33{      0.333f, 0.333f, 0.333f };
+	const Fluxions::Color3f Gray67{      0.667f, 0.667f, 0.667f };
+	const Fluxions::Color3f White{       1.000f, 1.000f, 1.000f };
+	const Fluxions::Color3f Red{         1.000f, 0.000f, 0.000f };
+	const Fluxions::Color3f Orange{      0.894f, 0.447f, 0.000f };
+	const Fluxions::Color3f Yellow{      0.894f, 0.894f, 0.000f };
+	const Fluxions::Color3f Green{       0.000f, 1.000f, 0.000f };
+	const Fluxions::Color3f Cyan{        0.000f, 0.707f, 0.707f };
+	const Fluxions::Color3f Azure{       0.000f, 0.447f, 0.894f };
+	const Fluxions::Color3f Blue{        0.000f, 0.000f, 1.000f };
+	const Fluxions::Color3f Violet{      0.447f, 0.000f, 0.894f };
+	const Fluxions::Color3f Rose{        0.894f, 0.000f, 0.447f };
+	const Fluxions::Color3f Brown{       0.500f, 0.250f, 0.000f };
+	const Fluxions::Color3f Gold{        0.830f, 0.670f, 0.220f };
+	const Fluxions::Color3f ForestGreen{ 0.250f, 0.500f, 0.250f };
+}
+
 namespace Fluxions
 {
 	class RendererContext;
@@ -121,18 +141,30 @@ namespace Fluxions
 		RendererConfig* pRendererConfig = nullptr;
 		RendererProgram* pProgram = nullptr;
 		RendererTextureCube* pSkyboxCube{ nullptr };
+		TSimpleResourceManager<int> textureUnits;
 
 		//Matrix4f projectionMatrix;
 		//Matrix4f cameraMatrix;
 
-		__ShaderProgramLocations locs;
-		std::map<std::string, SimpleMap*> currentTextures;
-		TSimpleResourceManager<int> textureUnits;
-		SimpleRenderer_GLuint renderer;
-		bool areBuffersBuilt = false;
+		struct SCENEINFO {
+			__ShaderProgramLocations locs;
+			std::map<std::string, SimpleMap*> currentTextures;
+			SimpleRenderer_GLuint renderer;
+			bool areBuffersBuilt = false;
+		} scene;
 
-		GLuint skybox_abo = 0;
-		GLuint skybox_eabo = 0;
+		struct SKYBOXINFO {
+			GLuint abo = 0;
+			GLuint eabo = 0;
+			~SKYBOXINFO() { FxDeleteBuffer(&abo); FxDeleteBuffer(&eabo); }
+		} skybox;
+
+		struct VIZINFO {
+			bool buffersBuilt = false;
+			int kdLoc = -1;
+			int worldMatrixLoc = -1;
+			SimpleRenderer_GLuint renderer;
+		} viz;
 
 		struct POSTINFO {
 			bool usable_ = false;
@@ -151,13 +183,17 @@ namespace Fluxions
 		void applySpheresToCurrentProgram();
 		void render(RendererProgram* program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
 		void applyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
-		void disableCurrentTextures();
+		void _sceneDisableCurrentTextures();
 
 		bool _initSkyBox();
 		void _renderSkyBox();
 		bool _initPost();
 		void _renderPost();
 		void _renderSceneGraph();
+		bool _initVIZ();
+		void _vizBBox(const BoundingBoxf& bbox, Matrix4f& worldMatrix, Color3f color);
+		void _vizBall(const Vector3f& center, float radius, Color3f color);
+		void _renderVIZ();
 	};
 } // namespace Fluxions
 

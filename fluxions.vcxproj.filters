@@ -109,19 +109,10 @@
     <ClCompile Include="src\fluxions_gte_vector4.cpp">
       <Filter>src\fluxions-gte</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_obj_static_model.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_opengl.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_pbsky.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_property.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_simple_ssphh.cpp">
@@ -303,6 +294,18 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_simple_path_animation.cpp" />
     <ClCompile Include="src\fluxions_simple_scene_graph_node.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_ibase_object.cpp">
+      <Filter>src\fluxions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_property.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_obj_static_model.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
   </ItemGroup>
@@ -726,6 +729,9 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp">
       <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ibase_object.hpp">
+      <Filter>include\fluxions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

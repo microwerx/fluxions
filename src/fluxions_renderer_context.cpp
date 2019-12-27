@@ -592,6 +592,7 @@ namespace Fluxions
 		static const std::string PERSPECTIVE{ "perspective" };
 		static const std::string AUTORESIZE{ "autoresize" };
 		static const std::string DRAW{ "draw" };
+		static const std::string VIZ{ "viz" };
 		static const std::string POST{ "post" };
 		static const std::string SCENE{ "scene" };
 		static const std::string SKYBOX{ "skybox" };
@@ -731,6 +732,9 @@ namespace Fluxions
 				else if (arg1 == DRAW && arg2 == POST) {
 					pcurRendererConfig->renderPost = true;
 					return true;
+				}
+				else if (arg1 == DRAW && arg2 == VIZ) {
+					pcurRendererConfig->renderVIZ = true;
 				}
 				else if (arg1 == WRITEFBO) {
 					if (!fbos.count(arg2)) return false;

@@ -10,7 +10,7 @@
 
 namespace Fluxions
 {
-	class SimpleSSPHHLight
+	class SimpleSSPHHLight : public SimpleSceneGraphNode
 	{
 	public:
 		bool enabled = true;

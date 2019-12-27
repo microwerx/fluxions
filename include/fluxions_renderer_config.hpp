@@ -22,6 +22,7 @@ namespace Fluxions
 
 		bool renderSkyBox = false;
 		bool renderSceneGraph = false;
+		bool renderVIZ = false;
 		bool renderPost = false;
 
 		float renderPostToneMapExposure = 0.0f;
@@ -104,6 +105,7 @@ namespace Fluxions
 		float metrics_total_ms{ 0.0f };
 		float metrics_skybox_ms{ 0.0f };
 		float metrics_scene_ms{ 0.0f };
+		float metrics_viz_ms{ 0.0f };
 		float metrics_posttime_ms{ 0.0f };
 
 		RendererConfig();

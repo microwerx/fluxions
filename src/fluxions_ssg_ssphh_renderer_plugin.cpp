@@ -54,6 +54,12 @@ namespace Fluxions
 			sphl.msph[2] = sphl.msph[0];
 			sphl.standardize();
 			ssphhLights.push_back(sphl);
+			pssg->nodes[sphl.name] = &sphl;
+			pssg->nodes[sphl.name]->bbox.reset();
+			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() - Vector3f(1, 1, 1);
+			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() + Vector3f(1, 1, 1);
+			pssg->nodes[sphl.name]->transform = Matrix4f::MakeTranslation(sphl.position.xyz());
+			pssg->nodes[sphl.name]->addlTransform.LoadIdentity();
 			return true;
 		}
 		else if (cmd == "sphl") {
@@ -65,6 +71,12 @@ namespace Fluxions
 			sphl.falloffRadius = ReadFloat(istr);
 			sphl.position = ReadVector3f(istr);
 			sphl.changeDegrees(MaxSphlDegree);
+			pssg->nodes[sphl.name] = &sphl;
+			pssg->nodes[sphl.name]->bbox.reset();
+			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() - Vector3f(1, 1, 1);
+			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() + Vector3f(1, 1, 1);
+			pssg->nodes[sphl.name]->transform = Matrix4f::MakeTranslation(sphl.position.xyz());
+			pssg->nodes[sphl.name]->addlTransform.LoadIdentity();
 			return true;
 		}
 		return false;

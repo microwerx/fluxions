@@ -627,6 +627,7 @@ namespace Fluxions
 												 camera.imageNearZ,
 												 camera.imageFarZ);
 			camera.viewMatrix.LookAt(origin, target, roll);
+			return true;
 		}
 		else if (keyword == "perspective_tmf") {
 			Matrix4f tm = ReadAffineMatrix4f(istr);
@@ -640,6 +641,7 @@ namespace Fluxions
 												camera.imageNearZ,
 												camera.imageFarZ);
 			camera.viewMatrix = tm;
+			return true;
 		}
 		else if (keyword == "ortho_otrw") {
 			Vector3f origin = ReadVector3f(istr);
@@ -651,6 +653,7 @@ namespace Fluxions
 			camera.isOrtho = true;
 			camera.width = width;
 			// TODO (projection and view matrix)
+			return true;
 		}
 		else if (keyword == "ortho_tmw") {
 			Matrix4f tm = ReadMatrix4f(istr);
@@ -661,9 +664,11 @@ namespace Fluxions
 			camera.width = (float)width;
 			camera.viewMatrix = tm;
 			// TODO (projection matrix)
+			return true;
 		}
 		else {
-			istr >> camera.nodename_;
+			std::string camname = ReadString(istr);
+			camera.setName(camname);
 		}
 		//if (!isBadCamera) {
 		//	float fstop = 16.0f;
@@ -751,14 +756,14 @@ namespace Fluxions
 	}
 
 	bool SimpleSceneGraph::ReadPointLight(const std::string& type, std::istream& istr) {
-		SimplePointLight spl;
-		spl.name = ReadString(istr);
+		const std::string name = ReadString(istr);
+		pointLights[name].setName(name);
+		nodes[name] = &pointLights[name];
+		SimplePointLight& spl = pointLights[name];
 		spl.index = pointLights.size();
 		spl.E0 = ReadFloat(istr);
 		spl.falloffRadius = ReadFloat(istr);
 		spl.position = ReadVector3f(istr);
-
-		pointLights.push_back(spl);
 		return true;
 	}
 
@@ -779,15 +784,22 @@ namespace Fluxions
 
 	bool SimpleSceneGraph::ReadPath(const std::string& keyword, std::istream& istr) {
 		if (keyword == "path") {
-			std::string pathName;
-			istr >> pathName;
-			paths[pathName].nodename_ = pathName;
+			std::string pathName = ReadString(istr);
+			paths[pathName].setName(pathName);
 			paths.lastId = paths.GetHandleFromName(pathName);
 		}
 		else if (paths.lastId > 0) {
 			return paths[paths.lastId].read(keyword, istr);
 		}
 		return false;
+	}
+
+	bool SimpleSceneGraph::read(const std::string& keyword, std::istream& istr) {
+		return false;
+	}
+
+	bool SimpleSceneGraph::write(std::ostream& ostr) const {
+		return true;
 	}
 
 	//void SimpleSceneGraph::initTexUnits() {

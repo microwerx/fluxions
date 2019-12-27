@@ -169,6 +169,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\fluxions_ibase_object.cpp" />
     <ClCompile Include="src\fluxions_image_loader.cpp" />
     <ClCompile Include="src\fluxions_renderer_gles30_snapshot.cpp" />
     <ClCompile Include="src\fluxions_renderer_object.cpp" />
@@ -607,6 +608,7 @@
     <ClInclude Include="include\damselfish_syntax_semantic_analyzer.hpp" />
     <ClInclude Include="include\fluxions.hpp" />
     <ClInclude Include="include\fluxions_astronomy.hpp" />
+    <ClInclude Include="include\fluxions_ibase_object.hpp" />
     <ClInclude Include="include\fluxions_bbox.hpp" />
     <ClInclude Include="include\fluxions_common_test.hpp" />
     <ClInclude Include="include\fluxions_config.hpp" />

@@ -31,7 +31,8 @@ namespace Fluxions
 		float imageNearZ = 0.1f;
 		float imageFarZ = 1000.0f;
 
-		const char* nodetype() const noexcept override { return "SimpleCamera"; }
+		const char* type() const override { return "SimpleCamera"; }
+		const char* keyword() const override { return "camera"; }
 
 		void setImageParameters(float screenWidth, float screenHeight, float znear, float zfar) {
 			imageWidth = screenWidth;

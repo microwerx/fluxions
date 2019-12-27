@@ -151,12 +151,30 @@ namespace Fluxions
 		void Index(IndexType index);
 		void Index(std::vector<IndexType> indices);
 
+		static const int POSITION = 0;
+		static const int NORMAL = 1;
+		static const int TEXCOORD = 2;
+		static const int COLOR = 3;
+		static const int ATTRIB1 = 4;
+		static const int BONEINDEX = 5;
+		static const int BONEWEIGHT = 6;
+		static const int ATTRIB2 = 7;
+
 		void VertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 		void Vertex4s(GLshort x, GLshort y, GLshort z, GLshort w);
 		void Normal4s(GLshort x, GLshort y, GLshort z, GLshort w);
 		void TexCoord2s(GLshort s, GLshort t);
 		void Color4ub(GLubyte r, GLubyte g, GLubyte b, GLubyte a);
 		void Attrib4s(GLshort x, GLshort y, GLshort z, GLshort w);
+
+		void Position3f(Vector3f position) { VertexAttrib4f(POSITION, position.x, position.y, position.z, 1.0); }
+		void Normal3f(Vector3f normal) { VertexAttrib4f(NORMAL, normal.x, normal.y, normal.z, 0.0f); }
+		void TexCoord2f(Vector2f st) { VertexAttrib4f(TEXCOORD, st.x, st.y, 0.0f, 0.0f); }
+		void Color3f(Color3f color) { VertexAttrib4f(COLOR, color.r, color.g, color.b, 1.0f); }
+		void Attrib14f(Vector4f v) { VertexAttrib4f(ATTRIB1, v.x, v.y, v.z, v.w); }
+		void BoneIndex4f(Vector4f v) { VertexAttrib4f(BONEINDEX, v.x, v.y, v.z, v.w); }
+		void BoneWeight4f(Vector4f v) { VertexAttrib4f(BONEWEIGHT, v.x, v.y, v.z, v.w); }
+		void Attrib24f(Vector4f v) { VertexAttrib4f(ATTRIB2, v.x, v.y, v.z, v.w); }
 
 		void BuildBuffers();
 		void BindBuffers();
