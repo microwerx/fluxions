@@ -25,8 +25,29 @@
 #include <viperfish_widget.hpp>
 #include <imgui.h>
 
+namespace Colors
+{
+	const ImVec4 Black{ 0.000f, 0.000f, 0.000f, 1.000f };
+	const ImVec4 Gray33{ 0.333f, 0.333f, 0.333f, 1.000f };
+	const ImVec4 Gray67{ 0.667f, 0.667f, 0.667f, 1.000f };
+	const ImVec4 White{ 1.000f, 1.000f, 1.000f, 1.000f };
+	const ImVec4 Red{ 1.000f, 0.000f, 0.000f, 1.000f };
+	const ImVec4 Orange{ 0.894f, 0.447f, 0.000f, 1.000f };
+	const ImVec4 Yellow{ 0.894f, 0.894f, 0.000f, 1.000f };
+	const ImVec4 Green{ 0.000f, 1.000f, 0.000f, 1.000f };
+	const ImVec4 Cyan{ 0.000f, 0.707f, 0.707f, 1.000f };
+	const ImVec4 Azure{ 0.000f, 0.447f, 0.894f, 1.000f };
+	const ImVec4 Blue{ 0.000f, 0.000f, 1.000f, 1.000f };
+	const ImVec4 Violet{ 0.447f, 0.000f, 0.894f, 1.000f };
+	const ImVec4 Rose{ 0.894f, 0.000f, 0.447f, 1.000f };
+	const ImVec4 Brown{ 0.500f, 0.250f, 0.000f, 1.000f };
+	const ImVec4 Gold{ 0.830f, 0.670f, 0.220f, 1.000f };
+	const ImVec4 ForestGreen{ 0.250f, 0.500f, 0.250f, 1.000f };
+}
+
 namespace Vf
 {
+
 	class DearImGuiWidget : public Widget
 	{
 	protected:
