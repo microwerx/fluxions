@@ -45,6 +45,9 @@ namespace Vf
 		std::vector<ImVec2> circles;
 		std::vector<ImVec2> points;
 		std::vector<std::pair<ImVec2, ImVec2>> lines;
+		float offsetX{ 0.0f };
+		float offsetY{ 0.0f };
+		float scale{ 1.0f };
 	private:
 		float X = 0.0f;
 		float Y = 0.0f;

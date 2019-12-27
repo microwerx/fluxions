@@ -291,6 +291,9 @@ namespace Fluxions
 			else if (token == "geometryGroup") {
 				ReadGeometryGroup(token, istr);
 			}
+			else if (token == "path") {
+				ReadPath(token, istr);
+			}
 			else if (token == "enviro") {
 				ReadEnviro(token, istr);
 			}
@@ -772,6 +775,19 @@ namespace Fluxions
 		sphere.objectId = id;
 		spheres[id] = sphere;
 		return true;
+	}
+
+	bool SimpleSceneGraph::ReadPath(const std::string& keyword, std::istream& istr) {
+		if (keyword == "path") {
+			std::string pathName;
+			istr >> pathName;
+			paths[pathName].nodename_ = pathName;
+			paths.lastId = paths.GetHandleFromName(pathName);
+		}
+		else if (paths.lastId > 0) {
+			return paths[paths.lastId].read(keyword, istr);
+		}
+		return false;
 	}
 
 	//void SimpleSceneGraph::initTexUnits() {

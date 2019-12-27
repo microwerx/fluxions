@@ -7,14 +7,49 @@
 namespace Fluxions
 {
 	struct PathKeyframe {
+
+		enum OrientationType {
+			Quaternion,
+			LookAt,
+			AngleAxis,
+			AzElTwist,
+			EulerXYZ,
+			EulerZYX,
+			EulerZXY,
+		};
+
 		// time of keyframe
 		float t = 0.0f;
 		// alpha of keyframe for motion
 		float a = 1.0f;
 		// position of keyframe
-		Fluxions::Vector3f p;
+		Vector3f position_;
 		// orientation of keyframe
-		Fluxions::Quaternionf q;
+		Quaternionf quaternion_;
+		
+		// orientation data of keyframe depending on orientationType
+		Vector3f lookAt_;
+		Vector3f azeltwist_;
+		Vector3f euler_;
+		Vector3f axis_;
+		float angle_;
+
+		OrientationType orientationType = OrientationType::Quaternion;
+
+		void setPosition(Vector3f p);
+		void setQuaternion(Quaternionf q);
+		void setLookAt(Vector3f lookAt);
+		void setAzElTwist(Vector3f azeltwist);
+		void setEulerXYZ(Vector3f angles);
+		void setEulerZYX(Vector3f angles);
+		void setEulerZXY(Vector3f angles);
+		void setAngleAxis(float angle, Vector3f axis);
+
+		bool read(const std::string& keyword, std::istream& istr);
+		bool write(std::ostream& ostr);
+
+		Vector3f p() const;
+		Quaternionf q() const;
 
 		bool operator<(const PathKeyframe& b) {
 			return t < b.t;

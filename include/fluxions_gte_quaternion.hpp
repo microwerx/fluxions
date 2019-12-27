@@ -65,7 +65,11 @@ namespace Fluxions
 			return *this;
 		}
 
+		static TQuaternion<T> makeFromLookDir(Vector3d dirTo, Vector3d rollDir) noexcept;
 		static TQuaternion<T> makeFromAngles(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
+		static TQuaternion<T> makeFromEulerXYZ(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
+		static TQuaternion<T> makeFromEulerZYX(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
+		static TQuaternion<T> makeFromEulerZXY(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
 		static TQuaternion<T> makeFromAzElTwist(double azInDegrees, double elInDegrees, double twistInDegrees) noexcept;
 		static TQuaternion<T> makeFromAngleAxis(double angleInDegrees, double x, double y, double z) noexcept;
 		static TQuaternion<T> makeFromMatrix3(const TMatrix3<T>& M) noexcept;
@@ -204,6 +208,21 @@ namespace Fluxions
 	};
 
 	template <typename T>
+	TQuaternion<T> TQuaternion<T>::makeFromLookDir(Vector3d dirTo, Vector3d rollDir) noexcept {
+		dirTo = dirTo.unit();
+		rollDir = rollDir.unit();
+		constexpr Vector3d forward{ 0.0, 0.0, 1.0 };
+		constexpr double EPS = 1e-6;
+		double cosTheta = forward.dot(dirTo);
+		if (std::abs(cosTheta + 1.0f) < EPS) return { T(FX_PI), T(0), T(1), T(0) };
+		else if (std::abs(cosTheta - 1.0f) < EPS) return { T(0), T(0), T(0), T(0) };
+
+		double angle = std::acos(cosTheta);
+		Vector3d axis = forward.cross(dirTo);
+		return TQuaternion<T>::makeFromAngleAxis(angle * FX_RADIANS_TO_DEGREES, axis.x, axis.y, axis.z);
+	}
+
+	template <typename T>
 	TQuaternion<T> TQuaternion<T>::makeFromAngles(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept {
 		TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(pitchInDegrees, 1.0, 0.0, 0.0);
 		TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(yawInDegrees, 0.0, 1.0, 0.0);
@@ -214,12 +233,40 @@ namespace Fluxions
 	}
 
 	template <typename T>
+	TQuaternion<T> TQuaternion<T>::makeFromEulerXYZ(double x, double y, double z) noexcept {
+		TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(x, 1.0, 0.0, 0.0);
+		TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(y, 0.0, 1.0, 0.0);
+		TQuaternion<T> qZ = TQuaternion<T>::makeFromAngleAxis(z, 0.0, 0.0, 1.0);
+
+		return (qX * qY * qZ).normalized();
+	}
+
+	template <typename T>
+	TQuaternion<T> TQuaternion<T>::makeFromEulerZYX(double x, double y, double z) noexcept {
+		TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(x, 1.0, 0.0, 0.0);
+		TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(y, 0.0, 1.0, 0.0);
+		TQuaternion<T> qZ = TQuaternion<T>::makeFromAngleAxis(z, 0.0, 0.0, 1.0);
+
+		return (qZ * qY * qX).normalized();
+	}
+
+	template <typename T>
+	TQuaternion<T> TQuaternion<T>::makeFromEulerZXY(double x, double y, double z) noexcept {
+		TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(x, 1.0, 0.0, 0.0);
+		TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(y, 0.0, 1.0, 0.0);
+		TQuaternion<T> qZ = TQuaternion<T>::makeFromAngleAxis(z, 0.0, 0.0, 1.0);
+
+		return (qZ * qX * qY).normalized();
+	}
+
+	template <typename T>
 	TQuaternion<T> TQuaternion<T>::makeFromAzElTwist(double azInDegrees, double elInDegrees, double twistInDegrees) noexcept {
 		TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(elInDegrees, 1.0, 0.0, 0.0);
 		TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(azInDegrees, 0.0, 1.0, 0.0);
 		TQuaternion<T> qZ = TQuaternion<T>::makeFromAngleAxis(twistInDegrees, 0.0, 0.0, 1.0);
 
-		return (qZ * qX * qY).normalized();
+		return (qY * qX * qZ).normalized();
+		//return (qZ * qX * qY).normalized();
 	}
 
 	template <typename T>

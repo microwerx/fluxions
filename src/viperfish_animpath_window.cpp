@@ -56,8 +56,13 @@ namespace Vf
 		q = qZ * qX * qY;
 
 		ImGui::SliderFloat("speed", &speed, 0.0f, 1.0f);
+		ImGui::SliderFloat("%", &t, 0.0f, (float)max_keys);
 		ImGui::Value("t", t);
-		
+		ImGui::SameLine();
+		if (ImGui::Button("0")) {
+			t = 0.0f;
+		}
+
 		ImGui::Separator();
 
 		if (ImGui::Button("Clear")) { clear_animation = true; }
@@ -137,7 +142,7 @@ namespace Vf
 
 		ImDrawList* dl = ImGui::GetWindowDrawList();
 		if (dl) {
-			constexpr float size = 20.0f;
+			const float size = scale;
 			constexpr float radius = 4.0f;
 			ImVec2 ip = ImGui::GetCursorScreenPos();
 			ip.y += 100.0f;
@@ -145,8 +150,8 @@ namespace Vf
 			Vector3f Z(q2.m13(), q2.m23(), q2.m33());
 			Z.normalize();
 			Z *= 2;
-			ImVec2 curp{ ip.x + p2.x * size, ip.y + p2.z * size };
-			ImVec2 curq{ ip.x + (p2.x + Z.x) * size, ip.y + (p2.z + Z.z) * size };
+			ImVec2 curp{ ip.x + (p2.x - offsetX) * size, ip.y + (p2.z - offsetY) * size };
+			ImVec2 curq{ ip.x + (p2.x - offsetX + Z.x) * size, ip.y + (p2.z - offsetY + Z.z) * size };
 
 			//points[pointIdx].y = p2.z * size;
 			//pointIdx = incr_wrap(pointIdx, (int)points.size() - 1);

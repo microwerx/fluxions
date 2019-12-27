@@ -33,6 +33,7 @@
 #include <fluxions_simple_sphere.hpp>
 #include <fluxions_simple_point_light.hpp>
 #include <fluxions_scene_graph_reader.hpp>
+#include <fluxions_simple_path_animation.hpp>
 
 namespace Fluxions
 {
@@ -56,12 +57,14 @@ namespace Fluxions
 		SimpleCamera camera;
 		SimpleEnvironment environment;
 
+	public:
 		TResourceManager<std::string> shaderMaps;
 		TResourceManager<SimpleSphere> spheres;
 		TResourceManager<SimpleGeometryGroup> geometry;
 		// TODO: Change OBJStaticModel to SimpleGeometryMesh
 		TResourceManager<OBJStaticModel> geometryObjects;
 		std::vector<SimplePointLight> pointLights;
+		TResourceManager<SimplePathAnimation> paths;
 		std::vector<SimpleSceneGraphNode*> nodes;
 
 		SimpleMaterialSystem materials;
@@ -84,6 +87,7 @@ namespace Fluxions
 		bool ReadDirectionalLight(const std::string& type, std::istream& istr);
 		bool ReadPointLight(const std::string& type, std::istream& istr);
 		bool ReadSphere(const std::string& type, std::istream& istr);
+		bool ReadPath(const std::string& keyword, std::istream& istr);
 
 		// Rendering tools
 		//void ApplySpheresToCurrentProgram();

@@ -51,6 +51,8 @@ public:
 	using mapped_type = typename std::map<unsigned, T>::mapped_type;
 	using key_type = typename std::map<unsigned, T>::key_type;
 
+	unsigned lastId{ 0 };
+
 	TResourceManager() { Init(); }
 	~TResourceManager() { Clear(); }
 
@@ -65,6 +67,9 @@ public:
 	inline const_iterator end() const noexcept { return resources.end(); }
 	inline bool empty() const noexcept { return resources.empty(); }
 	inline unsigned size() const noexcept { return (unsigned)resources.size(); }
+
+	unsigned count(const std::string& name) const noexcept;
+	unsigned count(unsigned id) const noexcept;
 
 	void DeleteUnnamedResources();
 
@@ -200,6 +205,17 @@ void TResourceManager<T>::reset() noexcept {
 	availableResourceHandles.clear();
 	stringToHandleMap.clear();
 	handleToStringsMap.clear();
+}
+
+
+template <typename T>
+unsigned TResourceManager<T>::count(const std::string& id) const noexcept {
+	return (unsigned)handleToStringsMap.count(id);
+}
+
+template <typename T>
+unsigned TResourceManager<T>::count(unsigned id) const noexcept {
+	return (unsigned)handleToStringsMap.count(id);
 }
 
 template <typename T>
