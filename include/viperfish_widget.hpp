@@ -50,6 +50,9 @@ namespace Vf
 		void Init(int argc, char** argv);
 		void Init(std::vector<std::string> args);
 		void Kill();
+		void Hide();
+		void ToggleVisible();
+		void Show();
 		void MainLoop();
 		void LeaveMainLoop();
 
