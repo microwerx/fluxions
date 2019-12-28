@@ -22,6 +22,7 @@
 #include <fluxions_simple_ssphh_light.hpp>
 #include <fluxions_ssphh_utilities.hpp>
 #include <fluxions_sphl_sampler.hpp>
+#include <fluxions_fileio_iostream.hpp>
 
 namespace Fluxions
 {
@@ -35,6 +36,50 @@ namespace Fluxions
 	SimpleSSPHHLight::~SimpleSSPHHLight() {
 		ptrcLightProbeTexture.kill();
 		msphLightProbeTexture.kill();
+	}
+
+	bool SimpleSSPHHLight::read(const std::string& keyword, std::istream& istr) {
+		if (keyword == "sphl") {
+			setName(ReadString(istr));
+			E0 = ReadFloat(istr);
+			falloffRadius = ReadFloat(istr);
+			position = ReadVector3f(istr);
+			transform = Matrix4f::MakeTranslation(position);
+			addlTransform = Matrix4f::MakeIdentity();
+			bbox.reset();
+			bbox += position - falloffRadius;
+			bbox += position + falloffRadius;
+			changeDegrees(MaxSphlDegree);
+			return true;
+		}
+		else if (keyword == "shlight") {
+			setName(ReadString(istr));
+			E0 = ReadFloat(istr);
+			falloffRadius = ReadFloat(istr);
+			position = ReadVector3f(istr);
+			transform = Matrix4f::MakeTranslation(position);
+			addlTransform = Matrix4f::MakeIdentity();
+			bbox.reset();
+			bbox += position - falloffRadius;
+			bbox += position + falloffRadius;
+			changeDegrees(MaxSphlDegree);
+
+			orientation = ReadQuaternionf(istr);
+			msph[0] = ReadSphericalHarmonicf(istr);
+			msph[1] = msph[0];
+			msph[2] = msph[0];
+			standardize();
+			return true;
+		}
+		return false;
+	}
+
+	bool SimpleSSPHHLight::write(std::ostream& ostr) const {
+		ostr << "sphl " << "\"" << name() << "\" ";
+		WriteFloat(ostr, E0);
+		WriteFloat(ostr, falloffRadius);
+		WriteVector3f(ostr, position);
+		return true;
 	}
 
 	void SimpleSSPHHLight::makeDirty() {
@@ -146,7 +191,7 @@ namespace Fluxions
 
 		auto meta = json->getMember("meta");
 		Df::JSONPtr m_meta = Df::JSON::MakeObject({
-			{ "name", Df::JSON::MakeString(name) },
+			{ "name", Df::JSON::MakeString(name()) },
 			{ "position", Df::JSON::MakeArray({
 				position.x,
 				position.y,
@@ -203,7 +248,7 @@ namespace Fluxions
 		if (meta->IsObject()) {
 			auto nameMember = meta->getMember("name");
 			if (nameMember->IsString()) {
-				name = nameMember->AsString();
+				setName(nameMember->AsString());
 			}
 
 			auto m_position = meta->getMember("position");

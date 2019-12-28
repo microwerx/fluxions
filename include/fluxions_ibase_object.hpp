@@ -16,10 +16,11 @@ namespace Fluxions
 		virtual const char* status() const = 0;
 		virtual bool read(const std::string& keyword, std::istream& istr) = 0;
 		virtual bool write(std::ostream& ostr) const = 0;
-	protected:
-		std::string name_;
+
 		void setName(const std::string& name) { name_ = name; }
 		void setName(const char* name) { name_ = name; }
+	protected:
+		std::string name_;
 		friend class SimpleSceneGraph;
 	};
 }

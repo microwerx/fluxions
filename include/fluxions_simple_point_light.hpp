@@ -14,7 +14,12 @@ namespace Fluxions
 		float falloffRadius;
 		Vector3f position;
 
-		virtual const char* type() const override { return "SimplePointLight"; }
+		const char* type() const override { return "SimplePointLight"; }
+		const char* keyword() const override{ return "pointLight"; }
+		Color3f color() const override { return FxColors3::Yellow; }
+
+		bool read(const std::string& keyword, std::istream& istr) override;
+		bool write(std::ostream& ostr) const override;
 
 		// FIXME: Why do we have a renderer element here?
 		RendererTextureCube scs;

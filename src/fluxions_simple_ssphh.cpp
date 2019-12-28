@@ -111,7 +111,7 @@ namespace Fluxions
 				lightProbe.saveEXR(basename + "_sph.exr");
 			}
 			if (saveJSONs) {
-				H[i][i].SaveJSON(basename + ".json", basename, sphl.position.xyz());
+				H[i][i].SaveJSON(basename + ".json", basename, sphl.position);
 			}
 			Hf::Log.info("%s(): (%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, i, lm0, lm1, lm2, lm3);
 			i++;
@@ -147,7 +147,7 @@ namespace Fluxions
 					lightProbe.saveEXR(basename + "_sph.exr");
 				}
 				if (saveJSONs)
-					H[i][j].SaveJSON(basename + ".json", basename, sphl.position.xyz());
+					H[i][j].SaveJSON(basename + ".json", basename, sphl.position);
 
 				// TODO: calculate visibility percentage
 				P[i][j] = 0.25f;
@@ -239,7 +239,7 @@ namespace Fluxions
 			}
 			if (saveJSONs) {
 				std::string basename = base + "_01_Sprime";
-				Sprime[i].SaveJSON(base + "_01_Sprime.json", basename, sphls[i].position.xyz());
+				Sprime[i].SaveJSON(base + "_01_Sprime.json", basename, sphls[i].position);
 			}
 
 			if (savePPMs) {
@@ -251,7 +251,7 @@ namespace Fluxions
 			}
 			if (saveJSONs) {
 				std::string basename = base + "_02_self";
-				self[i].SaveJSON(base + "_02_self.json", basename, sphls[i].position.xyz());
+				self[i].SaveJSON(base + "_02_self.json", basename, sphls[i].position);
 			}
 
 			if (savePPMs) {
@@ -263,7 +263,7 @@ namespace Fluxions
 			}
 			if (saveJSONs) {
 				std::string basename = base + "_03_neighbor";
-				neighbor[i].SaveJSON(base + "_03_neighbor.json", basename, sphls[i].position.xyz());
+				neighbor[i].SaveJSON(base + "_03_neighbor.json", basename, sphls[i].position);
 			}
 
 			float lm0, lm1, lm2, lm3;

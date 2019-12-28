@@ -42,41 +42,19 @@ namespace Fluxions
 
 	bool SSG_SSPHHRendererPlugin::read(const std::string& cmd, std::istringstream& istr) {
 		if (cmd == "sphLight") {
-			SimpleSSPHHLight sphl;
-			sphl.name = ReadString(istr);
-			sphl.index = (int)ssphhLights.size();
-			sphl.E0 = ReadFloat(istr);
-			sphl.falloffRadius = ReadFloat(istr);
-			sphl.position = ReadVector3f(istr);
-			sphl.orientation = ReadQuaternionf(istr);
-			sphl.msph[0] = ReadSphericalHarmonicf(istr);
-			sphl.msph[1] = sphl.msph[0];
-			sphl.msph[2] = sphl.msph[0];
-			sphl.standardize();
-			ssphhLights.push_back(sphl);
-			pssg->nodes[sphl.name] = &sphl;
-			pssg->nodes[sphl.name]->bbox.reset();
-			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() - Vector3f(1, 1, 1);
-			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() + Vector3f(1, 1, 1);
-			pssg->nodes[sphl.name]->transform = Matrix4f::MakeTranslation(sphl.position.xyz());
-			pssg->nodes[sphl.name]->addlTransform.LoadIdentity();
+			ssphhLights.resize(ssphhLights.size() + 1);
+			SimpleSSPHHLight& sphl = ssphhLights.back();
+			sphl.index = (int)ssphhLights.size() - 1;
+			sphl.read(cmd, istr);
+			pssg->nodes[sphl.name()] = &sphl;
 			return true;
 		}
 		else if (cmd == "sphl") {
 			ssphhLights.resize(ssphhLights.size() + 1);
 			SimpleSSPHHLight& sphl = ssphhLights.back();
-			sphl.name = ReadString(istr);
 			sphl.index = (int)ssphhLights.size() - 1;
-			sphl.E0 = ReadFloat(istr);
-			sphl.falloffRadius = ReadFloat(istr);
-			sphl.position = ReadVector3f(istr);
-			sphl.changeDegrees(MaxSphlDegree);
-			pssg->nodes[sphl.name] = &sphl;
-			pssg->nodes[sphl.name]->bbox.reset();
-			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() - Vector3f(1, 1, 1);
-			pssg->nodes[sphl.name]->bbox += sphl.position.xyz() + Vector3f(1, 1, 1);
-			pssg->nodes[sphl.name]->transform = Matrix4f::MakeTranslation(sphl.position.xyz());
-			pssg->nodes[sphl.name]->addlTransform.LoadIdentity();
+			sphl.read(cmd, istr);
+			pssg->nodes[sphl.name()] = &sphl;
 			return true;
 		}
 		return false;
@@ -139,7 +117,7 @@ namespace Fluxions
 				v_MaxIndex = i;
 				v_Enabled[i] = 1;
 				v_E0[i] = Vector3f(ssphhLights[i].E0);
-				v_Position[i] = ssphhLights[i].position.xyz();
+				v_Position[i] = ssphhLights[i].position;
 				v_LightProbeCubeMapTexId[i] = ssphhLights[i].hierLightProbeTexture.getTexture();
 				v_LightProbeCubeMapUnit[i] = ssphhLights[i].colorSphlMap.unit = pRenderer->getTexUnit();
 				FxBindTexture(v_LightProbeCubeMapUnit[i], GL_TEXTURE_CUBE_MAP, v_LightProbeCubeMapTexId[i]);

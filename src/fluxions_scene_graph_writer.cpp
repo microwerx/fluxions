@@ -22,18 +22,22 @@ bool SceneGraphWriter::write(const SimpleSceneGraph* pssg) {
 	const SimpleSceneGraph& ssg = *pssg;
 
 	// 1. Camera
-	fout << "camera ";
-	if (ssg.camera.isOrtho) {
-		fout << "ortho_tmw ";
-		WriteAffineMatrix4f(fout, ssg.camera.viewMatrix);
-		fout << ssg.camera.width;
+	//fout << "camera ";
+	//if (ssg.camera.isOrtho) {
+	//	fout << "ortho_tmw ";
+	//	WriteAffineMatrix4f(fout, ssg.camera.viewMatrix);
+	//	fout << ssg.camera.width;
+	//}
+	//else {
+	//	fout << "perspective_tmf ";
+	//	WriteAffineMatrix4f(fout, ssg.camera.viewMatrix);
+	//	fout << ssg.camera.fov;
+	//}
+	//fout << "\n";
+
+	for (auto& [k, n] : ssg.cameras) {
+		n.write(fout);
 	}
-	else {
-		fout << "perspective_tmf ";
-		WriteAffineMatrix4f(fout, ssg.camera.viewMatrix);
-		fout << ssg.camera.fov;
-	}
-	fout << "\n";
 
 	// 2. Environment
 	if (ssg.environment.hasColor) {

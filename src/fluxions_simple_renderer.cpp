@@ -59,6 +59,14 @@ namespace Fluxions
 		surfaces[currentSurface].isIndexed = isIndexed;
 		surfaces[currentSurface].programId = currentProgramId;
 		surfaces[currentSurface].first = 0;
+		switch (surfaces[currentSurface].vertexType) {
+		case VertexType::FAST_VERTEX:
+			surfaces[currentSurface].first = fastVertices.size();
+			break;
+		case VertexType::SLOW_VERTEX:
+			surfaces[currentSurface].first = slowVertices.size();
+			break;
+		}
 		surfaces[currentSurface].firstIndex = (int)Indices.size();
 		surfaces[currentSurface].firstZIndex = (int)zIndices.size();
 

@@ -1017,6 +1017,7 @@ namespace Fluxions
 			4, 5, 5, 6, 6, 7, 7, 4, // back
 			1, 5, 6, 2, 4, 0, 3, 7, // remaining lines
 		};
+		viz.renderer.NewObject();
 		viz.renderer.Begin(GL_LINES);
 		viz.renderer.Color3f(color);
 		viz.renderer.Normal3f({ 0.0f, 0.0f, 0.0f });
@@ -1028,6 +1029,7 @@ namespace Fluxions
 	}
 
 	void RendererGLES30::_vizBall(const Vector3f& center, float radius, Color3f color) {
+		viz.renderer.NewObject();
 		viz.renderer.Begin(GL_LINES);
 		viz.renderer.Color3f(color);
 		viz.renderer.Normal3f({ 0.0f, 0.0f, 0.0f });
@@ -1035,8 +1037,8 @@ namespace Fluxions
 		const int SLICES = 16;
 		const int STACKS = 8;
 		float theta = 0.0f;
-		const float dtheta = 360.0f / SLICES;
-		const float dphi = 180.0f / STACKS;
+		const float dtheta = FX_F32_TWOPI / SLICES;
+		const float dphi = FX_F32_PI / STACKS;
 		for (int stack = 0; stack < STACKS; stack++) {
 			float phi = 0.0f;
 			for (int slice = 0; slice <= SLICES; slice++) {
@@ -1049,8 +1051,9 @@ namespace Fluxions
 				viz.renderer.Position3f((radius * p) + center);
 				p.from_straight_theta_phi(theta, phi + dphi);
 				viz.renderer.Position3f((radius * p) + center);
+				phi += dphi;
 			}
-			phi += dphi;
+			theta += dtheta;
 		}
 		viz.renderer.End();
 	}
@@ -1062,6 +1065,10 @@ namespace Fluxions
 		_vizBBox(bbox, Matrix4f::MakeIdentity(), FxColors3::White);
 
 		for (auto& [k, n] : pSSG->nodes) {
+			if (n->keyword() == "sphl") {
+				_vizBall(n->transform.col4().xyz(), 1.0f, FxColors3::Yellow);
+				continue;
+			}
 			_vizBBox(n->bbox, n->transform * n->addlTransform, FxColors3::Cyan);
 		}
 
@@ -1071,6 +1078,10 @@ namespace Fluxions
 
 		for (auto& [k, n] : pSSG->pointLights) {
 			_vizBall(n.position, 0.5f, FxColors3::Yellow);
+		}
+
+		for (auto& [k, n] : pSSG->spheres) {
+			_vizBall(n.transform.col4().xyz(), 0.5f, FxColors3::Yellow);
 		}
 
 		viz.buffersBuilt = true;

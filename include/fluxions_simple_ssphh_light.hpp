@@ -10,13 +10,13 @@
 
 namespace Fluxions
 {
-	class SimpleSSPHHLight : public SimpleSceneGraphNode
-	{
+	class SimpleSSPHHLight : public SimpleSceneGraphNode {
 	public:
 		bool enabled = true;
 		float E0 = 1.0f;
 		float falloffRadius = 100.0f;
-		Vector4f position = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+		//Vector4f position = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+		Vector3f position{ 0.0f, 0.0f, 0.0f };
 		Quaternionf orientation;
 		MultispectralSph4f msph;
 
@@ -31,7 +31,7 @@ namespace Fluxions
 		bool dirty = true;
 		bool randomize = false;
 		bool randomizePosition = false;
-		std::string name;
+		//std::string name;
 		int index = -1;
 		int maxDegree = DefaultSphlDegree;
 
@@ -55,6 +55,13 @@ namespace Fluxions
 
 		SimpleSSPHHLight();
 		~SimpleSSPHHLight();
+
+		const char* type() const override { return "SimpleSSPHHLight"; }
+		const char* keyword() const override { return "sphl"; }
+		const char* status() const override { return statusString_.c_str(); }
+
+		bool read(const std::string& keyword, std::istream& istr) override;
+		bool write(std::ostream& ostr) const override;
 
 		// Reads from a Path Traced Light Probe (a cube map stored images from left to right in a single image).
 		bool readPtrcLightProbe(const std::string& path);
@@ -107,6 +114,8 @@ namespace Fluxions
 		void setHierarchyDescriptionToIndex();
 		void setHierarchyDescriptionToPercent();
 		void setHierarchyDescription();
+	private:
+		std::string statusString_;
 	};
 }
 

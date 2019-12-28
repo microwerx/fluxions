@@ -1,13 +1,18 @@
 #ifndef FLUXIONS_SIMPLE_CAMERA_HPP
 #define FLUXIONS_SIMPLE_CAMERA_HPP
 
-#include <fluxions_gte_matrix4.hpp>
+#include <fluxions_simple_scene_graph_node.hpp>
 
 namespace Fluxions
 {
 	struct SimpleCamera : public SimpleSceneGraphNode {
-		bool isOrtho;
-		bool isPerspective;
+		enum class CameraType {
+			PerspectiveTMF,
+			PerspectiveOTRF,
+			OrthoTMW,
+			OrthoOTRW,
+			Other
+		} cameraType;
 		Matrix4f projectionMatrix;
 		Matrix4f viewMatrix;
 		Matrix4f actualViewMatrix;
@@ -33,6 +38,10 @@ namespace Fluxions
 
 		const char* type() const override { return "SimpleCamera"; }
 		const char* keyword() const override { return "camera"; }
+		Color3f color() const override { return FxColors3::Gold; }
+
+		bool read(const std::string& keyword, std::istream& istr) override;
+		bool write(std::ostream& ostr) const override;
 
 		void setImageParameters(float screenWidth, float screenHeight, float znear, float zfar) {
 			imageWidth = screenWidth;
@@ -53,6 +62,11 @@ namespace Fluxions
 		inline Vector3f roll() const noexcept {
 			return origin() + viewMatrix.col2().xyz();
 		}
+	private:
+		Vector3f origin_;
+		Vector3f target_;
+		Vector3f roll_;
+		void recalcMatrices();
 	}; // struct SimpleCamera
 } // namespace Fluxions
 

@@ -226,29 +226,6 @@ namespace Fluxions
 	}
 
 	bool SimpleSceneGraph::Load(const std::string& filename) {
-		// Use this as a template
-		// ifstream fin(filename.c_str());
-
-		// int linecount = 0;
-		// int totallinecount = 0;
-		// string str;
-		// std::istringstream istr;
-		// while (1)
-		//{
-		//	getline(fin, str);
-		//	linecount++;
-		//	totallinecount++;
-		//	if (!fin)
-		//	{
-		//		break;
-		//	}
-		//	istr.clear();
-		//	istr.str(str);
-		//}
-
-		// fin.close();
-
-		// Try loading file. If we fail, return false
 		FilePathInfo scenefpi(filename);
 		name = scenefpi.fname;
 		std::ifstream fin(filename.c_str());
@@ -268,11 +245,10 @@ namespace Fluxions
 
 		// proceed to parse the file and read each line.
 		while (fin) {
-			std::string line;
 			// read a line from the file and set up a string stream.
+			std::string line;
 			getline(fin, line);
 			if (!fin && !fin.eof())	break;
-
 			if (line.empty()) continue;
 			if (line[0] == '#') continue;
 
@@ -282,8 +258,27 @@ namespace Fluxions
 			std::string token;
 			istr >> token;
 
-			if (token == "transform") {
+			if (token == "path") {
+				pathsToTry.push_back(ReadString(istr));
+			}
+			else if (token == "transform") {
 				currentTransform = ReadAffineMatrix4f(istr);
+			}
+			else if (token == "identity") {
+				currentTransform.LoadIdentity();
+			}
+			else if (token == "translate") {
+				currentTransform.Translate(
+					ReadFloat(istr),
+					ReadFloat(istr),
+					ReadFloat(istr));
+			}
+			else if (token == "rotate") {
+				currentTransform.Rotate(
+					ReadFloat(istr),
+					ReadFloat(istr),
+					ReadFloat(istr),
+					ReadFloat(istr));
 			}
 			else if (token == "mtllib") {
 				ReadMaterialLibrary(token, istr);
@@ -291,7 +286,8 @@ namespace Fluxions
 			else if (token == "geometryGroup") {
 				ReadGeometryGroup(token, istr);
 			}
-			else if (token == "path") {
+			else if (token == "pathanim") {
+				currentTransform.LoadIdentity();
 				ReadPath(token, istr);
 			}
 			else if (token == "enviro") {
@@ -304,6 +300,7 @@ namespace Fluxions
 				ReadEnviroDatetime(token, istr);
 			}
 			else if (token == "camera") {
+				currentTransform.LoadIdentity();
 				ReadCamera(token, istr);
 			}
 			else if (token == "tonemap") {
@@ -314,13 +311,19 @@ namespace Fluxions
 				environment.toneMapGamma = clamp(ReadFloat(istr), -6.0f, 6.0f);
 			}
 			else if (token == "sun" || token == "moon") {
-				ReadDirectionalLight(token, istr);
+				currentTransform.LoadIdentity();
+				ReadOldDirectionalLight(token, istr);
 			}
 			else if (token == "sphere") {
 				ReadSphere(token, istr);
 			}
 			else if (token == "pointLight" || token == "light") {
+				currentTransform.LoadIdentity();
 				ReadPointLight(token, istr);
+			}
+			else if (token == "dirtoLight" || token == "dirToLight") {
+				currentTransform.LoadIdentity();
+				ReadDirToLight(token, istr);
 			}
 			else if (userdata) {
 				userdata->read(token, istr);
@@ -341,85 +344,11 @@ namespace Fluxions
 		std::ofstream fout(filename.c_str());
 		if (!fout)
 			return false;
-
-		// output SCN information...
-
-		// 1. Camera
-		fout << "camera ";
-		if (camera.isOrtho) {
-			fout << "ortho_tmw ";
-			WriteAffineMatrix4f(fout, camera.viewMatrix);
-			fout << camera.width;
-		}
-		else {
-			fout << "perspective_tmf ";
-			WriteAffineMatrix4f(fout, camera.viewMatrix);
-			fout << camera.fov;
-		}
-		fout << std::endl;
-
-		// 2. Environment
-		if (environment.hasColor) {
-			fout << "enviro color ";
-			WriteColor3f(fout, environment.color);
-			fout << std::endl;
-		}
-		if (environment.hasTexmap) {
-			fout << "enviro texmap ";
-			WriteString(fout, environment.texmap);
-			fout << std::endl;
-		}
-		if (environment.hasSun) {
-			fout << "sun dirTo ";
-			WriteVector3f(fout, environment.curSunDirTo);
-			fout << "color ";
-			WriteColor3f(fout, environment.sunColor);
-			fout << "sizeMult ";
-			WriteDouble(fout, environment.sunSize);
-			fout << std::endl;
-		}
-
-		// 3. Newmaps
-		for (auto it = shaderMaps.begin(); it != shaderMaps.end(); it++) {
-			fout << "newmap " << it->first << " ";
-			WriteString(fout, it->second);
-			fout << std::endl;
-		}
-
-		// 4. Spheres
-		for (auto it = spheres.begin(); it != spheres.end(); it++) {
-			SimpleSphere& sphere = it->second;
-			if (materials.GetLibraryId() != sphere.mtllibId) {
-				materials.SetLibrary(sphere.mtllibName);
-
-				fout << "mtllib " << sphere.mtllibName << std::endl;
-			}
-			fout << "transform ";
-			WriteAffineMatrix4f(fout, sphere.transform);
-			fout << std::endl;
-			fout << "sphere ";
-			WriteString(fout, sphere.mtlName);
-			fout << std::endl;
-		}
-
-		// 5. Geometry Groups
-		for (auto it = geometry.begin(); it != geometry.end(); it++) {
-			SimpleGeometryGroup& geo = it->second;
-			if (materials.GetLibraryId() != geo.mtllibId) {
-				materials.SetLibrary(geo.mtllibName);
-
-				fout << "mtllib " << geo.mtllibName << std::endl;
-			}
-			fout << "transform ";
-			WriteAffineMatrix4f(fout, geo.transform);
-			fout << std::endl;
-			fout << "geometryGroup " << geo.objectName << std::endl;
-		}
+		write(fout);
 		fout.close();
 
 		// 6. Output geometry files
-		for (auto it = geometry.begin(); it != geometry.end(); it++) {
-			SimpleGeometryGroup& geo = it->second;
+		for (auto& [k, geo] : geometry) {
 			geometryObjects[geo.objectId].SaveOBJ(geo.objectName);
 		}
 
@@ -427,6 +356,96 @@ namespace Fluxions
 		materials.Save(fpi.dir);
 
 		return true;
+
+		// output SCN information...
+
+		//// 1. Camera
+		//fout << "camera ";
+		//if (camera.isOrtho) {
+		//	fout << "ortho_tmw ";
+		//	WriteAffineMatrix4f(fout, camera.viewMatrix);
+		//	fout << camera.width;
+		//}
+		//else {
+		//	fout << "perspective_tmf ";
+		//	WriteAffineMatrix4f(fout, camera.viewMatrix);
+		//	fout << camera.fov;
+		//}
+		//fout << "\n";
+
+		//for (auto& [k, n] : cameras) {
+		//	n.write(fout);
+		//}
+
+		//// 2. Environment
+		//if (environment.hasColor) {
+		//	fout << "enviro color ";
+		//	WriteColor3f(fout, environment.color);
+		//	fout << "\n";
+		//}
+		//if (environment.hasTexmap) {
+		//	fout << "enviro texmap ";
+		//	WriteString(fout, environment.texmap);
+		//	fout << "\n";
+		//}
+		//if (environment.hasSun) {
+		//	fout << "sun dirTo ";
+		//	WriteVector3f(fout, environment.curSunDirTo);
+		//	fout << "color ";
+		//	WriteColor3f(fout, environment.sunColor);
+		//	fout << "sizeMult ";
+		//	WriteDouble(fout, environment.sunSize);
+		//	fout << "\n";
+		//}
+
+		//// 3. Newmaps
+		//for (auto it = shaderMaps.begin(); it != shaderMaps.end(); it++) {
+		//	fout << "newmap " << it->first << " ";
+		//	WriteString(fout, it->second);
+		//	fout << "\n";
+		//}
+
+		//// 4. Spheres
+		//for (auto it = spheres.begin(); it != spheres.end(); it++) {
+		//	SimpleSphere& sphere = it->second;
+		//	if (materials.GetLibraryId() != sphere.mtllibId) {
+		//		materials.SetLibrary(sphere.mtllibName);
+
+		//		fout << "mtllib " << sphere.mtllibName << "\n";
+		//	}
+		//	fout << "transform ";
+		//	WriteAffineMatrix4f(fout, sphere.transform);
+		//	fout << "\n";
+		//	fout << "sphere ";
+		//	WriteString(fout, sphere.mtlName);
+		//	fout << "\n";
+		//}
+
+		//// 5. Geometry Groups
+		//for (auto it = geometry.begin(); it != geometry.end(); it++) {
+		//	SimpleGeometryGroup& geo = it->second;
+		//	if (materials.GetLibraryId() != geo.mtllibId) {
+		//		materials.SetLibrary(geo.mtllibName);
+
+		//		fout << "mtllib " << geo.mtllibName << "\n";
+		//	}
+		//	fout << "transform ";
+		//	WriteAffineMatrix4f(fout, geo.transform);
+		//	fout << "\n";
+		//	fout << "geometryGroup " << geo.objectName << "\n";
+		//}
+		//fout.close();
+
+		//// 6. Output geometry files
+		//for (auto it = geometry.begin(); it != geometry.end(); it++) {
+		//	SimpleGeometryGroup& geo = it->second;
+		//	geometryObjects[geo.objectId].SaveOBJ(geo.objectName);
+		//}
+
+		//// 7. Output mtllib files
+		//materials.Save(fpi.dir);
+
+		//return true;
 	}
 
 	bool SimpleSceneGraph::Load(const char* path, SceneGraphReader* reader) {
@@ -526,9 +545,10 @@ namespace Fluxions
 			HFLOGERROR("OBJ file %s had an error while loading", filename.c_str());
 			return false;
 		}
-		GLuint id = geometry.Create(fpi.fname);
+		auto node = createGeometry(fpi.fname);
+		unsigned id = geometry.lastId;
 
-		SimpleGeometryGroup geometryGroup;
+		SimpleGeometryGroup& geometryGroup = geometry[id];
 		geometryGroup.transform = currentTransform;
 		geometryGroup.mtllibName = materials.GetLibraryName();
 		geometryGroup.mtllibId = materials.GetLibraryId();
@@ -536,16 +556,12 @@ namespace Fluxions
 		geometryGroup.objectId = id;
 		geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
 
-		geometry[id] = geometryGroup;
-
 		// Transform the bounding box of the model into world coordinates
-		Vector4f tminBound = geometryGroup.transform *
-			Vector4f(geometryGroup.bbox.minBounds, 1.0f);
-		Vector4f tmaxBound = geometryGroup.transform *
-			Vector4f(geometryGroup.bbox.maxBounds, 1.0f);
+		Vector3f tminBound = geometryGroup.transform * geometryGroup.bbox.minBounds;
+		Vector3f tmaxBound = geometryGroup.transform * geometryGroup.bbox.maxBounds;
 
-		boundingBox += tminBound.xyz();
-		boundingBox += tmaxBound.xyz();
+		boundingBox += tminBound;
+		boundingBox += tmaxBound;
 
 		HFLOGINFO("OBJ file %s loaded.", filename.c_str());
 		return true;
@@ -608,122 +624,15 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSceneGraph::ReadCamera(const std::string& type, std::istream& istr) {
-		std::string keyword = ReadString(istr);
-		bool isBadCamera = true;
-		camera.projectionMatrix.LoadIdentity();
-		camera.viewMatrix.LoadIdentity();
-		if (keyword == "perspective_otrf") {
-			Vector3f origin = ReadVector3f(istr);
-			Vector3f target = ReadVector3f(istr);
-			Vector3f roll = ReadVector3f(istr);
-			float fov = ReadFloat(istr);
-			isBadCamera = false;
-			camera.isPerspective = true;
-			camera.isOrtho = false;
-			camera.fov = fov;
-			camera.projectionMatrix.LoadIdentity();
-			camera.projectionMatrix.PerspectiveY(camera.fov, camera.imageAspect,
-												 camera.imageNearZ,
-												 camera.imageFarZ);
-			camera.viewMatrix.LookAt(origin, target, roll);
-			return true;
+	bool SimpleSceneGraph::ReadCamera(const std::string& keyword, std::istream& istr) {
+		if (keyword == "camera") {
+			auto node = createCamera(ReadString(istr));
+			return node->read(keyword, istr);
 		}
-		else if (keyword == "perspective_tmf") {
-			Matrix4f tm = ReadAffineMatrix4f(istr);
-			float fov = ReadFloat(istr);
-			isBadCamera = false;
-			camera.isPerspective = true;
-			camera.isOrtho = false;
-			camera.fov = fov;
-			camera.projectionMatrix.LoadIdentity();
-			camera.projectionMatrix.Perspective(camera.fov, camera.imageAspect,
-												camera.imageNearZ,
-												camera.imageFarZ);
-			camera.viewMatrix = tm;
-			return true;
-		}
-		else if (keyword == "ortho_otrw") {
-			Vector3f origin = ReadVector3f(istr);
-			Vector3f target = ReadVector3f(istr);
-			Vector3f roll = ReadVector3f(istr);
-			float width = ReadFloat(istr);
-			isBadCamera = false;
-			camera.isPerspective = false;
-			camera.isOrtho = true;
-			camera.width = width;
-			// TODO (projection and view matrix)
-			return true;
-		}
-		else if (keyword == "ortho_tmw") {
-			Matrix4f tm = ReadMatrix4f(istr);
-			float width = ReadFloat(istr);
-			isBadCamera = false;
-			camera.isPerspective = false;
-			camera.isOrtho = true;
-			camera.width = (float)width;
-			camera.viewMatrix = tm;
-			// TODO (projection matrix)
-			return true;
-		}
-		else {
-			std::string camname = ReadString(istr);
-			camera.setName(camname);
-		}
-		//if (!isBadCamera) {
-		//	float fstop = 16.0f;
-		//	float filmWidth = 35.0f;
-		//	float focalDist = 100.0f;
-		//	float bokehPolygonalBlades = 3.0f;
-		//	float bokehPolygonalRotation = 0.0f;
-		//	float regionStartX = 0.0f;
-		//	float regionStartY = 0.0f;
-		//	float regionEndX = 1.0f;
-		//	float regionEndY = 1.0f;
-		//	std::string bokehImg;
-
-		//	// read optional components
-		//	while (istr) {
-		//		istr >> token;
-		//		if (str == "fstop") {
-		//			fstop = ReadFloat(istr);
-		//		}
-		//		else if (str == "filmWidth") {
-		//			filmWidth = ReadFloat(istr);
-		//		}
-		//		else if (str == "focalDist") {
-		//			focalDist = ReadFloat(istr);
-		//		}
-		//		else if (str == "bokehPolygonal") {
-		//			bokehPolygonalBlades = ReadFloat(istr);
-		//			bokehPolygonalRotation = ReadFloat(istr);
-		//		}
-		//		else if (str == "region") {
-		//			regionStartX = ReadFloat(istr);
-		//			regionStartY = ReadFloat(istr);
-		//			regionEndX = ReadFloat(istr);
-		//			regionEndY = ReadFloat(istr);
-		//		}
-		//		else if (str == "bokehImg") {
-		//			bokehImg = ReadString(istr);
-		//		}
-		//	}
-
-		//	camera.fstop = fstop;
-		//	camera.filmWidth = filmWidth;
-		//	camera.focalDist = focalDist;
-		//	camera.bokehPolygonalBlades = bokehPolygonalBlades;
-		//	camera.bokehPolygonalRotation = bokehPolygonalRotation;
-		//	camera.bokehImg = bokehImg;
-		//	camera.regionStartX = regionStartX;
-		//	camera.regionStartY = regionStartY;
-		//	camera.regionEndX = regionEndX;
-		//	camera.regionEndY = regionEndY;
-		//}
-		return true;
+		return false;
 	}
 
-	bool SimpleSceneGraph::ReadDirectionalLight(const std::string& type, std::istream& istr) {
+	bool SimpleSceneGraph::ReadOldDirectionalLight(const std::string& type, std::istream& istr) {
 		std::string sunopt;
 		environment.hasSun = true;
 		sunopt = ReadString(istr);
@@ -755,38 +664,46 @@ namespace Fluxions
 		return true;
 	}
 
-	bool SimpleSceneGraph::ReadPointLight(const std::string& type, std::istream& istr) {
-		const std::string name = ReadString(istr);
-		pointLights[name].setName(name);
-		nodes[name] = &pointLights[name];
-		SimplePointLight& spl = pointLights[name];
-		spl.index = pointLights.size();
-		spl.E0 = ReadFloat(istr);
-		spl.falloffRadius = ReadFloat(istr);
-		spl.position = ReadVector3f(istr);
-		return true;
+	bool SimpleSceneGraph::ReadPointLight(const std::string& keyword, std::istream& istr) {
+		if (keyword == "pointLight") {
+			auto node = createPointLight(ReadString(istr));
+			return node->read(keyword, istr);
+		}
+		return false;
 	}
 
-	bool SimpleSceneGraph::ReadSphere(const std::string& type, std::istream& istr) {
-		std::string mtlName = ReadString(istr);
+	bool SimpleSceneGraph::ReadDirToLight(const std::string& keyword, std::istream& istr) {
+		if (keyword == "dirtoLight") {
+			auto node = createDirToLight(ReadString(istr));
+			return node->read(keyword, istr);
+		}
+		return false;
+	}
 
-		GLuint id = spheres.Create();
-		SimpleSphere sphere;
-		sphere.transform = currentTransform;
-		sphere.mtllibName = materials.GetLibraryName();
-		sphere.mtllibId = materials.GetLibraryId();
-		sphere.mtlName = mtlName;
-		sphere.mtlId = materials.GetMaterialId(mtlName);
-		sphere.objectId = id;
-		spheres[id] = sphere;
-		return true;
+	bool SimpleSceneGraph::ReadSphere(const std::string& keyword, std::istream& istr) {
+		if (keyword == "sphere") {
+			auto node = createSphere(ReadString(istr));
+			return node->read(keyword, istr);
+		}
+		return false;
+		//std::string mtlName = ReadString(istr);
+
+		//GLuint id = spheres.Create();
+		//SimpleSphere sphere;
+		//sphere.transform = currentTransform;
+		//sphere.mtllibName = materials.GetLibraryName();
+		//sphere.mtllibId = materials.GetLibraryId();
+		//sphere.mtlName = mtlName;
+		//sphere.mtlId = materials.GetMaterialId(mtlName);
+		//sphere.objectId = id;
+		//spheres[id] = sphere;
+		//return true;
 	}
 
 	bool SimpleSceneGraph::ReadPath(const std::string& keyword, std::istream& istr) {
-		if (keyword == "path") {
-			std::string pathName = ReadString(istr);
-			paths[pathName].setName(pathName);
-			paths.lastId = paths.GetHandleFromName(pathName);
+		if (keyword == "pathanim") {
+			auto node = createPathAnim(ReadString(istr));
+			return node->read(keyword, istr);
 		}
 		else if (paths.lastId > 0) {
 			return paths[paths.lastId].read(keyword, istr);
@@ -799,7 +716,105 @@ namespace Fluxions
 	}
 
 	bool SimpleSceneGraph::write(std::ostream& ostr) const {
+		for (auto& [k, n] : cameras) {
+			n.write(ostr);
+		}
+
+		// 2. Environment
+		if (environment.hasColor) {
+			ostr << "enviro color ";
+			WriteColor3f(ostr, environment.color);
+			ostr << "\n";
+		}
+		if (environment.hasTexmap) {
+			ostr << "enviro texmap ";
+			WriteString(ostr, environment.texmap);
+			ostr << "\n";
+		}
+		if (environment.hasSun) {
+			ostr << "sun dirTo ";
+			WriteVector3f(ostr, environment.curSunDirTo);
+			ostr << "color ";
+			WriteColor3f(ostr, environment.sunColor);
+			ostr << "sizeMult ";
+			WriteDouble(ostr, environment.sunSize);
+			ostr << "\n";
+		}
+
+		// 3. Newmaps
+		for (auto it = shaderMaps.begin(); it != shaderMaps.end(); it++) {
+			ostr << "newmap " << it->first << " ";
+			WriteString(ostr, it->second);
+			ostr << "\n";
+		}
+
+		// 4. Spheres
+		for (auto& [k, sphere] : spheres) {
+			if (materials.GetLibraryId() != sphere.mtllibId) {
+				ostr << "mtllib " << sphere.mtllibName << "\n";
+			}
+			ostr << "transform ";
+			WriteAffineMatrix4f(ostr, sphere.transform);
+			ostr << "\n";
+			ostr << "sphere ";
+			WriteString(ostr, sphere.mtlName);
+			ostr << "\n";
+		}
+
+		// 5. Geometry Groups
+		for (auto& [k, geo] : geometry) {
+			if (materials.GetLibraryId() != geo.mtllibId) {
+				ostr << "mtllib " << geo.mtllibName << "\n";
+			}
+			ostr << "transform ";
+			WriteAffineMatrix4f(ostr, geo.transform) << "\n";
+			ostr << "geometryGroup " << geo.objectName << "\n";
+		}
+
 		return true;
+	}
+
+	SimpleSceneGraphNode* SimpleSceneGraph::createNode(const std::string& name, SimpleSceneGraphNode* node) {
+		node->setName(name);
+		node->transform = currentTransform;
+		nodes[name] = node;
+		return node;
+	}
+
+	SimpleSceneGraphNode* SimpleSceneGraph::createCamera(const std::string& name) {
+		unsigned id = cameras.Create(name);
+		cameras.lastId = id;
+		return createNode(name, &cameras[id]);
+	}
+
+	SimpleSceneGraphNode* SimpleSceneGraph::createSphere(const std::string& name) {
+		unsigned id = spheres.Create(name);
+		spheres.lastId = id;
+		return createNode(name, &spheres[id]);
+	}
+
+	SimpleSceneGraphNode* SimpleSceneGraph::createDirToLight(const std::string& name) {
+		unsigned id = dirToLights.Create(name);
+		dirToLights.lastId = id;
+		return createNode(name, &dirToLights[id]);
+	}
+
+	SimpleSceneGraphNode* SimpleSceneGraph::createPointLight(const std::string& name) {
+		unsigned id = pointLights.Create(name);
+		pointLights.lastId = id;
+		return createNode(name, &pointLights[id]);
+	}
+
+	SimpleSceneGraphNode* SimpleSceneGraph::createPathAnim(const std::string& name) {
+		unsigned id = paths.Create(name);
+		paths.lastId = id;
+		return createNode(name, &paths[id]);
+	}
+
+	SimpleSceneGraphNode* SimpleSceneGraph::createGeometry(const std::string& name) {
+		unsigned id = geometry.Create(name);
+		geometry.lastId = id;
+		return createNode(name, &geometry[id]);
 	}
 
 	//void SimpleSceneGraph::initTexUnits() {
@@ -965,7 +980,7 @@ namespace Fluxions
 
 	//		if (debugging)
 	//			std::cout << "SimpleSceneGraph::Render() -- using mtllib " << mtllib.name
-	//			<< std::endl;
+	//			<< "\n";
 	//		for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end();
 	//			mtlIt++) {
 	//			mtlId = mtlIt->first;
@@ -977,7 +992,7 @@ namespace Fluxions
 
 	//			if (debugging)
 	//				std::cout << "SimpleSceneGraph::Render() -- using mtl " << mtlId
-	//				<< std::endl;
+	//				<< "\n";
 
 	//			std::map<std::string, SimpleMap*> textures;
 	//			GLuint unit = 0;
@@ -1049,7 +1064,7 @@ namespace Fluxions
 	//				SimpleGeometryGroup& geo = geoIt->second;
 	//				if (debugging)
 	//					std::cout << "SimpleSceneGraph::Render() -- using OBJ "
-	//					<< geo.objectName << std::endl;
+	//					<< geo.objectName << "\n";
 	//				objectId = geo.objectId;
 	//				groupId = 0;
 

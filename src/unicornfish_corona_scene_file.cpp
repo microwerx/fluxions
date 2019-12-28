@@ -222,7 +222,7 @@ bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxion
 	else
 	{
 		const SimpleSSPHHLight &sphl2 = ssphh->ssphhLights[receivingLightIndex];
-		Fluxions::Vector3f tmp = sphl2.position.xyz();
+		Fluxions::Vector3f tmp = sphl2.position;
 		Fluxions::Vector3f position(tmp.x, -tmp.z, tmp.y);
 		Fluxions::Vector3f target(position.x, position.y - 1.0f, position.z);
 		//SetCubeMapCamera(position, target, Fluxions::Vector3f(0.0f, 0.0f, 1.0f));

@@ -32,6 +32,7 @@
 #include <fluxions_simple_environment.hpp>
 #include <fluxions_simple_sphere.hpp>
 #include <fluxions_simple_point_light.hpp>
+#include <fluxions_simple_dirto_light.hpp>
 #include <fluxions_scene_graph_reader.hpp>
 #include <fluxions_simple_path_animation.hpp>
 
@@ -59,13 +60,15 @@ namespace Fluxions
 
 	public:
 		TResourceManager<std::string> shaderMaps;
+		TResourceManager<SimpleCamera> cameras;
 		TResourceManager<SimpleSphere> spheres;
 		TResourceManager<SimpleGeometryGroup> geometry;
 		// TODO: Change OBJStaticModel to SimpleGeometryMesh
 		TResourceManager<OBJStaticModel> geometryObjects;
+		TResourceManager<SimpleDirToLight> dirToLights;
 		TResourceManager<SimplePointLight> pointLights;
 		TResourceManager<SimplePathAnimation> paths;
-		TResourceManager<SimpleSceneGraphNode*> nodes;
+		std::map<std::string, SimpleSceneGraphNode*> nodes;
 
 		SimpleMaterialSystem materials;
 		//mutable SimpleRenderer_GLuint renderer;
@@ -84,8 +87,9 @@ namespace Fluxions
 		bool ReadEnviroPbsky(const std::string& type, std::istream& istr);
 		bool ReadEnviroDatetime(const std::string& type, std::istream& istr);
 		bool ReadCamera(const std::string& type, std::istream& istr);
-		bool ReadDirectionalLight(const std::string& type, std::istream& istr);
+		bool ReadOldDirectionalLight(const std::string& type, std::istream& istr);
 		bool ReadPointLight(const std::string& type, std::istream& istr);
+		bool ReadDirToLight(const std::string& type, std::istream& istr);
 		bool ReadSphere(const std::string& type, std::istream& istr);
 		bool ReadPath(const std::string& keyword, std::istream& istr);
 
@@ -101,7 +105,14 @@ namespace Fluxions
 	private:
 		bool read(const std::string& keyword, std::istream& istr) override;
 		bool write(std::ostream & ostr) const override;
-
+		
+		SimpleSceneGraphNode* createNode(const std::string& name, SimpleSceneGraphNode* node);
+		SimpleSceneGraphNode* createCamera(const std::string& name);
+		SimpleSceneGraphNode* createSphere(const std::string& name);
+		SimpleSceneGraphNode* createDirToLight(const std::string& name);
+		SimpleSceneGraphNode* createPointLight(const std::string& name);
+		SimpleSceneGraphNode* createPathAnim(const std::string& name);
+		SimpleSceneGraphNode* createGeometry(const std::string& name);
 	private:
 		BoundingBoxf boundingBox;
 

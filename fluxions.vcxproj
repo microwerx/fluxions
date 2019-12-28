@@ -177,6 +177,9 @@
     <ClCompile Include="src\fluxions_renderer_texture_2d.cpp" />
     <ClCompile Include="src\fluxions_renderer_texture_cube.cpp" />
     <ClCompile Include="src\fluxions_renderer_utilities.cpp" />
+    <ClCompile Include="src\fluxions_simple_camera.cpp" />
+    <ClCompile Include="src\fluxions_simple_dirto_light.cpp" />
+    <ClCompile Include="src\fluxions_simple_point_light.cpp" />
     <ClCompile Include="src\fluxions_simple_scene_graph_node.cpp" />
     <ClCompile Include="src\fluxions_scene_graph_reader.cpp" />
     <ClCompile Include="src\fluxions_scene_graph_writer.cpp" />
@@ -429,6 +432,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\fluxions_simple_sphere.cpp" />
     <ClCompile Include="src\fluxions_simple_ssphh_light.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
@@ -608,6 +612,7 @@
     <ClInclude Include="include\damselfish_syntax_semantic_analyzer.hpp" />
     <ClInclude Include="include\fluxions.hpp" />
     <ClInclude Include="include\fluxions_astronomy.hpp" />
+    <ClInclude Include="include\fluxions_colors.hpp" />
     <ClInclude Include="include\fluxions_ibase_object.hpp" />
     <ClInclude Include="include\fluxions_bbox.hpp" />
     <ClInclude Include="include\fluxions_common_test.hpp" />
@@ -665,6 +670,7 @@
     <ClInclude Include="include\fluxions_shader_program_locations.hpp" />
     <ClInclude Include="include\fluxions_simple_camera.hpp" />
     <ClInclude Include="include\fluxions_renderer_texture_cube.hpp" />
+    <ClInclude Include="include\fluxions_simple_dirto_light.hpp" />
     <ClInclude Include="include\fluxions_simple_environment.hpp" />
     <ClInclude Include="include\fluxions_simple_geometry_group.hpp" />
     <ClInclude Include="include\fluxions_renderer_gles30.hpp" />

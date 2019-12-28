@@ -292,7 +292,6 @@
     <ClCompile Include="src\fluxions_image_loader.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_path_animation.cpp" />
     <ClCompile Include="src\fluxions_simple_scene_graph_node.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
@@ -308,6 +307,19 @@
     <ClCompile Include="src\fluxions_obj_static_model.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_simple_dirto_light.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_path_animation.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_point_light.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_sphere.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -731,6 +743,12 @@
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_ibase_object.hpp">
+      <Filter>include\fluxions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_dirto_light.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_colors.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
   </ItemGroup>
