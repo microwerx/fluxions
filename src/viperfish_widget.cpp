@@ -93,6 +93,19 @@ void Widget::Kill() {
 	parent_.reset();
 }
 
+void Widget::Hide() {
+	OnWindowHidden();
+}
+
+void Widget::Show() {
+	OnWindowVisible();
+}
+
+void Widget::ToggleVisible() {
+	if (visible_) OnWindowHidden();
+	else OnWindowVisible();
+}
+
 void Widget::MainLoop() {
 	HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 	leaveMainLoop_ = false;
