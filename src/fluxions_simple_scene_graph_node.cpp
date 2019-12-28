@@ -4,6 +4,13 @@
 
 namespace Fluxions
 {
+	const char* SimpleSceneGraphNode::updateNodeName() {
+		std::ostringstream ostr;
+		ostr << name() << "[" << type() << "]: [" << status() << "]";
+		nodeName_ = ostr.str();
+		return nodeName_.c_str();
+	}
+
 	bool SimpleSceneGraphNode::read(const std::string& keyword, std::istream& istr) {
 		if (keyword == this->keyword()) {
 			setName(ReadString(istr));

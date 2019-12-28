@@ -17,6 +17,8 @@ namespace Fluxions
 		const char* keyword() const override { return "node"; }
 		const char* status() const override { return statusString_.c_str(); }
 		virtual Color3f color() const { return FxColors3::Gray67; }
+		const char* nodeName() const { return nodeName_.c_str(); }
+		const char* updateNodeName();
 
 		bool read(const std::string& keyword, std::istream& istr) override;
 		bool write(std::ostream& ostr) const override;
@@ -29,6 +31,7 @@ namespace Fluxions
 		}
 	protected:
 		std::string statusString_;
+		std::string nodeName_;
 	};
 }
 
