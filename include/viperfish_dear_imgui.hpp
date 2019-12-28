@@ -1,5 +1,5 @@
 // SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
+// Copyright (C) 2017-2020 Jonathan Metzgar
 // All rights reserved.
 //
 // This program is free software : you can redistribute it and/or modify
@@ -16,11 +16,11 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+
 #ifndef VIPERFISH_DEAR_IMGUI_HPP
 #define VIPERFISH_DEAR_IMGUI_HPP
 
-#include <memory>
-#include <string>
+#include <fluxions_stdcxx.hpp>
 #include <viperfish_opengl.hpp>
 #include <viperfish_widget.hpp>
 #include <imgui.h>
@@ -103,6 +103,24 @@ namespace Vf
 	};
 
 	using DearImGuiWidgetPtr = std::shared_ptr<DearImGuiWidget>;
+
+	//////////////////////////////////////////////////////////////////////
+	// HELPER FUNCTIONS FOR DEAR IMGUI ///////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	inline void ImGuiMatrix4f(const Matrix4f& m) {
+		ImGui::Text("[ % 1.3f % 1.3f % 1.3f % 3.2f ]", m.m11, m.m12, m.m13, m.m14);
+		ImGui::Text("[ % 1.3f % 1.3f % 1.3f % 3.2f ]", m.m21, m.m22, m.m23, m.m24);
+		ImGui::Text("[ % 1.3f % 1.3f % 1.3f % 3.2f ]", m.m31, m.m32, m.m33, m.m34);
+		ImGui::Text("[ % 1.3f % 1.3f % 1.3f % 3.2f ]", m.m41, m.m42, m.m43, m.m44);
+	}
+
+	inline void ImGuiBoundingBox(const BoundingBoxf& bbox) {
+		ImGui::Text("Min:  [ % 3.2f % 3.2f % 3.2f ]", bbox.minBounds.x, bbox.minBounds.y, bbox.minBounds.z);
+		ImGui::Text("Max:  [ % 3.2f % 3.2f % 3.2f ]", bbox.maxBounds.x, bbox.maxBounds.y, bbox.maxBounds.z);
+		ImGui::Text("Size: [ %3.2f %3.2f %3.2f ]", bbox.Size().x, bbox.Size().y, bbox.Size().z);
+	}
+
 } // namespace Vf
 
-#endif // VIPERFISH_IMGUI_HPP
+#endif // VIPERFISH_DEAR_IMGUI_HPP
