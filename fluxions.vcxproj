@@ -176,6 +176,7 @@
     <ClCompile Include="src\fluxions_renderer_shader.cpp" />
     <ClCompile Include="src\fluxions_renderer_texture_2d.cpp" />
     <ClCompile Include="src\fluxions_renderer_texture_cube.cpp" />
+    <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp" />
     <ClCompile Include="src\fluxions_renderer_utilities.cpp" />
     <ClCompile Include="src\fluxions_simple_camera.cpp" />
     <ClCompile Include="src\fluxions_simple_dirto_light.cpp" />
@@ -479,7 +480,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\hatchetfish.cpp">
+    <ClCompile Include="src\hatchetfish_log.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -665,6 +666,7 @@
     <ClInclude Include="include\fluxions_renderer_context.hpp" />
     <ClInclude Include="include\fluxions_renderer_gles30_snapshot.hpp" />
     <ClInclude Include="include\fluxions_renderer_texture_2d.hpp" />
+    <ClInclude Include="include\fluxions_renderer_uniform_blocks.hpp" />
     <ClInclude Include="include\fluxions_renderer_utilities.hpp" />
     <ClInclude Include="include\fluxions_resource_manager.hpp" />
     <ClInclude Include="include\fluxions_shader_program_locations.hpp" />
@@ -691,6 +693,7 @@
     <ClInclude Include="include\fluxions_simple_scene_graph.hpp" />
     <ClInclude Include="include\fluxions_obj_static_model.hpp" />
     <ClInclude Include="include\fluxions_renderer_shader.hpp" />
+    <ClInclude Include="include\fluxions_simple_scene_graph_base.hpp" />
     <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp" />
     <ClInclude Include="include\fluxions_simple_sphere.hpp" />
     <ClInclude Include="include\fluxions_simple_ssphh.hpp" />
@@ -712,6 +715,7 @@
     <ClInclude Include="include\fluxions_xml.hpp" />
     <ClInclude Include="include\fluxions_draw_gl1gl2.hpp" />
     <ClInclude Include="include\hatchetfish.hpp" />
+    <ClInclude Include="include\hatchetfish_log.hpp" />
     <ClInclude Include="include\hatchetfish_stopwatch.hpp" />
     <ClInclude Include="include\fluxions_scene_graph_reader.hpp" />
     <ClInclude Include="include\fluxions_scene_graph_writer.hpp" />
@@ -729,6 +733,7 @@
     <ClInclude Include="include\unicornfish_worker.hpp" />
     <ClInclude Include="include\viperfish.hpp" />
     <ClInclude Include="include\viperfish_animation_window.hpp" />
+    <ClInclude Include="include\viperfish_base.hpp" />
     <ClInclude Include="include\viperfish_dear_imgui.hpp" />
     <ClInclude Include="include\viperfish_gamepad.hpp" />
     <ClInclude Include="include\viperfish_keyboard.hpp" />

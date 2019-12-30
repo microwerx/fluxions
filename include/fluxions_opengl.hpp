@@ -62,19 +62,13 @@
 
 #endif
 
-#include <fluxions_draw_gl1gl2.hpp>
-#include <map>
-#include <string>
-#include <hatchetfish.hpp>
-
 namespace Fluxions
 {
-	class OpenGLNameTranslator
-	{
+	class OpenGLNameTranslator {
 	public:
 		OpenGLNameTranslator();
-		int getEnum(const std::string &name) const noexcept;
-		const char *getString(int id) const noexcept;
+		int getEnum(const std::string& name) const noexcept;
+		const char* getString(int id) const noexcept;
 	private:
 		std::map<std::string, int> enums;
 		std::map<int, std::string> enum_strings;
@@ -83,8 +77,7 @@ namespace Fluxions
 
 	extern OpenGLNameTranslator glNameTranslator;
 
-	class QuickGLErrorChecker
-	{
+	class QuickGLErrorChecker {
 	public:
 		QuickGLErrorChecker();
 		bool isError();
@@ -97,7 +90,7 @@ namespace Fluxions
 #define APIENTRY
 #endif
 	void EnableGLDebugFunc();
-	void APIENTRY FluxionsGLDebugFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam);
+	void APIENTRY FluxionsGLDebugFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam);
 } // namespace Fluxions
 
 #endif // FLUXIONS_OPENGL_HPP

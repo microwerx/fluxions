@@ -30,6 +30,17 @@
 
 namespace Fluxions
 {
+	using FXubyte = unsigned char;
+	using FXbyte = char;
+	using FXshort = short;
+	using FXushort = unsigned short;
+	using FXint = int;
+	using FXuint = unsigned int;
+	using FXint64 = long long;
+	using FXuint64 = unsigned long long;
+	using FXfloat = float;
+	using FXdouble = double;
+
 #ifdef _WIN32
 	const int bitIsDirectory = _S_IFDIR;
 	const int bitIsRegularFile = _S_IFREG;
@@ -256,7 +267,7 @@ namespace Fluxions
 		if (TestIfFileExists(pathFilename))
 			return true;
 
-		for (const std::string& dirToTry: dirsToTry) {
+		for (const std::string& dirToTry : dirsToTry) {
 			char backChar = dirToTry.back();
 			std::string testPath = dirToTry;
 			if ((backChar != '/') && (backChar != '\\'))

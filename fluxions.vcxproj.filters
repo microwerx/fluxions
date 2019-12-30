@@ -139,9 +139,6 @@
     <ClCompile Include="src\fluxions-gte.cpp">
       <Filter>src\fluxions-gte</Filter>
     </ClCompile>
-    <ClCompile Include="src\hatchetfish.cpp">
-      <Filter>src\hatchetfish</Filter>
-    </ClCompile>
     <ClCompile Include="src\hatchetfish_stopwatch.cpp">
       <Filter>src\hatchetfish</Filter>
     </ClCompile>
@@ -319,7 +316,15 @@
     <ClCompile Include="src\fluxions_simple_sphere.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_camera.cpp" />
+    <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp">
+      <Filter>src\fluxions-renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_camera.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hatchetfish_log.cpp">
+      <Filter>src\hatchetfish</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -498,9 +503,6 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_xml.hpp">
       <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\hatchetfish.hpp">
-      <Filter>include\hatchetfish</Filter>
     </ClInclude>
     <ClInclude Include="include\hatchetfish_stopwatch.hpp">
       <Filter>include\hatchetfish</Filter>
@@ -750,6 +752,21 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_colors.hpp">
       <Filter>include\fluxions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_scene_graph_base.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_renderer_uniform_blocks.hpp">
+      <Filter>include\fluxions-renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\viperfish_base.hpp">
+      <Filter>include\viperfish</Filter>
+    </ClInclude>
+    <ClInclude Include="include\hatchetfish_log.hpp">
+      <Filter>include\hatchetfish</Filter>
+    </ClInclude>
+    <ClInclude Include="include\hatchetfish.hpp">
+      <Filter>include\hatchetfish</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

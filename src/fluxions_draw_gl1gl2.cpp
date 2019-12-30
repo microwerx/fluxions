@@ -17,10 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <cstdarg>
-#include <cstdio>
-#include <sstream>
-#include <string>
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_scalar_math.hpp>
@@ -291,7 +288,7 @@ bool FxCreateBuffer(GLenum target, unsigned& abo, GLsizeiptr size, const void* d
 	}
 	if (abo) {
 		glBindBuffer(target, abo);
-		glBufferData(target, size, data, usage);
+		if (data != nullptr) glBufferData(target, size, data, usage);
 	}
 	return abo != 0;
 }

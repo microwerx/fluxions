@@ -20,8 +20,7 @@
 #ifndef VIPERFISH_DEAR_IMGUI_HPP
 #define VIPERFISH_DEAR_IMGUI_HPP
 
-#include <fluxions_stdcxx.hpp>
-#include <viperfish_opengl.hpp>
+#include <viperfish_base.hpp>
 #include <viperfish_widget.hpp>
 #include <imgui.h>
 
