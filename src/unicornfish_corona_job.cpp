@@ -16,6 +16,7 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
+#include <hatchetfish.hpp>
 #include <fluxions_stdcxx.hpp>
 #include <fluxions_xml.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>

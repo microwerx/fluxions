@@ -150,19 +150,19 @@ namespace Fluxions
 		template <typename OtherType>
 		const TColor4<T>& operator=(const TVector3<OtherType>& color)
 		{
-			r = (T)color.r;
-			g = (T)color.g;
-			b = (T)color.b;
+			r = (T)color.x;
+			g = (T)color.y;
+			b = (T)color.z;
 			return *this;
 		}
 
 		template <typename OtherType>
 		const TColor4<T>& operator=(const TVector4<OtherType>& color)
 		{
-			r = (T)color.r;
-			g = (T)color.g;
-			b = (T)color.b;
-			a = (T)color.a;
+			r = (T)color.x;
+			g = (T)color.y;
+			b = (T)color.z;
+			a = (T)color.w;
 			return *this;
 		}
 

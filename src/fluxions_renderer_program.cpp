@@ -305,6 +305,7 @@ namespace Fluxions
 			bindAttribLocation(ra.index, ra.name.c_str());
 		}
 
+		// bind shader blocks indices to binding points
 		GLint bufSize;
 
 		try {
@@ -323,7 +324,7 @@ namespace Fluxions
 		infoLog.resize(bufSize);
 		if (bufSize > 0) {
 			glGetProgramInfoLog(program, bufSize, NULL, &infoLog[0]);
-			Hf::Log.errorfn(__FUNCTION__, "Program link error:\n%s", infoLog.c_str());
+			HFLOGERROR("Program link error:\n%s", infoLog.c_str());
 		}
 
 		validateStatus_ = 0;
@@ -334,11 +335,14 @@ namespace Fluxions
 		validateLog.resize(bufSize);
 		if (bufSize > 0) {
 			glGetProgramInfoLog(program, 0, NULL, &validateLog[0]);
-			Hf::Log.errorfn(__FUNCTION__, "Program validation error:\n%s", validateLog.c_str());
+			HFLOGERROR("Program validation error:\n%s", validateLog.c_str());
 		}
+
+		RendererUniformBlock::SetProgramBindingPoints(program);
 
 		activeAttributes.clear();
 		activeUniforms.clear();
+		activeUniformBlocks.clear();
 		if (linked) {
 			// get list of active attributes/uniforms
 			char buffer[4096];
@@ -349,31 +353,85 @@ namespace Fluxions
 			GLint numUniforms;
 			GLint maxAttribLength;
 			GLint numAttribs;
+			GLint maxUniformBlockNameLength;
+			GLint numUniformBlocks;
 
 			glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformLength);
 			glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
 			glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribLength);
 			glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttribs);
+			glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &maxUniformBlockNameLength);
+			glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
 
 			for (int i = 0; i < numUniforms; i++) {
 				glGetActiveUniform(program, i, maxUniformLength, &length, &size, &type, buffer);
 				std::string name = buffer;
-				activeUniforms[name].index = glGetUniformLocation(program, buffer);
-				activeUniforms[name].size = size;
-				activeUniforms[name].type = type;
-				Hf::Log.infofn(__FUNCTION__, "uniform (%02d) %20s %s", activeUniforms[name].index, activeUniforms[name].GetNameOfType(), name.c_str());
+				auto& object = activeUniforms[name];
+				object.index = glGetUniformLocation(program, buffer);
+				object.size = size;
+				object.type = type;
+				HFLOGSTR(object.desc, "uniform (%02d) %20s %s", object.index, object.GetNameOfType(), name.c_str());
+				HFLOGINFO(object.desc.c_str());
 			}
 
 			for (int i = 0; i < numAttribs; i++) {
 				glGetActiveAttrib(program, i, maxAttribLength, &length, &size, &type, buffer);
 				std::string name = buffer;
-				activeAttributes[name].index = glGetAttribLocation(program, buffer);
-				activeAttributes[name].size = size;
-				activeAttributes[name].type = type;
-				Hf::Log.infofn(__FUNCTION__, "attrib  (%02d) %20s %s", activeAttributes[name].index, activeAttributes[name].GetNameOfType(), name.c_str());
+				auto& object = activeAttributes[name];
+				object.index = glGetAttribLocation(program, buffer);
+				object.size = size;
+				object.type = type;
+				HFLOGSTR(object.desc, "attrib  (%02d) %20s %s", object.index, object.GetNameOfType(), name.c_str());
+				if (object.index < 0) continue;
+				HFLOGINFO(object.desc.c_str());
 			}
 
-			Hf::Log.infofn(__FUNCTION__, "program %d linked.", program);
+			for (int i = 0; i < numUniformBlocks; i++) {
+				glGetActiveUniformBlockName(program, i, maxUniformBlockNameLength, &length, buffer);
+				std::string name = buffer;
+				auto& object = activeUniformBlocks[name];
+				object.index = glGetUniformBlockIndex(program, buffer);
+				glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_DATA_SIZE, &object.size);
+				glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &object.ubUniforms);
+				object.ubUniformIndices.resize(object.ubUniforms, 0);
+				glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, &object.ubUniformIndices[0]);
+
+				object.type = 0;
+				GLint referenced;
+				glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER, &referenced);
+				object.type |= (referenced ? 1 : 0) << 0;
+				glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER, &referenced);
+				object.type |= (referenced ? 1 : 0) << 1;
+				//glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_REFERENCED_BY_GEOMETRY_SHADER, &referenced);
+				//object.type |= (referenced ? 1 : 0) << 2;
+				//glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_REFERENCED_BY_TESS_CONTROL_SHADER, &referenced);
+				//object.type |= (referenced ? 1 : 0) << 3;
+				//glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_REFERENCED_BY_TESS_EVALUATION_SHADER, &referenced);
+				//object.type |= (referenced ? 1 : 0) << 4;
+				//glGetActiveUniformBlockiv(program, object.index, GL_UNIFORM_BLOCK_REFERENCED_BY_COMPUTE_SHADER, &referenced);
+				//object.type |= (referenced ? 1 : 0) << 5;
+				//const char* referencedDesc = (object.type == 1) ? "VS  " :
+				//	(object.type == 2) ? "  FS" :
+				//	(object.type == 3) ? "VSFS" : "    ";
+				HFLOGSTR(object.desc, "ublock  (%02i) x%2i ufrms%5i bytes %s",
+						 object.index,
+						 object.ubUniforms,
+						 object.size,
+						 name.c_str());
+				HFLOGINFO(object.desc.c_str());
+				for (auto& id : object.ubUniformIndices) {
+					//for (const auto& [k, o] : activeUniforms) {
+					//	if (o.index == id) {
+					//		HFLOGINFO("%2i %s", id, k.c_str());
+					//		break;
+					//	}
+					//}
+					glGetActiveUniform(program, id, maxUniformLength, &length, &size, &object.type, buffer);
+					HFLOGINFO("uniform (%02d) %20s %s", id, object.GetNameOfType(), buffer);
+				}
+			}
+
+			HFLOGINFO("program %d linked.", program);
 		}
 
 		return linked;

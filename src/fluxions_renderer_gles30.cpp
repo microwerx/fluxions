@@ -169,9 +169,14 @@ namespace Fluxions
 		pRendererConfig->projectionMatrix = projectionMatrix_;
 		pRendererConfig->cameraMatrix = cameraMatrix_;
 
-		pProgram->applyUniform("ProjectionMatrix", (RendererUniform)projectionMatrix_);
+		ssgUbCamera.uniforms.ProjectionMatrix = projectionMatrix_;
+		ssgUbCamera.uniforms.CameraMatrix = cameraMatrix_;
+		ssgUbCamera.update();
+		ssgUbCamera.use(pProgram->getProgram());
+
+		//pProgram->applyUniform("ProjectionMatrix", (RendererUniform)projectionMatrix_);
+		//pProgram->applyUniform("CameraMatrix", (RendererUniform)cameraMatrix_);
 		pProgram->applyUniform("CameraPosition", (RendererUniform)(cameraMatrix_.AsInverse()).col4());
-		pProgram->applyUniform("CameraMatrix", (RendererUniform)cameraMatrix_);
 		pProgram->applyUniform("WorldMatrix", (RendererUniform)worldMatrix_);
 
 		for (auto& [map, t] : pRendererConfig->textures) {

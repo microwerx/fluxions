@@ -2,21 +2,21 @@
 #define FLUXIONS_SIMPLE_MATERIAL_HPP
 
 #include <fluxions_stdcxx.hpp>
-#include <fluxions_gte_color3.hpp>
+#include <fluxions_simple_scene_graph_base.hpp>
 
 namespace Fluxions {
-	struct SimpleMaterial
+	struct SimpleMaterial : BaseMaterial
 	{
-		Color3f Kd;
-		Color3f Ks;
-		Color3f Ke;
+		//Color3f Kd;
+		//Color3f Ks;
+		//Color3f Ke;
 		Color3f Ka;
 		Color3f Tf;      // Translucency;	// Tf
 		float Tr = 0.0f; // TranslucencyLevel -- same as (1 - d)
 		Color3f Refract;
 		Color3f Opacity;
 		float Ns = 0.0f; // Specular exponent [0 <= Ns <= 1000]
-		float Ni = 0.0f;
+		float Ni = 0.0f; // Index of refraction [1 <= Ni <= 2.4]
 		float d = 1.0f; // dissolved -- same as (1 - Tr)
 
 		float PBm = 0.0f;         // for roughness

@@ -17,7 +17,9 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 
+#include <hatchetfish.hpp>
 #include <fluxions_stdcxx.hpp>
+#include <fluxions_opengl.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_fileio_iostream.hpp>
 #include <fluxions_xml.hpp>
@@ -204,7 +206,7 @@ bool CoronaSceneFile::WriteSphlVizSCN(const std::string &filename, const Fluxion
 	writer.export_path_prefix = CoronaJob::exportPathPrefix;
 	writer.extra_tags.push_back({ "conffile", "../" + CoronaJob::confPathPrefix + "sphlviz.conf" });
 
-	//Hf::Log.infofn(__FUNCTION__, "Writing VIZ scene %s", filename.c_str());
+	//HFLOGINFO("Writing VIZ scene %s", filename.c_str());
 	//std::ofstream fout(filename);
 	//if (!fout)
 	//	return false;
@@ -370,7 +372,7 @@ void CoronaSceneFile::writeSun(std::ostream &ostr, const Fluxions::SimpleSceneGr
 	// Generate lights MTLLIB
 
 	std::string lights_mtllib_path = CoronaJob::exportPathPrefix + lights_mtllib;
-	Hf::Log.infofn(__FUNCTION__, "Writing lights_mtllib %s", lights_mtllib_path.c_str());
+	HFLOGINFO("Writing lights_mtllib %s", lights_mtllib_path.c_str());
 	std::ofstream fout(lights_mtllib_path);
 	XmlBeginTag(fout, "mtlLib") << std::endl;
 	XmlBeginTag(fout, "mapDefinition", "name", "Skylight_environment", 1) << std::endl;
@@ -412,8 +414,8 @@ void CoronaSceneFile::WriteCache(const Fluxions::SimpleSceneGraph &ssg)
 
 		std::string MTLpath = CoronaJob::exportPathPrefix + "materials.mtl";
 		std::string CoronaMTLpath = CoronaJob::exportPathPrefix + "materials_corona.mtl";
-		Hf::Log.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
-		Hf::Log.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
+		HFLOGINFO("Writing out %s", MTLpath.c_str());
+		HFLOGINFO("Writing out %s", CoronaMTLpath.c_str());
 		std::ofstream mtl_fout(MTLpath);
 		std::ofstream mtlxml_fout(CoronaMTLpath);
 		XmlBeginTag(mtlxml_fout, "mtlLib") << std::endl;
@@ -435,7 +437,7 @@ void CoronaSceneFile::WriteCache(const Fluxions::SimpleSceneGraph &ssg)
 				std::ostringstream obj_pathname;
 				obj_pathname << "object_" << std::setw(3) << std::setfill('0') << obj_count << "_" << sgo.objectName << ".obj";
 				std::string OBJpath = CoronaJob::exportPathPrefix + obj_pathname.str();
-				Hf::Log.infofn(__FUNCTION__, "Writing out %s", OBJpath.c_str());
+				HFLOGINFO("Writing out %s", OBJpath.c_str());
 				std::ofstream obj_fout(OBJpath);
 
 				mtl_name = sgo.objectName + "_" + surface.materialName;
@@ -624,8 +626,8 @@ void CoronaSceneFile::WriteMaterials(const Fluxions::SimpleSceneGraph &ssg, bool
 
 	std::string MTLpath = CoronaJob::exportPathPrefix + "materials.mtl";
 	std::string CoronaMTLpath = CoronaJob::exportPathPrefix + "materials_corona.mtl";
-	Hf::Log.infofn(__FUNCTION__, "Writing out %s", MTLpath.c_str());
-	Hf::Log.infofn(__FUNCTION__, "Writing out %s", CoronaMTLpath.c_str());
+	HFLOGINFO("Writing out %s", MTLpath.c_str());
+	HFLOGINFO("Writing out %s", CoronaMTLpath.c_str());
 	std::ofstream mtl_fout(MTLpath);
 	std::ofstream mtlxml_fout(CoronaMTLpath);
 	XmlBeginTag(mtlxml_fout, "mtlLib") << std::endl;
@@ -857,7 +859,7 @@ void CoronaSceneFile::writeGeometryGroups(std::ostream &ostr, const Fluxions::Si
 //			{
 //				tonemap = 0.0f;
 //			}
-//			Hf::Log.infofn(__FUNCTION__, "Writing tonemap conf %s", tonemapconf.c_str());
+//			HFLOGINFO("Writing tonemap conf %s", tonemapconf.c_str());
 //
 //			std::ofstream fout(tonemapconf);
 //			fout << "Float colorMap.simpleExposure = " << tonemap << std::endl;
@@ -970,7 +972,7 @@ void CoronaSceneFile::writeGeometryGroups(std::ostream &ostr, const Fluxions::Si
 //
 //		cmd << " -c " << corona_export_prefix + scene_name << "_tonemap.conf";
 //
-//		Hf::Log.infofn(__FUNCTION__, "running %s", cmd.str().c_str());
+//		HFLOGINFO("running %s", cmd.str().c_str());
 //
 //		return cmd.str();
 //	}

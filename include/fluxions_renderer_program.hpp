@@ -4,6 +4,7 @@
 #include <fluxions_renderer_object.hpp>
 #include <fluxions_renderer_shader.hpp>
 #include <fluxions_renderer_uniform.hpp>
+#include <fluxions_renderer_uniform_blocks.hpp>
 
 namespace Fluxions
 {
@@ -34,13 +35,17 @@ namespace Fluxions
 			GLint size;
 			GLenum type;
 			GLint index;
+			GLint ubUniforms;
+			std::vector<int> ubUniformIndices;
+			std::string desc;
 
 			const char* GetNameOfType() const;
 		};
 		std::vector<RendererShaderPtr> attachedShaders;
 		std::map<std::string, AttribUniformInfo> activeAttributes;
 		std::map<std::string, AttribUniformInfo> activeUniforms;
-
+		std::map<std::string, AttribUniformInfo> activeUniformBlocks;
+		
 		//std::string vertshaderpath;
 		//std::string fragshaderpath;
 		//std::string geomshaderpath;

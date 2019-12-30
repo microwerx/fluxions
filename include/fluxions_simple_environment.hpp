@@ -1,15 +1,14 @@
 #ifndef FLUXIONS_SIMPLE_ENVIRONMENT_HPP
 #define FLUXIONS_SIMPLE_ENVIRONMENT_HPP
 
-#include <fluxions_gte_color_math.hpp>
-#include <fluxions_gte_matrix_math.hpp>
+#include <fluxions_simple_scene_graph_base.hpp>
 #include <fluxions_astronomy.hpp>
 #include <fluxions_pbsky.hpp>
 #include <fluxions_opengl.hpp>
 
 namespace Fluxions
 {
-	struct SimpleEnvironment
+	struct SimpleEnvironment : BaseEnvironment
 	{
 		bool hasColor = false;
 		bool hasTexmap = false;

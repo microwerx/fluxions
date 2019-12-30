@@ -123,6 +123,9 @@ namespace Fluxions
 		RendererTextureCube* pSkyboxCube{ nullptr };
 		TSimpleResourceManager<int> textureUnits;
 
+		UbCameraBlock ssgUbCamera;
+		std::vector<UbMaterialBlock> ssgUbMaterials;
+
 		//Matrix4f projectionMatrix;
 		//Matrix4f cameraMatrix;
 
