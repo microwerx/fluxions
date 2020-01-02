@@ -16,9 +16,8 @@
 // along with this program.If not, see <https://www.gnu.org/licenses/>.
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include <hatchetfish.hpp>
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_xml.hpp>
+#include <fluxions_base.hpp>
+#include <fluxions_file_system.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>
 #include <unicornfish_corona_job.hpp>
 #include <unicornfish_corona_scene_file.hpp>
@@ -31,7 +30,7 @@ namespace Uf
 
 const std::string CoronaJob::exportPathPrefix = "corona_export/";
 const std::string CoronaJob::outputPathPrefix = "corona_output/";
-const std::string CoronaJob::confPathPrefix = "corona_conf/";
+//const std::string CoronaJob::confPathPrefix = "corona_conf/";
 
 /////////////////////////////////////////////////////////////////////
 // CoronaJob ////////////////////////////////////////////////////////
@@ -39,15 +38,17 @@ const std::string CoronaJob::confPathPrefix = "corona_conf/";
 
 CoronaJob::CoronaJob(const std::string &name, Type jobtype, int arg1, int arg2)
 {
+	export_path = exportPathPrefix + name + "/";
+
 	scene_name = name;
-	scene_path = exportPathPrefix + name + ".scn";
+	scene_path = export_path + name + ".scn";
 	output_path_exr = outputPathPrefix + name + ".exr";
 	output_path_ppm = outputPathPrefix + name + ".ppm";
 	output_path_png = outputPathPrefix + name + ".png";
-	conf_path = confPathPrefix + name + ".conf";
+	conf_path = export_path + name + ".conf";
 	hq_output_path_exr = outputPathPrefix + name + "_hq.exr";
 	hq_output_path_ppm = outputPathPrefix + name + "_hq.ppm";
-	hq_conf_path = confPathPrefix + name + "_hq.conf";
+	hq_conf_path = export_path + name + "_hq.conf";
 
 	type = jobtype;
 
@@ -56,18 +57,18 @@ CoronaJob::CoronaJob(const std::string &name, Type jobtype, int arg1, int arg2)
 	case Type::GEN:
 		sendLight = Fluxions::SphlSunIndex;
 		recvLight = arg1;
-		conf_path = confPathPrefix + "sphlgen.conf";
-		hq_conf_path = confPathPrefix + "sphlgen_hq.conf";
+		conf_path = export_path + "sphlgen.conf";
+		hq_conf_path = export_path + "sphlgen_hq.conf";
 		break;
 	case Type::VIZ:
 		sendLight = arg1;
 		recvLight = arg2;
-		conf_path = confPathPrefix + "sphlviz.conf";
-		hq_conf_path = confPathPrefix + "sphlviz_hq.conf";
+		conf_path = export_path + "sphlviz.conf";
+		hq_conf_path = export_path + "sphlviz_hq.conf";
 		break;
 	case Type::REF:
-		conf_path = confPathPrefix + "ssphh_ground_truth.conf";
-		hq_conf_path = confPathPrefix + "ssphh_ground_truth_hq.conf";
+		conf_path = export_path + "ground_truth.conf";
+		hq_conf_path = export_path + "ground_truth_hq.conf";
 		break;
 	case Type::REF_CubeMap:
 		break;
@@ -131,44 +132,39 @@ void CoronaJob::Start(CoronaSceneFile &coronaScene, Fluxions::SimpleSceneGraph &
 		fout.close();
 	}
 
-	double t0 = Hf::Log.getSecondsElapsed();
+	Hf::StopWatch stopwatch;
 	state = State::Running;
 	bool result = true;
 	switch (type)
 	{
 	case Type::REF:
-		coronaScene.WriteSCN(scene_path, ssg);
+		coronaScene.writeSCN(scene_path, ssg);
 		result = Run();
 		break;
 	case Type::REF_CubeMap:
-		coronaScene.WriteCubeMapSCN(scene_path, ssg);
+		coronaScene.writeCubeMapSCN(scene_path, ssg);
 		result = Run();
 		break;
 	case Type::Sky:
-		coronaScene.WriteSkySCN(scene_path, ssg);
+		coronaScene.writeSkySCN(scene_path, ssg);
 		result = Run();
 		break;
 	case Type::GEN:
-		coronaScene.WriteSphlVizSCN(scene_path, ssg, -1, recvLight);
+		coronaScene.writeSphlVizSCN(scene_path, ssg, -1, recvLight);
 		result = Run();
 		break;
 	case Type::VIZ:
-		coronaScene.WriteSphlVizSCN(scene_path, ssg, sendLight, recvLight);
+		coronaScene.writeSphlVizSCN(scene_path, ssg, sendLight, recvLight);
 		result = Run();
 		break;
 	default:
 		break;
 	}
-	elapsedTime = Hf::Log.getSecondsElapsed() - t0;
+	elapsedTime = stopwatch.GetSecondsElapsed();
 	state = result ? State::Finished : State::Error;
 
-#ifdef _WIN32
-	DeleteFile(tonemapconf.c_str());
-	DeleteFile(scene_path.c_str());
-#else
-	execl("rm", tonemapconf.c_str());
-	execl("rm", scene_path.c_str());
-#endif
+	std::filesystem::remove(tonemapconf);
+	std::filesystem::remove(scene_path);
 }
 
 void CoronaJob::CopySPH(const Fluxions::Sph4f &sph_)
@@ -243,45 +239,47 @@ std::string CoronaJob::MakeConvertCommandLine()
 
 bool CoronaJob::Run()
 {
-	const char *pcmd = nullptr;
-	int retval = 0;
-	{
-		std::string commandLine = MakeCoronaCommandLine();
-		pcmd = commandLine.c_str();
+	bool result = true;
+	if (!_runCorona()) result = false;
+	if (!_runMagickEXRtoPNG()) result = false;
+	if (!_runMagickEXRtoPPM()) result = false;
+	return result;
+}
 
-		HFLOGINFO("running %s", pcmd);
-		retval = lastCoronaRetval = system(pcmd);
-		if (retval != 0)
-		{
-			HFLOGERROR("unable to run corona");
-			return false;
-		}
-		//retval = lastConvertRetval = system(MakeConvertCommandLine().c_str());
-		//if (retval != 0) return false;
+bool CoronaJob::_runCorona() {
+	std::string commandLine = MakeCoronaCommandLine();
+	const char* pcmd = commandLine.c_str();
+	HFLOGINFO("running %s", pcmd);
+	lastCoronaRetval = system(pcmd);
+	if (lastCoronaRetval != 0) {
+		HFLOGERROR("unable to run Corona");
+		return false;
 	}
-	{
-		std::ostringstream cmd;
-		cmd << "magick " << output_path_exr << " " << output_path_png;
-		pcmd = cmd.str().c_str();
-		HFLOGINFO("running %s", pcmd);
-		retval = lastConvertRetval = system(pcmd);
-		if (retval != 0)
-		{
-			HFLOGERROR("unable to convert EXR to PNG");
-			return false;
-		}
+	return true;
+}
+
+bool CoronaJob::_runMagickEXRtoPNG() {
+	std::ostringstream cmd;
+	cmd << "magick " << output_path_exr << " " << output_path_png;
+	const char* pcmd = cmd.str().c_str();
+	HFLOGINFO("running %s", pcmd);
+	lastConvertRetval = system(pcmd);
+	if (lastConvertRetval != 0) {
+		HFLOGERROR("unable to convert EXR to PNG");
+		return false;
 	}
-	{
-		std::ostringstream cmd;
-		cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
-		pcmd = cmd.str().c_str();
-		HFLOGINFO("running %s", pcmd);
-		retval = lastConvertRetval = system(pcmd);
-		if (retval != 0)
-		{
-			HFLOGERROR("unable to convert PNG to PPM");
-			return false;
-		}
+	return true;
+}
+
+bool CoronaJob::_runMagickEXRtoPPM() {
+	std::ostringstream cmd;
+	cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
+	const char* pcmd = cmd.str().c_str();
+	HFLOGINFO("running %s", pcmd);
+	lastConvertRetval = system(pcmd);
+	if (lastConvertRetval != 0) {
+		HFLOGERROR("unable to convert PNG to PPM");
+		return false;
 	}
 	return true;
 }

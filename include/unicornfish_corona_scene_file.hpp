@@ -19,7 +19,6 @@
 #ifndef FLUXIONS_CORONA_SCENE_FILE_HPP
 #define FLUXIONS_CORONA_SCENE_FILE_HPP
 
-#include <fluxions_stdcxx.hpp>
 #include <fluxions_simple_scene_graph.hpp>
 
 namespace Uf
@@ -30,43 +29,47 @@ namespace Uf
 		CoronaSceneFile();
 		~CoronaSceneFile();
 
-		/// SetCameraType(newCameraType)
-		/// newCameraType = { "perspective" | "cubemap" }
-		void SetCameraType(const std::string& newCameraType);
-		std::string GetCameraType() const { return cameraType; }
+		using Vector3f = Fluxions::Vector3f;
+		using Matrix4f = Fluxions::Matrix4f;
 
-		void SetPerspectiveCamera(const Fluxions::Vector3f& origin, const Fluxions::Vector3f& target, const Fluxions::Vector3f& roll, const float horizontalFieldOfViewInDegrees);
-		void SetCubeMapCamera(const Fluxions::Vector3f& origin, const Fluxions::Vector3f& target, const Fluxions::Vector3f& roll);
+		// newCameraType = { "perspective" | "cubemap" }
+		void setCameraType(const std::string& newCameraType);
 
-		void WriteSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
-		void WriteCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
-		void WriteCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, const Fluxions::Vector3f& cameraPosition);
-		void WriteSkySCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
-		bool WriteSphlVizSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, int sourceLightIndex, int receivingLightIndex);
+		// returns "perspective" or "cubemap"
+		std::string getCameraType() const { return cameraType_; }
 
-		void ClearCache();
-		void WriteCache(const Fluxions::SimpleSceneGraph& ssg);
-		void WriteMaterials(const Fluxions::SimpleSceneGraph& ssg, bool enableKs);
+		void setPerspectiveCamera(const Vector3f& origin, const Vector3f& target, const Vector3f& roll, const float hfovInDegrees);
+		void setCubeMapCamera(const Vector3f& origin, const Vector3f& target, const Vector3f& roll);
+
+		void writeSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
+		void writeCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
+		void writeCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, const Fluxions::Vector3f& cameraPosition);
+		void writeSkySCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
+		bool writeSphlVizSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, int sourceLightIndex, int receivingLightIndex);
+
+		void clearCache();
+		void writeCache(const Fluxions::SimpleSceneGraph& ssg);
+		void writeGeometryCache(const Fluxions::SimpleSceneGraph& ssg);
+		void writeMaterialCache(const Fluxions::SimpleSceneGraph& ssg);
 
 		bool enableKs = false;
 
 	private:
 		// cache
 		using string_string_Matrix4f = std::tuple<std::string, std::string, Fluxions::Matrix4f>;
-		std::vector<string_string_Matrix4f> geometryGroups;
+		std::vector<string_string_Matrix4f> geometryGroups_;
+		
+		std::string cameraType_ = "perspective";
+		Vector3f cameraOrigin_;
+		Vector3f cameraTarget_;
+		Vector3f cameraRoll_;
+		Matrix4f cameraMatrix_;
+		float cameraHFovInDegrees_{ 45.0f };
 
-		std::string cameraType = "perspective";
-		Fluxions::Vector3f cameraOrigin;
-		Fluxions::Vector3f cameraTarget;
-		Fluxions::Vector3f cameraRoll;
-		Fluxions::Matrix4f cameraMatrix;
-		float cameraHorizontalFieldOfViewInDegrees = 45.0f;
-
-		void writeCamera(std::ostream& ostr);
-		void writeSun(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
-		void writeGeometryGroups(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
+		void _writeCamera(std::ostream& ostr);
+		void _writeSun(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
+		void _writeGeometryGroups(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
 	};
-
 } // namespace Uf
 
 #endif

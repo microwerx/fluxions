@@ -27,15 +27,13 @@
 
 namespace Uf
 {
-	class CoronaJob
-	{
+	class CoronaJob {
 	public:
 		static const std::string exportPathPrefix;
 		static const std::string outputPathPrefix;
 		static const std::string confPathPrefix;
 
-		enum class Type
-		{
+		enum class Type {
 			REF,
 			REF_CubeMap,
 			Sky,
@@ -43,11 +41,11 @@ namespace Uf
 			GEN
 		};
 
-		static Type TypeFromString(const std::string &str) noexcept;
-		static std::string & TypeToString(Type type, std::string & s_type) noexcept;
+		static Type TypeFromString(const std::string& str) noexcept;
+		static std::string& TypeToString(Type type, std::string& s_type) noexcept;
 
 		CoronaJob() {}
-		CoronaJob(const std::string &name, Type jobtype, int arg1 = 0, int arg2 = 0);
+		CoronaJob(const std::string& name, Type jobtype, int arg1 = 0, int arg2 = 0);
 		~CoronaJob();
 
 		void EnableHQ() { isHQ = true; }
@@ -73,16 +71,14 @@ namespace Uf
 		constexpr bool IsGEN() const { return type == Type::GEN; }
 		constexpr bool IsVIZ() const { return type == Type::VIZ; }
 
-		constexpr void SetImageDimensions(int w, int h)
-		{
+		constexpr void SetImageDimensions(int w, int h) {
 			imageWidth = Fluxions::clamp(w, 0, 8192);
 			imageHeight = Fluxions::clamp(h, 0, 8192);
 		}
 
 		constexpr double GetElapsedTime() const { return elapsedTime; }
 
-		constexpr const std::string &GetOutputPath(bool exrPathInstead = false) const
-		{
+		constexpr const std::string& GetOutputPath(bool exrPathInstead = false) const {
 			if (exrPathInstead) {
 				if (isHQ)
 					return hq_output_path_exr;
@@ -96,30 +92,27 @@ namespace Uf
 					return output_path_ppm;
 			}
 		}
-		constexpr const std::string &GetName() const { return scene_name; }
+		constexpr const std::string& GetName() const { return scene_name; }
 
-		constexpr int GetGENLightIndex() const
-		{
+		constexpr int GetGENLightIndex() const {
 			if (IsGEN())
 				return recvLight;
 			return -1;
 		}
-		constexpr int GetVIZSendLightIndex() const
-		{
+		constexpr int GetVIZSendLightIndex() const {
 			if (IsVIZ())
 				return sendLight;
 			return -1;
 		}
-		constexpr int GetVIZRecvLightIndex() const
-		{
+		constexpr int GetVIZRecvLightIndex() const {
 			if (IsVIZ())
 				return recvLight;
 			return -1;
 		}
 
-		void Start(CoronaSceneFile &coronaScene, Fluxions::SimpleSceneGraph &ssg);
-		void CopySPH(const Fluxions::Sph4f &sph);
-		void CopySPHToSph4f(Fluxions::Sph4f &sph);
+		void Start(CoronaSceneFile& coronaScene, Fluxions::SimpleSceneGraph& ssg);
+		void CopySPH(const Fluxions::Sph4f& sph);
+		void CopySPHToSph4f(Fluxions::Sph4f& sph);
 		const int GetCoronaRetval() const { return lastCoronaRetval; }
 		const int GetConvertRetval() const { return lastConvertRetval; }
 
@@ -128,8 +121,7 @@ namespace Uf
 
 		constexpr bool IsJobFinished() const { return finished; }
 		constexpr void MarkJobFinished() { finished = true; }
-		constexpr void MarkJobUnfinished()
-		{
+		constexpr void MarkJobUnfinished() {
 			finished = false;
 			working = false;
 		}
@@ -137,11 +129,10 @@ namespace Uf
 		constexpr void MarkJobWorking() { working = true; }
 
 		std::string ToString() const;
-		void FromString(const std::string &str);
+		void FromString(const std::string& str);
 
 	private:
-		enum class State
-		{
+		enum class State {
 			Error = -1,
 			Ready = 0,
 			Running,
@@ -149,6 +140,7 @@ namespace Uf
 		};
 		State state = State::Ready;
 		Type type = Type::REF;
+		std::string export_path;
 		std::string scene_name;
 		std::string scene_path;
 		std::string output_path_exr;
@@ -182,6 +174,10 @@ namespace Uf
 		int lastConvertRetval = 0;
 
 		bool Run();
+	private:
+		bool _runCorona();
+		bool _runMagickEXRtoPNG();
+		bool _runMagickEXRtoPPM();
 	};
 } // namespace Fluxions
 
