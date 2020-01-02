@@ -19,6 +19,8 @@
 #ifndef FLUXIONS_OPENGL_HPP
 #define FLUXIONS_OPENGL_HPP
 
+#include <fluxions_stdcxx.hpp>
+
 #ifdef _WIN32
 
 #ifndef WIN32_LEAN_AND_MEAN

@@ -102,7 +102,7 @@ namespace Fluxions
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
-	void SimpleRenderer<IndexType, GLIndexType>::DrawOBJ(const OBJStaticModel& obj) {
+	void SimpleRenderer<IndexType, GLIndexType>::DrawOBJ(const SimpleGeometryMesh& obj) {
 		int curIndex;
 
 		vertexCount += (int)obj.Vertices.size();
@@ -119,6 +119,7 @@ namespace Fluxions
 
 		for (const auto& surface : obj.Surfaces) {
 			triangleCount += surface.count / 3;
+			SetCurrentMtlLibName(surface.materialLibrary);
 			SetCurrentMtlName(surface.materialName);
 			Begin(GL_TRIANGLES, true);
 			for (unsigned i = surface.first; i < surface.first + surface.count; i++) {
@@ -687,12 +688,12 @@ namespace Fluxions
 				continue;
 			if (objectName.empty() != true && objectName != surface->objectName)
 				continue;
-			if (groupName.empty() != true && groupName != surface->groupName)
-				continue;
-			if (mtllibName.empty() != true && mtllibName != surface->mtllibName)
-				continue;
-			if (mtlName.empty() != true && mtlName != surface->mtlName)
-				continue;
+			//if (groupName.empty() != true && groupName != surface->groupName)
+			//	continue;
+			//if (mtllibName.empty() != true && mtllibName != surface->mtllibName)
+			//	continue;
+			//if (mtlName.empty() != true && mtlName != surface->mtlName)
+			//	continue;
 
 			GLintptr offset = 0;
 
@@ -745,12 +746,12 @@ namespace Fluxions
 				continue;
 			if (objectId != 0 && objectId != surface->objectId)
 				continue;
-			if (groupId != 0 && groupId != surface->groupId)
-				continue;
-			if (mtllibId != 0 && mtllibId != surface->mtllibId)
-				continue;
-			if (mtlId != 0 && mtlId != surface->mtlId)
-				continue;
+			//if (groupId != 0 && groupId != surface->groupId)
+			//	continue;
+			//if (mtllibId != 0 && mtllibId != surface->mtllibId)
+			//	continue;
+			//if (mtlId != 0 && mtlId != surface->mtlId)
+			//	continue;
 
 			GLintptr offset = 0;
 

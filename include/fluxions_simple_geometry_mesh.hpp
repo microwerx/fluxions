@@ -1,282 +1,221 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_SIMPLE_GEOMETRY_MESH_HPP
 #define FLUXIONS_SIMPLE_GEOMETRY_MESH_HPP
 
-#include <vector>
-#include <string>
-#include <fluxions_gte_vector4.hpp>
+#include <fluxions_stdcxx.hpp>
+#include <fluxions_gte.hpp>
 
 namespace Fluxions
 {
+	class SimpleGeometryMesh {
+	public:
+		// These constants match the GL_POINTS, GL_LINES, ... constants
+		enum SurfaceType {
+			Points = 0,
+			Lines = 1,
+			LineLoop = 2,
+			LineStrip = 3,
+			Triangles = 4,
+			TriangleStrip = 5,
+			TriangleFan = 6
+		};
 
-class SimpleGeometryMesh
-{
-  public:
-	//SimpleGeometryMesh() { }
-	//virtual ~SimpleGeometryMesh() { }
+		struct Vertex {
+			Vector3f position;
+			Vector3f normal;
+			Vector2f texcoord;
+			Color4f color;
+			Vector3f tangent;
+			Vector3f binormal;
 
-	class Vertex
-	{
-	  public:
-		Vertex(void)
-		{
-			for (int i = 0; i < 8; i++)
-			{
-				attribs[i].reset();
-			}
+			// future, for padding right now
+			Vector4ub boneIndex;
+			Vector4f boneWeights;
+			float sh[9];
+		};
+
+		struct Surface {
+			unsigned mode = SurfaceType::Triangles;
+			unsigned first = 0;
+			unsigned count = 0;
+			std::string materialLibrary;
+			std::string materialName;
+			std::string surfaceName;
+			int materialId = -1;
+		};
+
+		SimpleGeometryMesh();
+		~SimpleGeometryMesh();
+
+		bool loadOBJ(const std::string& filename);
+		bool saveOBJ(const std::string& filename) const;
+		int saveOBJByMaterial(const std::string& filename,
+							  const std::string& mtllib,
+							  const std::string& materialName) const;
+		bool saveCache(const std::string& filename) const;
+		bool loadCache(const std::string& filename);
+		void computeTangentVectors();
+		void clear();
+		void resize(int vertexCount, int indexCount, int surfaceCount = 1);
+		void createSimpleModel(int vertexCount, int indexCount, int surfaceCount = 1);
+		void transform(const Matrix4f& mat);
+
+		// Drawing commands
+	private:
+		Vertex curVertexAttrib_;
+		std::string currentMaterial_;
+		std::string currentMaterialLibrary_;
+		bool dirty{ true };
+	public:
+		int getIndexCount() const { return (int)Indices.size(); }
+		int getVertexCount() const { return (int)Vertices.size(); }
+
+		Vertex& getVertex(int i) { return Vertices[i]; }
+
+		inline void setMaterial(const std::string& mtl) { currentMaterial_ = mtl; }
+		inline void setMaterialLibrary(const std::string& mtllib) { currentMaterialLibrary_ = mtllib; }
+
+		inline void beginSurface(SurfaceType mode) {
+			Surface newSurface;
+			newSurface.mode = mode;
+			newSurface.first = getIndexCount();
+			newSurface.count = 0;
+			newSurface.materialLibrary = currentMaterialLibrary_;
+			newSurface.materialName = currentMaterial_;
+			Surfaces.push_back(newSurface);
 		}
-		Vertex(const Vertex &v)
-		{
-			for (int i = 0; i < 8; i++)
-			{
-				attribs[i] = v.attribs[i];
-			}
-		}
 
-		//union {
-		//	struct {
-		//		tvec4<float> attrib0;
-		//		tvec4<float> attrib1;
-		//		tvec4<float> attrib2;
-		//		tvec4<float> attrib3;
-		//		tvec4<float> attrib4;
-		//		tvec4<float> attrib5;
-		//		tvec4<float> attrib6;
-		//		tvec4<float> attrib7;
-		//	};
-		//	Vector4f attribs[8];
-		//};
-		Vector4f attribs[8];
-	};
-
-	class AttribInfo
-	{
-	  public:
-		int location = -1;
-		std::string name = "GenericAttribName";
-		bool normalized = false;
-		bool enabled = true;
-	};
-
-	using Index = unsigned; // unsigned short;
-
-	enum SurfaceType
-	{
-		//#define GL_LINES 0x0001
-		//#define GL_LINE_LOOP 0x0002
-		//#define GL_LINE_STRIP 0x0003
-		//#define GL_TRIANGLES 0x0004
-		//#define GL_TRIANGLE_STRIP 0x0005
-		//#define GL_TRIANGLE_FAN 0x0006
-		Points = 0,
-		Lines = 1,
-		LineLoop = 2,
-		LineStrip = 3,
-		Triangles = 4,
-		TriangleStrip = 5,
-		TriangleFan = 6
-	};
-
-	struct Surface
-	{
-		std::string materialName{ "" };
-		SurfaceType type = SurfaceType::Triangles;
-		unsigned first = 0;
-		unsigned count = 0;
-	};
-
-	using VertexPtr = Vertex *;
-	using IndexPtr = Index *;
-	using SurfacePtr = Surface *;
-
-	inline void Attrib4f(int i, float x, float y, float z, float w, bool addIndex = false)
-	{
-		if (!within(i, 0, 7))
-			return;
-		curVertexAttrib.attribs[i].x = x;
-		curVertexAttrib.attribs[i].y = y;
-		curVertexAttrib.attribs[i].z = z;
-		curVertexAttrib.attribs[i].w = w;
-		if (i == 0)
-		{
-			vertices.push_back(curVertexAttrib);
+		void position3f(float x, float y, float z, bool addIndex_ = false) {
+			curVertexAttrib_.position.reset(x, y, z);
+			Vertices.push_back(curVertexAttrib_);
 			dirty = true;
-			if (addIndex)
-			{
-				AddIndex(-1);
+			if (addIndex_) {
+				addIndex(-1);
 			}
 		}
-	}
 
-	inline void Attrib3f(int i, float x, float y, float z, bool addIndex = false) { Attrib4f(i, x, y, z, 1.0f, addIndex); }
-	inline void Attrib2f(int i, float x, float y, bool addIndex = false) { Attrib4f(i, x, y, 0.0f, 1.0f, addIndex); }
-	inline void Attrib1f(int i, float x, bool addIndex = false) { Attrib4f(i, x, 0.0f, 0.0f, 1.0f, addIndex); }
-
-	inline void Attrib4f(int i, const Vector4f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, v.z, v.w, addIndex); }
-	inline void Attrib3f(int i, const Vector3f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, v.z, 1.0f, addIndex); }
-	inline void Attrib2f(int i, const Vector2f &v, bool addIndex = false) { Attrib4f(i, v.x, v.y, 0.0f, 1.0f, addIndex); }
-
-	void reset();
-	void BeginSurface(SurfaceType type);
-	inline void AddIndex(int i = -1)
-	{
-		if (i < 0)
-			indices.push_back(GetIndexCount());
-		else if (within(i, 0, (int)GetVertexCount() - 1))
-			indices.push_back(i);
-		else
-			return;
-		if (!surfaces.empty())
-			surfaces.back().count++;
-		dirty = true;
-	}
-	inline void SetMaterial(const std::string &materialName) { curMaterialName = materialName; }
-	inline Surface &GetSurface(int i)
-	{
-		if (within(i, 0, (int)surfaces.size()))
-		{
-			return surfaces[i];
+		void position3f(const Vector3f v, bool addIndex_ = false) {
+			curVertexAttrib_.position = v;
+			Vertices.push_back(curVertexAttrib_);
+			dirty = true;
+			if (addIndex_) {
+				addIndex(-1);
+			}
 		}
-		return blahSurface;
-	}
-	inline const Surface &GetSurface(int i) const
-	{
-		if (within(i, 0, (int)surfaces.size()))
-		{
-			return surfaces[i];
+
+		void normal3f(float x, float y, float z) {
+			curVertexAttrib_.normal.reset(x, y, z);
 		}
-		return blahSurface;
-	}
 
-	inline const std::vector<Surface> &GetSurfaces() const { return surfaces; }
-	inline const std::vector<Vertex> &GetVertices() const { return vertices; }
-	inline const std::vector<Index> &GetIndices() const { return indices; }
-
-	inline Vertex &GetVertex(size_t i)
-	{
-		if (i < GetVertexCount())
-		{
-			return vertices[i];
+		void texcoord2f(float s, float t) {
+			curVertexAttrib_.texcoord.reset(s, t);
 		}
-		return blahVertex;
-	}
-	inline size_t GetVertexCount() const { return vertices.size(); }
-	inline int GetVertexSize() const { return sizeof(Vertex); }
-	inline int GetVertexOffset(int i) const
-	{
-		if (within(i, 0, 7))
-			return i * sizeof(Vector4f);
-		return 0;
-	}
-	inline const void *GetVertexData() const { return &vertices[0]; }
-	inline size_t GetVertexDataSize() const { return (size_t)(sizeof(Vertex) * vertices.size()); }
-	inline Vertex *GetVertexData() { return vertices.empty() ? nullptr : &vertices[0]; }
 
-	inline Index &GetIndex(int i)
-	{
-		if (within(i, 0, GetIndexCount()))
-			return indices[i];
-		return blahIndex;
-	}
-	inline Index GetIndexCount() const { return (Index)indices.size(); }
-	inline size_t GetIndexSize() const { return sizeof(Index); }
-	inline const void *GetIndexData() const { return &indices[0]; }
-	inline size_t GetIndexDataSize() const { return (size_t)(sizeof(Index) * indices.size()); }
-	inline Index *GetIndexData() { return indices.empty() ? nullptr : &indices[0]; }
-
-	inline void EnableAttrib(int i)
-	{
-		if (within(i, 0, 7))
-			attribInfo[i].enabled = true;
-	}
-	inline void DisableAttrib(int i)
-	{
-		if (within(i, 0, 7))
-			attribInfo[i].enabled = false;
-	}
-	inline bool IsAttribEnabled(int i) const
-	{
-		if (within(i, 0, 7))
-			return attribInfo[i].enabled;
-		return false;
-	}
-	inline bool IsAttribNormalized(int i) const
-	{
-		if (within(i, 0, 7))
-			return attribInfo[i].normalized;
-		return false;
-	}
-	inline const char *GetAttribName(int i) const
-	{
-		if (within(i, 0, 7))
-			return attribInfo[i].name.c_str();
-		return nullptr;
-	}
-	inline void SetAttribName(int i, const std::string &name)
-	{
-		if (within(i, 0, 7))
-			attribInfo[i].name = name;
-	}
-	//inline void SetAttribName(int i, const char *name) { if (within(i, 0, 7)) attribInfo[i].name = name; }
-	inline void SetAttribNormalized(int i, bool normalized)
-	{
-		if (within(i, 0, 7))
-			attribInfo[i].normalized = normalized;
-	}
-	inline int GetAttribLocation(const std::string &name) const
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			if (attribInfo[i].name == name)
-				return i;
+		void color3f(float r, float g, float b) {
+			curVertexAttrib_.color.reset(r, g, b, 1.0f);
 		}
-		return -1;
-	}
-	inline bool IsDirty() const { return dirty; }
 
-	bool SaveOBJ(const std::string &path, bool output_normals = true, bool output_texcoords = true);
+		void color3f(const Color3f color) {
+			curVertexAttrib_.color = color;
+		}
 
-  protected:
-	std::string curMaterialName;
-	Vertex curVertexAttrib;
-	std::vector<AttribInfo> attribInfo = {
-		{0, "aPosition", false, true},
-		{1, "aNormal", false, true},
-		{2, "aColor", false, true},
-		{3, "aTexCoord", false, true},
-		{4, "aGenericAttribute1", false, false},
-		{5, "aGenericAttribute2", false, false},
-		{6, "aGenericAttribute3", false, false},
-		{7, "aGenericAttribute4", false, false}};
-	bool dirty = false;
-	std::vector<Vertex> vertices;
-	std::vector<Index> indices;
-	std::vector<Surface> surfaces;
+		void color4f(float r, float g, float b, float a) {
+			curVertexAttrib_.color.reset(r, g, b, a);
+		}
 
-	// these are for returning references that are out of range
-	Surface blahSurface;
-	Vertex blahVertex;
-	Index blahIndex;
+		void tangent3f(float x, float y, float z) {
+			curVertexAttrib_.tangent.reset(x, y, z);
+		}
 
-	inline bool within(int i, int a, int b) const { return i >= a && i <= b; }
-};
-} // namespace Fluxions
+		void binormal3f(float x, float y, float z) {
+			curVertexAttrib_.binormal.reset(x, y, z);
+		}
+
+		inline void attrib4f(int i, float x, float y, float z, float w, bool addIndex_ = false) {
+			switch (i) {
+			case 0: curVertexAttrib_.position.reset(x, y, z);
+				break;
+			case 1: curVertexAttrib_.normal.reset(x, y, z);
+				break;
+			case 2: curVertexAttrib_.texcoord.reset(x, y);
+				break;
+			case 3: curVertexAttrib_.color.reset(x, y, z, w);
+				break;
+			case 4: curVertexAttrib_.tangent.reset(x, y, z);
+				break;
+			case 5: curVertexAttrib_.binormal.reset(x, y, z);
+				break;
+			default:
+				return;
+			}
+			if (i == 0) {
+				Vertices.push_back(curVertexAttrib_);
+				dirty = true;
+				if (addIndex_) {
+					addIndex(-1);
+				}
+			}
+		}
+
+		inline void addIndex(int i = -1) {
+			if (i < 0)
+				Indices.push_back(getIndexCount());
+			else if (within(i, 0, getVertexCount() - 1))
+				Indices.push_back(i);
+			else
+				return;
+			if (!Surfaces.empty())
+				Surfaces.back().count++;
+			dirty = true;
+		}
+
+		inline void attrib3f(int i, float x, float y, float z, bool addIndex = false) { attrib4f(i, x, y, z, 1.0f, addIndex); }
+		inline void attrib2f(int i, float x, float y, bool addIndex = false) { attrib4f(i, x, y, 0.0f, 1.0f, addIndex); }
+		inline void attrib1f(int i, float x, bool addIndex = false) { attrib4f(i, x, 0.0f, 0.0f, 1.0f, addIndex); }
+
+		inline void attrib4f(int i, const Vector4f& v, bool addIndex = false) { attrib4f(i, v.x, v.y, v.z, v.w, addIndex); }
+		inline void attrib3f(int i, const Vector3f& v, bool addIndex = false) { attrib4f(i, v.x, v.y, v.z, 1.0f, addIndex); }
+		inline void attrib2f(int i, const Vector2f& v, bool addIndex = false) { attrib4f(i, v.x, v.y, 0.0f, 1.0f, addIndex); }
+		inline void attrib4f(int i, const Color4f& v, bool addIndex = false) { attrib4f(i, v.r, v.g, v.b, v.a, addIndex); }
+		inline void attrib3f(int i, const Color3f& v, bool addIndex = false) { attrib4f(i, v.r, v.g, v.b, 1.0f, addIndex); }
+
+		// Memory
+		inline const void* getVertexData() const { return &Vertices[0]; }
+		inline size_t getVertexDataSize() const { return (size_t)(sizeof(Vertex) * Vertices.size()); }
+		inline const void* getIndexData() const { return &Indices[0]; }
+		inline size_t getIndexDataSize() const { return (size_t)(sizeof(unsigned) * Indices.size()); }
+		bool isAttribEnabled(int i) const { return (i >= 0 && i <= 3); }
+		const char* getAttribName(int i) const {
+			switch (i) {
+			case 0: return "aPosition";
+			case 1: return "aNormal";
+			case 2: return "aTexCoord";
+			case 3: return "aColor";
+			}
+			return nullptr;
+		}
+		bool isAttribNormalized(int i) const { if (i < 0) return true; return false; }
+		int getVertexOffset(int i) const {
+			switch (i) {
+			case 0: return 0;
+			case 1: return 3 * sizeof(float);
+			case 2: return 6 * sizeof(float);
+			case 3: return 8 * sizeof(float);
+			}
+			return 0;
+		}
+
+		// Properties
+		std::string name;
+		std::string path;
+		std::map<std::string, std::string> mtllibs;
+		std::map<std::string, std::string> Materials;
+		std::vector<Vertex> Vertices;
+		std::vector<unsigned> Indices;
+		std::vector<Surface> Surfaces;
+		BoundingBoxf BoundingBox;
+	private:
+		bool add_mtllib(std::istream& istr, std::string& mtllibname, std::string& basepath);
+	};
+}
 
 #endif

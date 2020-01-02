@@ -4,6 +4,21 @@
 
 namespace Fluxions
 {
+	bool ReadLines(const std::string& path, std::vector<std::string>& lines, bool noBlanksOrComments) {
+		std::ifstream fin(path);
+		if (!fin) return false;
+
+		lines.clear();
+		while (fin) {
+			std::string line;
+			std::getline(fin, line);
+			if (noBlanksOrComments && (line.empty() || line[0] == '#')) continue;
+			lines.emplace_back(line);
+		}
+		fin.close();
+		return true;
+	}
+
 	// Data type IOSTREAM Utilities
 	bool ReadBool(std::istream& istr) {
 		std::string str;
@@ -317,6 +332,11 @@ namespace Fluxions
 		return ostr << val << " ";
 	}
 
+	std::ostream& WriteLabel(std::ostream& ostr, const std::string& str) {
+		ostr << str << " ";
+		return ostr;
+	}
+
 	std::ostream& WriteString(std::ostream& ostr, const std::string& str) {
 		ostr << "\"";
 		for (auto it = str.begin(); it != str.end(); it++) {
@@ -339,6 +359,10 @@ namespace Fluxions
 	}
 
 	std::ostream& WriteVector3f(std::ostream& ostr, const Vector3f& v) {
+		return ostr << v.x << " " << v.y << " " << v.z << " ";
+	}
+
+	std::ostream& WriteVector3f(std::ostream& ostr, const Vector4f& v) {
 		return ostr << v.x << " " << v.y << " " << v.z << " ";
 	}
 

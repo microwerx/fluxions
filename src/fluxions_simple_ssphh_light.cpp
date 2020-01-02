@@ -18,6 +18,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
+#include <fluxions_renderer_base.hpp>
 #include <damselfish_json.hpp>
 #include <fluxions_simple_ssphh_light.hpp>
 #include <fluxions_ssphh_utilities.hpp>

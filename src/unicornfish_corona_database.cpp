@@ -17,13 +17,13 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include <fluxions_stdcxx.hpp>
-#include <fluxions_obj_static_model.hpp>
+#include <fluxions_simple_geometry_mesh.hpp>
 #include <unicornfish_corona_database.hpp>
 
-template class std::vector<Fluxions::OBJStaticModel::Vertex>;
+template class std::vector<Fluxions::SimpleGeometryMesh::Vertex>;
 //template class std::vector<unsigned>;
-template class std::vector<Fluxions::OBJStaticModel::Surface>;
-template class std::map<std::string, Fluxions::OBJStaticModel>;
+template class std::vector<Fluxions::SimpleGeometryMesh::Surface>;
+template class std::map<std::string, Fluxions::SimpleGeometryMesh>;
 
 namespace Uf
 {
@@ -32,13 +32,13 @@ namespace Uf
 
 	CoronaDatabase::~CoronaDatabase() {}
 
-	void CoronaDatabase::LoadOBJ(const std::string& objname, const std::string& filename) {
-		models[objname].LoadOBJ(filename);
+	void CoronaDatabase::loadOBJ(const std::string& objname, const std::string& filename) {
+		models[objname].loadOBJ(filename);
 	}
 
 	//void CoronaDatabase::BuildBuffers() {
 	//	renderer.reset();
-	//	std::map<std::string, Fluxions::OBJStaticModel>::iterator modelIt;
+	//	std::map<std::string, Fluxions::SimpleGeometryMesh>::iterator modelIt;
 	//	for (modelIt = models.begin(); modelIt != models.end(); modelIt++) {
 	//		modelIt->second.Render(renderer);
 	//	}

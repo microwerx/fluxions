@@ -347,7 +347,7 @@ namespace Fluxions
 	std::ostream& XmlComment(std::ostream& ostr, const std::string& comment, int numtabs) {
 		for (int i = 0; i < numtabs; i++)
 			ostr << "\t";
-		ostr << "<!-- " << comment << " -->" << std::endl;
+		ostr << "<!-- " << comment << " -->" << "\n";
 		return ostr;
 	}
 
@@ -380,11 +380,11 @@ namespace Fluxions
 	}
 
 	std::ostream& XmlCoronaMapTexture(std::ostream& ostr, const std::string& tagName, const std::string& mapName, const std::string& imagePath, int numtabs, const float gamma) {
-		XmlBeginTag(ostr, tagName, "name", mapName, numtabs) << std::endl;
-		XmlBeginTag(ostr, "map", "Texture", numtabs + 1) << std::endl;
-		XmlString(ostr, "image", imagePath, numtabs + 2) << std::endl;
-		XmlFloat(ostr, "gamma", gamma, numtabs + 2) << std::endl;
-		XmlEndTag(ostr, "map", numtabs + 1) << std::endl;
+		XmlBeginTag(ostr, tagName, "name", mapName, numtabs) << "\n";
+		XmlBeginTag(ostr, "map", "Texture", numtabs + 1) << "\n";
+		XmlString(ostr, "image", imagePath, numtabs + 2) << "\n";
+		XmlFloat(ostr, "gamma", gamma, numtabs + 2) << "\n";
+		XmlEndTag(ostr, "map", numtabs + 1) << "\n";
 		XmlEndTag(ostr, tagName, numtabs);
 		return ostr;
 	}

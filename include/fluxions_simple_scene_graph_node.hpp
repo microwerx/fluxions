@@ -13,6 +13,8 @@ namespace Fluxions
 		Matrix4f addlTransform;
 		BoundingBoxf bbox;
 
+		Matrix4f worldMatrix() const { return transform * addlTransform; }
+
 		const char* type() const override { return "SimpleSceneGraphNode"; }
 		const char* keyword() const override { return "node"; }
 		const char* status() const override { return statusString_.c_str(); }

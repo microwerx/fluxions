@@ -19,8 +19,7 @@
 #ifndef VIPERFISH_KEYBOARD_HPP
 #define VIPERFISH_KEYBOARD_HPP
 
-#include <map>
-#include <vector>
+#include <viperfish_base.hpp>
 
 constexpr unsigned VF_SHIFT_MODIFIER = 0x0001;
 constexpr unsigned VF_CTRL_MODIFIER = 0x0002;

@@ -31,9 +31,6 @@
     <ClCompile Include="src\fluxions_bbox.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_draw_gl1gl2.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_es2_renderer.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
@@ -298,12 +295,6 @@
     <ClCompile Include="src\fluxions_simple_property.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_obj_static_model.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_simple_dirto_light.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
@@ -325,6 +316,19 @@
     <ClCompile Include="src\hatchetfish_log.cpp">
       <Filter>src\hatchetfish</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_gl1gl2_tools.cpp">
+      <Filter>src\fluxions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_aniso_light.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_unfinished_geometry_mesh.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
+      <Filter>src\fluxions-ssg</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_material_library.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.hpp">
@@ -372,16 +376,10 @@
     <ClInclude Include="include\fluxions_config.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_draw_gl1gl2.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_es2_renderer.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_es2_state_info.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_fileio_iostream.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_gte.hpp">
@@ -501,9 +499,6 @@
     <ClInclude Include="include\fluxions_utilities.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_xml.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\hatchetfish_stopwatch.hpp">
       <Filter>include\hatchetfish</Filter>
     </ClInclude>
@@ -606,17 +601,11 @@
     <ClInclude Include="include\fluxions_scene_graph_reader.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_file_reader_writer.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_simple_map.hpp">
       <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_file_path_info.hpp">
-      <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_renderer_gles30_snapshot.hpp">
       <Filter>include\fluxions-renderer</Filter>
@@ -702,9 +691,6 @@
     <ClInclude Include="include\fluxions_simple_geometry_group.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_simple_point_light.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
@@ -722,9 +708,6 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_simple_vertex.hpp">
       <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_obj_static_model.hpp">
-      <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_renderer_sampler.hpp">
       <Filter>include\fluxions-renderer</Filter>
@@ -767,6 +750,39 @@
     </ClInclude>
     <ClInclude Include="include\hatchetfish.hpp">
       <Filter>include\hatchetfish</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_gl1gl2_tools.hpp">
+      <Filter>include\fluxions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_base.hpp">
+      <Filter>include\fluxions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_renderer_base.hpp">
+      <Filter>include\fluxions-renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_file_system.hpp">
+      <Filter>include\fluxions-file-system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_file_path_info.hpp">
+      <Filter>include\fluxions-file-system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_file_reader_writer.hpp">
+      <Filter>include\fluxions-file-system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_fileio_iostream.hpp">
+      <Filter>include\fluxions-file-system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_xml.hpp">
+      <Filter>include\fluxions-file-system</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_aniso_light.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_unfinished_geometry_mesh.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp">
+      <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -832,6 +848,9 @@
     </Filter>
     <Filter Include="include\fluxions-ssphh">
       <UniqueIdentifier>{7b634a8e-9bf0-44cf-811e-55e3146d6048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\fluxions-file-system">
+      <UniqueIdentifier>{9a28a89a-9603-401d-a578-1a3827bcaff9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

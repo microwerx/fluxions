@@ -17,11 +17,10 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_opengl.hpp>
+#include <hatchetfish.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_scalar_math.hpp>
-#include <fluxions_draw_gl1gl2.hpp>
+#include <fluxions_gl1gl2_tools.hpp>
 
 GLint g_MaxCombinedTextureUnits = 0;
 std::string g_CurrentDebugMessage;
@@ -282,20 +281,32 @@ bool FxDebugBindTexture(GLenum target, GLuint texture) {
 	return true;
 }
 
-bool FxCreateBuffer(GLenum target, unsigned& abo, GLsizeiptr size, const void* data, unsigned usage) {
-	if (!abo) {
-		glGenBuffers(1, &abo);
+bool FxCreateBuffer(GLenum target, unsigned* p, GLsizeiptr size, const void* data, unsigned usage) {
+	if (!*p) {
+		glGenBuffers(1, p);
 	}
-	if (abo) {
-		glBindBuffer(target, abo);
+	if (*p) {
+		glBindBuffer(target, *p);
 		if (data != nullptr) glBufferData(target, size, data, usage);
 	}
-	return abo != 0;
+	return *p != 0;
 }
 
 void FxDeleteBuffer(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteBuffers(1, p);
+	*p = 0;
+}
+
+void FxCreateVertexArray(GLuint* p) {
+	if (*p) FxDeleteVertexArray(p);
+	glGenVertexArrays(1, p);
+	glBindVertexArray(*p);
+}
+
+void FxDeleteVertexArray(GLuint* p) {
+	if (*p == 0) return;
+	glDeleteVertexArrays(1, p);
 	*p = 0;
 }
 

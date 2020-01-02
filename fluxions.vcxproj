@@ -178,8 +178,10 @@
     <ClCompile Include="src\fluxions_renderer_texture_cube.cpp" />
     <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp" />
     <ClCompile Include="src\fluxions_renderer_utilities.cpp" />
+    <ClCompile Include="src\fluxions_simple_aniso_light.cpp" />
     <ClCompile Include="src\fluxions_simple_camera.cpp" />
     <ClCompile Include="src\fluxions_simple_dirto_light.cpp" />
+    <ClCompile Include="src\fluxions_simple_material_library.cpp" />
     <ClCompile Include="src\fluxions_simple_point_light.cpp" />
     <ClCompile Include="src\fluxions_simple_scene_graph_node.cpp" />
     <ClCompile Include="src\fluxions_scene_graph_reader.cpp" />
@@ -379,7 +381,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\fluxions_shader_program_locations.cpp" />
-    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
+    <ClCompile Include="src\fluxions_simple_unfinished_geometry_mesh.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
@@ -429,7 +431,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_obj_static_model.cpp">
+    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
@@ -474,7 +476,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_draw_gl1gl2.cpp">
+    <ClCompile Include="src\fluxions_gl1gl2_tools.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>
@@ -613,7 +615,9 @@
     <ClInclude Include="include\damselfish_syntax_semantic_analyzer.hpp" />
     <ClInclude Include="include\fluxions.hpp" />
     <ClInclude Include="include\fluxions_astronomy.hpp" />
+    <ClInclude Include="include\fluxions_base.hpp" />
     <ClInclude Include="include\fluxions_colors.hpp" />
+    <ClInclude Include="include\fluxions_file_system.hpp" />
     <ClInclude Include="include\fluxions_ibase_object.hpp" />
     <ClInclude Include="include\fluxions_bbox.hpp" />
     <ClInclude Include="include\fluxions_common_test.hpp" />
@@ -658,6 +662,7 @@
     <ClInclude Include="include\fluxions_image_loader.hpp" />
     <ClInclude Include="include\fluxions_irenderer.hpp" />
     <ClInclude Include="include\fluxions_iscene.hpp" />
+    <ClInclude Include="include\fluxions_renderer_base.hpp" />
     <ClInclude Include="include\fluxions_renderer_framebuffer.hpp" />
     <ClInclude Include="include\fluxions_opengl.hpp" />
     <ClInclude Include="include\fluxions_pbsky.hpp" />
@@ -680,7 +685,7 @@
     <ClInclude Include="include\fluxions_simple_map.hpp" />
     <ClInclude Include="include\fluxions_simple_material.hpp" />
     <ClInclude Include="include\fluxions_simple_materials.hpp" />
-    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp" />
+    <ClInclude Include="include\fluxions_simple_unfinished_geometry_mesh.hpp" />
     <ClInclude Include="include\fluxions_simple_material_library.hpp" />
     <ClInclude Include="include\fluxions_simple_path_animation.hpp" />
     <ClInclude Include="include\fluxions_simple_point_light.hpp" />
@@ -691,7 +696,7 @@
     <ClInclude Include="include\fluxions_renderer_config.hpp" />
     <ClInclude Include="include\fluxions_renderer_sampler.hpp" />
     <ClInclude Include="include\fluxions_simple_scene_graph.hpp" />
-    <ClInclude Include="include\fluxions_obj_static_model.hpp" />
+    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp" />
     <ClInclude Include="include\fluxions_renderer_shader.hpp" />
     <ClInclude Include="include\fluxions_simple_scene_graph_base.hpp" />
     <ClInclude Include="include\fluxions_simple_scene_graph_node.hpp" />
@@ -713,12 +718,13 @@
     <ClInclude Include="include\fluxions_uniform_library.hpp" />
     <ClInclude Include="include\fluxions_utilities.hpp" />
     <ClInclude Include="include\fluxions_xml.hpp" />
-    <ClInclude Include="include\fluxions_draw_gl1gl2.hpp" />
+    <ClInclude Include="include\fluxions_gl1gl2_tools.hpp" />
     <ClInclude Include="include\hatchetfish.hpp" />
     <ClInclude Include="include\hatchetfish_log.hpp" />
     <ClInclude Include="include\hatchetfish_stopwatch.hpp" />
     <ClInclude Include="include\fluxions_scene_graph_reader.hpp" />
     <ClInclude Include="include\fluxions_scene_graph_writer.hpp" />
+    <ClInclude Include="include\fluxions_simple_aniso_light.hpp" />
     <ClInclude Include="include\unicornfish.hpp" />
     <ClInclude Include="include\unicornfish_broker.hpp" />
     <ClInclude Include="include\unicornfish_client.hpp" />

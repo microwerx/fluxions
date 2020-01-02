@@ -65,7 +65,7 @@ namespace Vf
 
 		ImGui::Separator();
 
-		if (ImGui::Button("Clear")) { clear_animation = true; }
+		if (ImGui::Button("clear")) { clear_animation = true; }
 		ImGui::SameLine();
 		if (ImGui::Button("Save")) { save_animation = true; }
 		ImGui::SameLine();

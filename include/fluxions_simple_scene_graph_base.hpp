@@ -1,10 +1,43 @@
 #ifndef FLUXIONS_SIMPLE_SCENE_GRAPH_BASE_HPP
 #define FLUXIONS_SIMPLE_SCENE_GRAPH_BASE_HPP
 
+#include <fluxions_base.hpp>
+#include <fluxions_gte_spherical_harmonic.hpp>
 #include <fluxions_gte_color_math.hpp>
 #include <fluxions_gte_matrix_extra.hpp>
+#include <fluxions_resource_manager.hpp>
+#include <fluxions_ibase_object.hpp>
+#include <fluxions_simple_geometry_mesh.hpp>
+#include <fluxions_pbsky.hpp>
 
-namespace Fluxions{
+namespace Fluxions
+{
+	constexpr int MaxSphlLights = 16;
+	constexpr int MaxSphlDegree = 9;
+	constexpr int DefaultSphlDegree = 2;
+	constexpr int SphlSunIndex = MaxSphlLights;
+
+	struct SceneGraphReader;
+	struct SceneGraphWriter;
+	struct ISimpleRendererPlugin;
+
+	enum class SceneGraphFileType {
+		Unknown = 0,
+		MTL,
+		OBJ,
+		SCN,
+		ANIM,
+		CONF,
+		JPG,
+		PNG,
+		EXR,
+		PFM,
+		PPM,
+		MaxFileTypes
+	};
+
+	using FileTypeStringPair = std::pair<SceneGraphFileType, std::string>;
+
 	// 128 bytes
 	struct BaseEnvironment {
 		Vector4f toneMap;		// {r} = exposure, {g} = gamma, {b} = filmic highlight, {a} = filmic shadows
@@ -15,6 +48,15 @@ namespace Fluxions{
 		Vector4f time;			// {r} = hour, {g} = minutes, {b} = seconds, {a} day seconds
 		Color4f sun;			// {rgb} = disk radiance, {a} = solid angle
 		Color4f moon;			// {rgb} = disk radiance, {a} = solid angle
+
+		float& toneMapExposure() { return toneMap.x; }
+		float& toneMapGamma() { return toneMap.y; }
+		float& toneMapFilmicHighlights() { return toneMap.z; }
+		float& toneMapFilmicShadows() { return toneMap.w; }
+		float toneMapExposure() const { return toneMap.x; }
+		float toneMapGamma() const { return toneMap.y; }
+		float toneMapFilmicHighlights() const { return toneMap.z; }
+		float toneMapFilmicShadows() const { return toneMap.w; }
 	};
 
 	// 64 bytes
@@ -36,11 +78,16 @@ namespace Fluxions{
 	// 2048 bytes
 	struct BaseAnisoLight {
 		Vector4f position;	// {xyz} = position of light, {a} = falloff radius
-		Vector4f shadow;	// {r} = znear, {g} = zfar, {ba} = shape theta/phi
-		Vector4f shape;     // {rgb} = n1, n2, n3, {a} = m
-		Vector4f shapeSH;	// {r} = width, {g} = height, {b} = , {a} = maxDegree
+		Vector4f shadow;	// {x} = znear, {y} = zfar, {zw} = shape theta/phi
+		Vector4f shape;     // {xyz} = n1, n2, n3, {w} = m
+		Vector4f shapeSH;	// {x} = width, {y} = height, {z} = , {w} = maxDegree
 		Matrix4f rotation;	// rotation of SPH
 		Color4f SH[121];	// {rgb} = colored E0, {a} = SH coefficient
+
+		float& falloffRadius() { return position.w; }
+		float falloffRadius() const { return position.w; }
+		float& znear() { return shadow.x; }
+		float znear() const { return shadow.x; }
 	};
 
 	// 128 bytes of material information

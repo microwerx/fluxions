@@ -1662,7 +1662,7 @@ namespace Fluxions
 
 	template <typename T, typename U>
 	constexpr auto operator*(const TMatrix4<T>& M, const TVector3<U>& V) noexcept {
-		return TVector2<std::common_type_t<T, U>>(
+		return TVector3<std::common_type_t<T, U>>(
 			M.m11 * V.x + M.m12 * V.y + M.m13 * V.z,
 			M.m21 * V.x + M.m22 * V.y + M.m23 * V.z,
 			M.m31 * V.x + M.m32 * V.y + M.m33 * V.z);

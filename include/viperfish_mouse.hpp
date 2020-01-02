@@ -19,6 +19,7 @@
 #ifndef VIPERFISH_MOUSE_HPP
 #define VIPERFISH_MOUSE_HPP
 
+#include <viperfish_base.hpp>
 #include <viperfish_utilities.hpp>
 
 #define VF_MOUSE_BUTTON_LEFT	0x0000;

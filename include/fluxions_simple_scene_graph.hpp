@@ -19,61 +19,50 @@
 #ifndef FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 #define FLUXIONS_SIMPLE_SCENE_GRAPH_HPP
 
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_file_path_info.hpp>
-#include <fluxions_gte.hpp>
-#include <fluxions_gte_spherical_harmonic.hpp>
-#include <fluxions_obj_static_model.hpp>
-#include <fluxions_pbsky.hpp>
-#include <fluxions_resource_manager.hpp>
-#include <fluxions_simple_materials.hpp>
-#include <fluxions_simple_geometry_group.hpp>
+#include <fluxions_simple_scene_graph_base.hpp>
+#include <fluxions_scene_graph_reader.hpp>
 #include <fluxions_simple_camera.hpp>
 #include <fluxions_simple_environment.hpp>
+#include <fluxions_simple_materials.hpp>
 #include <fluxions_simple_sphere.hpp>
-#include <fluxions_simple_point_light.hpp>
+#include <fluxions_simple_geometry_group.hpp>
 #include <fluxions_simple_dirto_light.hpp>
-#include <fluxions_scene_graph_reader.hpp>
+#include <fluxions_simple_point_light.hpp>
+#include <fluxions_simple_aniso_light.hpp>
 #include <fluxions_simple_path_animation.hpp>
 
 namespace Fluxions
 {
-	constexpr int MaxSphlLights = 16;
-	constexpr int MaxSphlDegree = 9;
-	constexpr int DefaultSphlDegree = 2;
-	constexpr int SphlSunIndex = MaxSphlLights;
-
-	struct SceneGraphReader;
-	struct SceneGraphWriter;
-	struct ISimpleRendererPlugin;
 
 	class SimpleSceneGraph : public IBaseObject {
 	public:
 		std::string name;
 		std::vector<std::string> sceneFileLines;
 		std::vector<std::string> pathsToTry;
+		std::vector<FileTypeStringPair> pathsToLoad;
 		Matrix4f currentTransform;
 
-		std::vector<std::string> confFiles;
+	public:
 		SimpleCamera camera;
 		SimpleEnvironment environment;
 
-	public:
-		TResourceManager<std::string> shaderMaps;
-		TResourceManager<SimpleCamera> cameras;
-		TResourceManager<SimpleSphere> spheres;
-		TResourceManager<SimpleGeometryGroup> geometry;
-		// TODO: Change OBJStaticModel to SimpleGeometryMesh
-		TResourceManager<OBJStaticModel> geometryObjects;
-		TResourceManager<SimpleDirToLight> dirToLights;
-		TResourceManager<SimplePointLight> pointLights;
-		TResourceManager<SimplePathAnimation> paths;
-		std::map<std::string, SimpleSceneGraphNode*> nodes;
-
-		SimpleMaterialSystem materials;
+		//TResourceManager<std::string> shaderMaps;
+		//std::map<std::string, SimpleMap*> currentTextures;
+		SimpleMaterialSystem materialSystem;
 		//mutable SimpleRenderer_GLuint renderer;
 		//__ShaderProgramLocations locs;
-		std::map<std::string, SimpleMap*> currentTextures;
+
+		TResourceManager<SimpleCamera> cameras;
+		TResourceManager<SimpleSphere> spheres;
+		TResourceManager<SimpleGeometryGroup> geometryGroups;
+		// TODO: Change SimpleGeometryMesh to SimpleGeometryMesh
+		TResourceManager<SimpleGeometryMesh> staticMeshes;
+		TResourceManager<SimpleDirToLight> dirToLights;
+		TResourceManager<SimplePointLight> pointLights;
+		TResourceManager<SimpleAnisoLight> anisoLights;
+		TResourceManager<SimplePathAnimation> paths;
+		std::map<std::string, SimpleSceneGraphNode*> nodes;
+		SimpleMaterialLibrary materials;
 
 		ISimpleRendererPlugin* userdata = nullptr;
 
@@ -111,6 +100,7 @@ namespace Fluxions
 		SimpleSceneGraphNode* createSphere(const std::string& name);
 		SimpleSceneGraphNode* createDirToLight(const std::string& name);
 		SimpleSceneGraphNode* createPointLight(const std::string& name);
+		SimpleSceneGraphNode* createAnisoLight(const std::string& name);
 		SimpleSceneGraphNode* createPathAnim(const std::string& name);
 		SimpleSceneGraphNode* createGeometry(const std::string& name);
 	private:

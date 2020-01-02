@@ -30,6 +30,10 @@ template class std::vector<Fluxions::TVector3<float>>;
 
 namespace Fluxions
 {
+	constexpr int POSITION = 0;
+	constexpr int NORMAL = 1;
+	constexpr int TEXCOORD = 2;
+	constexpr int COLOR = 3;
 
 	void FxModel::load(const char* path) {
 		std::ifstream fin(path);
@@ -53,15 +57,15 @@ namespace Fluxions
 	void FxModel::makeModel(SimpleGeometryMesh& model) {}
 
 	Sphl::Sphl() {
-		sph_model.SetAttribName(0, "aPosition");
-		sph_model.SetAttribName(1, "aNormal");
-		sph_model.SetAttribName(2, "aColor");
-		sph_model.SetAttribName(3, "aTexCoord");
+		//sph_model.SetAttribName(POSITION, "aPosition");
+		//sph_model.SetAttribName(NORMAL, "aNormal");
+		//sph_model.SetAttribName(COLOR, "aColor");
+		//sph_model.SetAttribName(TEXCOORD, "aTexCoord");
 
-		lightProbeModel.SetAttribName(0, "aPosition");
-		lightProbeModel.SetAttribName(1, "aNormal");
-		lightProbeModel.SetAttribName(2, "aColor");
-		lightProbeModel.SetAttribName(3, "aTexCoord");
+		//lightProbeModel.SetAttribName(POSITION, "aPosition");
+		//lightProbeModel.SetAttribName(NORMAL, "aNormal");
+		//lightProbeModel.SetAttribName(COLOR, "aColor");
+		//lightProbeModel.SetAttribName(TEXCOORD, "aTexCoord");
 	}
 
 	void Sphl::randomize() {
@@ -111,8 +115,8 @@ namespace Fluxions
 	}
 
 	void Sphl::createMesh(FxModel& model) {
-		sph_model.reset();
-		sph_model.Attrib3f(1, Vector3f(0.0f, 0.0f, 0.0f)); // Normal is 0, we will add neighboring face normals in a bit
+		sph_model.clear();
+		sph_model.normal3f(0.0f, 0.0f, 0.0f); // Normal is 0, we will add neighboring face normals in a bit
 
 		float theta = 0.0f;
 		float dtheta = (float)FX_DEGREES_TO_RADIANS;
@@ -122,7 +126,7 @@ namespace Fluxions
 		// const int MaxComponents = 6;
 		// Red, Green, Blue, Monochromatic, Hierarchy Self, Hierarchy Neighbors
 
-		Vector3f Colors[MaxComponents] = {
+		Color3f Colors[MaxComponents] = {
 			{1.0f, 0.0f, 0.0f},
 			{0.0f, 1.0f, 0.0f},
 			{0.0f, 0.0f, 1.0f},
@@ -130,7 +134,7 @@ namespace Fluxions
 			{1.0f, 0.0f, 0.5f},
 			{0.0f, 1.0f, 0.5f} };
 
-		Vector3f InvColors[MaxComponents] = {
+		Color3f InvColors[MaxComponents] = {
 			{0.3f, 0.0f, 0.0f},
 			{0.0f, 0.3f, 0.0f},
 			{0.0f, 0.0f, 0.3f},
@@ -166,35 +170,35 @@ namespace Fluxions
 				float sph = calc_spherical_harmonic<float>(maxDegree, v_coefs[j], model.vertices[i].theta(), model.vertices[i].phi());
 				if (sph > 0.0) {
 					//sph = 1.0f + sph;
-					sph_model.Attrib3f(2, Colors[j]); // Red SPH Color
+					sph_model.color3f(Colors[j]); // Red SPH Color
 				}
 				else {
 					sph = -sph;							 // sph = 1.0f - sph;
-					sph_model.Attrib3f(2, InvColors[j]); // (Opposite) Red SPH Color
+					sph_model.color3f(InvColors[j]); // (Opposite) Red SPH Color
 				}
 				// Added this line to move SPH between 0.25 and 0.5
 				sph = 0.25f + 0.25f * sph;
-				sph_model.Attrib3f(0, offsets[j] + scales[j] * sph * model.vertices[i]); // Position
+				sph_model.position3f(offsets[j] + scales[j] * sph * model.vertices[i]); // Position
 			}
 		}
 
 		unsigned k = 0;
 		for (unsigned j = firstIndex; j <= lastIndex; j++) {
-			sph_model.BeginSurface(SimpleGeometryMesh::SurfaceType::Triangles);
+			sph_model.beginSurface(SimpleGeometryMesh::SurfaceType::Triangles);
 			for (unsigned i = 0; i < model.triangleCount; i++) {
 				unsigned v0 = k * model.vertexCount + model.triangles[i].x;
 				unsigned v1 = k * model.vertexCount + model.triangles[i].y;
 				unsigned v2 = k * model.vertexCount + model.triangles[i].z;
-				Vector3f dp1 = sph_model.GetVertex(v1).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
-				Vector3f dp2 = sph_model.GetVertex(v2).attribs[0].xyz() - sph_model.GetVertex(v0).attribs[0].xyz();
+				Vector3f dp1 = sph_model.getVertex(v1).position - sph_model.getVertex(v0).position;
+				Vector3f dp2 = sph_model.getVertex(v2).position - sph_model.getVertex(v0).position;
 				Vector3f N = dp1.cross(dp2).unit();
-				sph_model.GetVertex(v0).attribs[1] += N;
-				sph_model.GetVertex(v1).attribs[1] += N;
-				sph_model.GetVertex(v2).attribs[1] += N;
+				sph_model.getVertex(v0).normal += N;
+				sph_model.getVertex(v1).normal += N;
+				sph_model.getVertex(v2).normal += N;
 
-				sph_model.AddIndex((int)(k * model.vertexCount + model.triangles[i].x));
-				sph_model.AddIndex((int)(k * model.vertexCount + model.triangles[i].y));
-				sph_model.AddIndex((int)(k * model.vertexCount + model.triangles[i].z));
+				sph_model.addIndex((int)(k * model.vertexCount + model.triangles[i].x));
+				sph_model.addIndex((int)(k * model.vertexCount + model.triangles[i].y));
+				sph_model.addIndex((int)(k * model.vertexCount + model.triangles[i].z));
 			}
 			k++;
 		}
@@ -204,13 +208,13 @@ namespace Fluxions
 				unsigned v0 = j * model.vertexCount + model.triangles[i].x;
 				unsigned v1 = j * model.vertexCount + model.triangles[i].y;
 				unsigned v2 = j * model.vertexCount + model.triangles[i].z;
-				sph_model.GetVertex(v0).attribs[1].normalize();
-				sph_model.GetVertex(v1).attribs[1].normalize();
-				sph_model.GetVertex(v2).attribs[1].normalize();
+				sph_model.getVertex(v0).normal.normalize();
+				sph_model.getVertex(v1).normal.normalize();
+				sph_model.getVertex(v2).normal.normalize();
 			}
 		}
 
-		lightProbeModel.Attrib4f(2, Vector4f(-1.0f, -1.0f, -1.0f, 1.0f), false);
+		lightProbeModel.texcoord2f(0.0f, 0.0f);
 	}
 
 	void Sphl::createLightProbe() {

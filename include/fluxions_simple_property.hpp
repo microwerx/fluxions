@@ -19,6 +19,8 @@
 #ifndef FLUXIONS_SIMPLE_PROPERTY_HPP
 #define FLUXIONS_SIMPLE_PROPERTY_HPP
 
+#include <fluxions_base.hpp>
+
 namespace Fluxions
 {
 

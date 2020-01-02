@@ -244,20 +244,20 @@ namespace Fluxions
 		// Push some texture_ units to our resource manager so we can dish these out as necessary
 		for (int i = 0; i < 32; i++) {
 			GLuint id = 16 + i;
-			textureUnits.Add(id);
+			textureUnits.add(id);
 		}
 	}
 
 	void RendererContext::killTexUnits() {
-		textureUnits.Clear();
+		textureUnits.clear();
 	}
 
 	GLuint RendererContext::getTexUnit() {
-		return textureUnits.Create();
+		return textureUnits.create();
 	}
 
 	void RendererContext::freeTexUnit(GLuint id) {
-		textureUnits.Delete(id);
+		textureUnits.erase(id);
 	}
 
 	//void RendererContext::renderGbuffer() {}
@@ -342,7 +342,7 @@ namespace Fluxions
 		//		}
 
 		//		if (!gspath.empty() && !spGS->didCompile) {
-		//			HFLOGERROR("failed to load program %s because the geometry shader did not compile.", p.name.c_str());
+		//			HFLOGERROR("failed to load program %s because the geometryGroups shader did not compile.", p.name.c_str());
 		//		}
 
 		//		RendererProgramPtr program = std::make_shared<RendererProgram>();

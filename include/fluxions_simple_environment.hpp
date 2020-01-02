@@ -19,9 +19,9 @@ namespace Fluxions
 		Vector3f curSunDirTo;
 		Color4f curSunDiskRadiance;
 		Color4f curGroundRadiance;
-		float toneMapScale = -6.0f;
-		float toneMapExposure = -6.0f;
-		float toneMapGamma = 1.0f;
+		//float toneMapScale = -6.0f;
+		//float toneMapExposure = -6.0f;
+		//float toneMapGamma = 1.0f;
 		// GLuint curSkyTextureId = 0;
 		// GLuint curSkySamplerId = 0;
 

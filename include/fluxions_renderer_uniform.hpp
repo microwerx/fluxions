@@ -1,8 +1,9 @@
 #ifndef FLUXIONS_SIMPLE_UNIFORM_HPP
 #define FLUXIONS_SIMPLE_UNIFORM_HPP
 
+#include <fluxions_base.hpp>
+#include <fluxions_gl1gl2_tools.hpp>
 #include <fluxions_gte_matrix_math.hpp>
-#include <fluxions_opengl.hpp>
 
 namespace Fluxions
 {

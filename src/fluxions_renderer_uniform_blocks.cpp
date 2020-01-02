@@ -1,6 +1,6 @@
 #include "pch.hpp"
+#include <fluxions_base.hpp>
 #include <fluxions_renderer_uniform_blocks.hpp>
-#include <fluxions_draw_gl1gl2.hpp>
 
 namespace Fluxions
 {
@@ -24,15 +24,20 @@ namespace Fluxions
 	}
 
 	void RendererUniformBlock::update() {
-		FxCreateBuffer(GL_UNIFORM_BUFFER, *ubo_, size_, data_, GL_DYNAMIC_DRAW);
+		FxCreateBuffer(GL_UNIFORM_BUFFER, &(*ubo_), size_, data_, GL_DYNAMIC_DRAW);
 		blockBinding_ = uniformBinding();
 		glBindBufferBase(GL_UNIFORM_BUFFER, blockBinding_, *ubo_);
+	}
+
+	void RendererUniformBlock::invalidate_cache() {
 		blockIndex_ = GL_INVALID_INDEX;
 	}
 
 	void RendererUniformBlock::use(GLuint program) {
 		if (blockIndex_ == GL_INVALID_INDEX) {
 			blockIndex_ = glGetUniformBlockIndex(program, uniformBlockName());
+		}
+		if (blockIndex_ == GL_INVALID_INDEX) {
 			return;
 		}
 		glUniformBlockBinding(program, blockIndex_, blockBinding_);

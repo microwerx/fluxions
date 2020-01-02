@@ -7,6 +7,8 @@
 
 namespace Fluxions
 {
+	bool ReadLines(const std::string& path, std::vector<std::string>& lines, bool noBlanksOrComments);
+
 	bool ReadBool(std::istream& istr);
 	int ReadInt(std::istream& istr);
 	long long ReadInt64(std::istream& istr);
@@ -37,10 +39,12 @@ namespace Fluxions
 	std::ostream& WriteInt64(std::ostream& ostr, long long val);
 	std::ostream& WriteFloat(std::ostream& ostr, float val);
 	std::ostream& WriteDouble(std::ostream& ostr, double val);
+	std::ostream& WriteLabel(std::ostream& ostr, const std::string& str);
 	std::ostream& WriteString(std::ostream& ostr, const std::string& str);
 	std::ostream& WriteVector2f(std::ostream& ostr, const Vector2f& v);
 	std::ostream& WriteVector2d(std::ostream& ostr, const Vector2d& v);
 	std::ostream& WriteVector3f(std::ostream& ostr, const Vector3f& v);
+	std::ostream& WriteVector3f(std::ostream& ostr, const Vector4f& v);
 	std::ostream& WriteVector3d(std::ostream& ostr, const Vector3d& v);
 	std::ostream& WriteVector4f(std::ostream& ostr, const Vector4f& v);
 	std::ostream& WriteVector4d(std::ostream& ostr, const Vector4d& v);

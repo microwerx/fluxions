@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <fluxions_stdcxx.hpp>
+#include <fluxions_base.hpp>
 #include <fluxions_fileio_iostream.hpp>
 #include <fluxions_simple_materials.hpp>
 
@@ -35,7 +35,7 @@ namespace Fluxions
 			currentMtlLibId = 0;
 		}
 		else {
-			currentMtlLibId = mtllibs.GetHandleFromName(currentMtlLibName);
+			currentMtlLibId = mtllibs.getHandleFromName(currentMtlLibName);
 			if (currentMtlLibId == 0)
 				currentMtlLibName.clear();
 		}
@@ -56,7 +56,7 @@ namespace Fluxions
 				currentMtlPtr = nullptr;
 			}
 			else {
-				currentMtlId = currentMtlLibPtr->mtls.GetHandleFromName(currentMtlName);
+				currentMtlId = currentMtlLibPtr->mtls.getHandleFromName(currentMtlName);
 				currentMtlPtr = &(currentMtlLibPtr->mtls[currentMtlId]);
 			}
 		}
@@ -98,20 +98,8 @@ namespace Fluxions
 		pmtllib->fpi.Set(filename);
 		pmtllib->name = mtllibName;
 
-		std::ifstream fin(filename.c_str());
-		if (!fin)
-			return false;
-
 		std::vector<std::string> lines;
-		std::string str;
-		std::istringstream istr;
-		while (1) {
-			if (!fin)
-				break;
-			getline(fin, str);
-			lines.push_back(str);
-		}
-		fin.close();
+		ReadLines(filename, lines);
 
 		pmtllib->maps.clear();
 		pmtllib->mtls.clear();
@@ -120,10 +108,9 @@ namespace Fluxions
 		//TResourceManager<SimpleMap>& maps = pmtllib->maps;
 		SimpleMaterial* curmtl = nullptr;
 
-		for (auto line = lines.begin(); line != lines.end(); line++) {
-			str.clear();
-			istr.clear();
-			istr.str(*line);
+		for (auto& line: lines) {
+			std::string str;
+			std::stringstream istr(line);
 
 			istr >> str;
 			if (str == "newmap") {
@@ -367,7 +354,7 @@ namespace Fluxions
 				AddMap(mtllibfpi.dir, curmtl->map_bump);
 			}
 			else if (!str.empty()) {
-				Hf::Log.info("%s(): property %s not officially supported", __FUNCTION__, str.c_str());
+				HFLOGWARN("property %s not officially supported", str.c_str());
 			}
 		}
 
@@ -377,7 +364,7 @@ namespace Fluxions
 	bool SimpleMaterialSystem::Save(const std::string& mtllibName, const std::string& filename) {
 		FilePathInfo fpi(filename);
 
-		if (!mtllibs.IsAHandle(mtllibName))
+		if (!mtllibs.isAHandle(mtllibName))
 			return false;
 
 		for (auto it = mtllibs.begin(); it != mtllibs.end(); it++) {
@@ -415,10 +402,10 @@ namespace Fluxions
 			return false;
 		}
 
-		if (currentMtlLibPtr->maps.IsAHandle(fpi.fname))
+		if (currentMtlLibPtr->maps.isAHandle(fpi.fname))
 			return true;
 
-		GLuint id = currentMtlLibPtr->maps.Create(filename);
+		GLuint id = currentMtlLibPtr->maps.create(filename);
 		currentMtlLibPtr->maps[id].mapId = id;
 		currentMtlLibPtr->maps[id].mapName = filename;
 		if (path.back() != '/' && TestIfFileExists(path + "/" + filename))
@@ -438,10 +425,10 @@ namespace Fluxions
 			return false;
 		}
 
-		if (currentMtlLibPtr->maps.IsAHandle(name))
+		if (currentMtlLibPtr->maps.isAHandle(name))
 			return true;
 
-		GLuint id = currentMtlLibPtr->maps.Create(name);
+		GLuint id = currentMtlLibPtr->maps.create(name);
 		currentMtlLibPtr->maps[id].mapId = id;
 		currentMtlLibPtr->maps[id].mapName = name;
 		currentMtlLibPtr->maps[id].pathname.clear();
@@ -453,25 +440,25 @@ namespace Fluxions
 	}
 
 	SimpleMaterialLibrary* SimpleMaterialSystem::CreateLibrary(const std::string& name) {
-		mtllibs.Create(name);
+		mtllibs.create(name);
 		return SetLibrary(name);
 	}
 
 	SimpleMaterial* SimpleMaterialSystem::CreateMaterial(const std::string& name) {
 		if (currentMtlLibPtr) {
-			currentMtlLibPtr->mtls.Create(name);
+			currentMtlLibPtr->mtls.create(name);
 		}
 		return SetMaterial(name);
 	}
 
 	void SimpleMaterialSystem::DeleteLibrary(const std::string& name) {
-		mtllibs.Delete(name);
+		mtllibs.erase(name);
 		SynchronizeIds();
 	}
 
 	void SimpleMaterialSystem::DeleteMaterial(const std::string& name) {
 		if (currentMtlLibPtr) {
-			currentMtlLibPtr->mtls.Delete(name);
+			currentMtlLibPtr->mtls.erase(name);
 		}
 		SynchronizeIds();
 	}
@@ -482,7 +469,7 @@ namespace Fluxions
 
 		SimpleMaterialLibrary* pmtllib = SetLibrary(mtllibName);
 		if (pmtllib) {
-			pmtllib->mtls.Delete(mtlName);
+			pmtllib->mtls.erase(mtlName);
 		}
 
 		SetLibraryMaterial(oldLibrary, oldMaterial);
@@ -505,11 +492,11 @@ namespace Fluxions
 	const SimpleMaterial* SimpleMaterialSystem::GetLibraryMaterial(const std::string& mtllibName, const std::string& mtlName) const {
 		const SimpleMaterial* mtl = nullptr;
 
-		auto mtlLibId = mtllibs.GetHandleFromName(mtllibName);
+		auto mtlLibId = mtllibs.getHandleFromName(mtllibName);
 		auto mtlLibPtr = &(mtllibs[mtlLibId]);
 
 		// Check to see if we're using a valid material
-		auto mtlId = mtlLibPtr->mtls.GetHandleFromName(mtlName);
+		auto mtlId = mtlLibPtr->mtls.getHandleFromName(mtlName);
 		mtl = &(mtlLibPtr->mtls[mtlId]);
 
 		return mtl;
@@ -531,7 +518,7 @@ namespace Fluxions
 
 	const std::string& SimpleMaterialSystem::GetMaterialName(GLuint handle) const {
 		if (currentMtlLibPtr != nullptr)
-			return currentMtlLibPtr->mtls.GetNameFromHandle(handle);
+			return currentMtlLibPtr->mtls.getNameFromHandle(handle);
 		else
 			return defaultName;
 	}
@@ -545,12 +532,12 @@ namespace Fluxions
 	}
 
 	GLuint SimpleMaterialSystem::GetLibraryId(const std::string& name) const {
-		return mtllibs.GetHandleFromName(name);
+		return mtllibs.getHandleFromName(name);
 	}
 
 	GLuint SimpleMaterialSystem::GetMaterialId(const std::string& name) const {
 		if (currentMtlLibPtr) {
-			return currentMtlLibPtr->mtls.GetHandleFromName(name);
+			return currentMtlLibPtr->mtls.getHandleFromName(name);
 		}
 		return 0;
 	}
@@ -558,10 +545,10 @@ namespace Fluxions
 	GLuint SimpleMaterialSystem::GetLibraryMaterialId(const std::string& mtllibName, const std::string& mtlName) const {
 		const SimpleMaterialLibrary* pmtllib = nullptr;
 		GLuint handle = 0;
-		if (mtllibs.IsAHandle(mtllibName))
+		if (mtllibs.isAHandle(mtllibName))
 			pmtllib = &(mtllibs[mtllibName]);
 		if (pmtllib != nullptr) {
-			handle = pmtllib->mtls.GetHandleFromName(mtlName);
+			handle = pmtllib->mtls.getHandleFromName(mtlName);
 		}
 		return handle;
 	}
@@ -589,7 +576,7 @@ namespace Fluxions
 		SimpleMap* map = nullptr;
 
 		if (currentMtlLibPtr != nullptr) {
-			if (currentMtlLibPtr->maps.IsAHandle(name)) {
+			if (currentMtlLibPtr->maps.isAHandle(name)) {
 				map = &(currentMtlLibPtr->maps[name]);
 			}
 		}
@@ -601,7 +588,7 @@ namespace Fluxions
 		SimpleMap* map = nullptr;
 
 		if (currentMtlLibPtr != nullptr) {
-			if (currentMtlLibPtr->maps.IsAHandle(name)) {
+			if (currentMtlLibPtr->maps.isAHandle(name)) {
 				map = &(currentMtlLibPtr->maps[name]);
 			}
 		}

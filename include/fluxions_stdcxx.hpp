@@ -69,6 +69,8 @@ namespace Fluxions
 		}
 		return str;
 	}
+
+	using string_string = std::pair<std::string, std::string>;
 }
 
 #endif

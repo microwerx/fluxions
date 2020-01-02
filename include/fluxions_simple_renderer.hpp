@@ -25,7 +25,7 @@
 #include <fluxions_simple_materials.hpp>
 #include <fluxions_simple_vertex.hpp>
 #include <fluxions_simple_surface.hpp>
-#include <fluxions_obj_static_model.hpp>
+#include <fluxions_simple_geometry_mesh.hpp>
 #include <fluxions_renderer_program.hpp>
 
 namespace Fluxions
@@ -146,7 +146,7 @@ namespace Fluxions
 		void Begin(GLenum mode, bool isIndexed = false);
 		void End();
 		void NewObject();
-		void DrawOBJ(const OBJStaticModel& obj);
+		void DrawOBJ(const SimpleGeometryMesh& obj);
 
 		void Index(IndexType index);
 		void Index(std::vector<IndexType> indices);

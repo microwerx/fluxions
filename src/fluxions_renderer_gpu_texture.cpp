@@ -1,7 +1,6 @@
 #include "pch.hpp"
-#include <hatchetfish_stopwatch.hpp>
+#include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_gpu_texture.hpp>
-#include <fluxions_gte_image.hpp>
 
 namespace Fluxions
 {

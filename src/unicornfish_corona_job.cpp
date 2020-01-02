@@ -100,7 +100,7 @@ void CoronaJob::Start(CoronaSceneFile &coronaScene, Fluxions::SimpleSceneGraph &
 	std::string tonemapconf = exportPathPrefix + scene_name + "_tonemap.conf";
 	if (1)
 	{
-		float tonemap = ssg.environment.toneMapScale;
+		float tonemap = ssg.environment.toneMapExposure();
 		if (type == Type::VIZ)
 		{
 			tonemap = 0.0f;

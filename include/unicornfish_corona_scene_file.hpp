@@ -52,7 +52,8 @@ namespace Uf
 
 	private:
 		// cache
-		std::vector<std::tuple<std::string, std::string, Fluxions::Matrix4f>> geometryGroups;
+		using string_string_Matrix4f = std::tuple<std::string, std::string, Fluxions::Matrix4f>;
+		std::vector<string_string_Matrix4f> geometryGroups;
 
 		std::string cameraType = "perspective";
 		Fluxions::Vector3f cameraOrigin;

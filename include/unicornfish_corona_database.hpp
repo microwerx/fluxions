@@ -10,12 +10,12 @@ namespace Uf
 	{
 	public:
 		//Fluxions::SimpleRenderer_GLuint renderer;
-		std::map<std::string, Fluxions::OBJStaticModel> models;
+		std::map<std::string, Fluxions::SimpleGeometryMesh> models;
 
 		CoronaDatabase();
 		~CoronaDatabase();
 
-		void LoadOBJ(const std::string& objname, const std::string& filename);
+		void loadOBJ(const std::string& objname, const std::string& filename);
 		//void BuildBuffers();
 		//void Render();
 		//void RenderZOnly();

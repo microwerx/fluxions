@@ -357,6 +357,10 @@ namespace Fluxions
 			return *this;
 		}
 
+		constexpr TColor3<T> rgb() const noexcept {
+			return TColor3<T>(r, g, b);
+		}
+
 		template <typename OtherType, typename ScaleType>
 		constexpr TColor3<OtherType> ToColor3(const ScaleType scale, const OtherType min_value, const OtherType max_value) const
 		{

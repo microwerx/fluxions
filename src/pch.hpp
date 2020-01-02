@@ -69,9 +69,9 @@
 // E X T E R N A L   D E P E N D E N C I E S /////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_gte.hpp>
-#include <fluxions_file_path_info.hpp>
+//#include <fluxions_stdcxx.hpp>
+//#include <fluxions_gte.hpp>
+//#include <fluxions_file_path_info.hpp>
 
 #ifndef FLUXIONS_NO_SDL
 //#include <SDL2/SDL.h>
@@ -126,7 +126,7 @@
 #include <fluxions_draw_gl1gl2.hpp>
 */
 
-#include <fluxions_resource_manager.hpp>
+//#include <fluxions_resource_manager.hpp>
 
 /*
 #include <ArHosekSkyModel.h>

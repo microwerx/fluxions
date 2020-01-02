@@ -19,13 +19,10 @@
 #ifndef FLUXIONS_RENDERER_GLES30_HPP
 #define FLUXIONS_RENDERER_GLES30_HPP
 
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_simple_scene_graph.hpp>
-#include <fluxions_simple_geometry_mesh.hpp>
+#include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_config.hpp>
 #include <fluxions_renderer_gles30_snapshot.hpp>
 #include <fluxions_shader_program_locations.hpp>
-#include <fluxions_simple_renderer.hpp>
 
 namespace Fluxions
 {
@@ -37,7 +34,8 @@ namespace Fluxions
 		int index{ 0 };
 		int targets[MaxUnits]{ 0 };
 		int units[MaxUnits]{ 0 };
-		unsigned textures[16]{ 0 };
+		unsigned textures[MaxUnits]{ 0 };
+		unsigned samplers[MaxUnits]{ 0 };
 		int ulocs[MaxUnits]{ 0 };
 
 		unit_manager() { clear(); }
@@ -55,17 +53,24 @@ namespace Fluxions
 		int uniform_location(int i) const { return units[i]; }
 
 		void texture(unsigned t) { textures[index] = t; }
-		unsigned texture() { return textures[index]; }
-		unsigned texture(int i) { return textures[i]; }
+		unsigned texture() const { return textures[index]; }
+		unsigned texture(int i) const { return textures[i]; }
+
+		void sampler(unsigned s) { samplers[index] = s; }
+		unsigned sampler() const { return samplers[index]; }
+		unsigned sampler(int i) const { return samplers[i]; }
 
 		void add() { index = count; count++; }
-		void add(int unit_, int target_, unsigned texture_) {
+		void add(int unit_, int target_, unsigned texture_, unsigned sampler_) {
 			add();
 			unit(unit_);
 			target(target_);
 			texture(texture_);
+			sampler(sampler_);
 		}
 
+		bool empty() const { return count == 0; }
+		int size() const { return count; }
 		void first() { index = 0; }
 		void next() { index++; }
 		void clear() { memset((void*)this, 0, sizeof(this)); }
@@ -124,7 +129,13 @@ namespace Fluxions
 		TSimpleResourceManager<int> textureUnits;
 
 		UbCameraBlock ssgUbCamera;
-		std::vector<UbMaterialBlock> ssgUbMaterials;
+		UbEnviromentBlock ssgUbEnvironment;
+		UbMaterialBlock ssgUbMaterials;
+		UbDirToLightBlock ssgUbDirToLights;
+		UbPointLightBlock ssgUbPointLights;
+		UbAnisoLightBlock ssgUbAnisoLights;
+
+		void updateUniformBlocks();
 
 		//Matrix4f projectionMatrix;
 		//Matrix4f cameraMatrix;

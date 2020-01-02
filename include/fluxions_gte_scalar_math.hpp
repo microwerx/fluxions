@@ -31,8 +31,7 @@ namespace Fluxions
 	using f32_t = float;
 	using f64_t = double;
 
-	enum IndexType
-	{
+	enum IndexType {
 		X = 0,
 		Y = 1,
 		Z = 2,
@@ -161,6 +160,8 @@ namespace Fluxions
 	constexpr float FX_F32_2_SQRTPI = 1.12837916f; // 2/sqrt(pi)
 	constexpr float FX_F32_SQRT1_2 = 0.70710678f;  // 1/sqrt(2)
 
+	constexpr unsigned FX_INVALID_INDEX = 0xFFFFFFFF;
+
 	template <typename T>
 	constexpr T DegToRad(T x) noexcept {
 		return x * FX_DEGREES_TO_RADIANS;
@@ -273,6 +274,16 @@ namespace Fluxions
 	constexpr T smootherlerp(T t, T a, T b) noexcept {
 		t = smootherstep(t);
 		return (T(1) - t) * a + t * b;
+	}
+
+	template <typename T>
+	constexpr T shininessToAlpha(T shininess) noexcept {
+		return (T)sqrtf(2.0f / ((float)shininess + 2.0f));
+	}
+
+	template <typename T>
+	constexpr T alphaToShininess(T alpha) noexcept {
+		return (T)(2.0f / powf(fmaxf(alpha, 0.005524f), 2.0f) - 2.0f);
 	}
 
 	template <typename _Ty1, typename _Ty2>

@@ -17,7 +17,7 @@
 //
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include "pch.hpp"
-#include <iostream>
+#include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_program.hpp>
 
 namespace Fluxions

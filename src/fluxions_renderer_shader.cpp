@@ -1,4 +1,5 @@
 #include "pch.hpp"
+#include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_shader.hpp>
 
 namespace Fluxions {
@@ -6,7 +7,7 @@ namespace Fluxions {
 		const char* typeName =
 			(type == GL_VERTEX_SHADER) ? "vertex" :
 			(type == GL_FRAGMENT_SHADER) ? "fragment" :
-			(type == GL_GEOMETRY_SHADER) ? "geometry" :
+			(type == GL_GEOMETRY_SHADER) ? "geometryGroups" :
 			"unknown";
 
 		FilePathInfo fpi(filename);

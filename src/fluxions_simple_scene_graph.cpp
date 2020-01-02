@@ -206,11 +206,11 @@ namespace Fluxions
 		boundingBox.reset();
 		sceneFileLines.clear();
 		pathsToTry.clear();
-		spheres.Clear();
+		spheres.clear();
 		currentTransform.LoadIdentity();
-		geometry.clear();
-		shaderMaps.clear();
-		geometryObjects.clear();
+		geometryGroups.clear();
+		//shaderMaps.clear();
+		staticMeshes.clear();
 		pointLights.clear();
 
 		if (userdata) {
@@ -221,8 +221,8 @@ namespace Fluxions
 		environment.pbsky.SetLocalDate(1, 7, 2017, true, 0);
 		environment.pbsky.SetLocalTime(16, 0, 0, 0.0f);
 		environment.pbsky_dtg = environment.pbsky.GetCivilDateTime();
-		// shaderMaps.Clear();
-		// geometry.Clear();
+		// shaderMaps.clear();
+		// geometryGroups.clear();
 	}
 
 	bool SimpleSceneGraph::Load(const std::string& filename) {
@@ -304,11 +304,16 @@ namespace Fluxions
 				ReadCamera(token, istr);
 			}
 			else if (token == "tonemap") {
-				environment.toneMapScale = clamp(ReadFloat(istr), -20.0f, 20.0f);
-				environment.toneMapExposure = environment.toneMapScale;
+				environment.toneMapExposure() = clamp(ReadFloat(istr), -20.0f, 20.0f);
 			}
 			else if (token == "gamma") {
-				environment.toneMapGamma = clamp(ReadFloat(istr), -6.0f, 6.0f);
+				environment.toneMapGamma() = clamp(ReadFloat(istr), -6.0f, 6.0f);
+			}
+			else if (token == "filmicHighlights") {
+				environment.toneMapFilmicHighlights() = clamp(ReadFloat(istr), 0.0f, 1.0f);
+			}
+			else if (token == "filmicShadows") {
+				environment.toneMapFilmicShadows() = clamp(ReadFloat(istr), 0.0f, 1.0f);
 			}
 			else if (token == "sun" || token == "moon") {
 				currentTransform.LoadIdentity();
@@ -333,7 +338,7 @@ namespace Fluxions
 		fin.close();
 
 		// Load Images
-		materials.FindMapPaths(pathsToTry);
+		materialSystem.FindMapPaths(pathsToTry);
 
 		return true;
 	}
@@ -347,13 +352,13 @@ namespace Fluxions
 		write(fout);
 		fout.close();
 
-		// 6. Output geometry files
-		for (auto& [k, geo] : geometry) {
-			geometryObjects[geo.objectId].SaveOBJ(geo.objectName);
+		// 6. Output geometryGroups files
+		for (auto& [k, geo] : geometryGroups) {
+			staticMeshes[geo.objectId].saveOBJ(geo.objectName);
 		}
 
 		// 7. Output mtllib files
-		materials.Save(fpi.dir);
+		materialSystem.Save(fpi.dir);
 
 		return true;
 
@@ -408,8 +413,8 @@ namespace Fluxions
 		//// 4. Spheres
 		//for (auto it = spheres.begin(); it != spheres.end(); it++) {
 		//	SimpleSphere& sphere = it->second;
-		//	if (materials.GetLibraryId() != sphere.mtllibId) {
-		//		materials.SetLibrary(sphere.mtllibName);
+		//	if (materialSystem.GetLibraryId() != sphere.mtllibId) {
+		//		materialSystem.SetLibrary(sphere.mtllibName);
 
 		//		fout << "mtllib " << sphere.mtllibName << "\n";
 		//	}
@@ -422,10 +427,10 @@ namespace Fluxions
 		//}
 
 		//// 5. Geometry Groups
-		//for (auto it = geometry.begin(); it != geometry.end(); it++) {
+		//for (auto it = geometryGroups.begin(); it != geometryGroups.end(); it++) {
 		//	SimpleGeometryGroup& geo = it->second;
-		//	if (materials.GetLibraryId() != geo.mtllibId) {
-		//		materials.SetLibrary(geo.mtllibName);
+		//	if (materialSystem.GetLibraryId() != geo.mtllibId) {
+		//		materialSystem.SetLibrary(geo.mtllibName);
 
 		//		fout << "mtllib " << geo.mtllibName << "\n";
 		//	}
@@ -435,15 +440,15 @@ namespace Fluxions
 		//	fout << "geometryGroup " << geo.objectName << "\n";
 		//}
 		//fout.close();
-
-		//// 6. Output geometry files
-		//for (auto it = geometry.begin(); it != geometry.end(); it++) {
+		
+		//// 6. Output geometryGroups files
+		//for (auto it = geometryGroups.begin(); it != geometryGroups.end(); it++) {
 		//	SimpleGeometryGroup& geo = it->second;
-		//	geometryObjects[geo.objectId].SaveOBJ(geo.objectName);
+		//	staticMeshes[geo.objectId].saveOBJ(geo.objectName);
 		//}
 
 		//// 7. Output mtllib files
-		//materials.Save(fpi.dir);
+		//materialSystem.Save(fpi.dir);
 
 		//return true;
 	}
@@ -504,33 +509,41 @@ namespace Fluxions
 
 	bool SimpleSceneGraph::ReadObjFile(const std::string& filename,
 									   const std::string& geometryName) {
-		if (geometryObjects.IsAHandle(filename))
+		if (staticMeshes.isAHandle(filename))
 			return true;
 
-		OBJStaticModel model;
-		bool result = model.LoadOBJ(filename);
+		SimpleGeometryMesh model;
+		bool result = model.loadOBJ(filename);
 		if (!result) {
 			return false;
 		}
 
-		geometryObjects[geometryName] = model;
+		staticMeshes[geometryName] = model;
 		return true;
 	}
 
 	bool SimpleSceneGraph::ReadMaterialLibrary(const std::string& type, std::istream& istr) {
+		if (type != "mtllib") return false;
 		std::string filename = ReadString(istr);
 		std::string path = FindPathIfExists(filename, pathsToTry);
 		FilePathInfo fpi(path);
-		if (path.empty()) {
-			HFLOGERROR("MTLLIB %s was not found.", filename.c_str());
-			return false;
+		if (materials.load(fpi.path)) {
+			return true;
 		}
-		if (!materials.Load(fpi.fname, path)) {
-			HFLOGERROR("MTLLIB error loading %s", filename.c_str());
-			return false;
-		}
-		HFLOGINFO("MTLLIB %s loaded", filename.c_str());
-		return true;
+		HFLOGERROR("MTLLIB %s was not found.", filename.c_str());
+		return false;
+
+		//HFLOGERROR("MTLLIB '%s' was not found.", filename.c_str());
+		//if (path.empty()) {
+		//	HFLOGERROR("MTLLIB %s was not found.", filename.c_str());
+		//	return false;
+		//}
+		//if (!materialSystem.Load(fpi.fname, path)) {
+		//	HFLOGERROR("MTLLIB error loading %s", filename.c_str());
+		//	return false;
+		//}
+		//HFLOGINFO("MTLLIB %s loaded", filename.c_str());
+		//return true;
 	}
 
 	bool SimpleSceneGraph::ReadGeometryGroup(const std::string& type, std::istream& istr) {
@@ -546,15 +559,15 @@ namespace Fluxions
 			return false;
 		}
 		auto node = createGeometry(fpi.fname);
-		unsigned id = geometry.lastId;
+		unsigned id = geometryGroups.lastId;
 
-		SimpleGeometryGroup& geometryGroup = geometry[id];
+		SimpleGeometryGroup& geometryGroup = geometryGroups[id];
 		geometryGroup.transform = currentTransform;
-		geometryGroup.mtllibName = materials.GetLibraryName();
-		geometryGroup.mtllibId = materials.GetLibraryId();
+		geometryGroup.mtllibName = materialSystem.GetLibraryName();
+		geometryGroup.mtllibId = materialSystem.GetLibraryId();
 		geometryGroup.objectName = fpi.fname;
 		geometryGroup.objectId = id;
-		geometryGroup.bbox = geometryObjects[fpi.fname].BoundingBox;
+		geometryGroup.bbox = staticMeshes[fpi.fname].BoundingBox;
 
 		// Transform the bounding box of the model into world coordinates
 		Vector3f tminBound = geometryGroup.transform * geometryGroup.bbox.minBounds;
@@ -691,10 +704,10 @@ namespace Fluxions
 		//GLuint id = spheres.Create();
 		//SimpleSphere sphere;
 		//sphere.transform = currentTransform;
-		//sphere.mtllibName = materials.GetLibraryName();
-		//sphere.mtllibId = materials.GetLibraryId();
+		//sphere.mtllibName = materialSystem.GetLibraryName();
+		//sphere.mtllibId = materialSystem.GetLibraryId();
 		//sphere.mtlName = mtlName;
-		//sphere.mtlId = materials.GetMaterialId(mtlName);
+		//sphere.mtlId = materialSystem.GetMaterialId(mtlName);
 		//sphere.objectId = id;
 		//spheres[id] = sphere;
 		//return true;
@@ -741,16 +754,16 @@ namespace Fluxions
 			ostr << "\n";
 		}
 
-		// 3. Newmaps
-		for (auto it = shaderMaps.begin(); it != shaderMaps.end(); it++) {
-			ostr << "newmap " << it->first << " ";
-			WriteString(ostr, it->second);
-			ostr << "\n";
-		}
+		//// 3. Newmaps
+		//for (auto it = shaderMaps.begin(); it != shaderMaps.end(); it++) {
+		//	ostr << "newmap " << it->first << " ";
+		//	WriteString(ostr, it->second);
+		//	ostr << "\n";
+		//}
 
 		// 4. Spheres
 		for (auto& [k, sphere] : spheres) {
-			if (materials.GetLibraryId() != sphere.mtllibId) {
+			if (materialSystem.GetLibraryId() != sphere.mtllibId) {
 				ostr << "mtllib " << sphere.mtllibName << "\n";
 			}
 			ostr << "transform ";
@@ -762,8 +775,8 @@ namespace Fluxions
 		}
 
 		// 5. Geometry Groups
-		for (auto& [k, geo] : geometry) {
-			if (materials.GetLibraryId() != geo.mtllibId) {
+		for (auto& [k, geo] : geometryGroups) {
+			if (materialSystem.GetLibraryId() != geo.mtllibId) {
 				ostr << "mtllib " << geo.mtllibName << "\n";
 			}
 			ostr << "transform ";
@@ -782,39 +795,45 @@ namespace Fluxions
 	}
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createCamera(const std::string& name) {
-		unsigned id = cameras.Create(name);
+		unsigned id = cameras.create(name);
 		cameras.lastId = id;
 		return createNode(name, &cameras[id]);
 	}
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createSphere(const std::string& name) {
-		unsigned id = spheres.Create(name);
+		unsigned id = spheres.create(name);
 		spheres.lastId = id;
 		return createNode(name, &spheres[id]);
 	}
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createDirToLight(const std::string& name) {
-		unsigned id = dirToLights.Create(name);
+		unsigned id = dirToLights.create(name);
 		dirToLights.lastId = id;
 		return createNode(name, &dirToLights[id]);
 	}
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createPointLight(const std::string& name) {
-		unsigned id = pointLights.Create(name);
+		unsigned id = pointLights.create(name);
 		pointLights.lastId = id;
 		return createNode(name, &pointLights[id]);
 	}
 
+	SimpleSceneGraphNode* SimpleSceneGraph::createAnisoLight(const std::string& name) {
+		unsigned id = anisoLights.create(name);
+		anisoLights.lastId = id;
+		return createNode(name, &anisoLights[id]);
+	}
+
 	SimpleSceneGraphNode* SimpleSceneGraph::createPathAnim(const std::string& name) {
-		unsigned id = paths.Create(name);
+		unsigned id = paths.create(name);
 		paths.lastId = id;
 		return createNode(name, &paths[id]);
 	}
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createGeometry(const std::string& name) {
-		unsigned id = geometry.Create(name);
-		geometry.lastId = id;
-		return createNode(name, &geometry[id]);
+		unsigned id = geometryGroups.create(name);
+		geometryGroups.lastId = id;
+		return createNode(name, &geometryGroups[id]);
 	}
 
 	//void SimpleSceneGraph::initTexUnits() {
@@ -828,21 +847,21 @@ namespace Fluxions
 	//	}
 	//}
 
-	//void SimpleSceneGraph::killTexUnits() { textureUnits.Clear(); }
+	//void SimpleSceneGraph::killTexUnits() { textureUnits.clear(); }
 
 	//void SimpleSceneGraph::buildBuffers() {
 	//	initTexUnits();
 	//	renderer.reset();
-	//	for (auto it = geometry.begin(); it != geometry.end(); it++) {
+	//	for (auto it = geometryGroups.begin(); it != geometryGroups.end(); it++) {
 	//		SimpleGeometryGroup& geo = it->second;
 	//		renderer.SetCurrentObjectId(geo.objectId);
 	//		renderer.SetCurrentMtlLibId(geo.mtllibId);
 	//		renderer.SetCurrentObjectName(geo.objectName);
 	//		renderer.SetCurrentMtlLibName(geo.mtllibName);
 	//		renderer.NewObject();
-	//		geometryObjects[geo.objectId].Render(renderer);
+	//		staticMeshes[geo.objectId].Render(renderer);
 	//	}
-	//	renderer.AssignMaterialIds(materials);
+	//	renderer.AssignMaterialIds(materialSystem);
 	//	renderer.SetCurrentMtlLibName("");
 	//	renderer.SetCurrentMtlLibId(0);
 
@@ -957,7 +976,7 @@ namespace Fluxions
 	//		spherePositions.push_back(pos.w);
 
 	//		Color3f Ke =
-	//			materials
+	//			materialSystem
 	//			.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName)
 	//			->Ke;
 	//		sphereKe.push_back(Ke.r);
@@ -972,11 +991,11 @@ namespace Fluxions
 	//	glUniform1i(program_loc_sphere_count, (int)spherePositions.size());
 
 	//	// apply each material separately
-	//	for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
+	//	for (auto libIt = materialSystem.begin(); libIt != materialSystem.end(); libIt++) {
 	//		SimpleMaterialLibrary& mtllib = libIt->second;
 	//		mtllibName = mtllib.name;
-	//		mtllibId = materials.GetLibraryId(mtllib.name);
-	//		materials.SetLibrary(mtllib.name);
+	//		mtllibId = materialSystem.GetLibraryId(mtllib.name);
+	//		materialSystem.SetLibrary(mtllib.name);
 
 	//		if (debugging)
 	//			std::cout << "SimpleSceneGraph::Render() -- using mtllib " << mtllib.name
@@ -984,11 +1003,11 @@ namespace Fluxions
 	//		for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end();
 	//			mtlIt++) {
 	//			mtlId = mtlIt->first;
-	//			mtlName = materials.GetMaterialName(mtlId);
+	//			mtlName = materialSystem.GetMaterialName(mtlId);
 	//			while (mtlName.back() == '\0')
 	//				mtlName.resize(mtlName.size() - 1);
 	//			SimpleMaterial& mtl = mtlIt->second;
-	//			materials.SetMaterial(mtlName);
+	//			materialSystem.SetMaterial(mtlName);
 
 	//			if (debugging)
 	//				std::cout << "SimpleSceneGraph::Render() -- using mtl " << mtlId
@@ -997,23 +1016,23 @@ namespace Fluxions
 	//			std::map<std::string, SimpleMap*> textures;
 	//			GLuint unit = 0;
 	//			if (!mtl.map_Ka.empty())
-	//				textures["map_Ka"] = materials.GetTextureMap(mtl.map_Ka);
+	//				textures["map_Ka"] = materialSystem.GetTextureMap(mtl.map_Ka);
 	//			if (!mtl.map_Kd.empty())
-	//				textures["map_Kd"] = materials.GetTextureMap(mtl.map_Kd);
+	//				textures["map_Kd"] = materialSystem.GetTextureMap(mtl.map_Kd);
 	//			if (!mtl.map_Ks.empty())
-	//				textures["map_Ks"] = materials.GetTextureMap(mtl.map_Ks);
+	//				textures["map_Ks"] = materialSystem.GetTextureMap(mtl.map_Ks);
 	//			if (!mtl.map_Ke.empty())
-	//				textures["map_Ke"] = materials.GetTextureMap(mtl.map_Ke);
+	//				textures["map_Ke"] = materialSystem.GetTextureMap(mtl.map_Ke);
 	//			if (!mtl.map_Ns.empty())
-	//				textures["map_Ns"] = materials.GetTextureMap(mtl.map_Ns);
+	//				textures["map_Ns"] = materialSystem.GetTextureMap(mtl.map_Ns);
 	//			if (!mtl.map_Tf.empty())
-	//				textures["map_Tf"] = materials.GetTextureMap(mtl.map_Tf);
+	//				textures["map_Tf"] = materialSystem.GetTextureMap(mtl.map_Tf);
 	//			if (!mtl.map_Tr.empty())
-	//				textures["map_Tr"] = materials.GetTextureMap(mtl.map_Tr);
+	//				textures["map_Tr"] = materialSystem.GetTextureMap(mtl.map_Tr);
 	//			if (!mtl.map_bump.empty())
-	//				textures["map_bump"] = materials.GetTextureMap(mtl.map_bump);
+	//				textures["map_bump"] = materialSystem.GetTextureMap(mtl.map_bump);
 	//			if (!mtl.map_normal.empty())
-	//				textures["map_normal"] = materials.GetTextureMap(mtl.map_normal);
+	//				textures["map_normal"] = materialSystem.GetTextureMap(mtl.map_normal);
 
 	//			if (mtl.map_Ka.empty())
 	//				glUniform1f(program_loc_map_Ka_mix, 0.0f);
@@ -1060,7 +1079,7 @@ namespace Fluxions
 	//			glUniform3fv(program_loc_Tr, 1, mtl.Tf.const_ptr());
 	//			glUniform1fv(program_loc_Tf, 1, &mtl.Tr);
 
-	//			for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
+	//			for (auto geoIt = geometryGroups.begin(); geoIt != geometryGroups.end(); geoIt++) {
 	//				SimpleGeometryGroup& geo = geoIt->second;
 	//				if (debugging)
 	//					std::cout << "SimpleSceneGraph::Render() -- using OBJ "
@@ -1133,25 +1152,25 @@ namespace Fluxions
 	//	GLint program_loc_Kd = program.GetUniformLocation("Kd");
 
 	//	// apply each material separately
-	//	for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
+	//	for (auto libIt = materialSystem.begin(); libIt != materialSystem.end(); libIt++) {
 	//		SimpleMaterialLibrary& mtllib = libIt->second;
 	//		mtllibName = mtllib.name;
-	//		mtllibId = materials.GetLibraryId(mtllib.name);
-	//		materials.SetLibrary(mtllib.name);
+	//		mtllibId = materialSystem.GetLibraryId(mtllib.name);
+	//		materialSystem.SetLibrary(mtllib.name);
 
 	//		for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end();
 	//			mtlIt++) {
 	//			mtlId = mtlIt->first;
-	//			mtlName = materials.GetMaterialName(mtlId);
+	//			mtlName = materialSystem.GetMaterialName(mtlId);
 	//			while (mtlName.back() == '\0')
 	//				mtlName.resize(mtlName.size() - 1);
 	//			SimpleMaterial& mtl = mtlIt->second;
-	//			materials.SetMaterial(mtlName);
+	//			materialSystem.SetMaterial(mtlName);
 
 	//			// Apply Diffuse Uniforms to the program shader
 	//			glUniform3fv(program_loc_Kd, 1, mtl.Kd.const_ptr());
 
-	//			for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
+	//			for (auto geoIt = geometryGroups.begin(); geoIt != geometryGroups.end(); geoIt++) {
 	//				SimpleGeometryGroup& geo = geoIt->second;
 	//				objectId = geo.objectId;
 	//				groupId = 0;
@@ -1221,26 +1240,26 @@ namespace Fluxions
 	//		RendererUniform(environment.sunShadowInverseViewMatrix));
 
 	//	// apply each material separately (use the idea that material state changes
-	//	// are worse than geometry ones
-	//	for (auto libIt = materials.begin(); libIt != materials.end(); libIt++) {
+	//	// are worse than geometryGroups ones
+	//	for (auto libIt = materialSystem.begin(); libIt != materialSystem.end(); libIt++) {
 	//		SimpleMaterialLibrary& mtllib = libIt->second;
 	//		std::string mtllibName = mtllib.name;
-	//		GLuint mtllibId = materials.GetLibraryId(mtllib.name);
-	//		materials.SetLibrary(mtllib.name);
+	//		GLuint mtllibId = materialSystem.GetLibraryId(mtllib.name);
+	//		materialSystem.SetLibrary(mtllib.name);
 
 	//		// loop through each material
 	//		for (auto mtlIt = mtllib.mtls.begin(); mtlIt != mtllib.mtls.end();
 	//			mtlIt++) {
 	//			GLuint mtlId = mtlIt->first;
-	//			std::string mtlName = materials.GetMaterialName(mtlId);
+	//			std::string mtlName = materialSystem.GetMaterialName(mtlId);
 	//			SimpleMaterial& mtl = mtlIt->second;
-	//			materials.SetMaterial(mtlName);
+	//			materialSystem.SetMaterial(mtlName);
 
 	//			if (useMaterials)
 	//				ApplyMaterialToCurrentProgram(mtl, useMaps);
 
-	//			// loop through each geometry object
-	//			for (auto geoIt = geometry.begin(); geoIt != geometry.end(); geoIt++) {
+	//			// loop through each geometryGroups object
+	//			for (auto geoIt = geometryGroups.begin(); geoIt != geometryGroups.end(); geoIt++) {
 	//				SimpleGeometryGroup& geo = geoIt->second;
 	//				GLuint objectId = geo.objectId;
 	//				GLuint groupId = 0;
@@ -1685,8 +1704,8 @@ namespace Fluxions
 	//	if (!program)
 	//		return;
 
-	//	// loop through each geometry object
-	//	for (auto [k, geo] : geometry) {
+	//	// loop through each geometryGroups object
+	//	for (auto [k, geo] : geometryGroups) {
 	//		//const SimpleGeometryGroup& geo = geoIt->second;
 
 	//		// Apply object specific uniforms like transformation matrices
@@ -1773,7 +1792,7 @@ namespace Fluxions
 	//		radius = radius - pos;
 	//		float length = radius.length();
 	//		pos.w = length;
-	//		SimpleMaterial* mtl = materials.SetLibraryMaterial(sphIt->second.mtllibName,
+	//		SimpleMaterial* mtl = materialSystem.SetLibraryMaterial(sphIt->second.mtllibName,
 	//			sphIt->second.mtlName);
 	//		// only push spheres that are emissive...
 	//		if (mtl) {
@@ -1809,27 +1828,27 @@ namespace Fluxions
 
 	//	if (useMaps) {
 	//		if (!mtl.map_Ka.empty())
-	//			currentTextures["map_Ka"] = materials.GetTextureMap(mtl.map_Ka);
+	//			currentTextures["map_Ka"] = materialSystem.GetTextureMap(mtl.map_Ka);
 	//		if (!mtl.map_Kd.empty())
-	//			currentTextures["map_Kd"] = materials.GetTextureMap(mtl.map_Kd);
+	//			currentTextures["map_Kd"] = materialSystem.GetTextureMap(mtl.map_Kd);
 	//		if (!mtl.map_Ks.empty())
-	//			currentTextures["map_Ks"] = materials.GetTextureMap(mtl.map_Ks);
+	//			currentTextures["map_Ks"] = materialSystem.GetTextureMap(mtl.map_Ks);
 	//		if (!mtl.map_Ke.empty())
-	//			currentTextures["map_Ke"] = materials.GetTextureMap(mtl.map_Ke);
+	//			currentTextures["map_Ke"] = materialSystem.GetTextureMap(mtl.map_Ke);
 	//		if (!mtl.map_Ns.empty())
-	//			currentTextures["map_Ns"] = materials.GetTextureMap(mtl.map_Ns);
+	//			currentTextures["map_Ns"] = materialSystem.GetTextureMap(mtl.map_Ns);
 	//		if (!mtl.map_Ns.empty())
-	//			currentTextures["map_Ni"] = materials.GetTextureMap(mtl.map_Ni);
+	//			currentTextures["map_Ni"] = materialSystem.GetTextureMap(mtl.map_Ni);
 	//		if (!mtl.map_Tf.empty())
-	//			currentTextures["map_Tf"] = materials.GetTextureMap(mtl.map_Tf);
+	//			currentTextures["map_Tf"] = materialSystem.GetTextureMap(mtl.map_Tf);
 	//		if (!mtl.map_Tr.empty())
-	//			currentTextures["map_Tr"] = materials.GetTextureMap(mtl.map_Tr);
+	//			currentTextures["map_Tr"] = materialSystem.GetTextureMap(mtl.map_Tr);
 	//		if (!mtl.map_bump.empty())
-	//			currentTextures["map_bump"] = materials.GetTextureMap(mtl.map_bump);
+	//			currentTextures["map_bump"] = materialSystem.GetTextureMap(mtl.map_bump);
 	//		if (!mtl.map_normal.empty())
-	//			currentTextures["map_normal"] = materials.GetTextureMap(mtl.map_normal);
+	//			currentTextures["map_normal"] = materialSystem.GetTextureMap(mtl.map_normal);
 	//		if (!mtl.PBmap.empty())
-	//			currentTextures["PBmap"] = materials.GetTextureMap(mtl.PBmap);
+	//			currentTextures["PBmap"] = materialSystem.GetTextureMap(mtl.PBmap);
 
 	//		// Set mixes to 0 if the map is not there (should default to 0.0 if we don't
 	//		// change it when applying it)

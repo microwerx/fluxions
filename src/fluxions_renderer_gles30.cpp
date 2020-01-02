@@ -40,7 +40,7 @@ namespace Fluxions
 
 		for (int i = 0; i < 32; i++) {
 			int id = 16 + i;
-			textureUnits.Add(id);
+			textureUnits.add(id);
 		}
 	}
 
@@ -70,6 +70,13 @@ namespace Fluxions
 		pSSG = nullptr;
 		pRendererConfig = nullptr;
 		pProgram = nullptr;
+
+		ssgUbCamera.invalidate_cache();
+		ssgUbEnvironment.invalidate_cache();
+		ssgUbMaterials.invalidate_cache();
+		ssgUbDirToLights.invalidate_cache();
+		ssgUbPointLights.invalidate_cache();
+		ssgUbAnisoLights.invalidate_cache();
 	}
 
 	void RendererGLES30::setSceneGraph(SimpleSceneGraph* pSSG_) {
@@ -172,7 +179,15 @@ namespace Fluxions
 		ssgUbCamera.uniforms.ProjectionMatrix = projectionMatrix_;
 		ssgUbCamera.uniforms.CameraMatrix = cameraMatrix_;
 		ssgUbCamera.update();
-		ssgUbCamera.use(pProgram->getProgram());
+
+		updateUniformBlocks();
+
+		GLuint program = pProgram->getProgram();
+		ssgUbCamera.use(program);
+		ssgUbEnvironment.use(program);
+		ssgUbMaterials.use(program);
+		ssgUbPointLights.use(program);
+		ssgUbDirToLights.use(program);
 
 		//pProgram->applyUniform("ProjectionMatrix", (RendererUniform)projectionMatrix_);
 		//pProgram->applyUniform("CameraMatrix", (RendererUniform)cameraMatrix_);
@@ -253,6 +268,50 @@ namespace Fluxions
 		pContext = pcontext;
 	}
 
+	void RendererGLES30::updateUniformBlocks() {
+		if (pProgram->activeUniformBlocks.count(ssgUbEnvironment.uniformBlockName())) {
+			BaseEnvironment* bEnvironment = (BaseEnvironment*)&pSSG->environment;
+			ssgUbEnvironment.uniforms = *bEnvironment;
+			ssgUbEnvironment.update();
+		}
+
+		if (pProgram->activeUniformBlocks.count(ssgUbMaterials.uniformBlockName())) {
+			unsigned i = 0;
+			for (const auto& mtls : pSSG->materialSystem) {
+				for (const auto& [k, m] : mtls.second.mtls) {
+					const BaseMaterial* bm = &m;
+					ssgUbMaterials.uniforms[i++] = *bm;
+				}
+			}
+			ssgUbMaterials.update();
+		}
+
+		if (pProgram->activeUniformBlocks.count(ssgUbDirToLights.uniformBlockName())) {
+			unsigned i = 0;
+			for (const auto& [k, dl] : pSSG->dirToLights) {
+				const BaseDirToLight* bdl = &dl;
+				ssgUbDirToLights.uniforms[i++] = *bdl;
+			}
+			ssgUbDirToLights.update();
+		}
+
+		if (pProgram->activeUniformBlocks.count(ssgUbPointLights.uniformBlockName())) {
+			unsigned i = 0;
+			for (const auto& [k, pl] : pSSG->pointLights) {
+				const BasePointLight* bPointLight = &pl;
+				ssgUbPointLights.uniforms[i++] = *bPointLight;
+			}
+			ssgUbPointLights.update();
+		}
+
+		//i = 0;
+		//for (const auto& [k, al] : pSSG->anisoLights) {
+		//	BasePointLight* bPointLight = &pl;
+		//	ssgUbPointLights.uniforms[i++] = *bPointLight;
+		//}
+		//ssgUbPointLights.update();
+	}
+
 	void RendererGLES30::render() {
 		if (!validate()) return;
 		if (pRendererConfig->isCubeMap)
@@ -267,19 +326,13 @@ namespace Fluxions
 		GLenum target = 0;
 
 	public:
-		BufferObject(GLenum target, GLsizei size, const void* data, GLenum usage) {
-			glGenBuffers(1, &buffer);
-			if (buffer > 0) {
-				this->target = target;
-				glBindBuffer(target, buffer);
-				glBufferData(target, size, data, usage);
-				glBindBuffer(target, buffer);
-			}
+		BufferObject(GLenum target_, GLsizeiptr size, const void* data, GLenum usage) :
+			target(target_) {
+			FxCreateBuffer(target, &buffer, size, data, usage);
 		}
 
 		~BufferObject() {
-			if (buffer > 0)
-				glDeleteBuffers(1, &buffer);
+			Delete();
 		}
 
 		void Bind() {
@@ -287,8 +340,7 @@ namespace Fluxions
 		}
 
 		void Delete() {
-			if (buffer > 0)
-				glDeleteBuffers(1, &buffer);
+			FxDeleteBuffer(&buffer);
 		}
 	};
 
@@ -319,8 +371,8 @@ namespace Fluxions
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
 				unsigned attribCount = 0;
 				for (unsigned i = 0; i < 8; i++) {
-					if (mesh.IsAttribEnabled(i)) {
-						const char* name = mesh.GetAttribName(i);
+					if (mesh.isAttribEnabled(i)) {
+						const char* name = mesh.getAttribName(i);
 						if (name == nullptr)
 							continue;
 						GLint loc = glGetAttribLocation(program, name);
@@ -328,7 +380,7 @@ namespace Fluxions
 							//Hf::Log.warning("%s(): Program %i does not have attrib %s", __FUNCTION__, program_, name);
 							continue;
 						}
-						glVertexAttribPointer(loc, 4, GL_FLOAT, mesh.IsAttribNormalized(i), sizeof(SimpleGeometryMesh::Vertex), cast_to_pointer(mesh.GetVertexOffset(i)));
+						glVertexAttribPointer(loc, 4, GL_FLOAT, mesh.isAttribNormalized(i), sizeof(SimpleGeometryMesh::Vertex), cast_to_pointer(mesh.getVertexOffset(i)));
 						glEnableVertexAttribArray(loc);
 						attribCount++;
 					}
@@ -343,30 +395,17 @@ namespace Fluxions
 					return;
 				}
 
-				GLenum type = 0;
-				switch (sizeof(SimpleGeometryMesh::Index)) {
-				case 1:
-					type = GL_UNSIGNED_BYTE;
-					break;
-				case 2:
-					type = GL_UNSIGNED_SHORT;
-					break;
-				case 4:
-					type = GL_UNSIGNED_INT;
-					break;
-				}
-				surfaces.resize(mesh.GetSurfaces().size());
+				GLenum type = GL_UNSIGNED_INT;
+				surfaces.resize(mesh.Surfaces.size());
 				unsigned i = 0;
-				for (const auto& meshSurface : mesh.GetSurfaces()) {
-					surfaces[i].mode = meshSurface.type;
+				for (const auto& meshSurface : mesh.Surfaces) {
+					surfaces[i].mode = meshSurface.mode;
 					surfaces[i].count = meshSurface.count;
-					surfaces[i].offset = cast_to_pointer(meshSurface.first * mesh.GetIndexSize());
+					surfaces[i].offset = cast_to_pointer(meshSurface.first * sizeof(unsigned));
 					surfaces[i].type = type;
 					i++;
 				}
 
-				//glBindBuffer(GL_ARRAY_BUFFER, 0);
-				//glVertexArrayElementBuffer(vao, eabo_);
 				glBindVertexArray(0);
 			}
 		}
@@ -401,8 +440,8 @@ namespace Fluxions
 		pProgram->applyUniform("WorldMatrix", (RendererUniform)modelViewMatrix);
 
 		// create a vbo
-		BufferObject abo_(GL_ARRAY_BUFFER, (GLsizei)mesh.GetVertexDataSize(), mesh.GetVertexData(), GL_STATIC_DRAW);
-		BufferObject eabo_(GL_ELEMENT_ARRAY_BUFFER, (GLsizei)mesh.GetIndexDataSize(), mesh.GetIndexData(), GL_STATIC_DRAW);
+		BufferObject abo_(GL_ARRAY_BUFFER, (GLsizei)mesh.getVertexDataSize(), mesh.getVertexData(), GL_STATIC_DRAW);
+		BufferObject eabo_(GL_ELEMENT_ARRAY_BUFFER, (GLsizei)mesh.getIndexDataSize(), mesh.getIndexData(), GL_STATIC_DRAW);
 
 		VertexArrayObject vao(mesh, pProgram->getProgram(), abo_.buffer, eabo_.buffer);
 		vao.Draw();
@@ -508,7 +547,7 @@ namespace Fluxions
 			radius = radius - pos;
 			float length = radius.length();
 			pos.w = length;
-			SimpleMaterial* mtl = pSSG->materials.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
+			SimpleMaterial* mtl = pSSG->materialSystem.SetLibraryMaterial(sphIt->second.mtllibName, sphIt->second.mtlName);
 			// only push spheres that are emissive...
 			if (mtl) {
 				spherePositions.push_back(pos.x);
@@ -549,22 +588,24 @@ namespace Fluxions
 		//program_->applyUniform("InverseCameraMatrix", (RendererUniform)cameraMatrix_.AsInverse());
 		//program_->applyUniform("CameraPosition", CameraPosition);
 
-		// apply each material separately (use the idea that material state changes are worse than geometry ones
-		for (auto& [index, mtllib] : pSSG->materials) {
-			GLuint mtllibId = pSSG->materials.GetLibraryId(mtllib.name);
-			pSSG->materials.SetLibrary(mtllib.name);
+		scene.renderer.Render();
+		return;
+		// apply each material separately (use the idea that material state changes are worse than geometryGroups ones
+		for (auto& [index, mtllib] : pSSG->materialSystem) {
+			GLuint mtllibId = pSSG->materialSystem.GetLibraryId(mtllib.name);
+			pSSG->materialSystem.SetLibrary(mtllib.name);
 
 			// loop through each material
 			for (auto& [mtlId, mtl] : mtllib.mtls) {
-				std::string mtlName = pSSG->materials.GetMaterialName(mtlId);
-				pSSG->materials.SetMaterial(mtlName);
+				std::string mtlName = pSSG->materialSystem.GetMaterialName(mtlId);
+				pSSG->materialSystem.SetMaterial(mtlName);
 
 				if (useMaterials) applyMaterialToCurrentProgram(mtl, useMaps);
 
-				// loop through each geometry object
-				for (auto& [geoId, geo] : pSSG->geometry) {
+				// loop through each geometryGroups object
+				for (auto& [geoId, geo] : pSSG->geometryGroups) {
 					GLuint objectId = geo.objectId;
-					GLuint groupId = 0;
+					GLuint groupId = 1;
 					scene.renderer.ApplyIdToMtlNames(mtlName, mtlId);
 
 					// Apply object specific uniforms like transformation matrices
@@ -604,27 +645,27 @@ namespace Fluxions
 
 		if (useMaps) {
 			if (!mtl.map_Ka.empty())
-				scene.currentTextures["map_Ka"] = pSSG->materials.GetTextureMap(mtl.map_Ka);
+				scene.currentTextures["map_Ka"] = pSSG->materialSystem.GetTextureMap(mtl.map_Ka);
 			if (!mtl.map_Kd.empty())
-				scene.currentTextures["map_Kd"] = pSSG->materials.GetTextureMap(mtl.map_Kd);
+				scene.currentTextures["map_Kd"] = pSSG->materialSystem.GetTextureMap(mtl.map_Kd);
 			if (!mtl.map_Ks.empty())
-				scene.currentTextures["map_Ks"] = pSSG->materials.GetTextureMap(mtl.map_Ks);
+				scene.currentTextures["map_Ks"] = pSSG->materialSystem.GetTextureMap(mtl.map_Ks);
 			if (!mtl.map_Ke.empty())
-				scene.currentTextures["map_Ke"] = pSSG->materials.GetTextureMap(mtl.map_Ke);
+				scene.currentTextures["map_Ke"] = pSSG->materialSystem.GetTextureMap(mtl.map_Ke);
 			if (!mtl.map_Ns.empty())
-				scene.currentTextures["map_Ns"] = pSSG->materials.GetTextureMap(mtl.map_Ns);
+				scene.currentTextures["map_Ns"] = pSSG->materialSystem.GetTextureMap(mtl.map_Ns);
 			if (!mtl.map_Ns.empty())
-				scene.currentTextures["map_Ni"] = pSSG->materials.GetTextureMap(mtl.map_Ni);
+				scene.currentTextures["map_Ni"] = pSSG->materialSystem.GetTextureMap(mtl.map_Ni);
 			if (!mtl.map_Tf.empty())
-				scene.currentTextures["map_Tf"] = pSSG->materials.GetTextureMap(mtl.map_Tf);
+				scene.currentTextures["map_Tf"] = pSSG->materialSystem.GetTextureMap(mtl.map_Tf);
 			if (!mtl.map_Tr.empty())
-				scene.currentTextures["map_Tr"] = pSSG->materials.GetTextureMap(mtl.map_Tr);
+				scene.currentTextures["map_Tr"] = pSSG->materialSystem.GetTextureMap(mtl.map_Tr);
 			if (!mtl.map_bump.empty())
-				scene.currentTextures["map_bump"] = pSSG->materials.GetTextureMap(mtl.map_bump);
+				scene.currentTextures["map_bump"] = pSSG->materialSystem.GetTextureMap(mtl.map_bump);
 			if (!mtl.map_normal.empty())
-				scene.currentTextures["map_normal"] = pSSG->materials.GetTextureMap(mtl.map_normal);
+				scene.currentTextures["map_normal"] = pSSG->materialSystem.GetTextureMap(mtl.map_normal);
 			if (!mtl.PBmap.empty())
-				scene.currentTextures["PBmap"] = pSSG->materials.GetTextureMap(mtl.PBmap);
+				scene.currentTextures["PBmap"] = pSSG->materialSystem.GetTextureMap(mtl.PBmap);
 
 			for (auto& [mapName, pMap] : scene.currentTextures) {
 				//for (auto tmapIt = currentTextures.begin(); tmapIt != currentTextures.end(); tmapIt++) {
@@ -768,11 +809,11 @@ namespace Fluxions
 	}
 
 	int RendererGLES30::getTexUnit() {
-		return textureUnits.Create();
+		return textureUnits.create();
 	}
 
 	void RendererGLES30::freeTexUnit(int id) {
-		textureUnits.Delete(id);
+		textureUnits.erase(id);
 	}
 
 	bool RendererGLES30::_initSkyBox() {
@@ -886,7 +927,7 @@ namespace Fluxions
 				w, h, z, s2, t2, 0.0f,
 				w, y, z, s2, t1, 0.0f
 			};
-			FxCreateBuffer(GL_ARRAY_BUFFER, post.abo, sizeof(buffer), buffer, GL_STATIC_DRAW);
+			FxCreateBuffer(GL_ARRAY_BUFFER, &post.abo, sizeof(buffer), buffer, GL_STATIC_DRAW);
 		}
 
 		post.program = pRendererConfig->rc_program_ptr->getProgram();
@@ -932,10 +973,10 @@ namespace Fluxions
 			post_units.next();
 		}
 
-		pProgram->applyUniform("ToneMapExposure", pRendererConfig->renderPostToneMapExposure);
-		pProgram->applyUniform("ToneMapGamma", pRendererConfig->renderPostToneMapGamma);
-		pProgram->applyUniform("FilmicHighlights", pRendererConfig->renderPostFilmicHighlights);
-		pProgram->applyUniform("FilmicShadows", pRendererConfig->renderPostFilmicShadows);
+		//pProgram->applyUniform("ToneMapExposure", pRendererConfig->renderPostToneMapExposure);
+		//pProgram->applyUniform("ToneMapGamma", pRendererConfig->renderPostToneMapGamma);
+		//pProgram->applyUniform("FilmicHighlights", pRendererConfig->renderPostFilmicHighlights);
+		//pProgram->applyUniform("FilmicShadows", pRendererConfig->renderPostFilmicShadows);
 
 		glBindBuffer(GL_ARRAY_BUFFER, post.abo);
 		glVertexAttribPointer(post.vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
@@ -1067,22 +1108,30 @@ namespace Fluxions
 		if (viz.buffersBuilt) return true;
 
 		BoundingBoxf bbox = pSSG->GetBoundingBox();
-		_vizBBox(bbox, Matrix4f::MakeIdentity(), FxColors3::White);
+		Matrix4f identity;
+		_vizBBox(bbox, identity, FxColors3::White);
 
 		for (auto& [k, n] : pSSG->nodes) {
-			if (n->keyword() == "sphl") {
+			if (n->keyword() == std::string("sphl")) {
 				_vizBall(n->transform.col4().xyz(), 1.0f, FxColors3::Yellow);
 				continue;
 			}
-			_vizBBox(n->bbox, n->transform * n->addlTransform, FxColors3::Cyan);
+			Matrix4f transform = n->transform * n->addlTransform;
+			_vizBBox(n->bbox, transform, FxColors3::Cyan);
 		}
 
-		for (auto& [k, n] : pSSG->geometry) {
-			_vizBBox(n.bbox, n.transform * n.addlTransform, FxColors3::Rose);
+		for (auto& [k, n] : pSSG->geometryGroups) {
+			Matrix4f transform = n.transform * n.addlTransform;
+			_vizBBox(n.bbox, transform, FxColors3::Rose);
 		}
 
 		for (auto& [k, n] : pSSG->pointLights) {
 			_vizBall(n.position, 0.5f, FxColors3::Yellow);
+		}
+
+		for (auto& [k, n] : pSSG->dirToLights) {
+			Vector3f outThere = n.dirTo.xyz() * 95.0f;
+			_vizBall(outThere, 0.5f, FxColors3::White);
 		}
 
 		for (auto& [k, n] : pSSG->spheres) {
@@ -1104,17 +1153,17 @@ namespace Fluxions
 	void RendererGLES30::buildBuffers() {
 		if (!validate()) return;
 		scene.renderer.reset();
-		for (auto& [geoindex, geo] : pSSG->geometry) {
+		for (auto& [geoindex, geo] : pSSG->geometryGroups) {
 			scene.renderer.SetCurrentObjectId(geo.objectId);
 			scene.renderer.SetCurrentMtlLibId(geo.mtllibId);
 			scene.renderer.SetCurrentObjectName(geo.objectName);
 			scene.renderer.SetCurrentMtlLibName(geo.mtllibName);
 			scene.renderer.NewObject();
-			scene.renderer.DrawOBJ(pSSG->geometryObjects[geo.objectId]);
-			//pSSG->geometryObjects[geo.objectId].Render(renderer);
+			scene.renderer.DrawOBJ(pSSG->staticMeshes[geo.objectId]);
+			//pSSG->staticMeshes[geo.objectId].Render(renderer);
 			//HFLOGDEBUGFIRSTRUNCOUNTMSG(5, "NEED TO RENDER OBJ_STATIC_MODEL");
 		}
-		scene.renderer.AssignMaterialIds(pSSG->materials);
+		scene.renderer.AssignMaterialIds(pSSG->materialSystem);
 		scene.renderer.SetCurrentMtlLibName("");
 		scene.renderer.SetCurrentMtlLibId(0);
 		scene.areBuffersBuilt = true;

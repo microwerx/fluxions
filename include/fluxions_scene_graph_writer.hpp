@@ -23,7 +23,7 @@ struct XmlSceneGraphWriter : SceneGraphWriter {
 	// extra_tags
 	// camera
 	// lights
-	// geometry groups
+	// geometryGroups groups
 	bool write(const SimpleSceneGraph* ssg) override;
 
 	void setPerspectiveCamera(const Vector3f& origin,
@@ -37,7 +37,7 @@ struct XmlSceneGraphWriter : SceneGraphWriter {
 	// These tags are written out before the sequence
 	// camera
 	// lights
-	// geometry groups
+	// geometryGroups groups
 	using string_string = std::pair<std::string, std::string>;
 	
 	// If first string is "", then the second is interpreted as already formatted
@@ -73,8 +73,8 @@ private:
 				  const SimpleMaterial* mtl,
 				  const SimpleSceneGraph* ssg);
 	void writeObj(std::ostream& obj_fout,
-				  const OBJStaticModel& obj,
-				  const OBJStaticModel::Surface& surface);
+				  const SimpleGeometryMesh& obj,
+				  const SimpleGeometryMesh::Surface& surface);
 	void writeCache(const SimpleSceneGraph* ssg);
 };
 

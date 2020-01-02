@@ -1,4 +1,5 @@
 #include "pch.hpp"
+#include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_framebuffer.hpp>
 #include <fluxions_renderer_gpu_texture.hpp>
 

@@ -31,6 +31,9 @@ namespace Fluxions
 		// Maps the buffer object to new data using GL_DYNAMIC_DRAW
 		virtual void update();
 
+		// Causes the uniform block to be rebound to the program
+		virtual void invalidate_cache();
+
 		// Returns "UnknownUniformBlock" if this object is not derived
 		virtual const char* uniformBlockName() const { return "UnknownUniformBlock"; }
 

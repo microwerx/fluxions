@@ -28,389 +28,378 @@
 namespace Fluxions
 {
 
-extern const std::string BlankString;
+	extern const std::string BlankString;
 
-template <typename T>
-class TResourceManager
-{
-private:
-	std::map<unsigned, T> resources;
-	T defaultObject;
+	template <typename T>
+	class TResourceManager {
+	private:
+		std::map<unsigned, T> resources_;
+		T defaultObject_;
 
-	unsigned largestHandle;
-	std::vector<unsigned> availableResourceHandles;
-	std::vector<unsigned> allocatedResourceHandles;
+		unsigned largestHandle_;
+		std::vector<unsigned> availableResourceHandles_;
+		std::vector<unsigned> allocatedResourceHandles_;
 
-	std::map<std::string, unsigned> stringToHandleMap;
-	std::map<unsigned, std::vector<std::string>> handleToStringsMap;
+		std::map<std::string, unsigned> stringToHandleMap_;
+		std::map<unsigned, std::vector<std::string>> handleToStringsMap_;
 
-public:
-	using iterator = typename std::map<unsigned, T>::iterator;
-	using const_iterator = typename std::map<unsigned, T>::const_iterator;
-	using value_type = typename std::map<unsigned, T>::value_type;
-	using mapped_type = typename std::map<unsigned, T>::mapped_type;
-	using key_type = typename std::map<unsigned, T>::key_type;
+	public:
+		using iterator = typename std::map<unsigned, T>::iterator;
+		using const_iterator = typename std::map<unsigned, T>::const_iterator;
+		using value_type = typename std::map<unsigned, T>::value_type;
+		using mapped_type = typename std::map<unsigned, T>::mapped_type;
+		using key_type = typename std::map<unsigned, T>::key_type;
 
-	unsigned lastId{ 0 };
+		unsigned lastId{ 0 };
 
-	TResourceManager() { Init(); }
-	~TResourceManager() { Clear(); }
+		TResourceManager() { init(); }
+		~TResourceManager() { clear(); }
 
-	void Init() noexcept;
-	void Clear() noexcept;
-	void reset() noexcept;
+		void init() noexcept;
+		void clear() noexcept;
+		void reset() noexcept;
 
-	inline void clear() noexcept { Clear(); }
-	inline iterator begin() noexcept { return resources.begin(); }
-	inline iterator end() noexcept { return resources.end(); }
-	inline const_iterator begin() const noexcept { return resources.begin(); }
-	inline const_iterator end() const noexcept { return resources.end(); }
-	inline bool empty() const noexcept { return resources.empty(); }
-	inline unsigned size() const noexcept { return (unsigned)resources.size(); }
+		inline iterator begin() noexcept { return resources_.begin(); }
+		inline iterator end() noexcept { return resources_.end(); }
+		inline const_iterator begin() const noexcept { return resources_.begin(); }
+		inline const_iterator end() const noexcept { return resources_.end(); }
+		inline bool empty() const noexcept { return resources_.empty(); }
+		inline unsigned size() const noexcept { return (unsigned)resources_.size(); }
 
-	unsigned count(const std::string& name) const noexcept;
-	unsigned count(unsigned id) const noexcept;
+		unsigned count(const std::string& name) const noexcept;
+		unsigned count(unsigned id) const noexcept;
 
-	void DeleteUnnamedResources();
+		void eraseUnnamedResources();
 
-	void SetDefaultValue(const T& value);
+		void setDefaultValue(const T& value);
 
-	unsigned Create();
-	unsigned Create(const std::string& name);
-	void Delete(unsigned handle);
-	void Delete(const std::string& name);
+		unsigned create();
+		unsigned create(const std::string& name);
+		void erase(unsigned handle);
+		void erase(const std::string& name);
 
-	bool IsAHandle(unsigned handle) const;
-	bool IsAHandle(const std::string& name) const;
-	const std::string& GetNameFromHandle(unsigned handle);
-	const std::vector<std::string> GetNamesFromHandle(unsigned handle);
-	unsigned GetHandleFromName(const std::string& name) const;
-	unsigned MapNameToHandle(const std::string& name, unsigned handle);
-	void RemoveName(const std::string& name);
+		bool isAHandle(unsigned handle) const;
+		bool isAHandle(const std::string& name) const;
+		const std::string& getNameFromHandle(unsigned handle);
+		const std::vector<std::string> getNamesFromHandle(unsigned handle);
+		unsigned getHandleFromName(const std::string& name) const;
+		unsigned mapNameToHandle(const std::string& name, unsigned handle);
+		void removeName(const std::string& name);
 
-	T& operator[](unsigned handle);
-	T& operator[](const std::string& name);
+		T& operator[](unsigned handle);
+		T& operator[](const std::string& name);
 
-	const T& operator[](unsigned handle) const;
-	const T& operator[](const std::string& name) const;
-};
+		const T& operator[](unsigned handle) const;
+		const T& operator[](const std::string& name) const;
+	};
 
-template <typename T>
-class TSimpleResourceManager
-{
-public:
-	TSimpleResourceManager();
-	~TSimpleResourceManager();
+	template <typename T>
+	class TSimpleResourceManager {
+	public:
+		TSimpleResourceManager();
+		~TSimpleResourceManager();
 
-	// Erases all elements and clears the available and allocated lists.
-	void Clear();
+		// Erases all elements and clears the available and allocated lists.
+		void clear();
 
-	// Frees allocated elements and makes them available
-	void reset();
+		// Frees allocated elements and makes them available
+		void reset();
 
-	// Adds a resource to the available list
-	void Add(T& resource);
+		// Adds a resource to the available list
+		void add(T& resource);
 
-	// Pulls a resource from the available list
-	T& Create();
+		// Pulls a resource from the available list
+		T& create();
 
-	// Moves a resource from the allocated list to the available list
-	void Delete(T& resource);
+		// Moves a resource from the allocated list to the available list
+		void erase(T& resource);
 
-private:
-	T defaultObject;
-	std::vector<T> available;
-	std::vector<T> allocated;
-};
+	private:
+		T defaultObject_;
+		std::vector<T> available_;
+		std::vector<T> allocated_;
+	};
 
-template <typename T>
-TSimpleResourceManager<T>::TSimpleResourceManager() {
-	allocated.clear();
-	available.clear();
-}
-
-template <typename T>
-TSimpleResourceManager<T>::~TSimpleResourceManager() {
-	allocated.clear();
-	available.clear();
-}
-
-template <typename T>
-void TSimpleResourceManager<T>::Clear() {
-	allocated.clear();
-	available.clear();
-}
-
-template <typename T>
-void TSimpleResourceManager<T>::reset() {
-	available.reserve(available.size() + allocated.size());
-	copy(allocated.begin(), allocated.end(), back_inserter(available));
-	allocated.clear();
-}
-
-template <typename T>
-void TSimpleResourceManager<T>::Add(T& resource) {
-	// std::vector<T>::iterator it;
-	auto it = find(allocated.begin(), allocated.end(), resource);
-	if (it != allocated.end()) {
-		// it's already allocated, so do nothing
-		return;
-	}
-	it = find(available.begin(), available.end(), resource);
-	if (it == available.end()) {
-		available.push_back(resource);
-	}
-}
-
-template <typename T>
-T& TSimpleResourceManager<T>::Create() {
-	if (available.empty())
-		return defaultObject;
-
-	T& item = available.back();
-	available.pop_back();
-	allocated.push_back(item);
-
-	return item;
-}
-
-template <typename T>
-void TSimpleResourceManager<T>::Delete(T& item) {
-	auto it = find(allocated.begin(), allocated.end(), item);
-	if (it != allocated.end()) {
-		available.push_back(item);
-		allocated.erase(it);
-	}
-}
-
-template <typename T>
-void TResourceManager<T>::Init() noexcept {
-	Clear();
-}
-
-template <typename T>
-void TResourceManager<T>::Clear() noexcept {
-	resources.clear();
-	handleToStringsMap.clear();
-	stringToHandleMap.clear();
-	allocatedResourceHandles.clear();
-	availableResourceHandles.clear();
-	largestHandle = 0;
-}
-
-template <typename T>
-void TResourceManager<T>::reset() noexcept {
-	availableResourceHandles.reserve(availableResourceHandles.size() + allocatedResourceHandles.size());
-	move(allocatedResourceHandles.begin(), allocatedResourceHandles.end(), back_inserter(availableResourceHandles));
-	availableResourceHandles.clear();
-	stringToHandleMap.clear();
-	handleToStringsMap.clear();
-}
-
-
-template <typename T>
-unsigned TResourceManager<T>::count(const std::string& id) const noexcept {
-	return (unsigned)handleToStringsMap.count(id);
-}
-
-template <typename T>
-unsigned TResourceManager<T>::count(unsigned id) const noexcept {
-	return (unsigned)handleToStringsMap.count(id);
-}
-
-template <typename T>
-void TResourceManager<T>::DeleteUnnamedResources() {
-	std::vector<unsigned> resourcesToRemove;
-	for (auto it = resources.begin(); it != resources.end(); it++) {
-		unsigned handle = it->first;
-		if (handleToStringsMap[handle].empty())
-			resourcesToRemove.push_back(handle);
-	}
-	for (auto it = resourcesToRemove.begin(); it != resourcesToRemove.end(); it++) {
-		Delete(*it);
-	}
-}
-
-template <typename T>
-void TResourceManager<T>::SetDefaultValue(const T& value) {
-	defaultObject = value;
-}
-
-template <typename T>
-bool TResourceManager<T>::IsAHandle(unsigned handle) const {
-	if (handle == 0)
-		return false;
-
-	auto handleObjIt = resources.find(handle);
-	if (handleObjIt == resources.end())
-		return false;
-
-	return true;
-}
-
-template <typename T>
-bool TResourceManager<T>::IsAHandle(const std::string& name) const {
-	unsigned handle = GetHandleFromName(name);
-	return IsAHandle(handle);
-}
-
-template <typename T>
-const std::string& TResourceManager<T>::GetNameFromHandle(unsigned handle) {
-	auto it = handleToStringsMap.find(handle);
-	if (it == handleToStringsMap.end())
-		return BlankString;
-	if (it->second.empty())
-		return BlankString;
-	return it->second[0];
-}
-
-template <typename T>
-const std::vector<std::string> TResourceManager<T>::GetNamesFromHandle(unsigned handle) {
-	auto it = handleToStringsMap.find(handle);
-	if (it == handleToStringsMap.end())
-		return std::vector<std::string>();
-	return it->second;
-}
-
-template <typename T>
-unsigned TResourceManager<T>::Create() {
-	// are we out of available ones?
-	if (availableResourceHandles.empty()) {
-		largestHandle++;
-		allocatedResourceHandles.push_back(largestHandle);
-		resources.emplace(largestHandle, T());
-		return largestHandle;
+	template <typename T>
+	TSimpleResourceManager<T>::TSimpleResourceManager() {
+		allocated_.clear();
+		available_.clear();
 	}
 
-	unsigned handle = availableResourceHandles.back();
-	availableResourceHandles.pop_back();
-	allocatedResourceHandles.push_back(handle);
-	resources.emplace(largestHandle, T());
-	return handle;
-}
+	template <typename T>
+	TSimpleResourceManager<T>::~TSimpleResourceManager() {
+		allocated_.clear();
+		available_.clear();
+	}
 
-template <typename T>
-unsigned TResourceManager<T>::Create(const std::string& name) {
-	// Don't create duplicate handles
-	unsigned handle = GetHandleFromName(name);
-	if (handle != 0)
+	template <typename T>
+	void TSimpleResourceManager<T>::clear() {
+		allocated_.clear();
+		available_.clear();
+	}
+
+	template <typename T>
+	void TSimpleResourceManager<T>::reset() {
+		available_.reserve(available_.size() + allocated_.size());
+		copy(allocated_.begin(), allocated_.end(), back_inserter(available_));
+		allocated_.clear();
+	}
+
+	template <typename T>
+	void TSimpleResourceManager<T>::add(T& resource) {
+		// std::vector<T>::iterator it;
+		auto it = find(allocated_.begin(), allocated_.end(), resource);
+		if (it != allocated_.end()) {
+			// it's already allocated, so do nothing
+			return;
+		}
+		it = find(available_.begin(), available_.end(), resource);
+		if (it == available_.end()) {
+			available_.push_back(resource);
+		}
+	}
+
+	template <typename T>
+	T& TSimpleResourceManager<T>::create() {
+		if (available_.empty())
+			return defaultObject_;
+
+		T& item = available_.back();
+		available_.pop_back();
+		allocated_.push_back(item);
+
+		return item;
+	}
+
+	template <typename T>
+	void TSimpleResourceManager<T>::erase(T& item) {
+		auto it = find(allocated_.begin(), allocated_.end(), item);
+		if (it != allocated_.end()) {
+			available_.push_back(item);
+			allocated_.erase(it);
+		}
+	}
+
+	template <typename T>
+	void TResourceManager<T>::init() noexcept {
+		clear();
+	}
+
+	template <typename T>
+	void TResourceManager<T>::clear() noexcept {
+		resources_.clear();
+		handleToStringsMap_.clear();
+		stringToHandleMap_.clear();
+		allocatedResourceHandles_.clear();
+		availableResourceHandles_.clear();
+		largestHandle_ = 0;
+	}
+
+	template <typename T>
+	void TResourceManager<T>::reset() noexcept {
+		availableResourceHandles_.reserve(availableResourceHandles_.size() + allocatedResourceHandles_.size());
+		move(allocatedResourceHandles_.begin(), allocatedResourceHandles_.end(), back_inserter(availableResourceHandles_));
+		availableResourceHandles_.clear();
+		stringToHandleMap_.clear();
+		handleToStringsMap_.clear();
+	}
+
+
+	template <typename T>
+	unsigned TResourceManager<T>::count(const std::string& id) const noexcept {
+		return (unsigned)handleToStringsMap_.count(id);
+	}
+
+	template <typename T>
+	unsigned TResourceManager<T>::count(unsigned id) const noexcept {
+		return (unsigned)handleToStringsMap_.count(id);
+	}
+
+	template <typename T>
+	void TResourceManager<T>::eraseUnnamedResources() {
+		std::vector<unsigned> resourcesToRemove;
+		for (auto& [handle, r] : resources_) {
+			//unsigned handle = it->first;
+			if (handleToStringsMap_[handle].empty())
+				resourcesToRemove.push_back(handle);
+		}
+
+		for (auto& resourceToRemove : resourcesToRemove) {
+			erase(resourceToRemove);
+		}
+	}
+
+	template <typename T>
+	void TResourceManager<T>::setDefaultValue(const T& value) {
+		defaultObject_ = value;
+	}
+
+	template <typename T>
+	bool TResourceManager<T>::isAHandle(unsigned handle) const {
+		return (handle != 0) && (resources_.count(handle) != 0);
+	}
+
+	template <typename T>
+	bool TResourceManager<T>::isAHandle(const std::string& name) const {
+		unsigned handle = getHandleFromName(name);
+		return isAHandle(handle);
+	}
+
+	template <typename T>
+	const std::string& TResourceManager<T>::getNameFromHandle(unsigned handle) {
+		auto it = handleToStringsMap_.find(handle);
+		if (it == handleToStringsMap_.end())
+			return BlankString;
+		if (it->second.empty())
+			return BlankString;
+		return it->second[0];
+	}
+
+	template <typename T>
+	const std::vector<std::string> TResourceManager<T>::getNamesFromHandle(unsigned handle) {
+		auto it = handleToStringsMap_.find(handle);
+		if (it == handleToStringsMap_.end())
+			return std::vector<std::string>();
+		return it->second;
+	}
+
+	template <typename T>
+	unsigned TResourceManager<T>::create() {
+		// are we out of available ones?
+		if (availableResourceHandles_.empty()) {
+			largestHandle_++;
+			allocatedResourceHandles_.push_back(largestHandle_);
+			resources_.emplace(largestHandle_, T());
+			return largestHandle_;
+		}
+
+		unsigned handle = availableResourceHandles_.back();
+		availableResourceHandles_.pop_back();
+		allocatedResourceHandles_.push_back(handle);
+		resources_.emplace(largestHandle_, T());
 		return handle;
-
-	handle = Create();
-	MapNameToHandle(name, handle);
-	return handle;
-}
-
-template <typename T>
-void TResourceManager<T>::Delete(unsigned handle) {
-	// does this object even exist?
-	iterator handleObjIt = resources.find(handle);
-	if (handleObjIt == resources.end())
-		return;
-
-	// remove actual object
-	resources.erase(handle);
-
-	// remove string names allocated to refer to this handle
-	const std::vector<std::string>& strings = handleToStringsMap[handle];
-	for (const std::string& name: strings) {
-		stringToHandleMap.erase(name);
 	}
 
-	// remove the handle from the strings map
-	handleToStringsMap.erase(handle);
+	template <typename T>
+	unsigned TResourceManager<T>::create(const std::string& name) {
+		// Don't create duplicate handles
+		unsigned handle = getHandleFromName(name);
+		if (handle != 0)
+			return handle;
 
-	// move handle to the available handles list
-	allocatedResourceHandles.erase(remove(allocatedResourceHandles.begin(),
-										  allocatedResourceHandles.end(),
-										  handle),
-								   allocatedResourceHandles.end());
-
-	availableResourceHandles.push_back(handle);
-}
-
-template <typename T>
-void TResourceManager<T>::Delete(const std::string& name) {
-	unsigned handle = GetHandleFromName(name);
-	Delete(handle);
-}
-
-template <typename T>
-unsigned TResourceManager<T>::GetHandleFromName(const std::string& name) const {
-	auto it = stringToHandleMap.find(name);
-	if (it == stringToHandleMap.end())
-		return 0;
-	return it->second;
-}
-
-template <typename T>
-unsigned TResourceManager<T>::MapNameToHandle(const std::string& name, unsigned handle) {
-	// do nothing if this is the default object
-	if (handle == 0)
-		return 0;
-
-	RemoveName(name);
-
-	// okay, go ahead and add it to the appropriate handle's string list
-	handleToStringsMap[handle].push_back(name);
-
-	// make this string point to this handle
-	stringToHandleMap[name] = handle;
-
-	return handle;
-}
-
-template <typename T>
-void TResourceManager<T>::RemoveName(const std::string& name) {
-	// is this string already mapped to a handle?
-	auto it = stringToHandleMap.find(name);
-	if (it != stringToHandleMap.end()) {
-		unsigned handle = it->second;
-		std::vector<std::string>& container = handleToStringsMap[handle];
-		// yep! so remove previous reference to it
-		auto pos = find(container.begin(), container.end(), name);
-		if (pos != container.end())
-			container.erase(pos);
-		stringToHandleMap.erase(it);
+		handle = create();
+		mapNameToHandle(name, handle);
+		return handle;
 	}
-}
 
-template <typename T>
-T& TResourceManager<T>::operator[](unsigned handle) {
-	// does this object even exist?
-	auto handleObjIt = resources.find(handle);
-	if (handleObjIt == resources.end())
-		return defaultObject;
-	return handleObjIt->second;
-}
+	template <typename T>
+	void TResourceManager<T>::erase(unsigned handle) {
+		// does this object even exist?
+		if (resources_.count(handle) == 0) return;
 
-template <typename T>
-T& TResourceManager<T>::operator[](const std::string& name) {
-	unsigned handle = GetHandleFromName(name);
-	if (handle == 0) {
-		handle = Create();
-		MapNameToHandle(name, handle);
+		// remove actual object
+		resources_.erase(handle);
+
+		// remove string names allocated to refer to this handle
+		const std::vector<std::string>& strings = handleToStringsMap_[handle];
+		for (const std::string& name : strings) {
+			stringToHandleMap_.erase(name);
+		}
+
+		// remove the handle from the strings map
+		handleToStringsMap_.erase(handle);
+
+		// move handle to the available handles list
+		allocatedResourceHandles_.erase(remove(allocatedResourceHandles_.begin(),
+											  allocatedResourceHandles_.end(),
+											  handle),
+									   allocatedResourceHandles_.end());
+
+		availableResourceHandles_.push_back(handle);
 	}
-	return this->operator[](handle);
-}
 
-template <typename T>
-const T& TResourceManager<T>::operator[](unsigned handle) const {
-	// does this object even exist?
-	auto handleObjIt = resources.find(handle);
-	if (handleObjIt == resources.end())
-		return defaultObject;
-	return handleObjIt->second;
-}
-
-template <typename T>
-const T& TResourceManager<T>::operator[](const std::string& name) const {
-	unsigned handle = GetHandleFromName(name);
-	if (handle == 0) {
-		return defaultObject;
+	template <typename T>
+	void TResourceManager<T>::erase(const std::string& name) {
+		unsigned handle = getHandleFromName(name);
+		erase(handle);
 	}
-	return this->operator[](handle);
-}
+
+	template <typename T>
+	unsigned TResourceManager<T>::getHandleFromName(const std::string& name) const {
+		auto it = stringToHandleMap_.find(name);
+		if (it == stringToHandleMap_.end())
+			return 0;
+		return it->second;
+	}
+
+	template <typename T>
+	unsigned TResourceManager<T>::mapNameToHandle(const std::string& name, unsigned handle) {
+		// do nothing if this is the default object
+		if (handle == 0)
+			return 0;
+
+		removeName(name);
+
+		// okay, go ahead and add it to the appropriate handle's string list
+		handleToStringsMap_[handle].push_back(name);
+
+		// make this string point to this handle
+		stringToHandleMap_[name] = handle;
+
+		return handle;
+	}
+
+	template <typename T>
+	void TResourceManager<T>::removeName(const std::string& name) {
+		// is this string already mapped to a handle?
+		auto it = stringToHandleMap_.find(name);
+		if (it != stringToHandleMap_.end()) {
+			unsigned handle = it->second;
+			std::vector<std::string>& container = handleToStringsMap_[handle];
+			// yep! so remove previous reference to it
+			auto pos = find(container.begin(), container.end(), name);
+			if (pos != container.end())
+				container.erase(pos);
+			stringToHandleMap_.erase(it);
+		}
+	}
+
+	template <typename T>
+	T& TResourceManager<T>::operator[](unsigned handle) {
+		// does this object even exist?
+		auto handleObjIt = resources_.find(handle);
+		if (handleObjIt == resources_.end())
+			return defaultObject_;
+		return handleObjIt->second;
+	}
+
+	template <typename T>
+	T& TResourceManager<T>::operator[](const std::string& name) {
+		unsigned handle = getHandleFromName(name);
+		if (handle == 0) {
+			handle = create();
+			mapNameToHandle(name, handle);
+		}
+		return this->operator[](handle);
+	}
+
+	template <typename T>
+	const T& TResourceManager<T>::operator[](unsigned handle) const {
+		// does this object even exist?
+		auto handleObjIt = resources_.find(handle);
+		if (handleObjIt == resources_.end())
+			return defaultObject_;
+		return handleObjIt->second;
+	}
+
+	template <typename T>
+	const T& TResourceManager<T>::operator[](const std::string& name) const {
+		unsigned handle = getHandleFromName(name);
+		if (handle == 0) {
+			return defaultObject_;
+		}
+		return this->operator[](handle);
+	}
 } // namespace Fluxions
 
 #endif

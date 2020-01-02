@@ -44,10 +44,8 @@
 //                        -- fluxions_xor.hpp
 
 #include <hatchetfish.hpp>
-#include <hatchetfish_stopwatch.hpp>
+#include <fluxions_base.hpp>
 #include <fluxions_utilities.hpp>
-#include <fluxions_opengl.hpp>
-#include <fluxions_gte.hpp>
 #include <fluxions_uniform_library.hpp>
 #include <fluxions_simple_renderer.hpp>
 #include <fluxions_simple_scene_graph.hpp>

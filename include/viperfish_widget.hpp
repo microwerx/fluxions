@@ -19,12 +19,10 @@
 #ifndef VIPERFISH_WIDGET_HPP
 #define VIPERFISH_WIDGET_HPP
 
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_gte_rect.hpp>
+#include <viperfish_base.hpp>
 #include <viperfish_mouse.hpp>
 #include <viperfish_keyboard.hpp>
 #include <viperfish_gamepad.hpp>
-#include <hatchetfish.hpp>
 
 namespace Vf
 {

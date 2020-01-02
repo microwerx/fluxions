@@ -5,10 +5,11 @@ namespace Fluxions {
 
 	struct SimpleMap
 	{
-		std::string mapName;
 		GLuint mapId = 0;
-		std::string pathname;
-		std::string shader;
+		std::string name;
+		std::string path;
+		//std::string shader;
+		bool loaded{ false };
 
 		struct SimpleMapCached {
 			GLuint textureId = 0;

@@ -110,34 +110,34 @@ namespace Fluxions
 		}
 
 		template <typename U>
-		constexpr TVector3<T>& operator+=(const U val) noexcept {
-			x += static_cast<T>(val);
-			y += static_cast<T>(val);
-			z += static_cast<T>(val);
+		constexpr TVector3<T>& operator+=(U val) noexcept {
+			x += (T)(val);
+			y += (T)(val);
+			z += (T)(val);
 			return *this;
 		}
 
 		template <typename U>
-		constexpr TVector3<T>& operator-=(const U val) noexcept {
-			x -= static_cast<T>(val);
-			y -= static_cast<T>(val);
-			z -= static_cast<T>(val);
+		constexpr TVector3<T>& operator-=(U val) noexcept {
+			x -= (T)(val);
+			y -= (T)(val);
+			z -= (T)(val);
 			return *this;
 		}
 
 		template <typename U>
-		constexpr TVector3<T>& operator*=(const U val) noexcept {
-			x *= static_cast<T>(val);
-			y *= static_cast<T>(val);
-			z *= static_cast<T>(val);
+		constexpr TVector3<T>& operator*=(U val) noexcept {
+			x *= (T)(val);
+			y *= (T)(val);
+			z *= (T)(val);
 			return *this;
 		}
 
 		template <typename U>
-		constexpr TVector3<T>& operator/=(const U val) noexcept {
-			x /= static_cast<T>(val);
-			y /= static_cast<T>(val);
-			z /= static_cast<T>(val);
+		constexpr TVector3<T>& operator/=(U val) noexcept {
+			x /= (T)(val);
+			y /= (T)(val);
+			z /= (T)(val);
 			return *this;
 		}
 
@@ -224,7 +224,7 @@ namespace Fluxions
 		}
 
 		constexpr T length() const noexcept {
-			return static_cast<T>(sqrt(x * x + y * y + z * z));
+			return (T)(sqrt(x * x + y * y + z * z));
 		}
 
 		constexpr T lengthSquared() const noexcept {
@@ -559,7 +559,7 @@ namespace Fluxions
 	template <typename T, typename U>
 	constexpr auto operator+(const U a, const TVector3<T>& V) {
 		return TVector3<std::common_type_t<U, T>>(a + V.x, a + V.y, a + V.z);
-}
+	}
 
 	template <typename T, typename U>
 	constexpr auto operator+(const TVector3<T>& V, const U a) noexcept {

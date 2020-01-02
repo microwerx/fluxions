@@ -22,7 +22,6 @@
 
 #include <viperfish_base.hpp>
 #include <viperfish_widget.hpp>
-#include <imgui.h>
 
 namespace Colors
 {
@@ -46,13 +45,11 @@ namespace Colors
 
 namespace Vf
 {
-
-	class DearImGuiWidget : public Widget
-	{
+	class DearImGuiWidget : public Widget {
 	protected:
 		DearImGuiWidget();
-		DearImGuiWidget(const DearImGuiWidget &widget) = default;
-		DearImGuiWidget(DearImGuiWidget &&widget) = default;
+		DearImGuiWidget(const DearImGuiWidget& widget) = default;
+		DearImGuiWidget(DearImGuiWidget&& widget) = default;
 
 	public:
 		static bool ContextInitialized;
@@ -60,12 +57,12 @@ namespace Vf
 		using SharedPtr = std::shared_ptr<DearImGuiWidget>;
 		using UniquePtr = std::unique_ptr<DearImGuiWidget>;
 
-		DearImGuiWidget(const std::string &name);
+		DearImGuiWidget(const std::string& name);
 		virtual ~DearImGuiWidget() override;
 
 		inline Widget::SharedPtr AsWidgetPtr() noexcept { return Widget::shared_from_this(); }
 
-		virtual void OnInit(const std::vector<std::string> &args) override;
+		virtual void OnInit(const std::vector<std::string>& args) override;
 		virtual void OnKill() override;
 		virtual void OnUpdate(double timeStamp) override;
 
@@ -73,8 +70,8 @@ namespace Vf
 		virtual void OnMouseButtonUp(int button) override;
 		virtual void OnMouseMove(int x, int y) override;
 
-		virtual void OnKeyDown(const std::string &key, int keymod) override;
-		virtual void OnKeyUp(const std::string &key, int keymod) override;
+		virtual void OnKeyDown(const std::string& key, int keymod) override;
+		virtual void OnKeyUp(const std::string& key, int keymod) override;
 
 		virtual void OnPreRender() override;
 		virtual void OnPostRender() override;
@@ -93,8 +90,8 @@ namespace Vf
 		GLuint abo = 0;
 		GLuint vao = 0;
 		GLuint eabo = 0;
-		ImGuiContext *pImGuiContext = nullptr;
-		ImGuiIO *pIO = nullptr;
+		ImGuiContext* pImGuiContext = nullptr;
+		ImGuiIO* pIO = nullptr;
 
 		bool CreateDeviceObjects();
 		void InvalidateDeviceObjects();
