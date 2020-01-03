@@ -11,8 +11,8 @@ namespace Fluxions
 
 	class RendererConfig : public RendererObject {
 	public:
-		bool useMaps = false;
-		bool useMaterials = false;
+		bool useMaps{ true };
+		bool useMaterials{ true };
 		bool useZOnly = false;
 		bool isCubeMap = false;
 		// bool recomputeProjectionMatrix = false;

@@ -181,8 +181,10 @@
     <ClCompile Include="src\fluxions_simple_aniso_light.cpp" />
     <ClCompile Include="src\fluxions_simple_camera.cpp" />
     <ClCompile Include="src\fluxions_simple_dirto_light.cpp" />
+    <ClCompile Include="src\fluxions_simple_environment.cpp" />
     <ClCompile Include="src\fluxions_simple_material_library.cpp" />
     <ClCompile Include="src\fluxions_simple_point_light.cpp" />
+    <ClCompile Include="src\fluxions_simple_renderer_plugin.cpp" />
     <ClCompile Include="src\fluxions_simple_scene_graph_node.cpp" />
     <ClCompile Include="src\fluxions_scene_graph_reader.cpp" />
     <ClCompile Include="src\fluxions_scene_graph_writer.cpp" />

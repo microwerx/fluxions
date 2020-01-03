@@ -10,7 +10,9 @@ namespace Fluxions
 		IBaseObject() {}
 		virtual ~IBaseObject() {};
 
-		const char* name() const { return name_.c_str(); };		
+		const char* name() const { return name_.c_str(); };
+		const std::string& name_str() const { return name_; }
+
 		virtual const char* keyword() const = 0;
 		virtual const char* type() const = 0;
 		virtual const char* status() const = 0;
