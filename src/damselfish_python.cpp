@@ -195,7 +195,7 @@ namespace Df
 			return;
 #ifdef _WIN32
 		BOOL result = AllocConsole();
-		Hf::Log.info("%(): Opening Console: result = %d", __FUNCTION__, result);
+		HFLOGINFO("Opening Console: result = %d", result);
 #endif
 		std::cout << "PythonInterpreter::thread_func() [" << pPyInterpreter->myThread.get_id() << "]: starting[" << programName << "]..." << std::endl;
 		try {

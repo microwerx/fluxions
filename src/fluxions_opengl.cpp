@@ -1148,7 +1148,7 @@ namespace Fluxions
 	bool QuickGLErrorChecker::isError() {
 		e = glGetError();
 		if (e != GL_NO_ERROR) {
-			Hf::Log.error("%s(): OpenGL Error %s", __FUNCTION__, glewGetErrorString(e));
+			HFLOGERROR("OpenGL Error %s", glewGetErrorString(e));
 			return true;
 		}
 		return false;
@@ -1266,7 +1266,7 @@ namespace Fluxions
 		std::istringstream istr(m);
 		std::string line;
 		while (getline(istr, line)) {
-			Hf::Log.info("> %s", line.c_str());
+			HFLOGINFO("> %s", line.c_str());
 		}
 	}
 

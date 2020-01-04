@@ -82,7 +82,7 @@ namespace Fluxions
 
 		constexpr TSphericalHarmonic<VectorType, ScalarType>& operator+=(const TSphericalHarmonic<VectorType, ScalarType>& b) noexcept {
 			if (coefficients.size() != b.coefficients.size()) {
-				//Hf::Log.error("%s(): spherical harmonics do not have the same degree! addition not done.", __FUNCTION__);
+				//HFLOGERROR("spherical harmonics do not have the same degree! addition not done.");
 				return *this;
 			}
 
@@ -124,7 +124,7 @@ namespace Fluxions
 
 			//if (coefficients.size() != b.coefficients.size())
 			//{
-			//	Hf::Log.error("%s(): spherical harmonics do not have the same degree! addition not done.", __FUNCTION__);
+			//	HFLOGERROR("spherical harmonics do not have the same degree! addition not done.");
 			//	return *this;
 			//}
 

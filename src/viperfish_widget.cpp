@@ -233,7 +233,7 @@ bool Widget::processStyle(const std::string& style) {
 
 	if (!json->IsObject())
 	{
-		Hf::Log.error("%s(): style is not an JSON object", __FUNCTION__);
+		HFLOGERROR("style is not an JSON object");
 		return false;
 	}
 

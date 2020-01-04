@@ -307,7 +307,7 @@ namespace Vf
 			char* infoLog = new char[infoLogLength + 1];
 			infoLog[infoLogLength] = '\0';
 			glGetProgramInfoLog(program, infoLogLength, NULL, infoLog);
-			Hf::Log.error("%s(): failed to link Dear ImGui program\n%s\n", infoLog);
+			HFLOGERROR("failed to link Dear ImGui program\n%s\n", infoLog);
 			delete[] infoLog;
 		}
 
@@ -373,7 +373,7 @@ namespace Vf
 			ImGui::GetIO().Fonts->TexID = 0;
 			fontTextureId = 0;
 		}
-		Hf::Log.infofn(__FUNCTION__, "Dear ImGui Device Objects Invalidated");
+		HFLOGINFO("Dear ImGui Device Objects Invalidated");
 		ContextInitialized = false;
 	}
 

@@ -78,7 +78,7 @@ namespace Fluxions
 	void SimpleSSPHH::GEN() {
 		if (!sphls_)
 			return;
-		Hf::Log.infofn(__FUNCTION__, "SSPHH GEN");
+		HFLOGINFO("SSPHH GEN");
 		//auto &sphls = *sphls_;
 
 		int i = 0;
@@ -113,7 +113,7 @@ namespace Fluxions
 			if (saveJSONs) {
 				H[i][i].SaveJSON(basename + ".json", basename, sphl.position);
 			}
-			Hf::Log.info("%s(): (%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, i, lm0, lm1, lm2, lm3);
+			HFLOGINFO("(%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", i, i, lm0, lm1, lm2, lm3);
 			i++;
 		}
 	}
@@ -121,7 +121,7 @@ namespace Fluxions
 	void SimpleSSPHH::VIZ() {
 		if (!sphls_)
 			return;
-		Hf::Log.infofn(__FUNCTION__, "SSPHH VIZ");
+		HFLOGINFO("SSPHH VIZ");
 
 		auto& sphls = *sphls_;
 
@@ -165,7 +165,7 @@ namespace Fluxions
 					lm2 = -1.0f;
 					lm3 = -1.0f;
 				}
-				Hf::Log.infofn(__FUNCTION__, "(%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", i, j, lm0, lm1, lm2, lm3);
+				HFLOGINFO("(%d, %d) -> [ %.2f, %.2f, %.2f, %.2f ]", i, j, lm0, lm1, lm2, lm3);
 			}
 		}
 		return;
@@ -174,7 +174,7 @@ namespace Fluxions
 	void SimpleSSPHH::HIER(bool includeSelf, bool includeNeighbor, int MaxDegrees) {
 		if (!sphls_)
 			return;
-		Hf::Log.infofn(__FUNCTION__, "SSPHH HIER");
+		HFLOGINFO("SSPHH HIER");
 
 		auto& sphls = *sphls_;
 		for (size_t i = 0; i < size_; i++) {
@@ -218,7 +218,7 @@ namespace Fluxions
 					lm2 = -1.0f;
 					lm3 = -1.0f;
 				}
-				// Hf::Log.info("%s(): (%d, %d) S' += H * %.2f -> [ %.2f, %.2f, %.2f, %.2f ]", __FUNCTION__, i, j, Q[j].p, lm0, lm1, lm2, lm3);
+				// HFLOGERROR("(%d, %d) S' += H * %.2f -> [ %.2f, %.2f, %.2f, %.2f ]", i, j, Q[j].p, lm0, lm1, lm2, lm3);
 			}
 		}
 
@@ -279,7 +279,7 @@ namespace Fluxions
 				lm2 = -1.0f;
 				lm3 = -1.0f;
 			}
-			Hf::Log.infofn(__FUNCTION__, "S'_%d -> [ %.2f, %.2f, %.2f, %.2f ]", i, lm0, lm1, lm2, lm3);
+			HFLOGINFO("S'_%d -> [ %.2f, %.2f, %.2f, %.2f ]", i, lm0, lm1, lm2, lm3);
 		}
 		return;
 	}

@@ -45,6 +45,12 @@
 #define HFLOGCHECKDEBUG(condition) if (condition) Hf::Log.debugfn(__FUNCTION__, "Condition is false (%s)", #condition);
 #define HFLOGCHECKERROR(condition) if (condition) Hf::Log.errorfn(__FUNCTION__, "Condition is false (%s)", #condition);
 
+#define HFLOG_MS_ELAPSED() (Hf::Log.getMillisecondsElapsed())
+#define HFLOG_SECS_ELAPSED() (Hf::Log.getSecondsElapsed())
+
+#define HFLOG_HISTORYSIZE() ((int)(Hf::Log.getHistoryItemsSize()))
+#define HFLOG_DTG() (Hf::Log.makeDTG())
+
 namespace Hf
 {
 	class HatchetfishLog

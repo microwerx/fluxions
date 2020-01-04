@@ -58,7 +58,7 @@ namespace Fluxions
 		if (!scs.dirty)
 			return;
 
-		double t0 = Hf::Log.getSecondsElapsed();
+		double t0 = HFLOG_SECS_ELAPSED();
 
 		scs.createTextureShadowCube(rc.viewportRect.w);
 
@@ -101,7 +101,7 @@ namespace Fluxions
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteFramebuffers(1, &cubeShadowFbo);
 
-		double dt = Hf::Log.getSecondsElapsed() - t0;
+		double dt = HFLOG_SECS_ELAPSED() - t0;
 		scs.buildTime = dt * 1000.0;
 		scs.dirty = false;
 	}

@@ -379,7 +379,6 @@ namespace Fluxions
 							continue;
 						GLint loc = glGetAttribLocation(program, name);
 						if (loc < 0) {
-							//Hf::Log.warning("%s(): Program %i does not have attrib %s", __FUNCTION__, program_, name);
 							continue;
 						}
 						glVertexAttribPointer(loc, 4, GL_FLOAT, mesh.isAttribNormalized(i), sizeof(SimpleGeometryMesh::Vertex), cast_to_pointer(mesh.getVertexOffset(i)));

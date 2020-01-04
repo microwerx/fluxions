@@ -51,7 +51,7 @@ namespace Uf
 	{
 		StringTimePairFuture future_result = std::async(std::launch::async, [url]() {
 			StringTimePair result;
-			result.second = Hf::Log.getSecondsElapsed();
+			result.second = HFLOG_SECS_ELAPSED();
 			CURL *curl = curl_easy_init();
 			if (curl) {
 				CURLcode res;
@@ -64,7 +64,7 @@ namespace Uf
 				}
 				curl_easy_cleanup(curl);
 			}
-			result.second = Hf::Log.getSecondsElapsed() - result.second;
+			result.second = HFLOG_SECS_ELAPSED() - result.second;
 			return result;
 		});
 		return future_result;

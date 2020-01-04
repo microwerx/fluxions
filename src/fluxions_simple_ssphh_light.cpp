@@ -226,7 +226,7 @@ namespace Fluxions
 
 		Df::JSONPtr json = Df::JSON::New();
 		if (!json->Deserialize(buffer)) {
-			Hf::Log.error("Unable to read JSON SPH");
+			HFLOGERROR("Unable to read JSON SPH");
 			return false;
 		}
 

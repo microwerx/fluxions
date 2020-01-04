@@ -287,7 +287,7 @@ namespace Fluxions
 	void LogGLEWError() {
 		GLenum glerror = glGetError();
 		if (glerror != 0) {
-			Hf::Log.errorfn(__FUNCTION__, "GL Error: %s", (const char*)glewGetErrorString(glerror));
+			HFLOGERROR("GL Error: %s", (const char*)glewGetErrorString(glerror));
 		}
 	}
 
@@ -452,46 +452,4 @@ namespace Fluxions
 		glUniformBlockBinding(program, blockIndex, blockBindingIndex);
 		glBindBufferRange(GL_UNIFORM_BUFFER, blockBindingIndex, buffer, offset, size);
 	}
-
-	//// SIMPLEBLOCKUNIFORMSYSTEM
-
-	//RendererUniformBlockSystem::RendererUniformBlockSystem() {}
-
-	//RendererUniformBlockSystem::~RendererUniformBlockSystem() {
-	//	Delete();
-	//}
-
-	//void RendererUniformBlockSystem::Create(GLsizei totalMemory, GLuint blockIndex) {
-	//	if (uniformBlockBufferId != 0)
-	//		Delete();
-	//	buffer.resize(totalMemory);
-	//	blockIndexId = blockIndex;
-	//	glGenBuffers(1, &uniformBlockBufferId);
-	//	Hf::Log.info("%s(): uniform block %d created.", __FUNCTION__, uniformBlockBufferId);
-	//	glBindBuffer(GL_UNIFORM_BUFFER, uniformBlockBufferId);
-	//	glBufferData(GL_UNIFORM_BUFFER, buffer.size(), buffer.data(), GL_DYNAMIC_DRAW);
-	//	glBindBufferBase(GL_UNIFORM_BUFFER, blockIndexId, uniformBlockBufferId);
-	//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	//}
-
-	//void RendererUniformBlockSystem::Delete() {
-	//	if (uniformBlockBufferId != 0) {
-	//		Hf::Log.info("%s(): uniform block %d deleted.", __FUNCTION__, uniformBlockBufferId);
-	//		glDeleteBuffers(1, &uniformBlockBufferId);
-	//		uniformBlockBufferId = 0;
-	//		blockIndexId = 0;
-	//	}
-	//}
-
-	//void RendererUniformBlockSystem::Update() {
-	//	glBindBuffer(GL_UNIFORM_BUFFER, uniformBlockBufferId);
-	//	glBufferData(GL_UNIFORM_BUFFER, buffer.size(), buffer.data(), GL_DYNAMIC_DRAW);
-	//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	//}
-
-	//void RendererUniformBlockSystem::UpdateSubData(GLsizei offset, GLsizei size, GLbyte* data) {
-	//	glBindBuffer(GL_UNIFORM_BUFFER, uniformBlockBufferId);
-	//	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
-	//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	//}
 } // namespace Fluxions
