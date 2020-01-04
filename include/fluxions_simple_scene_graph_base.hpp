@@ -48,6 +48,8 @@ namespace Fluxions
 		Vector4f time;			// {r} = hour, {g} = minutes, {b} = seconds, {a} day seconds
 		Color4f sun;			// {rgb} = disk radiance, {a} = solid angle
 		Color4f moon;			// {rgb} = disk radiance, {a} = solid angle
+		Color4f CompareBlend;	// {r} = fade image, {g} = fade solid, {b} = fade reference, {a} = image difference
+		Color4f FadeColor;		// {rgb} = color, {a} = fade dissolve
 
 		float& toneMapExposure() { return toneMap.x; }
 		float& toneMapGamma() { return toneMap.y; }

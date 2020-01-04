@@ -13,6 +13,8 @@ namespace Fluxions
 		GLint lastBoundUnit = 0;
 
 	public:
+		bool viewportAutoresize{ false };
+
 		RendererFramebuffer();
 		~RendererFramebuffer();
 

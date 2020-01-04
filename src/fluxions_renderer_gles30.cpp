@@ -272,7 +272,8 @@ namespace Fluxions
 	}
 
 	void RendererGLES30::updateUniformBlocks() {
-		static std::string blockname = ssgUbEnvironment.uniformBlockName();
+		static std::string blockname;
+		blockname = ssgUbEnvironment.uniformBlockName();
 		if (pRendererProgram->activeUniformBlocks.count(blockname)) {
 			BaseEnvironment* bEnvironment = (BaseEnvironment*)&pSSG->environment;
 			ssgUbEnvironment.uniforms = *bEnvironment;
@@ -311,13 +312,6 @@ namespace Fluxions
 			}
 			ssgUbPointLights.update();
 		}
-
-		//i = 0;
-		//for (const auto& [k, al] : pSSG->anisoLights) {
-		//	BasePointLight* bPointLight = &pl;
-		//	ssgUbPointLights.uniforms[i++] = *bPointLight;
-		//}
-		//ssgUbPointLights.update();
 	}
 
 	void RendererGLES30::render() {
@@ -511,12 +505,12 @@ namespace Fluxions
 			_renderSceneGraph();
 		}
 
-		if (pRendererConfig->renderVIZ) {
-			_renderVIZ();
-		}
-
 		if (pRendererConfig->renderPost) {
 			_renderPost();
+		}
+
+		if (pRendererConfig->renderVIZ) {
+			_renderVIZ();
 		}
 
 		restoreGLState();
@@ -983,17 +977,8 @@ namespace Fluxions
 	void RendererGLES30::_renderPost() {
 		Hf::StopWatch stopwatch;
 		if (!_initPost()) return;
-		while (glGetError()) HFLOGERROR("1 ERRORS");
 
 		glUseProgram(post.program);
-		post_units.first();
-		for (int i = 0; i < post_units.count; i++) {
-			glUniform1i(post_units.uniform_location(), post_units.unit());
-			glActiveTexture(GL_TEXTURE0 + post_units.unit());
-			glBindTexture(post_units.target(), post_units.texture());
-			post_units.next();
-		}
-
 		glBindBuffer(GL_ARRAY_BUFFER, post.abo);
 		glVertexAttribPointer(post.vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
 		if (post.tloc >= 0) glVertexAttribPointer(post.tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
@@ -1003,15 +988,6 @@ namespace Fluxions
 		if (post.vloc >= 0) glDisableVertexAttribArray(post.vloc);
 		if (post.tloc >= 0) glDisableVertexAttribArray(post.tloc);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		while (glGetError()) HFLOGERROR("3 ERRORS");
-
-		post_units.first();
-		for (int i = 0; i < post_units.count; i++) {
-			glActiveTexture(GL_TEXTURE0 + post_units.unit());
-			glBindTexture(post_units.target(), 0);
-			post_units.next();
-		}
-		while (glGetError()) HFLOGERROR("4 ERRORS");
 		glUseProgram(0);
 		pRendererConfig->metrics_posttime_ms = stopwatch.Stop_msf();
 	}

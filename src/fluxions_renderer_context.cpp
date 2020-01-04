@@ -94,6 +94,13 @@ namespace Fluxions
 				rc.updateViewport();
 			}
 		}
+
+		for (auto& [k, fbo] : fbos) {
+			if (fbo.viewportAutoresize) {
+				fbo.setDimensions(width, height);
+				fbo.make();
+			}
+		}
 	}
 
 	bool RendererContext::loadConfig(const std::string& filename) {
@@ -1026,144 +1033,143 @@ namespace Fluxions
 			return false;
 		std::string arg1;
 		bool svalarg1 = k_sval(args, 1, arg1);
-		if (count == 2 && svalarg1) {
+
+		static const std::string ATTACH{ "attach" };
+		static const std::string DIMENSIONS{ "dimensions" };
+		static const std::string AUTORESIZE{ "autoresize" };
+
+		if (pcurFBO && svalarg1) {
+			if (arg1 == AUTORESIZE) {
+				pcurFBO->viewportAutoresize = true;
+				return true;
+			}
+
+			else if (arg1 == DIMENSIONS) {
+				int width = k_ivalue(args, 2);
+				int height = k_ivalue(args, 3);
+				if (!width || !height) {
+					HFLOGERROR("fbo '%s' dimensions must be > 0",
+							   pcurFBO->name());
+				}
+				pcurFBO->setDimensions(width, height);
+				return true;
+			}
+
+			// attach target attachment internalformat mapName
+			else if (count >= 5 && arg1 == ATTACH) {
+				bool gotTarget = false;
+				bool gotAttachment = false;
+				bool gotInternalformat = false;
+				bool generateMipmaps = true;
+
+				GLenum target = glNameTranslator.getEnum(args[2].sval);
+				GLenum attachment = glNameTranslator.getEnum(args[3].sval);
+				GLenum internalformat = glNameTranslator.getEnum(args[4].sval);
+				std::string mapName;
+				if (!k_sval(args, 5, mapName)) {
+					HFLOGWARN("Warning FBO does not have a MapName associated with it");
+				}
+
+				static const std::vector<GLenum> targets{
+					GL_RENDERBUFFER,
+					GL_TEXTURE_2D,
+					GL_TEXTURE_CUBE_MAP
+				};
+
+				if (std::find(targets.begin(), targets.end(),
+							  target) != targets.end()) {
+					gotTarget = true;
+				}
+				else {
+					HFLOGERROR("target '%s' incorrect for fbo '%s'",
+							   args[2].sval.c_str(),
+							   pcurFBO->name());
+					return false;
+				}
+
+				static const std::vector<GLenum> attachments{
+					GL_COLOR_ATTACHMENT0,
+					GL_COLOR_ATTACHMENT1,
+					GL_COLOR_ATTACHMENT2,
+					GL_COLOR_ATTACHMENT3,
+					GL_COLOR_ATTACHMENT4,
+					GL_COLOR_ATTACHMENT5,
+					GL_COLOR_ATTACHMENT6,
+					GL_COLOR_ATTACHMENT7,
+					GL_DEPTH_ATTACHMENT,
+					GL_STENCIL_ATTACHMENT,
+					GL_DEPTH_STENCIL_ATTACHMENT
+				};
+
+				if (std::find(attachments.begin(), attachments.end(),
+							  attachment) != attachments.end()) {
+					gotAttachment = true;
+				}
+				else {
+					HFLOGERROR("attachment incorrect for fbo '%s'",
+							   args[3].sval.c_str(),
+							   pcurFBO->name());
+					return false;
+				}
+
+				static const std::vector<GLenum> internalformats{
+					GL_DEPTH24_STENCIL8,
+					GL_DEPTH32F_STENCIL8,
+					GL_DEPTH_COMPONENT16,
+					GL_DEPTH_COMPONENT24,
+					GL_DEPTH_COMPONENT32F,
+					GL_RGB8,
+					GL_RGBA8,
+					GL_RGB16F,
+					GL_RGBA16F,
+					GL_RGB32F,
+					GL_RGBA32F
+				};
+
+				if (std::find(internalformats.begin(),
+							  internalformats.end(),
+							  internalformat) != internalformats.end()) {
+					gotInternalformat = true;
+				}
+				else {
+					HFLOGERROR("internalformat %s incorrect for fbo '%s'",
+							   args[4].sval.c_str(),
+							   pcurFBO->name());
+					return false;
+				}
+
+				if (gotTarget && gotAttachment && gotInternalformat) {
+					switch (target) {
+					case GL_RENDERBUFFER:
+						pcurFBO->addRenderbuffer(attachment, internalformat);
+						HFLOGINFO("attaching renderbuffer to fbo '%s'",
+								  pcurFBO->name());
+						break;
+					case GL_TEXTURE_2D:
+						pcurFBO->addTexture2D(attachment, target, internalformat, generateMipmaps);
+						pcurFBO->setMapName(mapName);
+						HFLOGINFO("attaching texture2D to fbo '%s' for map '%s'",
+								  pcurFBO->name(),
+								  mapName.c_str());
+						break;
+					case GL_TEXTURE_CUBE_MAP:
+						pcurFBO->addTextureCubeMap(attachment, target, internalformat, generateMipmaps);
+						pcurFBO->setMapName(mapName);
+						HFLOGINFO("attaching textureCube to fbo '%s' for map '%s'",
+								  pcurFBO->name(),
+								  mapName.c_str());
+						break;
+					}
+					return true;
+				}
+			}
+		}
+
+		if (svalarg1) {
 			fbos[arg1].init(arg1, this);
 			pcurFBO = &fbos[arg1];
 			return true;
-			//TODO: remove following code
-			//std::string name = args[1].sval;
-			//Framebuffers[name].name = name;
-			//Framebuffers[name].renderbuffers.clear();
-			//Framebuffers[name].textures.clear();
-			//pcur_fbo = &Framebuffers[name];
 		}
-
-		if (!pcurFBO || !svalarg1)
-			return false;
-
-		tolower(arg1);
-		const std::string ATTACH{ "attach" };
-		const std::string DIMENSIONS{ "dimensions" };
-
-		if (arg1 == DIMENSIONS) {
-			int width = k_ivalue(args, 2);
-			int height = k_ivalue(args, 3);
-			if (!width || !height) {
-				HFLOGERROR("fbo '%s' dimensions must be > 0",
-						   pcurFBO->name());
-			}
-			pcurFBO->setDimensions(width, height);
-		}
-
-		// attach target attachment internalformat mapName
-		if (count >= 5 && arg1 == ATTACH) {
-			bool gotTarget = false;
-			bool gotAttachment = false;
-			bool gotInternalformat = false;
-			bool generateMipmaps = true;
-
-			GLenum target = glNameTranslator.getEnum(args[2].sval);
-			GLenum attachment = glNameTranslator.getEnum(args[3].sval);
-			GLenum internalformat = glNameTranslator.getEnum(args[4].sval);
-			std::string mapName;
-			if (!k_sval(args, 5, mapName)) {
-				HFLOGWARN("Warning FBO does not have a MapName associated with it");
-			}
-
-			static const std::vector<GLenum> targets{
-				GL_RENDERBUFFER,
-				GL_TEXTURE_2D,
-				GL_TEXTURE_CUBE_MAP
-			};
-
-			if (std::find(targets.begin(), targets.end(),
-						  target) != targets.end()) {
-				gotTarget = true;
-			}
-			else {
-				HFLOGERROR("target '%s' incorrect for fbo '%s'",
-						   args[2].sval.c_str(),
-						   pcurFBO->name());
-				return false;
-			}
-
-			static const std::vector<GLenum> attachments{
-				GL_COLOR_ATTACHMENT0,
-				GL_COLOR_ATTACHMENT1,
-				GL_COLOR_ATTACHMENT2,
-				GL_COLOR_ATTACHMENT3,
-				GL_COLOR_ATTACHMENT4,
-				GL_COLOR_ATTACHMENT5,
-				GL_COLOR_ATTACHMENT6,
-				GL_COLOR_ATTACHMENT7,
-				GL_DEPTH_ATTACHMENT,
-				GL_STENCIL_ATTACHMENT,
-				GL_DEPTH_STENCIL_ATTACHMENT
-			};
-
-			if (std::find(attachments.begin(), attachments.end(),
-						  attachment) != attachments.end()) {
-				gotAttachment = true;
-			}
-			else {
-				HFLOGERROR("attachment incorrect for fbo '%s'",
-						   args[3].sval.c_str(),
-						   pcurFBO->name());
-				return false;
-			}
-
-			static const std::vector<GLenum> internalformats{
-				GL_DEPTH24_STENCIL8,
-				GL_DEPTH32F_STENCIL8,
-				GL_DEPTH_COMPONENT16,
-				GL_DEPTH_COMPONENT24,
-				GL_DEPTH_COMPONENT32F,
-				GL_RGB8,
-				GL_RGBA8,
-				GL_RGB16F,
-				GL_RGBA16F,
-				GL_RGB32F,
-				GL_RGBA32F
-			};
-
-			if (std::find(internalformats.begin(),
-						  internalformats.end(),
-						  internalformat) != internalformats.end()) {
-				gotInternalformat = true;
-			}
-			else {
-				HFLOGERROR("internalformat %s incorrect for fbo '%s'",
-						   args[4].sval.c_str(),
-						   pcurFBO->name());
-				return false;
-			}
-
-			if (gotTarget && gotAttachment && gotInternalformat) {
-				switch (target) {
-				case GL_RENDERBUFFER:
-					pcurFBO->addRenderbuffer(attachment, internalformat);
-					HFLOGINFO("attaching renderbuffer to fbo '%s'",
-							  pcurFBO->name());
-					break;
-				case GL_TEXTURE_2D:
-					pcurFBO->addTexture2D(attachment, target, internalformat, generateMipmaps);
-					pcurFBO->setMapName(mapName);
-					HFLOGINFO("attaching texture2D to fbo '%s' for map '%s'",
-							  pcurFBO->name(),
-							  mapName.c_str());
-					break;
-				case GL_TEXTURE_CUBE_MAP:
-					pcurFBO->addTextureCubeMap(attachment, target, internalformat, generateMipmaps);
-					pcurFBO->setMapName(mapName);
-					HFLOGINFO("attaching textureCube to fbo '%s' for map '%s'",
-							  pcurFBO->name(),
-							  mapName.c_str());
-					break;
-				}
-				return true;
-			}
-		}
-
 
 		return false;
 	}
