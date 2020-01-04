@@ -46,30 +46,22 @@ namespace Fluxions
 		SimpleCamera camera;
 		SimpleEnvironment environment;
 
-		//TResourceManager<std::string> shaderMaps;
-		//std::map<std::string, SimpleMap*> currentTextures;
-		SimpleMaterialSystem materialSystem;
-		//mutable SimpleRenderer_GLuint renderer;
-		//__ShaderProgramLocations locs;
-
 		TResourceManager<SimpleCamera> cameras;
 		TResourceManager<SimpleSphere> spheres;
 		TResourceManager<SimpleGeometryGroup> geometryGroups;
-		// TODO: Change SimpleGeometryMesh to SimpleGeometryMesh
-		TResourceManager<SimpleGeometryMesh> staticMeshes;
 		TResourceManager<SimpleDirToLight> dirToLights;
 		TResourceManager<SimplePointLight> pointLights;
 		TResourceManager<SimpleAnisoLight> anisoLights;
-		TResourceManager<SimplePathAnimation> paths;
+		TResourceManager<SimplePathAnimation> pathanims;
+
 		std::map<std::string, SimpleSceneGraphNode*> nodes;
+
+		TResourceManager<SimpleGeometryMesh> staticMeshes;
 		SimpleMaterialLibrary materials;
 
 		ISimpleRendererPlugin* userdata = nullptr;
 
-		//bool ReadMtlLibFile(const std::string &filename);
-		//bool ReadConfFile(const std::string &filename);
 		bool ReadObjFile(const std::string& filename, const std::string& name);
-		//bool ReadTexmap(const std::string &name, const std::string &texmap);
 		bool ReadMaterialLibrary(const std::string& type, std::istream& istr);
 		bool ReadGeometryGroup(const std::string& type, std::istream& istr);
 		bool ReadEnviro(const std::string& type, std::istream& istr);
@@ -82,19 +74,14 @@ namespace Fluxions
 		bool ReadSphere(const std::string& type, std::istream& istr);
 		bool ReadPath(const std::string& keyword, std::istream& istr);
 
-		// Rendering tools
-		//void ApplySpheresToCurrentProgram();
-		//void ApplyGlobalSettingsToCurrentProgram();
-		//void ApplyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
-		//void DisableCurrentTextures();
-
 		const char* type() const override { return "SimpleSceneGraph"; }
 		const char* keyword() const override { return "scenegraph"; }
 		const char* status() const override { return "unknown"; }
-	private:
+
 		bool read(const std::string& keyword, std::istream& istr) override;
 		bool write(std::ostream & ostr) const override;
 		
+	private:
 		SimpleSceneGraphNode* createNode(const std::string& name, SimpleSceneGraphNode* node);
 		SimpleSceneGraphNode* createCamera(const std::string& name);
 		SimpleSceneGraphNode* createSphere(const std::string& name);
@@ -103,33 +90,16 @@ namespace Fluxions
 		SimpleSceneGraphNode* createAnisoLight(const std::string& name);
 		SimpleSceneGraphNode* createPathAnim(const std::string& name);
 		SimpleSceneGraphNode* createGeometry(const std::string& name);
+
+		void _assignIdsToMeshes();
 	private:
 		BoundingBoxf boundingBox;
-
-		//TSimpleResourceManager<GLuint> textureUnits;
-		//void InitTexUnits();
-		//void KillTexUnits();
-
-	public:
-		//GLuint GetTexUnit() { return textureUnits.Create(); }
-		//void FreeTexUnit(GLuint& id) {
-		//	textureUnits.Delete(id);
-		//	id = 0;
-		//}
-		//void FreeTexUnit(GLint& id) {
-		//	if (id > 0) {
-		//		GLuint tid = static_cast<GLuint>(id);
-		//		textureUnits.Delete(tid);
-		//		id = 0;
-		//	}
-		//}
 
 	public:
 		SimpleSceneGraph();
 		~SimpleSceneGraph();
 
-		/// <summary>reset() is a method of SimpleSceneGraph.
-		/// <para>Resets scene graph to initial conditions. It's completely empty with default values.</para></summary>
+		// Resets scene graph to initial conditions.
 		void reset();
 
 		bool Load(const std::string& filename);
@@ -145,24 +115,8 @@ namespace Fluxions
 			return Load(path.c_str(), reader);
 		}
 
-		const BoundingBoxf& GetBoundingBox();
-
-		/// Note this is where we went wrong, by including rendering information in the scene graph...
-
-		//void BuildBuffers();
-		//void Render(RendererProgram& program);
-		//void RenderZOnly(RendererProgram& program);
-
-		//void Render(RendererProgram& program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
-
-		//void AdvancedRender(RendererConfig& rc);
-		//void AdvancedRenderZOnly(const RendererConfig& rc) const;
-		//void RenderZOnly(RendererProgramPtr& program) const;
-
-		//void SetUniforms(RendererProgramPtr& shader);
-
-		//void InitSphls();
-		//void MakeSphlsUnclean();
+		const BoundingBoxf& getBoundingBox() const { return boundingBox; }
+		void calcBounds();
 	}; // class SimpleSceneGraph
 } // namespace Fluxions
 

@@ -61,10 +61,10 @@ namespace Fluxions
 		surfaces[currentSurface].first = 0;
 		switch (surfaces[currentSurface].vertexType) {
 		case VertexType::FAST_VERTEX:
-			surfaces[currentSurface].first = fastVertices.size();
+			surfaces[currentSurface].first = (int)fastVertices.size();
 			break;
 		case VertexType::SLOW_VERTEX:
-			surfaces[currentSurface].first = slowVertices.size();
+			surfaces[currentSurface].first = (int)slowVertices.size();
 			break;
 		}
 		surfaces[currentSurface].firstIndex = (int)Indices.size();
@@ -119,13 +119,14 @@ namespace Fluxions
 
 		for (const auto& surface : obj.Surfaces) {
 			triangleCount += surface.count / 3;
-			SetCurrentMtlLibName(surface.materialLibrary);
 			SetCurrentMtlName(surface.materialName);
+			SetCurrentMtlId(surface.materialId);
 			Begin(GL_TRIANGLES, true);
 			for (unsigned i = surface.first; i < surface.first + surface.count; i++) {
 				Index((IndexType)obj.Indices[i]);
 			}
 			End();
+			surfaces.back().drawMtlId = surface.materialId;
 		}
 		SetCurrentMtlName("");
 	}
@@ -184,14 +185,14 @@ namespace Fluxions
 		}
 	}
 
-	template <typename IndexType, GLenum GLIndexType>
-	void SimpleRenderer<IndexType, GLIndexType>::AssignMaterialIds(SimpleMaterialSystem& materials) {
-		for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++) {
-			materials.SetLibraryMaterial(surface->mtllibName, surface->mtlName);
-			surface->mtllibId = materials.GetLibraryId();
-			surface->mtlId = materials.GetMaterialId();
-		}
-	}
+	//template <typename IndexType, GLenum GLIndexType>
+	//void SimpleRenderer<IndexType, GLIndexType>::AssignMaterialIds(SimpleMaterialSystem& materials) {
+	//	for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++) {
+	//		materials.SetLibraryMaterial(surface->mtllibName, surface->mtlName);
+	//		surface->mtllibId = materials.GetLibraryId();
+	//		surface->mtlId = materials.GetMaterialId();
+	//	}
+	//}
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::Index(IndexType index) {
@@ -381,8 +382,8 @@ namespace Fluxions
 		bufferInfo.vertexBufferSizeInBytes = bufferInfo.zVertexSize + bufferInfo.fastVertexSize + bufferInfo.slowVertexSize;
 		bufferInfo.indexBufferSizeInBytes = bufferInfo.zIndexSize + bufferInfo.IndexSize;
 
-		vertexMemoryBuffer.resize(bufferInfo.vertexBufferSizeInBytes + 1);
-		indexMemoryBuffer.resize(bufferInfo.indexBufferSizeInBytes + 1);
+		vertexMemoryBuffer.resize((size_t)bufferInfo.vertexBufferSizeInBytes + 1);
+		indexMemoryBuffer.resize((size_t)bufferInfo.indexBufferSizeInBytes + 1);
 
 		if (!zVertices.empty())
 			memcpy(&vertexMemoryBuffer[bufferInfo.zVertexOffset], &zVertices[0], bufferInfo.zVertexSize);
@@ -397,10 +398,10 @@ namespace Fluxions
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
-	void SimpleRenderer<IndexType, GLIndexType>::BuildBuffers() {
+	bool SimpleRenderer<IndexType, GLIndexType>::BuildBuffers() {
 		// Have we already built the buffers?
 		if (arrayBuffer && elementArrayBuffer)
-			return;
+			return true;
 
 		if (!arrayBuffer) {
 			glGenBuffers(1, &arrayBuffer);
@@ -441,11 +442,11 @@ namespace Fluxions
 		glEnableVertexAttribArray(2);
 		glEnableVertexAttribArray(3);
 		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(0, 4, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(long long)(bufferInfo.fastVertexOffset));
-		glVertexAttribPointer(1, 4, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(long long)((bufferInfo.fastVertexOffset + 8)));
-		glVertexAttribPointer(2, 2, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(long long)((bufferInfo.fastVertexOffset + 16)));
-		glVertexAttribPointer(3, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(long long)((bufferInfo.fastVertexOffset + 20)));
-		glVertexAttribPointer(4, 4, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(long long)((bufferInfo.fastVertexOffset + 24)));
+		glVertexAttribPointer(0, 4, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(bufferInfo.fastVertexOffset));
+		glVertexAttribPointer(1, 4, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(bufferInfo.fastVertexOffset + 8));
+		glVertexAttribPointer(2, 2, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(bufferInfo.fastVertexOffset + 16));
+		glVertexAttribPointer(3, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(bufferInfo.fastVertexOffset + 20));
+		glVertexAttribPointer(4, 4, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(bufferInfo.fastVertexOffset + 24));
 
 		if (slowVAO) {
 			glDeleteVertexArrays(1, &slowVAO);
@@ -458,7 +459,8 @@ namespace Fluxions
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
 		for (int i = 0; i < 8; i++) {
 			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, sizeof(SimpleSlowVertex), (GLvoid*)(long long)(bufferInfo.slowVertexOffset + i * 16));
+			GLsizeiptr offset = bufferInfo.slowVertexOffset + i * 16;
+			glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, sizeof(SimpleSlowVertex), (GLvoid*)offset);
 		}
 
 		glBindVertexArray(0);
@@ -475,6 +477,8 @@ namespace Fluxions
 				//surface->baseZIndexBufferOffset = bufferInfo.zIndexOffset;
 			}
 		}
+
+		return (arrayBuffer && elementArrayBuffer);
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -536,9 +540,7 @@ namespace Fluxions
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::BindBuffers() {
-		if (!arrayBuffer || !elementArrayBuffer) {
-			BuildBuffers();
-		}
+		if (!BuildBuffers()) return;
 
 		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
@@ -546,37 +548,46 @@ namespace Fluxions
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::Render() {
-		// Render all surfaces as slow/fast vertex types with appropriate programs.
+		RenderFast();
+		RenderSlow();
+	}
 
-		if (!arrayBuffer || !elementArrayBuffer) {
-			BuildBuffers();
-		}
+	template <typename IndexType, GLenum GLIndexType>
+	void SimpleRenderer<IndexType, GLIndexType>::RenderFast() {
+		if (!BuildBuffers()) return;
 
 		glBindVertexArray(fastVAO);
 
-		for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++) {
-			if (surface->vertexType != VertexType::FAST_VERTEX)
+		for (auto& surface: surfaces) {
+			if (surface.vertexType != VertexType::FAST_VERTEX)
 				continue;
 
-			if (surface->isIndexed) {
-				glDrawElements(surface->mode, surface->count, GLIndexType, (GLvoid*)(long long)(surface->baseIndexBufferOffset));
+			if (surface.isIndexed) {
+				glDrawElements(surface.mode, surface.count, GLIndexType, (GLvoid*)(surface.baseIndexBufferOffset));
 			}
 			else {
-				glDrawArrays(surface->mode, surface->first, surface->count);
+				glDrawArrays(surface.mode, surface.first, surface.count);
 			}
 		}
 
+		glBindVertexArray(0);
+	}
+
+	template <typename IndexType, GLenum GLIndexType>
+	void SimpleRenderer<IndexType, GLIndexType>::RenderSlow() {
+		if (!BuildBuffers()) return;
+
 		glBindVertexArray(slowVAO);
 
-		for (auto surface = surfaces.begin(); surface != surfaces.end(); surface++) {
-			if (surface->vertexType != VertexType::SLOW_VERTEX)
+		for (auto& surface : surfaces) {
+			if (surface.vertexType != VertexType::SLOW_VERTEX)
 				continue;
 
-			if (surface->isIndexed) {
-				glDrawElements(surface->mode, surface->count, GLIndexType, (GLvoid*)(long long)(surface->baseIndexBufferOffset));
+			if (surface.isIndexed) {
+				glDrawElements(surface.mode, surface.count, GLIndexType, (GLvoid*)(surface.baseIndexBufferOffset));
 			}
 			else {
-				glDrawArrays(surface->mode, surface->first, surface->count);
+				glDrawArrays(surface.mode, surface.first, surface.count);
 			}
 		}
 
@@ -688,12 +699,12 @@ namespace Fluxions
 				continue;
 			if (objectName.empty() != true && objectName != surface->objectName)
 				continue;
-			//if (groupName.empty() != true && groupName != surface->groupName)
-			//	continue;
-			//if (mtllibName.empty() != true && mtllibName != surface->mtllibName)
-			//	continue;
-			//if (mtlName.empty() != true && mtlName != surface->mtlName)
-			//	continue;
+			if (groupName.empty() != true && groupName != surface->groupName)
+				continue;
+			if (mtllibName.empty() != true && mtllibName != surface->mtllibName)
+				continue;
+			if (mtlName.empty() != true && mtlName != surface->mtlName)
+				continue;
 
 			GLintptr offset = 0;
 
@@ -746,12 +757,12 @@ namespace Fluxions
 				continue;
 			if (objectId != 0 && objectId != surface->objectId)
 				continue;
-			//if (groupId != 0 && groupId != surface->groupId)
-			//	continue;
-			//if (mtllibId != 0 && mtllibId != surface->mtllibId)
-			//	continue;
-			//if (mtlId != 0 && mtlId != surface->mtlId)
-			//	continue;
+			if (groupId != 0 && groupId != surface->groupId)
+				continue;
+			if (mtllibId != 0 && mtllibId != surface->mtllibId)
+				continue;
+			if (mtlId != 0 && mtlId != surface->mtlId)
+				continue;
 
 			GLintptr offset = 0;
 
@@ -787,6 +798,64 @@ namespace Fluxions
 		}
 
 		glBindVertexArray(0);
+	}
+
+	template <typename IndexType, GLenum GLIndexType>
+	int SimpleRenderer<IndexType, GLIndexType>::RenderIf(GLuint objectId, int mtlId, bool onlyRenderZ) {
+		if (objectId == 0) return 0;
+		if (!BuildBuffers()) return 0;
+
+		GLuint lastUsedVAO = 0;
+
+		if (onlyRenderZ) {
+			glBindVertexArray(zVAO);
+		}
+
+		int count = 0;
+		for (auto& surface: surfaces) {
+			if (surface.vertexType == VertexType::UNDECIDED)
+				continue;
+			if (objectId != 0 && objectId != surface.objectId)
+				continue;
+			if (mtlId != surface.drawMtlId)
+				continue;
+
+			GLintptr offset = 0;
+
+			// TODO: Check if it is faster to move these out of the loop and render one VAO at a time...
+			if (onlyRenderZ) {
+				offset = surface.baseZIndexBufferOffset;
+				if (lastUsedVAO != zVAO) {
+					lastUsedVAO = zVAO;
+					glBindVertexArray(zVAO);
+				}
+			}
+			else if (surface.vertexType == VertexType::SLOW_VERTEX) {
+				offset = surface.baseIndexBufferOffset;
+				if (lastUsedVAO != slowVAO) {
+					lastUsedVAO = slowVAO;
+					glBindVertexArray(slowVAO);
+				}
+			}
+			else if (surface.vertexType == VertexType::FAST_VERTEX) {
+				offset = surface.baseIndexBufferOffset;
+				if (lastUsedVAO != fastVAO) {
+					lastUsedVAO = fastVAO;
+					glBindVertexArray(fastVAO);
+				}
+			}
+
+			if (surface.isIndexed) {
+				glDrawElements(surface.mode, surface.count, GLIndexType, (GLvoid*)offset);
+			}
+			else {
+				glDrawArrays(surface.mode, surface.first, surface.count);
+			}
+			count++;
+		}
+
+		glBindVertexArray(0);
+		return count;
 	}
 
 	// explicit template instantiation is after the implementation

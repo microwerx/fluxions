@@ -11,11 +11,8 @@ namespace Fluxions
 	class SimpleSphere : public SimpleSceneGraphNode
 	{
 	public:
-		std::string mtllibName;
-		std::string mtlName;
-		GLuint mtllibId = 0;
-		GLuint mtlId = 0;
-		GLuint objectId = 0;
+		std::string materialLibrary;
+		std::string materialName;
 
 		const char* type() const override { return "SimpleSphere"; }
 		const char* keyword() const override { return "sphere"; }

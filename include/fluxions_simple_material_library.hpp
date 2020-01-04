@@ -28,10 +28,12 @@ namespace Fluxions
 		bool load(const std::string& path);
 		bool saveMTL(const std::string& path) const;
 		bool saveXml(const std::string& path, int flags) const;
+
+		int getMaterialIndex(const std::string& materialName) const;
 	private:
 		SimpleMaterial* set_mtl(std::string&& name);
 		// Looks for map location, modifies mapname to be user friendly
-		bool readMap(std::istream& istr, std::string& mapname, std::string& mtlpath);
+		bool readMap(std::string& pathToMap, std::string& mapname, std::string& mtlpath);
 		std::ostream& printMap(std::ostream& ostr, const std::string& maptype, const std::string& mapname) const;
 	};
 }

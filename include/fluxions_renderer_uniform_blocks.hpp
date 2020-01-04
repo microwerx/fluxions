@@ -40,6 +40,9 @@ namespace Fluxions
 		// Returns 0 if this object has no binding (due to a badly implemented class)
 		virtual unsigned uniformBinding() const { return (unsigned)UbBindings::Unknown; }
 
+		// Returns the number of uniforms in this block
+		virtual unsigned size() const { return 0; }
+
 		void use(GLuint program);
 
 		bool usable() const { return blockIndex_ != GL_INVALID_INDEX; }
@@ -62,6 +65,7 @@ namespace Fluxions
 		const char* uniformBlockName() const override { return "EnvironmentBlock"; }
 		unsigned uniformBinding() const override { return (unsigned)UbBindings::Enviroment; }
 
+		unsigned size() const override { return 1; }
 		BaseEnvironment uniforms;
 	};
 
@@ -74,6 +78,7 @@ namespace Fluxions
 		const char* uniformBlockName() const override { return "CameraBlock"; }
 		unsigned uniformBinding() const override { return (unsigned)UbBindings::Camera; }
 
+		unsigned size() const override { return 1; }
 		struct UNIFORMS {
 			Matrix4f ProjectionMatrix;
 			Matrix4f CameraMatrix;
@@ -89,6 +94,7 @@ namespace Fluxions
 		const char* uniformBlockName() const override { return "MaterialBlock"; }
 		unsigned uniformBinding() const override { return (unsigned)UbBindings::Materials; }
 
+		unsigned size() const override { return MaxMaterials; }
 		BaseMaterial uniforms[MaxMaterials];
 	};
 
@@ -101,6 +107,7 @@ namespace Fluxions
 		const char* uniformBlockName() const override { return "DirToLightBlock"; }
 		unsigned uniformBinding() const override { return (unsigned)UbBindings::DirToLights; }
 
+		unsigned size() const override { return MaxLights; }
 		BaseDirToLight uniforms[MaxLights];
 	};
 
@@ -113,6 +120,7 @@ namespace Fluxions
 		const char* uniformBlockName() const override { return "PointLightBlock"; }
 		unsigned uniformBinding() const override { return (unsigned)UbBindings::PointLights; }
 
+		unsigned size() const override { return MaxLights; }
 		BasePointLight uniforms[MaxLights];
 	};
 
@@ -125,6 +133,7 @@ namespace Fluxions
 		const char* uniformBlockName() const override { return "AnisoLightBlock"; }
 		unsigned uniformBinding() const override { return (unsigned)UbBindings::AnisoLights; }
 
+		unsigned size() const override { return MaxLights; }
 		BaseAnisoLight uniforms[MaxLights];
 	};
 }

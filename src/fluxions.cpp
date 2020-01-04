@@ -144,10 +144,16 @@ namespace Fluxions
 
 #ifndef FLUXIONS_NO_SDL
 		HFLOGINFO("Initializing SDL2");
-		SDL_Init(SDL_INIT_EVERYTHING);
+		if (SDL_Init(SDL_INIT_EVERYTHING)) {
+			HFLOGERROR("SDL Error! %s", SDL_GetError());
+		}
 
-		HFLOGINFO("Initializing SDL2_image for JPG/PNG support");
-		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
+		HFLOGINFO("Initializing SDL2_image for JPG/PNG/WEBP support");
+		int flags = IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_WEBP;
+		flags = IMG_Init(flags);
+		if ((flags & IMG_INIT_JPG) == 0) HFLOGWARN("SDL2_image: No JPG support!");
+		if ((flags & IMG_INIT_PNG) == 0) HFLOGWARN("SDL2_image: No PNG support!");
+		if ((flags & IMG_INIT_WEBP) == 0) HFLOGWARN("SDL2_image: No WEBP support!");
 #endif
 	}
 
@@ -164,6 +170,6 @@ namespace Fluxions
 #elif _POSIX_VERSION
 		usleep(0);
 #endif
-}
+	}
 
 } // namespace Fluxions

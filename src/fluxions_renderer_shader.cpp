@@ -7,7 +7,7 @@ namespace Fluxions {
 		const char* typeName =
 			(type == GL_VERTEX_SHADER) ? "vertex" :
 			(type == GL_FRAGMENT_SHADER) ? "fragment" :
-			(type == GL_GEOMETRY_SHADER) ? "geometryGroups" :
+			(type == GL_GEOMETRY_SHADER) ? "geometryGroups_" :
 			"unknown";
 
 		FilePathInfo fpi(filename);

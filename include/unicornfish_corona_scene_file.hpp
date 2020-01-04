@@ -29,46 +29,14 @@ namespace Uf
 		CoronaSceneFile();
 		~CoronaSceneFile();
 
-		using Vector3f = Fluxions::Vector3f;
-		using Matrix4f = Fluxions::Matrix4f;
-
-		// newCameraType = { "perspective" | "cubemap" }
-		void setCameraType(const std::string& newCameraType);
-
-		// returns "perspective" or "cubemap"
-		std::string getCameraType() const { return cameraType_; }
-
-		void setPerspectiveCamera(const Vector3f& origin, const Vector3f& target, const Vector3f& roll, const float hfovInDegrees);
-		void setCubeMapCamera(const Vector3f& origin, const Vector3f& target, const Vector3f& roll);
-
 		void writeSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
 		void writeCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
 		void writeCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, const Fluxions::Vector3f& cameraPosition);
 		void writeSkySCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg);
 		bool writeSphlVizSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, int sourceLightIndex, int receivingLightIndex);
 
-		void clearCache();
-		void writeCache(const Fluxions::SimpleSceneGraph& ssg);
-		void writeGeometryCache(const Fluxions::SimpleSceneGraph& ssg);
-		void writeMaterialCache(const Fluxions::SimpleSceneGraph& ssg);
-
-		bool enableKs = false;
-
-	private:
-		// cache
-		using string_string_Matrix4f = std::tuple<std::string, std::string, Fluxions::Matrix4f>;
-		std::vector<string_string_Matrix4f> geometryGroups_;
-		
-		std::string cameraType_ = "perspective";
-		Vector3f cameraOrigin_;
-		Vector3f cameraTarget_;
-		Vector3f cameraRoll_;
-		Matrix4f cameraMatrix_;
-		float cameraHFovInDegrees_{ 45.0f };
-
-		void _writeCamera(std::ostream& ostr);
-		void _writeSun(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
-		void _writeGeometryGroups(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
+		bool enableKs{ false };
+		bool clearCache{ false };
 	};
 } // namespace Uf
 

@@ -30,8 +30,7 @@ namespace Fluxions
 		return "RendererConfig";
 	}
 
-	void RendererConfig::invalidate_caches() {
-	}
+	void RendererConfig::invalidate_caches() {}
 
 	GLbitfield RendererConfig::getClearBits() const {
 		GLbitfield clearBits = 0;

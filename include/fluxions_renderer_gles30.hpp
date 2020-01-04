@@ -37,6 +37,7 @@ namespace Fluxions
 		unsigned textures[MaxUnits]{ 0 };
 		unsigned samplers[MaxUnits]{ 0 };
 		int ulocs[MaxUnits]{ 0 };
+		int umixlocs[MaxUnits]{ 0 };
 
 		unit_manager() { clear(); }
 
@@ -50,7 +51,11 @@ namespace Fluxions
 
 		void uniform_location(int loc) { ulocs[index] = loc; }
 		int uniform_location() const { return ulocs[index]; }
-		int uniform_location(int i) const { return units[i]; }
+		int uniform_location(int i) const { return ulocs[i]; }
+
+		void uniform_mix_location(int loc) { umixlocs[index] = loc; }
+		int uniform_mix_location() const { return umixlocs[index]; }
+		int uniform_mix_location(int i) const { return umixlocs[i]; }
 
 		void texture(unsigned t) { textures[index] = t; }
 		unsigned texture() const { return textures[index]; }
@@ -105,9 +110,9 @@ namespace Fluxions
 
 		bool validate() const {
 			return (pSSG != nullptr
-					&& pContext != nullptr
+					&& pRendererContext != nullptr
 					&& pRendererConfig != nullptr
-					&& pProgram != nullptr);
+					&& pRendererProgram != nullptr);
 		}
 
 		int getTexUnit();
@@ -122,9 +127,9 @@ namespace Fluxions
 
 		//SimpleSceneGraph emptySSG;
 		SimpleSceneGraph* pSSG = nullptr;
-		RendererContext* pContext = nullptr;
+		RendererContext* pRendererContext = nullptr;
 		RendererConfig* pRendererConfig = nullptr;
-		RendererProgram* pProgram = nullptr;
+		RendererProgram* pRendererProgram = nullptr;
 		RendererTextureCube* pSkyboxCube{ nullptr };
 		TSimpleResourceManager<int> textureUnits;
 
@@ -138,18 +143,24 @@ namespace Fluxions
 		void updateUniformBlocks();
 
 		//Matrix4f projectionMatrix;
-		//Matrix4f cameraMatrix;
+		//Matrix4f cameraMatrix_;
 
 		struct SCENEINFO {
 			__ShaderProgramLocations locs;
-			std::map<std::string, SimpleMap*> currentTextures;
+			//std::map<std::string, SimpleMap*> currentTextures;
+			unit_manager maps[MaxMaterials];
 			SimpleRenderer_GLuint renderer;
-			bool areBuffersBuilt = false;
+			int mtlIdLoc{ -1 };
+			int worldMatrixLoc{ -1 };
+			Matrix4f worldMatrix;
+			bool areBuffersBuilt{ false };
 		} scene;
 
 		struct SKYBOXINFO {
 			GLuint abo = 0;
 			GLuint eabo = 0;
+			GLint tloc{ -1 };
+			GLint vloc{ -1 };
 			~SKYBOXINFO() { FxDeleteBuffer(&abo); FxDeleteBuffer(&eabo); }
 		} skybox;
 
@@ -175,9 +186,10 @@ namespace Fluxions
 		void renderCubeImages();
 		void applyGlobalSettingsToCurrentProgram();
 		void applySpheresToCurrentProgram();
-		void render(RendererProgram* program, bool useMaterials, bool useMaps, bool useZOnly, Matrix4f& projectionMatrix, Matrix4f& cameraMatrix);
+		void render(RendererProgram* program, bool useMaterials, bool useMaps, bool useZOnly);
 		void applyMaterialToCurrentProgram(SimpleMaterial& mtl, bool useMaps);
-		void _sceneDisableCurrentTextures();
+		void _sceneEnableCurrentTextures(int materialId);
+		void _sceneDisableCurrentTextures(int materialId);
 
 		bool _initSkyBox();
 		void _renderSkyBox();

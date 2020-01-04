@@ -117,7 +117,7 @@ namespace Fluxions
 			GLuint texture = *texture_;
 			if (texture != 0) {
 				glDeleteTextures(1, &texture);
-				HFLOGINFO("Deleted texture %d", *texture_);
+				//HFLOGINFO("Deleted texture %d", *texture_);
 			}
 			texture_.reset();
 		}
@@ -167,7 +167,7 @@ namespace Fluxions
 		}
 		GLuint texture = *texture_;
 		if (texture != 0) {
-			HFLOGINFO("Deleted texture %i", texture);
+			//HFLOGINFO("Deleted texture %i", texture);
 			glDeleteTextures(1, &texture);
 		}
 		glGenTextures(1, &texture);
@@ -175,7 +175,7 @@ namespace Fluxions
 		usable_ = false;
 		FxDebugBindTexture(target_, *texture_);
 		FxDebugBindTexture(target_, 0);
-		HFLOGINFO("Created texture %i", *texture_);
+		//HFLOGINFO("Created texture %i", *texture_);
 	}
 
 	void RendererGpuTexture::createStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type) {

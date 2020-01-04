@@ -14,16 +14,16 @@ namespace Fluxions
 		FilePathInfo fpi_original(filename);
 		FilePathInfo fpi_cache(cache_filename);
 
+		// Save name and path for possible reload later
+		name = fpi_original.fname;
+		path = fpi_original.path;
+
 		if (fpi_cache.Exists()) {
 			// Is the original file newer than the cache?
 			if (fpi_original.ctime <= fpi_cache.ctime) {
 				return loadCache(cache_filename);
 			}
 		}
-
-		// Save name and path for possible reload later
-		name = fpi_original.fname;
-		path = fpi_original.path;
 
 		HFLOGINFO("loading OBJ '%s'", name.c_str());
 		int curSurface = 0;
@@ -131,7 +131,7 @@ namespace Fluxions
 				HFLOGINFO("'%s' ... using material '%s' from '%s'", name.c_str(), str.c_str(), materialLibrary.c_str());
 			}
 			else if (str == "mtllib") {
-				add_mtllib(istr, materialLibrary, fpi_original.path);
+				add_mtllib(istr, materialLibrary, fpi_original.dir);
 			}
 			else if (str == "v") {
 				istr >> v[0] >> v[1] >> v[2];
@@ -345,13 +345,13 @@ namespace Fluxions
 		std::ofstream fout(filename.c_str());
 		fout << "mtllib " << mtllib << "\n";
 
-		int totalVertices = 0;
+		size_t totalVertices = 0;
 		for (auto& surface : Surfaces) {
 			if (surface.materialName != materialName) continue;
 
 			// 1. Output Vertices
-			for (int i = 0; i < surface.count; i++) {
-				const Vertex& v = Vertices[surface.first + i];
+			for (unsigned i = 0; i < surface.count; i++) {
+				const Vertex& v = Vertices[(size_t)surface.first + i];
 				fout << "v ";
 				WriteVector3f(fout, v.position) << "\n";
 				fout << "vn ";
@@ -364,12 +364,14 @@ namespace Fluxions
 			fout << "usemtl " << materialName << "\n";
 
 			// 2. Output Faces
-			for (int i = 0; i < surface.count; i + 3) {
-				int j = totalVertices + i;
+			for (size_t i = 0; i < surface.count; i += 3) {
+				size_t j1 = totalVertices + i;
+				size_t j2 = j1 + 1;
+				size_t j3 = j1 + 2;
 				fout << "f ";
-				fout << Indices[j + 0] << "/" << Indices[j + 0] << "/" << Indices[j + 0] << " ";
-				fout << Indices[j + 1] << "/" << Indices[j + 1] << "/" << Indices[j + 1] << " ";
-				fout << Indices[j + 2] << "/" << Indices[j + 2] << "/" << Indices[j + 2] << "\n";
+				fout << Indices[j1] << "/" << Indices[j1] << "/" << Indices[j1] << " ";
+				fout << Indices[j2] << "/" << Indices[j2] << "/" << Indices[j2] << " ";
+				fout << Indices[j3] << "/" << Indices[j3] << "/" << Indices[j3] << "\n";
 			}
 
 			totalVertices += surface.count;
@@ -388,29 +390,26 @@ namespace Fluxions
 		unsigned indexCount = (unsigned)Indices.size();
 		unsigned surfaceCount = (unsigned)Surfaces.size();
 
-		fout.write(reinterpret_cast<const char*>(&vertexCount), sizeof(unsigned));
-		fout.write(reinterpret_cast<const char*>(&indexCount), sizeof(unsigned));
-		fout.write(reinterpret_cast<const char*>(&surfaceCount), sizeof(unsigned));
+		WriteBinaryElement(fout, vertexCount);
+		WriteBinaryElement(fout, indexCount);
+		WriteBinaryElement(fout, surfaceCount);
 
-		fout.write(reinterpret_cast<const char*>(&Vertices[0]), sizeof(Vertex)* vertexCount);
-		fout.write(reinterpret_cast<const char*>(&Indices[0]), sizeof(unsigned)* indexCount);
+		WriteBinaryStringMap(fout, mtllibs);
+
+		WriteBinaryElement(fout, Vertices);
+		WriteBinaryElement(fout, Indices);
 
 		for (unsigned i = 0; i < surfaceCount; i++) {
 			unsigned mode = Surfaces[i].mode;
 			unsigned first = Surfaces[i].first;
 			unsigned count = Surfaces[i].count;
-			size_t mtlNameSize = Surfaces[i].materialName.size();
-			const char* mtlName = Surfaces[i].materialName.c_str();
-			size_t surfaceNameSize = Surfaces[i].surfaceName.size();
-			const char* surfaceName = Surfaces[i].surfaceName.c_str();
 
-			fout.write(reinterpret_cast<char*>(&mode), sizeof(long));
-			fout.write(reinterpret_cast<char*>(&first), sizeof(long));
-			fout.write(reinterpret_cast<char*>(&count), sizeof(long));
-			fout.write(reinterpret_cast<char*>(&mtlNameSize), sizeof(long));
-			fout.write(mtlName, mtlNameSize);
-			fout.write(reinterpret_cast<char*>(&surfaceNameSize), sizeof(long));
-			fout.write(surfaceName, surfaceNameSize);
+			WriteBinaryElement(fout, mode);
+			WriteBinaryElement(fout, first);
+			WriteBinaryElement(fout, count);
+			WriteBinaryString(fout, Surfaces[i].materialName);
+			WriteBinaryString(fout, Surfaces[i].materialLibrary);
+			WriteBinaryString(fout, Surfaces[i].surfaceName);
 		}
 
 		fout.close();
@@ -425,41 +424,41 @@ namespace Fluxions
 		unsigned indexCount = 0;
 		unsigned surfaceCount = 0;
 
-		fin.read(reinterpret_cast<char*>(&vertexCount), sizeof(unsigned));
-		fin.read(reinterpret_cast<char*>(&indexCount), sizeof(unsigned));
-		fin.read(reinterpret_cast<char*>(&surfaceCount), sizeof(unsigned));
+		ReadBinaryElement(fin, vertexCount);
+		ReadBinaryElement(fin, indexCount);
+		ReadBinaryElement(fin, surfaceCount);
+
+		mtllibs.clear();
+		ReadBinaryStringMap(fin, mtllibs);
 
 		Vertices.resize(vertexCount);
 		Indices.resize(indexCount);
 		Surfaces.resize(surfaceCount);
 		BoundingBox.reset();
 
-		fin.read(reinterpret_cast<char*>(&Vertices[0]), sizeof(Vertex)* vertexCount);
-		fin.read(reinterpret_cast<char*>(&Indices[0]), sizeof(unsigned)* indexCount);
+		ReadBinaryElement(fin, Vertices, vertexCount);
+		ReadBinaryElement(fin, Indices, indexCount);
 
 		for (unsigned i = 0; i < surfaceCount; i++) {
 			unsigned mode = 0;
 			unsigned first = 0;
 			unsigned count = 0;
 			std::string mtlName;
+			std::string mtllibName;
 			std::string surfaceName;
-			unsigned mtlNameSize = 0;
-			unsigned surfaceNameSize = 0;
 
-			fin.read(reinterpret_cast<char*>(&mode), sizeof(long));
-			fin.read(reinterpret_cast<char*>(&first), sizeof(long));
-			fin.read(reinterpret_cast<char*>(&count), sizeof(long));
-			fin.read(reinterpret_cast<char*>(&mtlNameSize), sizeof(long));
-			mtlName.resize(mtlNameSize);
-			fin.read(reinterpret_cast<char*>(&mtlName[0]), mtlNameSize);
-			fin.read(reinterpret_cast<char*>(&surfaceNameSize), sizeof(long));
-			surfaceName.resize(surfaceNameSize);
-			fin.read(reinterpret_cast<char*>(&surfaceName[0]), surfaceNameSize);
+			ReadBinaryElement(fin, mode);
+			ReadBinaryElement(fin, first);
+			ReadBinaryElement(fin, count);
+			ReadBinaryString(fin, mtlName);
+			ReadBinaryString(fin, mtllibName);
+			ReadBinaryString(fin, surfaceName);
 
 			Surfaces[i].mode = mode;
 			Surfaces[i].first = first;
 			Surfaces[i].count = count;
 			Surfaces[i].materialName = mtlName;
+			Surfaces[i].materialLibrary = mtllibName;
 			Surfaces[i].surfaceName = surfaceName;
 		}
 

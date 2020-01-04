@@ -60,6 +60,33 @@ namespace Fluxions
 	std::ostream& WriteAffineMatrix4d(std::ostream& ostr, const Matrix4d& m);
 	std::ostream& WriteSphericalHarmonicf(std::ostream& ostr, const SphericalHarmonicf& sph);
 	std::ostream& WriteSphericalHarmonicd(std::ostream& ostr, const SphericalHarmonicd& sph);
+
+	template<typename T>
+	std::ostream& WriteBinaryElement(std::ostream& os, T x) {
+		return os.write(reinterpret_cast<const char*>(&x), sizeof(T));
+	}
+
+	template<typename T>
+	std::istream& ReadBinaryElement(std::istream& is, T& x) {
+		return is.read(reinterpret_cast<char*>(&x), sizeof(T));
+	}
+
+	template <typename T>
+	std::ostream& WriteBinaryElement(std::ostream& os, const std::vector<T>& v) {
+		return os.write(reinterpret_cast<const char*>(&v[0]), v.size() * sizeof(T));
+	}
+
+	template<typename T>
+	std::istream& ReadBinaryElement(std::istream& is, std::vector<T>& v, size_t count) {
+		v.resize(count);
+		return is.read(reinterpret_cast<char*>(&v[0]), count * sizeof(T));
+	}
+
+	std::ostream& WriteBinaryString(std::ostream& os, const std::string& str);
+	std::ostream& WriteBinaryStringMap(std::ostream& os, const string_string_map& m);
+
+	std::istream& ReadBinaryString(std::istream& is, std::string& str);
+	std::istream& ReadBinaryStringMap(std::istream& is, string_string_map& m);
 }
 
 #endif

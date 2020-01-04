@@ -8,18 +8,23 @@ namespace Fluxions {
 	struct SimpleMaterial : public BaseMaterial {
 		std::string name;
 		int renderIndex{ -1 };
+		
+		string_string_map maps;
 
-		std::string map_Ka;
-		std::string map_Kd;
-		std::string map_Ks;
-		std::string map_Ke;
-		std::string map_Kdpbr;
-		std::string map_Kspbr;
-		std::string map_norm;
-		std::string map_bump;
-		std::string map_Ps;		// Sheen
-		std::string map_Pc;		// Clear Coat
-		std::string map_Pm;		// Metallic
+		bool hasMap(const std::string& needle) const {			
+			return maps.count(needle);
+		}
+		//std::string map_Ka;
+		//std::string map_Kd;
+		//std::string map_Ks;
+		//std::string map_Ke;
+		//std::string map_Kdpbr;
+		//std::string map_Kspbr;
+		//std::string map_norm;
+		//std::string map_bump;
+		//std::string map_Ps;		// Sheen
+		//std::string map_Pc;		// Clear Coat
+		//std::string map_Pm;		// Metallic
 	};
 
 	//struct SimpleMaterial : BaseMaterial

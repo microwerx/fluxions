@@ -342,7 +342,7 @@ namespace Fluxions
 		//		}
 
 		//		if (!gspath.empty() && !spGS->didCompile) {
-		//			HFLOGERROR("failed to load program %s because the geometryGroups shader did not compile.", p.name.c_str());
+		//			HFLOGERROR("failed to load program %s because the geometryGroups_ shader did not compile.", p.name.c_str());
 		//		}
 
 		//		RendererProgramPtr program = std::make_shared<RendererProgram>();
@@ -391,6 +391,7 @@ namespace Fluxions
 			texture2Ds[map].mappath = path;
 		}
 		loadTextures();
+		invalidate_caches();
 	}
 
 	void RendererContext::makeFramebuffers() {
@@ -600,6 +601,9 @@ namespace Fluxions
 		static const std::string TEXTURECUBE{ "textureCube" };
 		static const std::string PRETRANSFORM{ "pretransform" };
 		static const std::string POSTTRANSFORM{ "posttransform" };
+		static const std::string OPTIONS{ "options" };
+		static const std::string NOMAPS{ "nomaps" };
+		static const std::string NOMATS{ "nomats" };
 
 		if (svalarg1 && pcurRendererConfig) {
 			if (arg1 == ZONLY) {
@@ -735,6 +739,14 @@ namespace Fluxions
 				}
 				else if (arg1 == DRAW && arg2 == VIZ) {
 					pcurRendererConfig->renderVIZ = true;
+				}
+				else if (arg1 == OPTIONS) {
+					if (arg2 == NOMAPS) {
+						pcurRendererConfig->useMaps = false;
+					}
+					else if (arg2 == NOMATS) {
+						pcurRendererConfig->useMaterials = false;
+					}
 				}
 				else if (arg1 == WRITEFBO) {
 					if (!fbos.count(arg2)) return false;

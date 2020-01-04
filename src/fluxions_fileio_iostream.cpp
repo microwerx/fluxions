@@ -447,4 +447,41 @@ namespace Fluxions
 		}
 		return ostr;
 	}
+
+	std::ostream& WriteBinaryString(std::ostream& os, const std::string& str) {
+		int length = (int)str.size();
+		const char* cptr = str.c_str();
+		os.write(reinterpret_cast<char*>(&length), sizeof(long));
+		return os.write(cptr, length);
+	}
+
+	std::ostream& WriteBinaryStringMap(std::ostream& os, const string_string_map& m) {
+		unsigned count = (unsigned)m.size();
+		WriteBinaryElement(os, count);
+		for (auto& [k, v] : m) {
+			WriteBinaryString(os, k);
+			WriteBinaryString(os, v);
+		}
+		return os;
+	}
+
+	std::istream& ReadBinaryString(std::istream& is, std::string& str) {
+		unsigned length;
+		ReadBinaryElement(is, length);
+		str.resize(length);
+		return is.read(reinterpret_cast<char*>(&str[0]), length);
+	}
+
+	std::istream& ReadBinaryStringMap(std::istream& is, string_string_map& m) {
+		unsigned count{ 0 };
+		ReadBinaryElement(is, count);
+		for (unsigned i = 0; i < count; i++) {
+			std::string k;
+			std::string v;
+			ReadBinaryString(is, k);
+			ReadBinaryString(is, v);
+			m.insert_or_assign(k, v);
+		}
+		return is;
+	}
 }

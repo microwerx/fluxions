@@ -371,6 +371,7 @@ namespace Fluxions
 				object.size = size;
 				object.type = type;
 				HFLOGSTR(object.desc, "uniform (%02d) %20s %s", object.index, object.GetNameOfType(), name.c_str());
+				if (object.index < 0) continue;
 				HFLOGINFO(object.desc.c_str());
 			}
 
@@ -382,7 +383,6 @@ namespace Fluxions
 				object.size = size;
 				object.type = type;
 				HFLOGSTR(object.desc, "attrib  (%02d) %20s %s", object.index, object.GetNameOfType(), name.c_str());
-				if (object.index < 0) continue;
 				HFLOGINFO(object.desc.c_str());
 			}
 
@@ -413,7 +413,7 @@ namespace Fluxions
 				//const char* referencedDesc = (object.type == 1) ? "VS  " :
 				//	(object.type == 2) ? "  FS" :
 				//	(object.type == 3) ? "VSFS" : "    ";
-				HFLOGSTR(object.desc, "ublock  (%02i) x%2i ufrms%5i bytes %s",
+				HFLOGSTR(object.desc, "ublock  (%02i) x%3i ufrms%4i bytes %s",
 						 object.index,
 						 object.ubUniforms,
 						 object.size,
@@ -427,6 +427,8 @@ namespace Fluxions
 					//	}
 					//}
 					glGetActiveUniform(program, id, maxUniformLength, &length, &size, &object.type, buffer);
+					if (strstr(buffer, "[") && !strstr(buffer, "[0]"))
+						continue;
 					HFLOGINFO("uniform (%02d) %20s %s", id, object.GetNameOfType(), buffer);
 				}
 			}

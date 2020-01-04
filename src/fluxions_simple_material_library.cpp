@@ -24,6 +24,7 @@ namespace Fluxions
 
 		std::string name = fpi.fname;
 		std::string pathToMTL = fpi.path;
+		mtllibs[name] = pathToMTL;
 
 		std::vector<std::string> lines;
 		ReadLines(pathToMTL, lines, false);
@@ -109,38 +110,27 @@ namespace Fluxions
 			else if (str == "sheentint") {
 				curmtl->KclearcoatSheen.a = ReadFloat(istr);
 			}
-			else if (str == "map_Ka") {
-				readMap(istr, curmtl->map_Ka, fpi.dir);
-			}
-			else if (str == "map_Kd") {
-				readMap(istr, curmtl->map_Kd, fpi.dir);
-			}
-			else if (str == "map_Ks") {
-				readMap(istr, curmtl->map_Ks, fpi.dir);
-			}
-			else if (str == "map_Ke") {
-				readMap(istr, curmtl->map_Ke, fpi.dir);
-			}
-			else if (str == "map_Kdpbr") {
-				readMap(istr, curmtl->map_Kdpbr, fpi.dir);
-			}
-			else if (str == "map_Kspbr") {
-				readMap(istr, curmtl->map_Kspbr, fpi.dir);
-			}
-			else if (str == "map_Ps") {
-				readMap(istr, curmtl->map_Ps, fpi.dir);
-			}
-			else if (str == "map_Pc") {
-				readMap(istr, curmtl->map_Pc, fpi.dir);
-			}
-			else if (str == "map_Pm") {
-				readMap(istr, curmtl->map_Pm, fpi.dir);
-			}
-			else if (str == "map_norm" || str == "norm") {
-				readMap(istr, curmtl->map_norm, fpi.dir);
-			}
-			else if (str == "map_bump" || str == "bump") {
-				readMap(istr, curmtl->map_bump, fpi.dir);
+			else if (str.substr(0, 4) == "map_") {
+				std::string mapName = str;
+				std::string pathToMap = ReadString(istr);
+				curmtl->maps[mapName] = pathToMap;
+				readMap(pathToMap, mapName, fpi.dir);
+
+				if (str == "map_Kd") {
+					curmtl->Kd.a = 1.0f;
+				}
+				else if (str == "map_Ks") {
+					curmtl->Ks.a = 1.0f;
+				}
+				else if (str == "map_Ke") {
+					curmtl->Ke.a = 1.0f;
+				}
+				else if (str == "map_Kdpbr") {
+					curmtl->Kdroughness.a = 1.0f;
+				}
+				else if (str == "map_Kspbr") {
+					curmtl->Ksroughness.a = 1.0f;
+				}
 			}
 			else if (!str.empty()) {
 				HFLOGWARN("property %s not officially supported", str.c_str());
@@ -178,17 +168,9 @@ namespace Fluxions
 			WriteLabel(fout, "Pcr"); WriteFloat(fout, alphaToShininess(mtl.KclearcoatSheen.g)) << endl;
 			WriteLabel(fout, "sheen"); WriteFloat(fout, alphaToShininess(mtl.KclearcoatSheen.b)) << endl;
 			WriteLabel(fout, "sheentint"); WriteFloat(fout, alphaToShininess(mtl.KclearcoatSheen.a)) << endl;
-			printMap(fout, "map_Ka", mtl.map_Ka) << endl;
-			printMap(fout, "map_Kd", mtl.map_Kd) << endl;
-			printMap(fout, "map_Ks", mtl.map_Ks) << endl;
-			printMap(fout, "map_Ke", mtl.map_Ke) << endl;
-			printMap(fout, "map_Kdpbr", mtl.map_Kdpbr) << endl;
-			printMap(fout, "map_Kspbr", mtl.map_Kspbr) << endl;
-			printMap(fout, "map_Ps", mtl.map_Ps) << endl;
-			printMap(fout, "map_Pc", mtl.map_Pc) << endl;
-			printMap(fout, "map_Pm", mtl.map_Pm) << endl;
-			printMap(fout, "map_norm", mtl.map_norm) << endl;
-			printMap(fout, "map_bump", mtl.map_bump) << endl;
+			for (auto& map : mtl.maps) {
+				printMap(fout, map.first, map.second) << endl;
+			}
 		}
 		return true;
 	}
@@ -205,10 +187,10 @@ namespace Fluxions
 				XmlBeginTag(mtlxml_fout, "material", "Native", 2) << "\n";
 
 				bool isMetal = enableSpecular && mtl.KmetallicSpecular.r > 0.0f;
-				if (!mtl.map_Kd.empty()) {
+				if (mtl.hasMap("map_Kd")) {
 					XmlBeginTag(mtlxml_fout, "diffuse", 3) << "\n";
 					XmlBeginTag(mtlxml_fout, "map", "Reference", 4);
-					mtlxml_fout << mtl.map_Kd;
+					mtlxml_fout << mtl.maps.at("map_Kd");
 					XmlEndTag(mtlxml_fout, "map") << "\n";
 					XmlEndTag(mtlxml_fout, "diffuse", 3) << "\n";
 				}
@@ -253,6 +235,16 @@ namespace Fluxions
 		return true;
 	}
 
+	int SimpleMaterialLibrary::getMaterialIndex(const std::string& materialName) const {
+		int id = 0;
+		for (auto& mtl : mtls) {
+			if (mtl.name == materialName) break;
+			id++;
+		}
+		if (id >= mtls.size()) return 0;
+		return id;
+	}
+
 	SimpleMaterial* SimpleMaterialLibrary::set_mtl(std::string&& name) {
 		SimpleMaterial newmtl;
 		newmtl.name = std::move(name);
@@ -266,12 +258,12 @@ namespace Fluxions
 		}
 
 		// add to end
-		newmtl.renderIndex = mtls.size();
+		newmtl.renderIndex = (int)mtls.size();
 		mtls.push_back(newmtl);
+		return &mtls.back();
 	}
 
-	bool SimpleMaterialLibrary::readMap(std::istream& istr, std::string& mapname, std::string& basepath) {
-		std::string pathToMap = ReadString(istr);
+	bool SimpleMaterialLibrary::readMap(std::string& pathToMap, std::string& mapname, std::string& basepath) {
 		FilePathInfo fpi(basepath + pathToMap);
 
 		// Check if we have added this map already
@@ -293,7 +285,7 @@ namespace Fluxions
 		}
 
 		// update the information in the map list
-		mapname = fpi.fname;
+		mapname = fpi.fullfname;
 		maps[mapname] = pathToMap;
 		return true;
 	}

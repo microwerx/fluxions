@@ -33,8 +33,8 @@ namespace Fluxions
 		GLenum type = 0;
 		GLsizei firstIndex = 0;
 		GLsizei firstZIndex = 0;
-		mutable GLsizei baseZIndexBufferOffset = 0;
-		mutable GLsizei baseIndexBufferOffset = 0;
+		mutable GLsizeiptr baseZIndexBufferOffset = 0;
+		mutable GLsizeiptr baseIndexBufferOffset = 0;
 
 		// Scene graph information
 		GLuint groupId = 0;
@@ -42,6 +42,7 @@ namespace Fluxions
 		GLuint programId = 0;
 		GLuint mtlId = 0;
 		GLuint mtllibId = 0;
+		GLint drawMtlId{ -1 };
 
 		std::string mtlName;
 		std::string mtllibName;

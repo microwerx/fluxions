@@ -184,6 +184,6 @@
 #include <viperfish_xinput.hpp>
 */
 
-constexpr int MAX_RUN_MESSAGES = 2;
+constexpr int MAX_RUN_MESSAGES = 0;
 
 #endif

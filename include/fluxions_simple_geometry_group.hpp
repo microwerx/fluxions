@@ -13,10 +13,9 @@ namespace Fluxions
 		FilePathInfo fpi;
 
 		std::string objectName;
-		std::string mtllibName;
-
+		//std::string mtllibName;
 		unsigned objectId = 0;
-		unsigned mtllibId = 0;
+		//unsigned mtllibId = 0;
 
 		virtual const char* nodetype() const noexcept { return "SimpleGeometryGroup"; }
 	};

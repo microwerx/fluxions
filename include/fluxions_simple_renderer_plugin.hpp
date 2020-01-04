@@ -1,6 +1,8 @@
 #ifndef FLUXIONS_SIMPLE_RENDERER_PLUGIN_HPP
 #define FLUXIONS_SIMPLE_RENDERER_PLUGIN_HPP
 
+#include <fluxions_base.hpp>
+
 namespace Fluxions
 {
 	class SimpleSceneGraph;

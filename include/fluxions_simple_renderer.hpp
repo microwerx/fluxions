@@ -56,23 +56,21 @@ namespace Fluxions
 
 		struct BUFFERINFO
 		{
-			GLsizei zVertexOffset = 0;
-			GLsizei zVertexSize = 0;
-			GLsizei fastVertexOffset = 0;
-			GLsizei fastVertexSize = 0;
-			GLsizei slowVertexOffset = 0;
-			GLsizei slowVertexSize = 0;
+			GLsizeiptr zVertexOffset = 0;
+			GLsizeiptr zVertexSize = 0;
+			GLsizeiptr fastVertexOffset = 0;
+			GLsizeiptr fastVertexSize = 0;
+			GLsizeiptr slowVertexOffset = 0;
+			GLsizeiptr slowVertexSize = 0;
 
-			GLsizei zIndexOffset = 0;
-			GLsizei zIndexSize = 0;
-			GLsizei IndexOffset = 0;
-			GLsizei IndexSize = 0;
+			GLsizeiptr zIndexOffset = 0;
+			GLsizeiptr zIndexSize = 0;
+			GLsizeiptr IndexOffset = 0;
+			GLsizeiptr IndexSize = 0;
 
-			GLsizei vertexBufferSizeInBytes = 0;
-			GLsizei indexBufferSizeInBytes = 0;
-		};
-
-		BUFFERINFO bufferInfo;
+			GLsizeiptr vertexBufferSizeInBytes = 0;
+			GLsizeiptr indexBufferSizeInBytes = 0;
+		} bufferInfo;
 
 		SimpleFastVertex currentFastVertex;
 		SimpleSlowVertex currentSlowVertex;
@@ -141,7 +139,7 @@ namespace Fluxions
 		void ApplyIdToMtlNames(const std::string& mtlName, GLuint id);
 		void AssignUniqueGroupIds();
 
-		void AssignMaterialIds(SimpleMaterialSystem& materials);
+		//void AssignMaterialIds(SimpleMaterialSystem& materials);
 
 		void Begin(GLenum mode, bool isIndexed = false);
 		void End();
@@ -176,12 +174,15 @@ namespace Fluxions
 		void BoneWeight4f(Vector4f v) { VertexAttrib4f(BONEWEIGHT, v.x, v.y, v.z, v.w); }
 		void Attrib24f(Vector4f v) { VertexAttrib4f(ATTRIB2, v.x, v.y, v.z, v.w); }
 
-		void BuildBuffers();
+		bool BuildBuffers();
 		void BindBuffers();
 		void reset();
 		void Render();
 		void RenderIf(const std::string& objectName, const std::string& groupName, const std::string& mtllibName, const std::string& mtlName, bool onlyRenderZ = false);
 		void RenderIf(GLuint objectId = 0, GLuint groupId = 0, GLuint mtllibId = 0, GLuint mtlId = 0, bool onlyRenderZ = false);
+		int RenderIf(GLuint objectId, int mtlId, bool onlyRenderZ = false);
+		void RenderFast();
+		void RenderSlow();
 		void RenderZOnly();
 
 		//void Configure(RendererContext *pRenderer);

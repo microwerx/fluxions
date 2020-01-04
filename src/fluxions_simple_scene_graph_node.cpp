@@ -22,7 +22,8 @@ namespace Fluxions
 	bool SimpleSceneGraphNode::write(std::ostream& ostr) const {
 		ostr << "\ntransform ";
 		WriteAffineMatrix4f(ostr, transform) << "\n";
-		ostr << keyword() << " \"" << name() << "\" ";
+		WriteLabel(ostr, keyword());
+		WriteString(ostr, name()) << "\n";
 		return true;
 	}
 }
