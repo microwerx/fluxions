@@ -202,7 +202,7 @@ namespace Fluxions
 			for (auto& [mtlname, mtllib] : mesh.Materials) {
 				std::ostringstream obj_pathname;
 				obj_pathname << export_path_prefix + "geometry/";
-				obj_pathname << ssg.name << "_";
+				obj_pathname << ssg.name() << "_";
 				obj_pathname << std::setw(3) << std::setfill('0') << obj_count << "_";
 				obj_pathname << "object_" << objname << "_";
 				obj_pathname << mtlname << ".obj";

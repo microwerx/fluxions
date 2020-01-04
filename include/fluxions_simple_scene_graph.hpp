@@ -36,7 +36,7 @@ namespace Fluxions
 
 	class SimpleSceneGraph : public IBaseObject {
 	public:
-		std::string name;
+		//std::string name;
 		std::vector<std::string> sceneFileLines;
 		std::vector<std::string> pathsToTry;
 		std::vector<FileTypeStringPair> pathsToLoad;

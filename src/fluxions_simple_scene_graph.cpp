@@ -111,7 +111,7 @@ namespace Fluxions
 
 	bool SimpleSceneGraph::Load(const std::string& filename) {
 		FilePathInfo scenefpi(filename);
-		name = scenefpi.fname;
+		setName(scenefpi.fname);
 		std::ifstream fin(filename.c_str());
 
 		if (!fin) {
@@ -573,7 +573,7 @@ namespace Fluxions
 
 	bool SimpleSceneGraph::write(std::ostream& ostr) const {
 		WriteLabel(ostr, "mtllib");
-		WriteString(ostr, name + ".mtl") << "\n";
+		WriteString(ostr, name_str() + ".mtl") << "\n";
 
 		for (auto& [k, n] : cameras) {
 			n.write(ostr);

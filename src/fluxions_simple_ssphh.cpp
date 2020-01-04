@@ -38,7 +38,7 @@ namespace Fluxions
 			HFLOGERROR("ssphh pointer is nullptr");
 		}
 		HFLOGINFO("SSPHH INIT");
-		sceneName = ssg.name;
+		sceneName = ssg.name_str();
 		sphls_ = &ssphh->ssphhLights;
 		size_ = sphls_->size();
 		S.resize(size_);
