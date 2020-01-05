@@ -117,6 +117,21 @@ namespace Vf
 		ImGui::Text("Size: [ %3.2f %3.2f %3.2f ]", bbox.Size().x, bbox.Size().y, bbox.Size().z);
 	}
 
+	inline void ImGuiAlignAt(float& offset, const char* referencestr = nullptr) {
+		if (offset == 0.0f && referencestr) {
+			ImVec2 box = ImGui::CalcTextSize(referencestr);
+			offset = box.x;
+		}
+		ImGui::SameLine(offset);
+	}
+
+	inline void ImGui2NSlider(const char* desc, int* choice, int* size, int minvalue, int maxvalue) {
+		ImGui::SliderInt(desc, choice, minvalue, maxvalue);
+		ImGui::SameLine();
+		ImGui::Text("= %d", 2 << *choice);
+		*size = 2 << *choice;
+	}
+
 } // namespace Vf
 
 #endif // VIPERFISH_DEAR_IMGUI_HPP
