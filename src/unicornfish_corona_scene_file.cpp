@@ -40,9 +40,9 @@ namespace Uf
 									ssg.camera.fov);
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
-		writer.extra_tags.push_back({ "conffile", fpi.path + "export_corona_ground_truth.conf" });
+		writer.extra_tags.push_back({ "conffile", "export_corona_ground_truth.conf" });
 		writer.enableKs = enableKs;
-		ssg.Save(filename, &writer);
+		ssg.Save(fpi.fullfname, &writer);
 		return;
 	}
 
@@ -58,9 +58,9 @@ namespace Uf
 								Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
-		writer.extra_tags.push_back({ "conffile", fpi.path + "export_corona_ground_truth.conf" });
+		writer.extra_tags.push_back({ "conffile", "export_corona_ground_truth.conf" });
 		writer.enableKs = enableKs;
-		ssg.Save(filename, &writer);
+		ssg.Save(fpi.fullfname, &writer);
 	}
 
 	void CoronaSceneFile::writeSkySCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg) {
@@ -70,10 +70,10 @@ namespace Uf
 								Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
-		writer.extra_tags.push_back({ "conffile", fpi.path + "ssphh_sky.conf" });
+		writer.extra_tags.push_back({ "conffile", "ssphh_sky.conf" });
 		writer.enableKs = enableKs;
 		writer.write_geometry = false;
-		ssg.Save(filename, &writer);
+		ssg.Save(fpi.fullfname, &writer);
 	}
 
 	bool CoronaSceneFile::writeSphlVizSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, int sourceLightIndex, int receivingLightIndex) {
@@ -91,7 +91,7 @@ namespace Uf
 		Fluxions::XmlSceneGraphWriter writer;
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
-		writer.extra_tags.push_back({ "conffile", fpi.path + "sphlviz.conf" });
+		writer.extra_tags.push_back({ "conffile", "sphlviz.conf" });
 		writer.enableKs = enableKs;
 
 		// Camera
@@ -117,7 +117,7 @@ namespace Uf
 				0.0f, 0.0f, 0.0f, 1.0f);
 			if (!fpi.Exists()) {
 				HFLOGINFO("Writing out sphlviz.mtl");
-				std::ofstream svout(fpi.path + "sphlviz.mtl");
+				std::ofstream svout("sphlviz.mtl");
 				svout << "<mtlLib>"
 					"<materialDefinition name = \"sphlSphereLight\">"
 					"<material class = \"Native\">"
@@ -144,7 +144,7 @@ namespace Uf
 			Fx::XmlEndTag(fout, "geometryGroup", 1) << "\n";
 			writer.extra_tags.push_back({ "", fout.str() });
 		}
-		ssg.Save(filename, &writer);
+		ssg.Save(fpi.fullfname, &writer);
 		return true;
 	}
 
