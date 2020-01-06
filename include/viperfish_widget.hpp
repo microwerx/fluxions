@@ -106,8 +106,8 @@ namespace Vf
 
 		inline float getX() const { return windowRect_.x; }
 		inline float getY() const { return windowRect_.y; }
-		inline float getHeight() const { return windowRect_.w; }
-		inline float getWidth() const { return windowRect_.h; }
+		inline float getWidth() const { return windowRect_.w; }
+		inline float getHeight() const { return windowRect_.h; }
 		inline int getXi() const { return (int)windowRect_.x; }
 		inline int getYi() const { return (int)windowRect_.y; }
 		inline int getHeighti() const { return (int)windowRect_.w; }
