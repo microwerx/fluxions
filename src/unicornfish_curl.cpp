@@ -72,7 +72,7 @@ namespace Uf
 
 	size_t Curl::write_callback(char *buffer, size_t size, size_t nitems, void *instream)
 	{
-		if (!instream)
+		if (!instream || nitems == 0)
 			return 0;
 		StringTimePair *data = (Curl::StringTimePair *)instream;
 
