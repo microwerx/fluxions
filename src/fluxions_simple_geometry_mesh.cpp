@@ -369,9 +369,51 @@ namespace Fluxions
 				size_t j2 = j1 + 1;
 				size_t j3 = j1 + 2;
 				fout << "f ";
-				fout << Indices[j1] << "/" << Indices[j1] << "/" << Indices[j1] << " ";
-				fout << Indices[j2] << "/" << Indices[j2] << "/" << Indices[j2] << " ";
-				fout << Indices[j3] << "/" << Indices[j3] << "/" << Indices[j3] << "\n";
+				WriteIndices(fout, Indices[j1], Indices[j1], Indices[j1]);
+				WriteIndices(fout, Indices[j2], Indices[j2], Indices[j2]);
+				WriteIndices(fout, Indices[j3], Indices[j3], Indices[j3]) << "\n";
+			}
+
+			totalVertices += surface.count;
+			count++;
+		}
+		return count;
+	}
+
+	int SimpleGeometryMesh::saveOBJByMaterial(const std::string& filename,
+											  const std::string& materialName,
+											  int materialId) const {
+		int count = 0;
+
+		std::ofstream fout(filename.c_str());
+
+		size_t totalVertices = 0;
+		for (auto& surface : Surfaces) {
+			if (surface.materialName != materialName) continue;
+
+			// 1. Output Vertices
+			for (unsigned i = 0; i < surface.count; i++) {
+				const Vertex& v = Vertices[(size_t)surface.first + i];
+				fout << "v ";
+				WriteVector3f(fout, v.position) << "\n";
+				fout << "vn ";
+				WriteVector3f(fout, v.normal) << "\n";
+				fout << "vt ";
+				WriteVector2f(fout, v.texcoord) << "\n";
+			}
+
+			fout << "o " << surface.surfaceName << "\n";
+			fout << "usemtl " << materialId << "\n";
+
+			// 2. Output Faces
+			for (size_t i = 0; i < surface.count; i += 3) {
+				size_t j1 = totalVertices + i;
+				size_t j2 = j1 + 1;
+				size_t j3 = j1 + 2;
+				fout << "f ";
+				WriteIndices(fout, Indices[j1], Indices[j1], Indices[j1]);
+				WriteIndices(fout, Indices[j2], Indices[j2], Indices[j2]);
+				WriteIndices(fout, Indices[j3], Indices[j3], Indices[j3]) << "\n";
 			}
 
 			totalVertices += surface.count;
@@ -464,6 +506,11 @@ namespace Fluxions
 
 		for (auto& v : Vertices) {
 			BoundingBox += v.position;
+		}
+
+		Materials.clear();
+		for (auto& surface : Surfaces) {
+			Materials[surface.materialName] = surface.materialLibrary;
 		}
 
 		fin.close();

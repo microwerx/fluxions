@@ -49,6 +49,7 @@ struct XmlSceneGraphWriter : SceneGraphWriter {
 	bool write_geometry{ true };
 	bool enableKs{ true };
 	bool clearCache{ true };
+	std::string export_confname;
 	std::string export_path_prefix{ "./xml_scn_output/" };
 private:
 	std::string cameraType_ = "perspective";
@@ -69,6 +70,7 @@ private:
 	void _writeCamera(std::ostream& ostr);
 	void _writeSun(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
 	void _writeGeometryGroups(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
+	void _writeConf(const std::string& path, const Fluxions::SimpleSceneGraph& ssg);
 
 	using string_string_Matrix4f = std::tuple<std::string, std::string, Fluxions::Matrix4f>;
 	std::vector<string_string_Matrix4f> geometryGroups_;

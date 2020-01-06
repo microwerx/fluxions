@@ -51,6 +51,9 @@ namespace Fluxions
 		int saveOBJByMaterial(const std::string& filename,
 							  const std::string& mtllib,
 							  const std::string& materialName) const;
+		int saveOBJByMaterial(const std::string& filename,
+							  const std::string& materialName,
+							  int materialId) const;
 		bool saveCache(const std::string& filename) const;
 		bool loadCache(const std::string& filename);
 		void computeTangentVectors();

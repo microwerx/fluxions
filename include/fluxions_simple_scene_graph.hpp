@@ -42,6 +42,9 @@ namespace Fluxions
 		std::vector<FileTypeStringPair> pathsToLoad;
 		Matrix4f currentTransform;
 
+		float requestedExposure{ 0.0f };
+		Vector2f requestedResolution{ 1024, 512 };
+
 	public:
 		SimpleCamera camera;
 		SimpleEnvironment environment;

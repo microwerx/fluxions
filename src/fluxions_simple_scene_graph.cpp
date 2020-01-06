@@ -257,12 +257,12 @@ namespace Fluxions
 		//fout << "camera ";
 		//if (camera.isOrtho) {
 		//	fout << "ortho_tmw ";
-		//	WriteAffineMatrix4f(fout, camera.viewMatrix);
+		//	WriteAffineMatrix4f(fout, camera.viewMatrix_);
 		//	fout << camera.width;
 		//}
 		//else {
 		//	fout << "perspective_tmf ";
-		//	WriteAffineMatrix4f(fout, camera.viewMatrix);
+		//	WriteAffineMatrix4f(fout, camera.viewMatrix_);
 		//	fout << camera.fov;
 		//}
 		//fout << "\n";

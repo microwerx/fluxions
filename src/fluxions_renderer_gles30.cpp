@@ -149,6 +149,8 @@ namespace Fluxions
 		Matrix4f projectionMatrix_;
 		Matrix4f cameraMatrix_;
 		Matrix4f worldMatrix_;
+		float fov = pSSG->camera.fov;
+		float width = pSSG->camera.width;
 
 		if (pRendererConfig->useSceneProjection) {
 			projectionMatrix_.LoadIdentity();
@@ -160,16 +162,23 @@ namespace Fluxions
 		}
 		else {
 			projectionMatrix_ = pRendererConfig->viewportProjectionMatrix;
+			fov = pRendererConfig->viewportFovInDegrees;
 		}
 
 		if (pRendererConfig->useSceneCamera) {
 			cameraMatrix_ *= pRendererConfig->preCameraMatrix;
-			cameraMatrix_ *= pSSG->camera.viewMatrix;
+			cameraMatrix_ *= pSSG->camera.viewMatrix();
 			cameraMatrix_ *= pRendererConfig->postCameraMatrix;
 		}
 		else {
 			cameraMatrix_ *= pRendererConfig->preCameraMatrix;
 			cameraMatrix_ *= pRendererConfig->postCameraMatrix;
+		}
+
+		if (pRendererConfig->renderSceneGraph) {
+			pSSG->camera.actualViewMatrix = cameraMatrix_;
+			pSSG->camera.actualFov = fov;
+			pSSG->camera.actualWidth = width;
 		}
 
 		pRendererConfig->projectionMatrix = projectionMatrix_;

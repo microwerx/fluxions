@@ -7,6 +7,12 @@
 
 namespace Fluxions
 {
+	const Fluxions::Matrix4f notusedfixMatrix(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, -1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+
 	bool SceneGraphWriter::open(const char* path) {
 		fout.open(path);
 		if (!fout) return false;
@@ -24,21 +30,28 @@ namespace Fluxions
 
 	// XML SCENE GRAPH WRITER
 
+	bool make_path(const std::filesystem::path& path) {
+		if (!std::filesystem::exists(path)) {
+			if (!std::filesystem::is_directory(path)) {
+				std::filesystem::create_directory(path);
+			}
+		}
+		return std::filesystem::is_directory(path);
+	}
+
 	bool XmlSceneGraphWriter::open(const char* path) {
-		FilePathInfo ssgfpi(export_path_prefix);
-		if (!ssgfpi.IsDirectory()) {
-			HFLOGERROR("Cannot export, '%s' is a regular file", ssgfpi.path.c_str());
+		if (!make_path(export_path_prefix)) {
+			HFLOGERROR("'%s' is a file or cannot be created", export_path_prefix.c_str());
 			return false;
 		}
-		if (ssgfpi.DoesNotExist()) {
-			std::filesystem::path ssgpath(export_path_prefix);
-			std::filesystem::path ssgassetspath(export_path_prefix + "assets");
-			std::filesystem::path ssggeometrypath(export_path_prefix + "geometry");
-			std::filesystem::create_directory(ssgpath);
-			std::filesystem::create_directory(ssgassetspath);
-			std::filesystem::create_directory(ssggeometrypath);
+		if (!make_path(export_path_prefix + "assets")) {
+			HFLOGERROR("'%sassets' is a file or cannot be created", export_path_prefix.c_str());
+			return false;
+		};
+		if (!make_path(export_path_prefix + "geometry")) {
+			HFLOGERROR("'%sgeometry' is a file or cannot be created", export_path_prefix.c_str());
+			return false;
 		}
-
 		fout.open(export_path_prefix + path);
 		if (!fout) return false;
 		return true;
@@ -76,6 +89,10 @@ namespace Fluxions
 
 		XmlEndTag(fout, "scene") << "\n";
 
+		if (!export_confname.empty()) {
+			_writeConf(export_path_prefix + export_confname, *ssg);
+		}
+
 		return true;
 	}
 
@@ -103,15 +120,11 @@ namespace Fluxions
 	}
 
 	void XmlSceneGraphWriter::_writeCamera(std::ostream& ostr) {
-		Matrix4f fixMatrix(
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, -1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
 		XmlBeginTag(ostr, "camera", cameraType_, 1) << "\n";
 		if (cameraType_ == "perspective") {
-			Fluxions::Matrix4f fixed = cameraMatrix_ * fixMatrix;
-			XmlMatrix4f(ostr, "tm", fixed, 2) << "\n";
+			XmlVector3f(ostr, "origin", cameraOrigin_, 2) << "\n";
+			XmlVector3f(ostr, "target", cameraTarget_, 2) << "\n";
+			XmlVector3f(ostr, "roll", cameraRoll_, 2) << "\n";
 			XmlFloat(ostr, "fov", cameraHFovInDegrees_, 2) << "\n";
 		}
 		if (cameraType_ == "cubemap") {
@@ -125,8 +138,9 @@ namespace Fluxions
 	void XmlSceneGraphWriter::_writeSun(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg) {
 		XmlString(ostr, "mtllib", lights_mtllib, 1) << "\n";
 		XmlBeginTag(ostr, "sun", 1) << "\n";
-		Vector3f sunDirTo(ssg.environment.curSunDirTo.x, -ssg.environment.curSunDirTo.z, ssg.environment.curSunDirTo.y);
+		Vector3f sunDirTo(ssg.environment.curSunDirTo.x, ssg.environment.curSunDirTo.y, ssg.environment.curSunDirTo.z);
 		XmlVector3f(ostr, "dirTo", sunDirTo, 2) << "\n";
+		XmlVector3f(ostr, "dirUp", { 0.0f, 1.0f, 0.0f }, 2) << "\n";
 		XmlFloat(ostr, "turbidity", ssg.environment.pbsky.GetTurbidity(), 2) << "\n";
 		XmlEndTag(ostr, "sun", 1) << "\n\n";
 
@@ -167,7 +181,7 @@ namespace Fluxions
 		lights_mtllib_fout << "\t<map class = \"Sky\" originalMapClass = \"SkyShader\">\n";
 		XmlVector3f(lights_mtllib_fout, "groundColor", ssg.environment.pbsky.GetGroundAlbedo().ToVector3(), 2) << "\n";
 		XmlEndTag(lights_mtllib_fout, "map", 1) << "\n";
-		XmlEndTag(lights_mtllib_fout, "mapDefinition", 1) << "\n\n";
+		XmlEndTag(lights_mtllib_fout, "mapDefinition", 1) << "\n";
 
 		for (unsigned i = 0; i < ssg.pointLights.size(); i++) {
 			std::ostringstream name;
@@ -178,7 +192,7 @@ namespace Fluxions
 			XmlVector3f(lights_mtllib_fout, "color", Fluxions::Vector3f(ssg.pointLights[i].E0 / size), 4) << "\n";
 			XmlEndTag(lights_mtllib_fout, "emission", 3) << "\n";
 			XmlEndTag(lights_mtllib_fout, "material", 2) << "\n";
-			XmlEndTag(lights_mtllib_fout, "materialDefinition", 1) << "\n\n";
+			XmlEndTag(lights_mtllib_fout, "materialDefinition", 1) << "\n";
 		}
 
 		XmlEndTag(lights_mtllib_fout, "mtlLib") << "\n";
@@ -200,27 +214,29 @@ namespace Fluxions
 		int obj_count = 0;
 		for (auto& [objname, mesh] : ssg.staticMeshes) {
 			for (auto& [mtlname, mtllib] : mesh.Materials) {
+				std::string idmtlname = mtlname;
+				toidentifier(idmtlname);
+				tolower(idmtlname);
+				std::string idobjname = ssg.staticMeshes.getNameFromHandle(objname);
+				toidentifier(idobjname);
+				tolower(idobjname);
+
 				std::ostringstream obj_pathname;
-				obj_pathname << export_path_prefix + "geometry/";
+				obj_pathname << "geometry/";
 				obj_pathname << ssg.name() << "_";
 				obj_pathname << std::setw(3) << std::setfill('0') << obj_count << "_";
-				obj_pathname << "object_" << objname << "_";
-				obj_pathname << mtlname << ".obj";
-				std::string OBJpath = obj_pathname.str();
-				HFLOGINFO("Writing out '%s'", OBJpath.c_str());
-				mesh.saveOBJ(OBJpath);
+				obj_pathname << "object_" << idobjname << "_";
+				obj_pathname << idmtlname << ".obj";
+				std::string objectPath = export_path_prefix + obj_pathname.str();
+				HFLOGINFO("Writing out '%s'", objectPath.c_str());
+				if (!std::filesystem::exists(objectPath)) {
+					mesh.saveOBJByMaterial(objectPath, mtlname, 1);
+				}
 
 				auto& group = ssg.geometryGroups[objname];
 
-				const Fluxions::Matrix4f fixMatrix(
-					1.0f, 0.0f, 0.0f, 0.0f,
-					0.0f, 0.0f, -1.0f, 0.0f,
-					0.0f, 1.0f, 0.0f, 0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f);
-
-				std::string objectPath = obj_pathname.str();
-				Fluxions::Matrix4f transform = fixMatrix * group.worldMatrix();
-				geometryGroups_.push_back(string_string_Matrix4f(objectPath, mtlname, transform));
+				Fluxions::Matrix4f transform = group.worldMatrix();
+				geometryGroups_.push_back(string_string_Matrix4f(obj_pathname.str(), mtlname, transform));
 
 				obj_count++;
 			}
@@ -244,32 +260,59 @@ namespace Fluxions
 		for (const auto& [mapname, mappath] : ssg.materials.maps) {
 			FilePathInfo fpi(mappath);
 			std::string asset_path = export_path_prefix + "assets/" + fpi.fullfname;
-			std::filesystem::copy_file(mappath, asset_path);
+			if (std::filesystem::exists(asset_path)) continue;
+			if (std::filesystem::exists(mappath)) {
+				try {
+					std::filesystem::copy_file(mappath, asset_path);
+				}
+				catch (const std::filesystem::filesystem_error & e) {
+					HFLOGERROR("file cannot be copied: '%s'", mappath.c_str());
+					HFLOGERROR("system reported '%s'", e.what());
+				}
+			}
+			else {
+				HFLOGWARN("file does not exist: '%s'", mappath.c_str());
+			}
 		}
 	}
 
 	void XmlSceneGraphWriter::_writeGeometryGroups(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg) {
 		_writeCache(ssg);
 		XmlBeginTag(ostr, "mtllib", 1);
-		ostr << "materials_corona.mtl";
-		XmlEndTag(ostr, "mtllib");
-		XmlBeginTag(ostr, "mtllib", 1);
 		ostr << "materials_corona-maps.mtl";
-		XmlEndTag(ostr, "mtllib");
+		XmlEndTag(ostr, "mtllib") << "\n";
 		XmlBeginTag(ostr, "mtllib", 1);
-		ostr << lights_mtllib;
-		XmlEndTag(ostr, "mtllib");
+		ostr << "materials_corona.mtl";
+		XmlEndTag(ostr, "mtllib") << "\n";
 		ostr << "\n";
 		for (auto& gg : geometryGroups_) {
 			XmlBeginTag(ostr, "geometryGroup", 1) << "\n";
-			XmlBeginTag(ostr, "object", "file", 2) << std::get<0>(gg);
-			XmlEndTag(ostr, "object") << "\n";
+
 			XmlBeginTag(ostr, "instance", 2) << "\n";
 			XmlBeginTag(ostr, "material", "Reference", 3) << std::get<1>(gg);
 			XmlEndTag(ostr, "material", 0) << "\n";
 			XmlMatrix4f(ostr, "transform", std::get<2>(gg), 3) << "\n";
 			XmlEndTag(ostr, "instance", 2) << "\n";
-			XmlEndTag(ostr, "geometryGroup", 1) << "\n";
+
+			XmlBeginTag(ostr, "object", "file", 2) << std::get<0>(gg);
+			XmlEndTag(ostr, "object") << "\n";
+
+			XmlEndTag(ostr, "geometryGroup", 1) << "\n\n";
 		}
+	}
+
+	void XmlSceneGraphWriter::_writeConf(const std::string& path, const Fluxions::SimpleSceneGraph& ssg) {
+		std::ofstream conf(path);
+		if (ssg.requestedResolution.lengthSquared() > 1) {
+			if (cameraType_ == "cubemap") {
+				conf << "       Int image.width  = " << (ssg.requestedResolution.y * 6.0f) << "\n";
+				conf << "       Int image.height = " << ssg.requestedResolution.y << "\n";
+			}
+			else {
+				conf << "       Int image.width  = " << ssg.requestedResolution.x << "\n";
+				conf << "       Int image.height = " << ssg.requestedResolution.y << "\n";
+			}
+		}
+		conf << "     Float colorMap.simpleExposure = " << ssg.requestedExposure << "\n";
 	}
 } // namespace Fluxions

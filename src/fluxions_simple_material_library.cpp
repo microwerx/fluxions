@@ -182,7 +182,10 @@ namespace Fluxions
 		XmlBeginTag(mtlxml_fout, "mtlLib") << endl;
 		if (flags & WRITE_MATERIALS) {
 			bool enableSpecular = (flags & WRITE_SPECULAR);
+			int materialNumber = 0;
 			for (const auto& mtl : mtls) {
+				XmlComment(mtlxml_fout, "Material" + std::to_string(materialNumber++));
+
 				XmlBeginTag(mtlxml_fout, "materialDefinition", "name", mtl.name, 1) << "\n";
 				XmlBeginTag(mtlxml_fout, "material", "Native", 2) << "\n";
 
@@ -190,7 +193,9 @@ namespace Fluxions
 				if (mtl.hasMap("map_Kd")) {
 					XmlBeginTag(mtlxml_fout, "diffuse", 3) << "\n";
 					XmlBeginTag(mtlxml_fout, "map", "Reference", 4);
-					mtlxml_fout << mtl.maps.at("map_Kd");
+					std::string map_name = "assets/" + mtl.maps.at("map_Kd");
+					toidentifier(map_name);
+					mtlxml_fout << map_name;
 					XmlEndTag(mtlxml_fout, "map") << "\n";
 					XmlEndTag(mtlxml_fout, "diffuse", 3) << "\n";
 				}
@@ -220,14 +225,19 @@ namespace Fluxions
 				}
 
 				XmlEndTag(mtlxml_fout, "material", 2) << "\n";
-				XmlEndTag(mtlxml_fout, "materialDefinition", 1) << "\n";
+				XmlEndTag(mtlxml_fout, "materialDefinition", 1) << "\n\n";
 			}
 		}
 
 		if (flags & WRITE_MAPS) {
 			XmlComment(mtlxml_fout, "Texture Maps", 1) << "\n\n";
 			for (auto& [mapName, imagePath] : maps) {
-				XmlCoronaMapTexture(mtlxml_fout, "mapDefinition", mapName, imagePath, 1, 2.2f) << "\n";
+				std::string map_name = "assets/" + mapName;
+				toidentifier(map_name);
+				FilePathInfo mapfpi(imagePath);
+				std::string map_path = "assets/" + mapfpi.fullfname;
+
+				XmlCoronaMapTexture(mtlxml_fout, "mapDefinition", map_name, map_path, 1, 2.2f) << "\n\n";
 			}
 		}
 
