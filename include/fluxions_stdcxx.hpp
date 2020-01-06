@@ -70,6 +70,13 @@ namespace Fluxions
 		return str;
 	}
 
+	inline std::string& toidentifier(std::string& str) {
+		for (auto& c : str) {
+			if (!isalnum(c)) c = '_';
+		}
+		return str;
+	}
+
 	using string_string = std::pair<std::string, std::string>;
 	using string_vector = std::vector<std::string>;
 	using string_string_vector = std::vector<string_string>;
