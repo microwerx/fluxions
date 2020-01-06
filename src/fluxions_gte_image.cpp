@@ -1030,7 +1030,7 @@ namespace Fluxions
 			for (unsigned i = 0; i < count; i++) {
 				PixelValueType* v = pixels[i].ptr();
 				for (unsigned j = 0; j < components; j++) {
-					v[j] = scaleFactor_itof * data[j];
+					v[j] = (PixelValueType)(scaleFactor_itof * data[j]);
 				}
 				data += fromstride;
 			}
