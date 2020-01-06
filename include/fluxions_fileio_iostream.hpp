@@ -60,6 +60,7 @@ namespace Fluxions
 	std::ostream& WriteAffineMatrix4d(std::ostream& ostr, const Matrix4d& m);
 	std::ostream& WriteSphericalHarmonicf(std::ostream& ostr, const SphericalHarmonicf& sph);
 	std::ostream& WriteSphericalHarmonicd(std::ostream& ostr, const SphericalHarmonicd& sph);
+	std::ostream& WriteIndices(std::ostream& os, int i1, int i2, int i3);
 
 	template<typename T>
 	std::ostream& WriteBinaryElement(std::ostream& os, T x) {

@@ -448,6 +448,11 @@ namespace Fluxions
 		return ostr;
 	}
 
+	std::ostream& WriteIndices(std::ostream& os, int i1, int i2, int i3) {
+		os << (i1 + 1) << "/" << (i2 + 1) << "/" << (i3 + 1) << " ";
+		return os;
+	}
+
 	std::ostream& WriteBinaryString(std::ostream& os, const std::string& str) {
 		int length = (int)str.size();
 		const char* cptr = str.c_str();
