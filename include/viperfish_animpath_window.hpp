@@ -7,6 +7,25 @@
 
 namespace Vf
 {
+	enum class PathAnimActions {
+		None,
+		GoToStart,
+		GoToPrevKeyFrame,
+		GoToPrevFrame,
+		GoToPrevMicroUnit,
+		GoToNextMicroUnit,
+		GoToNextFrame,
+		GoToNextKeyFrame,
+		GoToEnd,
+		FragileOperation,
+		SetKey,
+		SetAlpha,
+		NewPathAnim,
+		ClearAnimation,
+		LoadAnimation,
+		SaveAnimation,
+		NumPathAnimActions
+	};
 
 	class AnimPathWindow : public Window {
 	public:
@@ -21,13 +40,6 @@ namespace Vf
 		Quaternionf q1;
 		Quaternionf q2;
 
-		Quaternionf kq0;
-		Quaternionf kq1;
-		Quaternionf kq2;
-		Quaternionf kq3;
-		Quaternionf ka;
-		Quaternionf kb;
-
 		Vector3f p1;
 		Vector3f p2;
 		float speed = 0.1f;
@@ -36,12 +48,13 @@ namespace Vf
 		bool bsquad = false;
 		bool blerp = false;
 		bool createNewPath = false;
-		int key = 0;
-		int max_keys = 0;
 		bool set_key = false;
 		bool clear_animation = false;
 		bool save_animation = false;
 		bool load_animation = false;
+		PathAnimActions action{ PathAnimActions::LoadAnimation };
+		int key = 0;
+		int max_keys = 0;
 		std::vector<ImVec2> circles;
 		std::vector<ImVec2> points;
 		std::vector<std::pair<ImVec2, ImVec2>> lines;
@@ -57,8 +70,9 @@ namespace Vf
 		float q1Z = 0.0f;
 		int pointIdx = 0;
 
-		void showv(const char* m, const Vector3f& v);
-		void showq(const char* m, const Quaternionf& q);
+		void _showv(const char* m, const Vector3f& v);
+		void _showq(const char* m, const Quaternionf& q);
+		void _drawPath();
 	};
 
 	using AnimPathWindowPtr = std::shared_ptr<AnimPathWindow>;

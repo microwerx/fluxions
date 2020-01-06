@@ -1,11 +1,11 @@
 #include "pch.hpp"
-#include <sstream>
-#include <viperfish.hpp>
+#include <viperfish_base.hpp>
 #include <viperfish_animpath_window.hpp>
 #include <fluxions_gte_noise.hpp>
 
 namespace Vf
 {
+	namespace Fx = Fluxions;
 
 	AnimPathWindow::AnimPathWindow(const std::string& name)
 		: Window(name) {}
@@ -14,9 +14,15 @@ namespace Vf
 
 	void AnimPathWindow::OnUpdate(double timeStamp) {
 		Window::OnUpdate(timeStamp);
+
+		Quaternionf qX = Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
+		Quaternionf qY = Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
+		Quaternionf qZ = Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
+
+		q = qZ * qX * qY;
 	}
 
-	void AnimPathWindow::showv(const char* m, const Vector3f& v) {
+	void AnimPathWindow::_showv(const char* m, const Vector3f& v) {
 		ImGui::Text(m);
 		ImGui::SameLine();
 		ImGui::Value("x", v.x);
@@ -26,7 +32,7 @@ namespace Vf
 		ImGui::Value("z", v.z);
 	}
 
-	void AnimPathWindow::showq(const char* m, const Quaternionf& q) {
+	void AnimPathWindow::_showq(const char* m, const Quaternionf& q) {
 		ImGui::Text(m);
 		ImGui::SameLine();
 		ImGui::Value("a", q.a);
@@ -38,108 +44,7 @@ namespace Vf
 		ImGui::Value("d", q.d);
 	}
 
-	void AnimPathWindow::OnRenderDearImGui() {
-		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
-		if (!beginWindow()) return;
-		Window::OnRenderDearImGui();
-
-		if (!set_key) {
-			q1X = q1.pitchInDegrees();
-			q1Y = q1.yawInDegrees();
-			q1Z = q1.rollInDegrees();
-		}
-
-		Quaternionf qX = Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
-		Quaternionf qY = Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
-		Quaternionf qZ = Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
-
-		q = qZ * qX * qY;
-
-		ImGui::SliderFloat("speed", &speed, 0.0f, 1.0f);
-		ImGui::SliderFloat("%", &t, 0.0f, (float)max_keys);
-		ImGui::Value("t", t);
-		ImGui::SameLine();
-		if (ImGui::Button("0")) {
-			t = 0.0f;
-		}
-
-		ImGui::Separator();
-
-		if (ImGui::Button("clear")) { clear_animation = true; }
-		ImGui::SameLine();
-		if (ImGui::Button("Save")) { save_animation = true; }
-		ImGui::SameLine();
-		if (ImGui::Button("Load")) { load_animation = true; }
-
-		ImGui::Separator();
-
-		showv("p2", p2);
-		showq("q2", q2);
-
-		//ImGui::Text("K");
-		//showq(kq0);
-		//showq(kq1);
-		//showq(kq2);
-		//showq(kq3);
-		//showq(ka);
-		//showq(kb);
-
-		ImGui::Text("Keyframe");
-
-		showq("q1", q1);
-		showv("p1", p1);
-
-		ImGui::Text("Modify active");
-
-		showq("q", q);
-
-		ImGui::SliderFloat("X", &X, -90.0f, 90.0f);
-		ImGui::SliderFloat("Y", &Y, -360.0f, 360.0f);
-		ImGui::SliderFloat("Z", &Z, -180.0f, 180.0f);
-
-		ImGui::Separator();
-
-		if (max_keys > 0) {
-			ImGui::SliderInt("Key", &key, 0, max_keys - 1);
-		}
-
-		ImGui::SliderFloat("qX", &q1X, -90.0f, 90.0f);
-		ImGui::SliderFloat("qY", &q1Y, -360.0f, 360.0f);
-		ImGui::SliderFloat("qZ", &q1Z, -180.0f, 180.0f);
-
-		ImGui::SliderFloat("pX", &p1.x, -30.0f, 30.0f);
-		ImGui::SliderFloat("pY", &p1.y, -30.0f, 30.0f);
-		ImGui::SliderFloat("pZ", &p1.z, -30.0f, 30.0f);
-
-		ImGui::Checkbox("Set Key", &set_key);
-
-		if (ImGui::Button("Reset Q")) {
-			X = 0.0f;
-			Y = 0.0f;
-			Z = 0.0f;
-		}
-
-		if (ImGui::Button("Reset Q1")) {
-			q1X = 0.0f;
-			q1Y = 0.0f;
-			q1Z = 0.0f;
-		}
-
-		if (ImGui::Button("Reset P1")) {
-			p1.reset();
-		}
-
-		if (set_key) {
-			q1 = Quaternionf::makeFromAngles(q1Y, q1X, q1Z);
-		}
-
-		if (ImGui::Button("create")) {
-			createNewPath = true;
-		}
-		ImGui::DragFloat("alpha", &alpha, 0.01f, -4.0f, 4.0f);
-		ImGui::Checkbox("LERP", &blerp);
-		ImGui::Checkbox("SQUAD", &bsquad);
-
+	void AnimPathWindow::_drawPath() {
 		ImDrawList* dl = ImGui::GetWindowDrawList();
 		if (dl) {
 			const float size = scale;
@@ -189,6 +94,105 @@ namespace Vf
 			dl->AddCircleFilled(curp, radius * 1.5f, mcolor);
 			dl->AddLine(curp, curq, mcolor);
 		}
+	}
+
+	void AnimPathWindow::OnRenderDearImGui() {
+		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
+		if (!beginWindow()) return;
+		Window::OnRenderDearImGui();
+
+		if (!set_key) {
+			q1X = q1.pitchInDegrees();
+			q1Y = q1.yawInDegrees();
+			q1Z = q1.rollInDegrees();
+		}
+
+		ImGui::SliderFloat("speed", &speed, 0.0f, 1.0f);
+		ImGui::SliderFloat("%", &t, 0.0f, (float)max_keys);
+		ImGui::Value("t", t);
+		ImGui::SameLine();
+		if (ImGui::Button("|<")) action = PathAnimActions::GoToStart;
+		ImGui::SameLine();
+		if (ImGui::Button("<||")) action = PathAnimActions::GoToPrevKeyFrame;
+		ImGui::SameLine();
+		if (ImGui::Button("<<")) action = PathAnimActions::GoToPrevFrame;
+		ImGui::SameLine();
+		if (ImGui::Button(">>")) action = PathAnimActions::GoToNextFrame;
+		ImGui::SameLine();
+		if (ImGui::Button("||>")) action = PathAnimActions::GoToNextKeyFrame;
+		ImGui::SameLine();
+		if (ImGui::Button(">|"))  action = PathAnimActions::GoToEnd;
+
+		ImGui::Separator();
+
+		if (ImGui::Button("clear")) action = PathAnimActions::ClearAnimation;
+		ImGui::SameLine();
+		if (ImGui::Button("Save")) action = PathAnimActions::SaveAnimation;
+		ImGui::SameLine();
+		if (ImGui::Button("Load")) action = PathAnimActions::LoadAnimation;
+
+		ImGui::Separator();
+
+		_showv("p2", p2);
+		_showq("q2", q2);
+
+		ImGui::Text("Keyframe");
+
+		_showq("q1", q1);
+		_showv("p1", p1);
+
+		ImGui::Text("Modify active");
+
+		_showq("q", q);
+
+		ImGui::SliderFloat("X", &X, -90.0f, 90.0f);
+		ImGui::SliderFloat("Y", &Y, -360.0f, 360.0f);
+		ImGui::SliderFloat("Z", &Z, -180.0f, 180.0f);
+
+		ImGui::Separator();
+
+		if (max_keys > 0) {
+			ImGui::SliderInt("Key", &key, 0, max_keys - 1);
+		}
+
+		ImGui::SliderFloat("qX", &q1X, -90.0f, 90.0f);
+		ImGui::SliderFloat("qY", &q1Y, -360.0f, 360.0f);
+		ImGui::SliderFloat("qZ", &q1Z, -180.0f, 180.0f);
+
+		ImGui::SliderFloat("pX", &p1.x, -30.0f, 30.0f);
+		ImGui::SliderFloat("pY", &p1.y, -30.0f, 30.0f);
+		ImGui::SliderFloat("pZ", &p1.z, -30.0f, 30.0f);
+
+		if (ImGui::Button("Set Key")) {
+			q1 = Quaternionf::makeFromAngles(q1Y, q1X, q1Z);
+			action = PathAnimActions::SetKey;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Set Alpha")) action = PathAnimActions::SetAlpha;
+		ImGui::SameLine();
+		if (ImGui::Button("New Path")) action = PathAnimActions::NewPathAnim;
+		ImGui::DragFloat("alpha", &alpha, 0.01f, -4.0f, 4.0f);
+
+		if (ImGui::Button("Reset Q")) {
+			X = 0.0f;
+			Y = 0.0f;
+			Z = 0.0f;
+		}
+
+		if (ImGui::Button("Reset Q1")) {
+			q1X = 0.0f;
+			q1Y = 0.0f;
+			q1Z = 0.0f;
+		}
+
+		if (ImGui::Button("Reset P1")) {
+			p1.reset();
+		}
+
+		ImGui::Checkbox("LERP", &blerp);
+		ImGui::Checkbox("SQUAD", &bsquad);
+
+		_drawPath();
 
 		endWindow();
 	}
