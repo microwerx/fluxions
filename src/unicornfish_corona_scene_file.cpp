@@ -37,17 +37,19 @@ namespace Uf
 		writer.setPerspectiveCamera(ssg.camera.origin(),
 									ssg.camera.target(),
 									ssg.camera.roll(),
-									ssg.camera.fov);
+									ssg.camera.actualFov);
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
+		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "export_corona_ground_truth.conf" });
 		writer.extra_tags.push_back({ "conffile", "export_corona_ground_truth.conf" });
+		writer.export_confname = "export_corona_ground_truth.conf";
 		writer.enableKs = enableKs;
 		ssg.Save(fpi.fullfname, &writer);
 		return;
 	}
 
 	void CoronaSceneFile::writeCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg) {
-		Fluxions::Vector3f cameraPosition = ssg.camera.actualViewMatrix.col4().xyz();
+		Fluxions::Vector3f cameraPosition = -ssg.camera.actualViewMatrix.col4().xyz();
 		writeCubeMapSCN(filename, ssg, cameraPosition);
 	}
 
@@ -58,7 +60,9 @@ namespace Uf
 								Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
-		writer.extra_tags.push_back({ "conffile", "export_corona_ground_truth.conf" });
+		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "export_corona_ground_truth_cube.conf" });
+		writer.extra_tags.push_back({ "conffile", "export_corona_ground_truth_cube.conf" });
+		writer.export_confname = "export_corona_ground_truth_cube.conf";
 		writer.enableKs = enableKs;
 		ssg.Save(fpi.fullfname, &writer);
 	}
@@ -70,7 +74,7 @@ namespace Uf
 								Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
-		writer.extra_tags.push_back({ "conffile", "ssphh_sky.conf" });
+		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "ssphh_sky.conf" });
 		writer.enableKs = enableKs;
 		writer.write_geometry = false;
 		ssg.Save(fpi.fullfname, &writer);
@@ -91,7 +95,7 @@ namespace Uf
 		Fluxions::XmlSceneGraphWriter writer;
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.dir;
-		writer.extra_tags.push_back({ "conffile", "sphlviz.conf" });
+		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "sphlviz.conf" });
 		writer.enableKs = enableKs;
 
 		// Camera

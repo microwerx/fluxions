@@ -30,7 +30,7 @@ namespace Uf
 
 const std::string CoronaJob::exportPathPrefix = "corona_export/";
 const std::string CoronaJob::outputPathPrefix = "corona_output/";
-//const std::string CoronaJob::confPathPrefix = "corona_conf/";
+const std::string CoronaJob::confPathPrefix = "../corona_conf/";
 
 /////////////////////////////////////////////////////////////////////
 // CoronaJob ////////////////////////////////////////////////////////
