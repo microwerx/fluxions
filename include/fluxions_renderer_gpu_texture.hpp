@@ -19,6 +19,8 @@ namespace Fluxions
 		bool dirty = true;
 		// This flag is used to determine whether to build mip maps
 		bool useMipMaps = true;
+		// This flag is used to determine whether to load the image every time
+		bool alwaysLoad{ false };
 
 		std::string mappath;
 		bool maploaded{ false };
