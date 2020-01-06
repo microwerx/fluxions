@@ -135,7 +135,7 @@ namespace Fluxions
 	}
 
 	bool RendererGpuTexture::loadMap() {
-		if (maploaded) return true;
+		if (maploaded && !alwaysLoad) return true;
 		FilePathInfo fpi(mappath);
 		toupper(fpi.ext);
 		maploaded = gpuLoadTexture(*this, fpi.ext, mappath, true);
