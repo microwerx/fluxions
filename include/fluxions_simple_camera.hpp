@@ -13,9 +13,11 @@ namespace Fluxions
 			OrthoOTRW,
 			Other
 		} cameraType;
-		Matrix4f projectionMatrix;
-		Matrix4f viewMatrix;
+
 		Matrix4f actualViewMatrix;
+		float actualFov;
+		float actualWidth;
+
 		float fov = 45.0;	// horizontal field of view in degrees
 		float width = 2.0;
 		//float fstop = 16.0;
@@ -36,6 +38,10 @@ namespace Fluxions
 		float imageNearZ = 0.1f;
 		float imageFarZ = 1000.0f;
 
+		const Matrix4f& viewMatrix(const Matrix4f& M);
+		const Matrix4f& viewMatrix() const { return viewMatrix_; }
+		const Matrix4f& projectionMatrix() const { return projectionMatrix_; }
+
 		const char* type() const override { return "SimpleCamera"; }
 		const char* keyword() const override { return "camera"; }
 		Color3f color() const override { return FxColors3::Gold; }
@@ -51,21 +57,17 @@ namespace Fluxions
 			imageFarZ = zfar;
 		}
 
-		inline Vector3f origin() const noexcept {
-			return viewMatrix.col4().xyz();
-		}
-
-		inline Vector3f target() const noexcept {
-			return origin() + viewMatrix.col3().xyz();
-		}
-
-		inline Vector3f roll() const noexcept {
-			return origin() + viewMatrix.col2().xyz();
-		}
+		Vector3f origin() const noexcept;
+		Vector3f target() const noexcept;
+		Vector3f roll() const noexcept;
 	private:
 		Vector3f origin_;
 		Vector3f target_;
 		Vector3f roll_;
+
+		Matrix4f projectionMatrix_;
+		Matrix4f viewMatrix_;
+
 		void recalcMatrices();
 	}; // struct SimpleCamera
 } // namespace Fluxions

@@ -8,8 +8,8 @@ namespace Fluxions
 		if (keyword != this->keyword()) return false;
 
 		std::string camtype = ReadString(istr);
-		projectionMatrix.LoadIdentity();
-		viewMatrix.LoadIdentity();
+		projectionMatrix_.LoadIdentity();
+		viewMatrix_.LoadIdentity();
 
 		bool isBadCamera = false;
 		if (camtype == "perspective_otrf") {
@@ -22,7 +22,7 @@ namespace Fluxions
 		else if (camtype == "perspective_tmf") {
 			cameraType = CameraType::PerspectiveTMF;
 			fov = ReadFloat(istr);
-			viewMatrix = ReadAffineMatrix4f(istr);
+			viewMatrix_ = ReadAffineMatrix4f(istr);
 		}
 		else if (camtype == "ortho_otrw") {
 			cameraType = CameraType::OrthoOTRW;
@@ -34,7 +34,7 @@ namespace Fluxions
 		else if (camtype == "ortho_tmw") {
 			cameraType = CameraType::OrthoTMW;
 			width = ReadFloat(istr);
-			viewMatrix = ReadAffineMatrix4f(istr);
+			viewMatrix_ = ReadAffineMatrix4f(istr);
 		}
 		else {
 			statusString_ = "bad!";
@@ -43,7 +43,6 @@ namespace Fluxions
 
 		statusString_ = camtype;
 		recalcMatrices();
-		transform = viewMatrix.AsInverse();
 
 		return true;
 		//if (!isBadCamera) {
@@ -111,7 +110,7 @@ namespace Fluxions
 		case CameraType::PerspectiveTMF:
 			ostr << "perspective_tmf ";
 			WriteFloat(ostr, fov);
-			WriteAffineMatrix4f(ostr, viewMatrix);
+			WriteAffineMatrix4f(ostr, viewMatrix_);
 			break;
 		case CameraType::OrthoOTRW:
 			ostr << "ortho_otrw ";
@@ -123,7 +122,7 @@ namespace Fluxions
 		case CameraType::OrthoTMW:
 			ostr << "ortho_tmw ";
 			WriteFloat(ostr, width);
-			WriteAffineMatrix4f(ostr, viewMatrix);
+			WriteAffineMatrix4f(ostr, viewMatrix_);
 			break;
 		}
 		ostr << "\n";
@@ -133,19 +132,38 @@ namespace Fluxions
 	void SimpleCamera::recalcMatrices() {
 		switch (cameraType) {
 		case CameraType::PerspectiveOTRF:
-			viewMatrix = Matrix4f::MakeLookAt(origin_, target_, roll_);
-			projectionMatrix = Matrix4f::MakePerspectiveY(fov, imageAspect, imageNearZ, imageFarZ);
+			viewMatrix_ = Matrix4f::MakeLookAt(origin_, target_, roll_);
+			projectionMatrix_ = Matrix4f::MakePerspectiveY(fov, imageAspect, imageNearZ, imageFarZ);
 			break;
 		case CameraType::PerspectiveTMF:
-			projectionMatrix = Matrix4f::MakePerspectiveY(fov, imageAspect, imageNearZ, imageFarZ);
+			projectionMatrix_ = Matrix4f::MakePerspectiveY(fov, imageAspect, imageNearZ, imageFarZ);
 			break;
 		case CameraType::OrthoOTRW:
-			viewMatrix = Matrix4f::MakeLookAt(origin_, target_, roll_);
-			projectionMatrix = Matrix4f::MakeOrtho2D(0, width, 0, width / imageAspect);
+			viewMatrix_ = Matrix4f::MakeLookAt(origin_, target_, roll_);
+			projectionMatrix_ = Matrix4f::MakeOrtho2D(0, width, 0, width / imageAspect);
 			break;
 		case CameraType::OrthoTMW:
-			projectionMatrix = Matrix4f::MakeOrtho2D(0, width, 0, width / imageAspect);
+			projectionMatrix_ = Matrix4f::MakeOrtho2D(0, width, 0, width / imageAspect);
 			break;
 		}
+		transform = viewMatrix_.AsInverse();
+	}
+
+	const Matrix4f& SimpleCamera::viewMatrix(const Matrix4f& M) {
+		transform = M.AsInverse();
+		viewMatrix_ = M;
+		return viewMatrix_;
+	}
+
+	Vector3f SimpleCamera::origin() const noexcept {
+		return worldMatrix().col4().xyz();
+	}
+
+	Vector3f SimpleCamera::target() const noexcept {
+		return origin() - worldMatrix().col3().xyz();
+	}
+
+	Vector3f SimpleCamera::roll() const noexcept {
+		return worldMatrix().col2().xyz();
 	}
 }
