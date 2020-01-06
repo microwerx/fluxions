@@ -80,8 +80,8 @@ namespace Fluxions
 
 		bool isAHandle(unsigned handle) const;
 		bool isAHandle(const std::string& name) const;
-		const std::string& getNameFromHandle(unsigned handle);
-		const std::vector<std::string> getNamesFromHandle(unsigned handle);
+		const std::string& getNameFromHandle(unsigned handle) const;
+		const std::vector<std::string> getNamesFromHandle(unsigned handle) const;
 		unsigned getHandleFromName(const std::string& name) const;
 		unsigned mapNameToHandle(const std::string& name, unsigned handle);
 		void removeName(const std::string& name);
@@ -246,7 +246,7 @@ namespace Fluxions
 	}
 
 	template <typename T>
-	const std::string& TResourceManager<T>::getNameFromHandle(unsigned handle) {
+	const std::string& TResourceManager<T>::getNameFromHandle(unsigned handle) const {
 		auto it = handleToStringsMap_.find(handle);
 		if (it == handleToStringsMap_.end())
 			return BlankString;
@@ -256,7 +256,7 @@ namespace Fluxions
 	}
 
 	template <typename T>
-	const std::vector<std::string> TResourceManager<T>::getNamesFromHandle(unsigned handle) {
+	const std::vector<std::string> TResourceManager<T>::getNamesFromHandle(unsigned handle) const {
 		auto it = handleToStringsMap_.find(handle);
 		if (it == handleToStringsMap_.end())
 			return std::vector<std::string>();
