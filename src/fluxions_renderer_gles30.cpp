@@ -139,6 +139,13 @@ namespace Fluxions
 			glDepthFunc(pRendererConfig->depthComparisonTest);
 		}
 
+		if (pRendererConfig->enableSRGB) {
+			glEnable(GL_FRAMEBUFFER_SRGB);
+		}
+		else {
+			glDisable(GL_FRAMEBUFFER_SRGB);
+		}
+
 		if (pRendererConfig->clearColorBuffer) {
 			glClearColor(pRendererConfig->clearColor.r, pRendererConfig->clearColor.g, pRendererConfig->clearColor.b, pRendererConfig->clearColor.a);
 		}

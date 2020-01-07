@@ -54,6 +54,7 @@ namespace Fluxions {
 		depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
 		scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
 		stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
+		framebufferSrgbEnabled = glIsEnabled(GL_FRAMEBUFFER_SRGB);
 	}
 
 	void RendererGLES30Snapshot::restore() {
@@ -95,6 +96,10 @@ namespace Fluxions {
 			glEnable(GL_STENCIL_TEST);
 		else
 			glDisable(GL_STENCIL_TEST);
+		if (framebufferSrgbEnabled)
+			glEnable(GL_FRAMEBUFFER_SRGB);
+		else
+			glDisable(GL_FRAMEBUFFER_SRGB);
 		glViewport(viewport.x, viewport.y, viewport.w, viewport.h);
 		glScissor(scissorBox.x, scissorBox.y, scissorBox.w, scissorBox.h);
 	}

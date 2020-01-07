@@ -1221,10 +1221,11 @@ namespace Fluxions
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
-		if (svalarg1 && count == 2) {
-			texture2Ds[arg1].init(arg1, this);
-			pcurTexture2D = &texture2Ds[arg1];
-			return true;
+		if (pcurTexture2D && svalarg1) {
+			if (arg1 == "alwaysLoad") {
+				pcurTexture2D->alwaysLoad = true;
+				return true;
+			}
 		}
 		if (pcurTexture2D && svalarg1 && svalarg2) {
 			if (arg1 == "map") {
@@ -1242,6 +1243,11 @@ namespace Fluxions
 				return true;
 			}
 		}
+		if (svalarg1 && count == 2) {
+			texture2Ds[arg1].init(arg1, this);
+			pcurTexture2D = &texture2Ds[arg1];
+			return true;
+		}
 		return false;
 	}
 
@@ -1254,10 +1260,11 @@ namespace Fluxions
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
-		if (svalarg1 && count == 2) {
-			textureCubes[arg1].init(arg1, this);
-			pcurTextureCube = &textureCubes[arg1];
-			return true;
+		if (pcurTexture2D && svalarg1) {
+			if (arg1 == "alwaysLoad") {
+				pcurTexture2D->alwaysLoad = true;
+				return true;
+			}
 		}
 		if (pcurTextureCube && svalarg1 && svalarg2) {
 			if (arg1 == "map") {
@@ -1274,6 +1281,11 @@ namespace Fluxions
 				pcurTextureCube->samplerId = samplers[arg2].getId();
 				return true;
 			}
+		}
+		if (svalarg1 && count == 2) {
+			textureCubes[arg1].init(arg1, this);
+			pcurTextureCube = &textureCubes[arg1];
+			return true;
 		}
 		return false;
 	}

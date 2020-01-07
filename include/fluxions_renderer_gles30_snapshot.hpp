@@ -46,6 +46,7 @@ namespace Fluxions {
 		GLboolean depthTestEnabled = GL_FALSE;
 		GLboolean scissorTestEnabled = GL_FALSE;
 		GLboolean stencilTestEnabled = GL_FALSE;
+		GLboolean framebufferSrgbEnabled = GL_FALSE;
 
 		RendererGLES30Snapshot();
 		~RendererGLES30Snapshot();
