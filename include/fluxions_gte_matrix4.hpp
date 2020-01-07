@@ -240,6 +240,11 @@ namespace Fluxions
 		constexpr TVector4<T> col3() const noexcept { return TVector4<T>(m13, m23, m33, m43); }
 		constexpr TVector4<T> col4() const noexcept { return TVector4<T>(m14, m24, m34, m44); }
 
+		constexpr TVector3<T> xbasis() const noexcept { return { m11, m21, m31 }; }
+		constexpr TVector3<T> ybasis() const noexcept { return { m12, m22, m32 }; }
+		constexpr TVector3<T> zbasis() const noexcept { return { m13, m23, m33 }; }
+		constexpr TVector3<T> origin() const noexcept { return { m14, m24, m34 }; }
+
 		// col(i) returns the ith column of the matrix (i = 1 is column 1)
 		constexpr TVector4<T> col(int i) const noexcept {
 			switch (i) {
