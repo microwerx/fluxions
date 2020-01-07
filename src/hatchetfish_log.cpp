@@ -138,7 +138,7 @@ namespace Hf
 	}
 
 	void HatchetfishLog::_trimHistory() {
-		if (history.size() < maxHistoryLines) return;
+		if (maxHistoryLines == 0 || history.size() < maxHistoryLines) return;
 		history.erase(history.begin(), history.end() - maxHistoryLines + 1);
 		history_cstr.clear();
 		for (auto& h : history) {
