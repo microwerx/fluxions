@@ -36,11 +36,11 @@ const std::string CoronaJob::confPathPrefix = "../corona_conf/";
 // CoronaJob ////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
-CoronaJob::CoronaJob(const std::string &name, Type jobtype, int arg1, int arg2)
+CoronaJob::CoronaJob(const std::string& basename, const std::string &name, Type jobtype, int arg1, int arg2)
 {
-	export_path = exportPathPrefix + name + "/";
+	export_path = exportPathPrefix;
 
-	scene_name = name;
+	scene_name = basename;
 	scene_path = export_path + name + ".scn";
 	output_path_exr = outputPathPrefix + name + ".exr";
 	output_path_ppm = outputPathPrefix + name + ".ppm";
@@ -88,7 +88,7 @@ void CoronaJob::Start(CoronaSceneFile &coronaScene, Fluxions::SimpleSceneGraph &
 		return;
 	}
 
-	if (!ignoreCache)
+	if (usePreviousRun_)
 	{
 		Fluxions::FilePathInfo fpi(isHQ ? hq_output_path_exr : output_path_exr);
 		if (fpi.Exists())
@@ -98,73 +98,85 @@ void CoronaJob::Start(CoronaSceneFile &coronaScene, Fluxions::SimpleSceneGraph &
 		}
 	}
 
-	std::string tonemapconf = exportPathPrefix + scene_name + "_tonemap.conf";
-	if (1)
-	{
-		float tonemap = ssg.environment.toneMapExposure();
-		if (type == Type::VIZ)
-		{
-			tonemap = 0.0f;
-		}
-		if (type == Type::GEN)
-		{
-			tonemap = 0.0f;
-		}
-		HFLOGINFO("Writing tonemap conf %s", tonemapconf.c_str());
+	//std::string tonemapconf = exportPathPrefix + scene_name + "_tonemap.conf";
+	//if (1)
+	//{
+	//	float tonemap = ssg.environment.toneMapExposure();
+	//	if (type == Type::VIZ)
+	//	{
+	//		tonemap = 0.0f;
+	//	}
+	//	if (type == Type::GEN)
+	//	{
+	//		tonemap = 0.0f;
+	//	}
+	//	HFLOGINFO("Writing tonemap conf %s", tonemapconf.c_str());
 
-		std::ofstream fout(tonemapconf);
-		fout << "Float colorMap.simpleExposure = " << tonemap << "\n";
-		if (type == Type::REF)
-		{
-			fout << "Int image.width = " << imageWidth << "\n";
-			fout << "Int image.height = " << imageHeight << "\n";
-		}
-		else
-		{
-			fout << "Int image.width = " << 6 * 128 << "\n";
-			fout << "Int image.height = " << 128 << "\n";
-		}
-		if (!isHQ)
-		{
-			fout << "Int shading.maxRayDepth = " << maxRayDepth << "\n";
-			fout << "Int progressive.passLimit = " << passLimit << "\n";
-		}
-		fout.close();
-	}
+	//	std::ofstream fout(tonemapconf);
+	//	fout << "Float colorMap.simpleExposure = " << tonemap << "\n";
+	//	if (type == Type::REF)
+	//	{
+	//		fout << "Int image.width = " << imageWidth << "\n";
+	//		fout << "Int image.height = " << imageHeight << "\n";
+	//	}
+	//	else
+	//	{
+	//		fout << "Int image.width = " << 6 * 128 << "\n";
+	//		fout << "Int image.height = " << 128 << "\n";
+	//	}
+	//	if (!isHQ)
+	//	{
+	//		fout << "Int shading.maxRayDepth = " << maxRayDepth << "\n";
+	//		fout << "Int progressive.passLimit = " << passLimit << "\n";
+	//	}
+	//	fout.close();
+	//}
 
 	Hf::StopWatch stopwatch;
 	state = State::Running;
 	bool result = true;
+	coronaScene.stashConfig();
 	switch (type)
 	{
 	case Type::REF:
+		coronaScene.REF.resolution.reset(imageWidth, imageHeight);
+		coronaScene.currentConfig = coronaScene.REF;
 		coronaScene.writeSCN(scene_path, ssg);
 		result = Run();
 		break;
 	case Type::REF_CubeMap:
+		coronaScene.REF.resolution.reset(imageWidth, imageHeight);
+		coronaScene.currentConfig = coronaScene.REF;
 		coronaScene.writeCubeMapSCN(scene_path, ssg);
 		result = Run();
 		break;
 	case Type::Sky:
+		coronaScene.SKY.resolution.reset(imageWidth, imageHeight);
+		coronaScene.currentConfig = coronaScene.SKY;
 		coronaScene.writeSkySCN(scene_path, ssg);
 		result = Run();
 		break;
 	case Type::GEN:
-		coronaScene.writeSphlVizSCN(scene_path, ssg, -1, recvLight);
+		coronaScene.GEN.resolution.reset(imageWidth, imageHeight);
+		coronaScene.currentConfig = coronaScene.GEN;
+		coronaScene.writeSphlGenSCN(scene_path, ssg, recvLight);
 		result = Run();
 		break;
 	case Type::VIZ:
+		coronaScene.VIZ.resolution.reset(imageWidth, imageHeight);
+		coronaScene.currentConfig = coronaScene.VIZ;
 		coronaScene.writeSphlVizSCN(scene_path, ssg, sendLight, recvLight);
 		result = Run();
 		break;
 	default:
 		break;
 	}
+	coronaScene.restoreConfig();
 	elapsedTime = stopwatch.GetSecondsElapsed();
 	state = result ? State::Finished : State::Error;
 
-	std::filesystem::remove(tonemapconf);
-	std::filesystem::remove(scene_path);
+	// std::filesystem::remove(tonemapconf);
+	// std::filesystem::remove(scene_path);
 }
 
 void CoronaJob::CopySPH(const Fluxions::Sph4f &sph_)
@@ -207,16 +219,16 @@ std::string CoronaJob::MakeCoronaCommandLine()
 		cmd << " -o " << (isHQ ? hq_output_path_exr : output_path_exr);
 	}
 
-	if (isHQ)
-	{
-		cmd << " -c " << hq_conf_path;
-	}
-	else
-	{
-		cmd << " -c " << conf_path;
-	}
+	//if (isHQ)
+	//{
+	//	cmd << " -c " << hq_conf_path;
+	//}
+	//else
+	//{
+	//	cmd << " -c " << conf_path;
+	//}
 
-	cmd << " -c " << exportPathPrefix + scene_name << "_tonemap.conf";
+	//cmd << " -c " << exportPathPrefix + scene_name << "_tonemap.conf";
 
 	HFLOGINFO("running %s", cmd.str().c_str());
 
@@ -289,7 +301,7 @@ std::string CoronaJob::ToString() const
 	std::ostringstream ostr;
 	ostr << imageWidth << "\n";
 	ostr << imageHeight << "\n";
-	ostr << ignoreCache << "\n";
+	ostr << usePreviousRun_ << "\n";
 	ostr << maxRayDepth << "\n";
 	ostr << passLimit << "\n";
 	ostr << elapsedTime << "\n";
@@ -313,7 +325,7 @@ void CoronaJob::FromString(const std::string &str)
 	std::istringstream istr(str);
 	istr >> imageWidth;
 	istr >> imageHeight;
-	istr >> ignoreCache;
+	istr >> usePreviousRun_;
 	istr >> maxRayDepth;
 	istr >> passLimit;
 	istr >> elapsedTime;

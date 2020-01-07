@@ -146,9 +146,9 @@ namespace Fluxions
 		lightProbeToSph(ptrcLightProbeImage, msph);
 		sphToLightProbe(msph, msphLightProbeImage);
 
-		ptrcLightProbeImage.reset();
-		msphLightProbeImage.reset();
-		hierLightProbeImage.reset();
+		//ptrcLightProbeImage.reset();
+		//msphLightProbeImage.reset();
+		//hierLightProbeImage.reset();
 		uploadLightProbe(ptrcLightProbeImage, ptrcLightProbeTexture);
 		uploadLightProbe(msphLightProbeImage, msphLightProbeTexture);
 		// UploadLightProbe(hierLightProbeImage, hierLightProbeTexture);

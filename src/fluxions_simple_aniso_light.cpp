@@ -12,6 +12,7 @@ namespace Fluxions
 			position = ReadVector4f(istr);
 			SH[0] = ReadColor3f(istr);
 			SH[0].a = 1.0f;
+			transform = Matrix4f::MakeTranslation(position.xyz());
 			return true;
 		}
 		return false;

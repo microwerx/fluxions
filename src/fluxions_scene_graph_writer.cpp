@@ -82,16 +82,16 @@ namespace Fluxions
 		_writeCamera(fout);
 
 		// Sun
-		_writeSun(fout, *ssg);
+		if (write_sun) {
+			_writeSun(fout, *ssg);
+		}
 
 		// Geometry Groups
-		_writeGeometryGroups(fout, *ssg);
+		if (write_geometry) {
+			_writeGeometryGroups(fout, *ssg);
+		}
 
 		XmlEndTag(fout, "scene") << "\n";
-
-		if (!export_confname.empty()) {
-			_writeConf(export_path_prefix + export_confname, *ssg);
-		}
 
 		return true;
 	}
@@ -224,12 +224,12 @@ namespace Fluxions
 				std::ostringstream obj_pathname;
 				obj_pathname << "geometry/";
 				obj_pathname << ssg.name() << "_";
-				obj_pathname << std::setw(3) << std::setfill('0') << obj_count << "_";
+				//obj_pathname << std::setw(3) << std::setfill('0') << obj_count << "_";
 				obj_pathname << "object_" << idobjname << "_";
 				obj_pathname << idmtlname << ".obj";
 				std::string objectPath = export_path_prefix + obj_pathname.str();
-				HFLOGINFO("Writing out '%s'", objectPath.c_str());
 				if (!std::filesystem::exists(objectPath)) {
+					HFLOGINFO("Writing out '%s'", obj_pathname.str().c_str());
 					mesh.saveOBJByMaterial(objectPath, mtlname, 1);
 				}
 
@@ -299,20 +299,5 @@ namespace Fluxions
 
 			XmlEndTag(ostr, "geometryGroup", 1) << "\n\n";
 		}
-	}
-
-	void XmlSceneGraphWriter::_writeConf(const std::string& path, const Fluxions::SimpleSceneGraph& ssg) {
-		std::ofstream conf(path);
-		if (ssg.requestedResolution.lengthSquared() > 1) {
-			if (cameraType_ == "cubemap") {
-				conf << "       Int image.width  = " << (ssg.requestedResolution.y * 6.0f) << "\n";
-				conf << "       Int image.height = " << ssg.requestedResolution.y << "\n";
-			}
-			else {
-				conf << "       Int image.width  = " << ssg.requestedResolution.x << "\n";
-				conf << "       Int image.height = " << ssg.requestedResolution.y << "\n";
-			}
-		}
-		conf << "     Float colorMap.simpleExposure = " << ssg.requestedExposure << "\n";
 	}
 } // namespace Fluxions

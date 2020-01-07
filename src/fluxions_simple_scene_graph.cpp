@@ -96,6 +96,7 @@ namespace Fluxions
 		//shaderMaps.clear();
 		staticMeshes.clear();
 		pointLights.clear();
+		anisoLights.clear();
 
 		if (userdata) {
 			userdata->reset();
@@ -214,6 +215,10 @@ namespace Fluxions
 			else if (token == "dirtoLight" || token == "dirToLight") {
 				currentTransform.LoadIdentity();
 				ReadDirToLight(token, istr);
+			}
+			else if (token == "anisoLight") {
+				currentTransform.LoadIdentity();
+				ReadAnisoLight(token, istr);
 			}
 			else if (userdata) {
 				userdata->read(token, istr);
@@ -535,6 +540,14 @@ namespace Fluxions
 	bool SimpleSceneGraph::ReadPointLight(const std::string& keyword, std::istream& istr) {
 		if (keyword == "pointLight") {
 			auto node = createPointLight(ReadString(istr));
+			return node->read(keyword, istr);
+		}
+		return false;
+	}
+
+	bool SimpleSceneGraph::ReadAnisoLight(const std::string& keyword, std::istream& istr) {
+		if (keyword == "anisoLight") {
+			auto node = createAnisoLight(ReadString(istr));
 			return node->read(keyword, istr);
 		}
 		return false;

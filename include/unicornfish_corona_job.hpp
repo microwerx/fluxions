@@ -45,7 +45,7 @@ namespace Uf
 		static std::string& TypeToString(Type type, std::string& s_type) noexcept;
 
 		CoronaJob() {}
-		CoronaJob(const std::string& name, Type jobtype, int arg1 = 0, int arg2 = 0);
+		CoronaJob(const std::string& basename, const std::string& name, Type jobtype, int arg1 = 0, int arg2 = 0);
 		~CoronaJob();
 
 		void EnableHQ() { isHQ = true; }
@@ -55,7 +55,8 @@ namespace Uf
 		constexpr void SetMaxRayDepth(int depth) { maxRayDepth = Fluxions::clamp(depth, 1, 50); }
 		constexpr void SetPassLimit(int limit) { passLimit = Fluxions::clamp(limit, 1, 100); }
 
-		constexpr void SetIgnoreCache(bool bState) { ignoreCache = bState; }
+		void usePreviousRun(bool bState) { usePreviousRun_ = bState; }
+		const bool usePreviousRun() const { return usePreviousRun_; }
 
 		void EnableHDR() { isHDR = true; }
 		void DisableHDR() { isHDR = false; }
@@ -157,7 +158,7 @@ namespace Uf
 		int imageHeight = 720;
 		int maxRayDepth = 5;
 		int passLimit = 1;
-		bool ignoreCache = false;
+		bool usePreviousRun_{ true };
 
 		double elapsedTime;
 		bool finished = false;
