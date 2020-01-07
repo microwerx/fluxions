@@ -69,6 +69,7 @@ namespace Fluxions
 		constexpr unsigned width() const { return imageWidth; }
 		constexpr unsigned height() const { return imageHeight; }
 		constexpr unsigned depth() const { return imageDepth; }
+		constexpr unsigned pitch() const { return (unsigned)imageWidth * sizeof(value_type); }
 		constexpr unsigned addr(unsigned x, unsigned y, unsigned z = 0) {
 			if (x >= imageWidth || y >= imageHeight || z >= imageDepth)
 				return 0;

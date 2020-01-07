@@ -952,7 +952,7 @@ namespace Fluxions
 		std::vector<Imf::Rgba> halfPixels((unsigned)imageWidth * imageHeight * imageDepth, black);
 		const unsigned count = imageWidth * imageHeight * imageDepth;
 		for (unsigned i = 0; i < count; i++) {
-			constexpr float to_float = color_to_float_factor<value_type>();
+			constexpr float to_float = color_to_float_factor<scalar_type>();
 			//Color3f color = ToColor3f(pixels[i]);
 			Color3f color(pixels[i][0] * to_float,
 						  pixels[i][1] * to_float,
@@ -1070,19 +1070,18 @@ namespace Fluxions
 	// Square image operations
 	template <typename ColorType>
 	bool TImage<ColorType>::flipX(int z) {
-		if (empty() || imageWidth != imageHeight)
+		if (empty())
 			return false;
 
 		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
-		unsigned size = imageWidth;
 		unsigned _zstride = imageWidth * imageHeight;
 		unsigned zoffset = _zstride * z;
-		for (unsigned x = 0; x < size; x++) {
-			for (unsigned y = 0; y < size; y++) {
-				unsigned sx = size - x - 1;
+		for (unsigned x = 0; x < imageWidth; x++) {
+			for (unsigned y = 0; y < imageHeight; y++) {
+				unsigned sx = imageWidth - x - 1;
 				unsigned sy = y;
-				unsigned dst_offset = y * size + x;
-				unsigned src_offset = sy * size + sx;
+				unsigned dst_offset = y * imageWidth + x;
+				unsigned src_offset = sy * imageWidth + sx;
 				tmp[dst_offset] = pixels[(size_t)zoffset + src_offset];
 			}
 		}
@@ -1093,19 +1092,18 @@ namespace Fluxions
 
 	template <typename ColorType>
 	bool TImage<ColorType>::flipY(int z) {
-		if (empty() || imageWidth != imageHeight)
+		if (empty())
 			return false;
 
 		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
-		unsigned size = imageWidth;
 		unsigned _zstride = imageWidth * imageHeight;
 		unsigned zoffset = _zstride * z;
-		for (unsigned x = 0; x < size; x++) {
-			for (unsigned y = 0; y < size; y++) {
+		for (unsigned x = 0; x < imageWidth; x++) {
+			for (unsigned y = 0; y < imageHeight; y++) {
 				unsigned sx = x;
-				unsigned sy = size - y - 1;
-				unsigned dst_offset = y * size + x;
-				unsigned src_offset = sy * size + sx;
+				unsigned sy = imageHeight - y - 1;
+				unsigned dst_offset = y * imageWidth + x;
+				unsigned src_offset = sy * imageWidth + sx;
 				tmp[dst_offset] = pixels[(size_t)zoffset + src_offset];
 			}
 		}
@@ -1116,19 +1114,19 @@ namespace Fluxions
 
 	template <typename ColorType>
 	bool TImage<ColorType>::flipXY(int z) {
-		if (empty() || imageWidth != imageHeight)
+		if (empty())
 			return false;
 
 		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
 		unsigned size = imageWidth;
 		unsigned _zstride = imageWidth * imageHeight;
 		unsigned zoffset = _zstride * z;
-		for (unsigned x = 0; x < size; x++) {
-			for (unsigned y = 0; y < size; y++) {
-				unsigned sx = size - x - 1;
-				unsigned sy = size - y - 1;
-				unsigned dst_offset = y * size + x;
-				unsigned src_offset = sy * size + sx;
+		for (unsigned x = 0; x < imageWidth; x++) {
+			for (unsigned y = 0; y < imageHeight; y++) {
+				unsigned sx = imageWidth - x - 1;
+				unsigned sy = imageHeight - y - 1;
+				unsigned dst_offset = y * imageWidth + x;
+				unsigned src_offset = sy * imageWidth + sx;
 				tmp[dst_offset] = pixels[(size_t)zoffset + src_offset];
 			}
 		}
