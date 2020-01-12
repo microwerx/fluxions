@@ -28,7 +28,7 @@ SRCOBJECTS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(CXXSOURCES)) $(patsubst 
 OBJECTS = $(SRCOBJECTS)
 # $(DEPOBJECTS)
 TARGET = build/libfluxions.a
-GCH = $(SRCDIR)/pch.h.gch
+GCH = $(SRCDIR)/pch.hpp.gch
 GCH_SRC = $(SRCDIR)/pch.hpp
 
 MACINCDIRS = -I/usr/local/opt/mesa/include

@@ -29,7 +29,7 @@ namespace Fluxions
 		} locs;
 	public:
 		SSG_SSPHHRendererPlugin(SimpleSceneGraph* pointerToSSG);
-		~SSG_SSPHHRendererPlugin();
+		virtual ~SSG_SSPHHRendererPlugin();
 
 		std::vector<SimpleSSPHHLight> ssphhLights;
 
