@@ -18,11 +18,15 @@
 // For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include <algorithm>
 #include <fstream>
+#include <iostream>
+#ifdef _MSC_VER
+#elif defined(__unix__)
+#include <byteswap.h>
+#endif
 #include <hatchetfish.hpp>
 #include <fluxions_gte_color_math.hpp>
 #include <fluxions_gte_image.hpp>
 #include <fluxions_gte_image_operations.hpp>
-#include <iostream>
 
 #define _CRT_SECURE_NO_WARNINGS
 #ifdef _WIN32
@@ -30,7 +34,9 @@
 #endif
 
 #ifdef FLUXIONS_GTE_USEOPENEXR
+#ifdef _WIN32
 #define OPENEXR_DLL
+#endif
 #include <OpenEXR/ImfRgbaFile.h>
 #endif
 
@@ -687,7 +693,7 @@ namespace Fluxions
 			y2 = -1;
 			dy = -1;
 		}
-		constexpr unsigned count = 3;
+
 		for (int y = y1; y != y2; y += dy) {
 			for (int x = 0; x < (int)imageWidth; x++) {
 				ColorType c = getPixel(x, y, z);
@@ -803,16 +809,22 @@ namespace Fluxions
 
 		return false;
 	}
-
+#ifdef _MSC_VER
+#define FX_SWAP32INT(v) _byteswap_ulong(v);
+#elif defined(__APPLE__)
+#define FX_SWAP32INT(v) OSSwapInt32(v);
+#elif defined(__unix__)
+#define FX_SWAP32INT(v) __bswap_32(v);
+#endif
 	float read_float_reversebytes(std::ifstream& fin) {
 		unsigned v;
 		fin.read((char*)&v, 4);
-		v = _byteswap_ulong(v);
+		v = FX_SWAP32INT(v);
 		return *reinterpret_cast<float*>(&v);
 	}
 
 	inline void reverse_bytes1(float* f) {
-		unsigned long u = _byteswap_ulong(*reinterpret_cast<int*>(f));
+		unsigned long u = FX_SWAP32INT(*reinterpret_cast<int*>(f));
 		*f = *reinterpret_cast<float*>(&u);
 	}
 
@@ -991,11 +1003,6 @@ namespace Fluxions
 		}
 	}
 
-	template <typename ColorType>
-	void TImage<ColorType>::setImageData(unsigned int format, unsigned int type, unsigned width, unsigned height, unsigned depth, void* _pixels) {
-		_setImageData(getComponentCount(format), type, ColorType::gl_size, ColorType::gl_type, width, height, depth, _pixels);
-	}
-
 	constexpr unsigned getComponentCount(unsigned format) {
 		constexpr unsigned glconstant_RGB = 0x1907;
 		constexpr unsigned glconstant_RGBA = 0x1908;
@@ -1006,12 +1013,17 @@ namespace Fluxions
 	}
 
 	template <typename ColorType>
+	void TImage<ColorType>::setImageData(unsigned int format, unsigned int type, unsigned width, unsigned height, unsigned depth, void* _pixels) {
+		_setImageData(getComponentCount(format), type, ColorType::gl_size, ColorType::gl_type, width, height, depth, _pixels);
+	}
+
+	template <typename ColorType>
 	void TImage<ColorType>::_setImageData(unsigned int fromFormat, unsigned int fromType, unsigned int toFormat, unsigned int toType, unsigned width, unsigned height, unsigned depth, void* _pixels) {
 		constexpr float scaleFactor_itof = 1.0f / 255.99f;
 		constexpr float scaleFactor_ftoi = 255.99f;
 
-		constexpr unsigned glconstant_RGB = 0x1907;
-		constexpr unsigned glconstant_RGBA = 0x1908;
+		// constexpr unsigned glconstant_RGB = 0x1907;
+		// constexpr unsigned glconstant_RGBA = 0x1908;
 		constexpr unsigned glconstant_FLOAT = 0x1406;
 		constexpr unsigned glconstant_UNSIGNED_BYTE = 0x1401;
 
@@ -1118,7 +1130,6 @@ namespace Fluxions
 			return false;
 
 		std::vector<ColorType> tmp((size_t)imageWidth * imageHeight);
-		unsigned size = imageWidth;
 		unsigned _zstride = imageWidth * imageHeight;
 		unsigned zoffset = _zstride * z;
 		for (unsigned x = 0; x < imageWidth; x++) {

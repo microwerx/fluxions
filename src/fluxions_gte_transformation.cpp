@@ -18,11 +18,11 @@ bool TestCommonVector(const char* testname) {
 	const auto t1(1);
 	const auto t2(2);
 
-	auto t3 = t1 + t2;
-	auto t4 = t1 - t2;
+	TTransformation<T> t3 = t1 + t2;
+	TTransformation<T> t4 = t1 - t2;
 
-	cout << t3.toString() << endl;
-	cout << t4.toString() << endl;
+	std::cout << t3.toString() << std::endl;
+	std::cout << t4.toString() << std::endl;
 	
 	FLUXIONS_END_TESTS();
 }
@@ -33,9 +33,9 @@ bool TestGteTransformations(const char* testname) {
 	using std::endl;
 	bool result = true;
 
-	using T1 = TTransformation<T>::value_type;
-	using PType = TTransformation<T>::position_type;
-	using QType = TTransformation<T>::rotation_type;
+	using T1 = typename TTransformation<T>::value_type;
+	using PType = typename TTransformation<T>::position_type;
+	using QType = typename TTransformation<T>::rotation_type;
 
 	TTransformation<T> t1{ { 1,  1,  1}, TQuaternion<T>::makeFromAngleAxis( 10, 1, 0, 0) };
 	TTransformation<T> t2{ { 2,  3,  4}, TQuaternion<T>::makeFromAngleAxis( 90, 0, 1, 0) };

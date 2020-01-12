@@ -88,8 +88,10 @@ bool TestTVector3(const char* testname) {
 		result = false;
 	if constexpr (TVector3<T>::zero != 0)
 		result = false;
-	if constexpr (TVector3<T>::is_signed&& TVector3<T>::minusone != -1) {
-		result = false;
+	if constexpr (TVector3<T>::is_signed) {
+		if constexpr (TVector3<T>::minusone != -1) {
+			result = false;
+		}
 	}
 
 	// Linear Algebra Test

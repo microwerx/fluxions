@@ -251,7 +251,7 @@ namespace Fluxions
 			if (mtl.name == materialName) break;
 			id++;
 		}
-		if (id >= mtls.size()) return 0;
+		if (id >= (int)mtls.size()) return 0;
 		return id;
 	}
 

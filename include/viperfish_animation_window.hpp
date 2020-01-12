@@ -84,7 +84,7 @@ namespace Vf
 			AnimationTime u2 = keyframe2.u->time();
 			//AnimationTime t = (u - u1) / (u2 - u1);
 			if (u < u2) return keyframe1.p->scalar(u - u1);
-			if (u >= u2) return keyframe2.p->scalar(u - u2);
+			else return keyframe2.p->scalar(u - u2);
 		}
 	};
 

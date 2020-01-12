@@ -492,14 +492,14 @@ namespace Fluxions
 
 	bool RendererContext::k_check(const Df::TokenVector& args,
 								  int count, const std::string& cmd) {
-		if (args.size() < count || args[0].sval != cmd)
+		if (((int)args.size()) < count || args[0].sval != cmd)
 			return false;
 		return true;
 	}
 
 	bool RendererContext::k_sval(const Df::TokenVector& args,
 								 int i, std::string& x) {
-		if (args.size() <= i) return false;
+		if (((int)args.size()) <= i) return false;
 		if (args[i].IsStringOrIdentifier()) {
 			x = args[i].sval;
 			return true;
@@ -509,7 +509,7 @@ namespace Fluxions
 
 	bool RendererContext::k_ival(const Df::TokenVector& args,
 								 int i, int& ival) {
-		if (args.size() <= i) return false;
+		if (((int)args.size()) <= i) return false;
 		if (args[i].IsInteger()) {
 			ival = args[i].ival;
 			return true;
@@ -519,7 +519,7 @@ namespace Fluxions
 
 	bool RendererContext::k_dval(const Df::TokenVector& args,
 								 int i, double& dval) {
-		if (args.size() <= i) return false;
+		if (((int)args.size()) <= i) return false;
 		if (args[i].IsIntegerOrDouble()) {
 			dval = args[i].dval;
 			return true;
@@ -529,7 +529,7 @@ namespace Fluxions
 
 	bool RendererContext::k_glenum(const Df::TokenVector& args,
 								   int i, GLenum& enumValue) {
-		if (args.size() <= i) return false;
+		if (((int)args.size()) <= i) return false;
 		if (args[i].IsStringOrIdentifier()) {
 			GLenum paramName = Fluxions::glNameTranslator.getEnum(args[i].sval);
 			if (paramName) {
@@ -541,7 +541,7 @@ namespace Fluxions
 	}
 
 	int RendererContext::k_ivalue(const Df::TokenVector& args, int i) {
-		if (args.size() <= i) return 0;
+		if (((int)args.size()) <= i) return 0;
 		else if (args[i].IsInteger()) return args[i].ival;
 		else if (args[i].IsDouble()) return (int)args[i].dval;
 		else if (args[i].sval.empty()) return 0;
@@ -552,7 +552,7 @@ namespace Fluxions
 	}
 
 	double RendererContext::k_dvalue(const Df::TokenVector& args, int i) {
-		if (args.size() <= i) return 0;
+		if (((int)args.size()) <= i) return 0;
 		else if (args[i].IsDouble()) return args[i].dval;
 		else if (args[i].IsInteger()) return args[i].ival;
 		else if (args[i].sval.empty()) return 0;

@@ -37,7 +37,7 @@ CC = gcc
 CCFLAGS = -Wall -I$(INCDIR) $(MACINCDIRS) `python3-config --includes`
 CXX = g++
 CXXFLAGS = -std=c++17 -g -Wall -I$(INCDIR) $(INCLUDES) $(MACINCDIRS) `python3-config --includes`
-LDFLAGS = -LGLEW -LGL -LGLU -Lglut -lIlmImf
+LDFLAGS = -LGLEW -LGL -LGLU -LGLFW -LSDL2_image -lIlmImf
 
 .PHONY: all clean precompiled
 

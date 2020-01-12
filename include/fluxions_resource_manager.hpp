@@ -207,7 +207,7 @@ namespace Fluxions
 
 	template <typename T>
 	unsigned TResourceManager<T>::count(const std::string& id) const noexcept {
-		return (unsigned)handleToStringsMap_.count(id);
+		return (unsigned)stringToHandleMap_.count(id);
 	}
 
 	template <typename T>

@@ -113,7 +113,7 @@ namespace Vf
 		inline int getHeighti() const { return (int)windowRect_.h; }
 		inline int getWidthi() const { return (int)windowRect_.w; }
 		inline const Rectf& windowRect() const { return windowRect_; }
-		inline const Recti& windowRecti() const { return windowRect_; }
+		inline Recti windowRecti() const { return (Recti)windowRect_; }
 		inline Rectf& windowRect() { return windowRect_; }
 
 		inline bool isVisible() const { return visible_; }

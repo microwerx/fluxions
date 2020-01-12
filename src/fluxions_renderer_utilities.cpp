@@ -137,7 +137,7 @@ namespace Fluxions
 		unsigned size = w * h * layers;
 		for (unsigned addr = 0; addr < size; addr++) {
 			for (unsigned i = 0; i < dstcomponents; i++) {
-				if (i >= (int)srccomponents) {
+				if (i >= (unsigned)srccomponents) {
 					if (dstubpixels) {
 						*dstubpixels++ = 0;
 					}
@@ -321,13 +321,13 @@ namespace Fluxions
 					  depthSize, Fluxions::glNameTranslator.getString(depthType));
 		}
 
-		bool iszero = true;
-		for (auto i = 0; i < pixels.size(); i++) {
-			if (pixels[i] != '\0') {
-				iszero = false;
-				break;
-			}
-		}
+		// bool iszero = true;
+		// for (auto& p: pixels) {
+		// 	if (p != '\0') {
+		// 		iszero = false;
+		// 		break;
+		// 	}
+		// }
 
 		FxDebugBindTexture(target, 0);
 		return true;
