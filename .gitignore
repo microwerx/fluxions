@@ -362,3 +362,7 @@ GPATH
 GTAGS
 GRTAGS
 *.gch
+
+# cmake
+build/**/
+!build/.keep
