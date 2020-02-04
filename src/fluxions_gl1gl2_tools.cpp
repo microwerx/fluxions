@@ -265,6 +265,7 @@ bool FxDebugBindTexture(GLenum target, GLuint texture) {
 bool FxCreateBuffer(GLenum target, unsigned* p, GLsizeiptr size, const void* data, unsigned usage) {
 	if (!*p) {
 		glGenBuffers(1, p);
+		HFLOGDEBUG("buffer %d created", *p);
 	}
 	if (*p) {
 		glBindBuffer(target, *p);
@@ -276,49 +277,121 @@ bool FxCreateBuffer(GLenum target, unsigned* p, GLsizeiptr size, const void* dat
 void FxDeleteBuffer(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteBuffers(1, p);
+	HFLOGDEBUG("buffer %d deleted", *p);
 	*p = 0;
 }
 
-void FxCreateVertexArray(GLuint* p) {
+bool FxCreateProgram(GLuint* p) {
+	if (*p) FxDeleteProgram(p);
+	if (!*p) {
+		*p = glCreateProgram();
+		HFLOGDEBUG("program %d created", *p);
+	}
+	return *p != 0;
+}
+
+void FxDeleteProgram(GLuint* p) {
+	if (*p == 0) return;
+	glDeleteProgram(*p);
+	HFLOGDEBUG("program %d deleted", *p);
+	*p = 0;
+}
+
+bool FxCreateShader(GLenum shaderType, GLuint* p) {
+	if (*p) FxDeleteShader(p);
+	if (!*p) {
+		*p = glCreateShader(shaderType);
+		HFLOGDEBUG("shader %d created", *p);
+	}
+	return *p != 0;
+}
+
+void FxDeleteShader(GLuint* p) {
+	if (*p == 0) return;
+	glDeleteShader(*p);
+	HFLOGDEBUG("shader %d deleted", *p);
+	*p = 0;
+}
+
+bool FxCreateTexture(GLenum target, GLuint* p) {
+	if (*p) FxDeleteTexture(p);
+	if (!*p) {
+		glGenTextures(1, p);
+		glBindTexture(target, *p);
+		HFLOGDEBUG("texture %d created", *p);
+	}
+	return *p != 0;
+}
+
+void FxDeleteTexture(GLuint* p) {
+	if (*p == 0) return;
+	glDeleteTextures(1, p);
+	HFLOGDEBUG("texture %d deleted", *p);
+	*p = 0;
+}
+
+bool FxCreateSampler(GLuint* p) {
+	if (*p) FxDeleteSampler(p);
+	if (!*p) {
+		glGenSamplers(1, p);
+		HFLOGDEBUG("sampler %d created", *p);
+	}
+	return *p != 0;
+}
+
+void FxDeleteSampler(GLuint* p) {
+	if (*p == 0) return;
+	glDeleteSamplers(1, p);
+	HFLOGDEBUG("sampler %d deleted", *p);
+	*p = 0;
+}
+
+
+bool FxCreateVertexArray(GLuint* p) {
 	if (*p) FxDeleteVertexArray(p);
 	glGenVertexArrays(1, p);
+	HFLOGDEBUG("vao %d created", *p);
 	glBindVertexArray(*p);
+	return *p != 0;
 }
 
 void FxDeleteVertexArray(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteVertexArrays(1, p);
+	HFLOGDEBUG("vao %d deleted", *p);
 	*p = 0;
 }
 
-void FxCreateRenderbuffer(GLuint* p) {
+bool FxCreateRenderbuffer(GLuint* p) {
 	if (*p) {
 		FxDeleteRenderbuffer(p);
 	}
 	glGenRenderbuffers(1, p);
-	HFLOGDEBUG("Creating renderbuffer %i", *p);
+	HFLOGDEBUG("renderbuffer %i created", *p);
 	glBindRenderbuffer(GL_FRAMEBUFFER, *p);
+	return *p != 0;
 }
 
 void FxDeleteRenderbuffer(GLuint* p) {
 	if (*p == 0) return;
-	HFLOGDEBUG("Deleting renderbuffer %i", *p);
+	HFLOGDEBUG("renderbuffer %i deleted", *p);
 	glDeleteRenderbuffers(1, p);
 	*p = 0;
 }
 
-void FxCreateFramebuffer(GLuint* p) {
+bool FxCreateFramebuffer(GLuint* p) {
 	if (*p) {
 		FxDeleteFramebuffer(p);
 	}
 	glGenFramebuffers(1, p);
-	HFLOGDEBUG("Creating framebuffer %i", *p);
+	HFLOGDEBUG("framebuffer %i created", *p);
 	glBindFramebuffer(GL_FRAMEBUFFER, *p);
+	return *p != 0;
 }
 
 void FxDeleteFramebuffer(GLuint* p) {
 	if (*p == 0) return;
-	HFLOGDEBUG("Deleting framebuffer %i", *p);
+	HFLOGDEBUG("framebuffer %i deleted", *p);
 	glDeleteFramebuffers(1, p);
 	*p = 0;
 }
@@ -337,6 +410,58 @@ GLuint FxCheckFramebufferStatus() {
 void FxClearScreenRgb(GLfloat r, GLfloat g, GLfloat b) {
 	glClearColor(r, g, b, 1.0f);
 	glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+}
+
+FxSaveGraphicsState::FxSaveGraphicsState() {
+	glGetIntegerv(GL_ACTIVE_TEXTURE, &last_active_texture);
+	glActiveTexture(GL_TEXTURE0);
+	glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
+	glGetIntegerv(GL_BLEND_SRC_RGB, &last_blend_src_rgb);
+	glGetIntegerv(GL_BLEND_DST_RGB, &last_blend_dst_rgb);
+	glGetIntegerv(GL_BLEND_SRC_ALPHA, &last_blend_src_alpha);
+	glGetIntegerv(GL_BLEND_DST_ALPHA, &last_blend_dst_alpha);
+	glGetIntegerv(GL_BLEND_EQUATION_RGB, &last_blend_equation_rgb);
+	glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &last_blend_equation_alpha);
+	glGetIntegerv(GL_VIEWPORT, last_viewport);
+	glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
+	GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
+	GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
+	GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+	GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
+}
+
+FxSaveGraphicsState::~FxSaveGraphicsState() {
+	glUseProgram(last_program);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, last_texture);
+	glActiveTexture(last_active_texture);
+	glBindVertexArray(last_vertex_array);
+	glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
+	glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
+	glBlendFuncSeparate(last_blend_src_rgb, last_blend_dst_rgb, last_blend_src_alpha, last_blend_dst_alpha);
+	if (last_enable_blend)
+		glEnable(GL_BLEND);
+	else
+		glDisable(GL_BLEND);
+	if (last_enable_cull_face)
+		glEnable(GL_CULL_FACE);
+	else
+		glDisable(GL_CULL_FACE);
+	if (last_enable_depth_test)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
+	if (last_enable_scissor_test)
+		glEnable(GL_SCISSOR_TEST);
+	else
+		glDisable(GL_SCISSOR_TEST);
+	glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
+	glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
 
 void FxGlutTestLitSolidTeapotScene(double fovy, double aspect) {
@@ -371,6 +496,7 @@ void FxGlutTestLitSolidTeapotScene(double fovy, double aspect) {
 }
 
 void FxGlutBitmapString(void* font, const char* str) {
+	if (!font) return;
 	int len = (int)strlen(str);
 	int i = 0;
 
@@ -382,6 +508,7 @@ void FxGlutBitmapString(void* font, const char* str) {
 }
 
 void FxGlutStrokeString(void* font, const char* str) {
+	if (!font) return;
 	int len = (int)strlen(str);
 	int i = 0;
 
@@ -1061,12 +1188,8 @@ void FxDrawGL2UnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLin
 	static GLuint eabo = 0;
 
 	if (abo == 0) {
-		glGenBuffers(1, &abo);
-		glGenBuffers(1, &eabo);
-		glBindBuffer(GL_ARRAY_BUFFER, abo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		FxCreateBuffer(GL_ARRAY_BUFFER, &abo, sizeof(buffer), buffer, GL_STATIC_DRAW);
+		FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, abo);
@@ -1086,9 +1209,6 @@ void FxDrawGL2UnwrappedCubeMap(GLuint x, GLuint y, GLuint size, GLint vloc, GLin
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glUseProgram(0);
-
-	// glDeleteBuffers(1, &abo);
-	// glDeleteBuffers(1, &eabo);
 }
 
 // FxDrawGL2CubeMap
@@ -1247,12 +1367,8 @@ void FxDrawGL2CubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint v
 	static GLuint eabo = 0;
 
 	if (abo == 0) {
-		glGenBuffers(1, &abo);
-		glGenBuffers(1, &eabo);
-		glBindBuffer(GL_ARRAY_BUFFER, abo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		FxCreateBuffer(GL_ARRAY_BUFFER, &abo, sizeof(buffer), buffer, GL_STATIC_DRAW);
+		FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
 	//glBindBuffer(GL_ARRAY_BUFFER, abo);
@@ -1273,13 +1389,6 @@ void FxDrawGL2CubeMap(GLdouble x, GLdouble y, GLdouble z, GLdouble size, GLint v
 		glDisableVertexAttribArray(vloc);
 	if (tloc >= 0)
 		glDisableVertexAttribArray(tloc);
-
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//glUseProgram(0);
-
-	// glDeleteBuffers(1, &abo);
-	// glDeleteBuffers(1, &eabo);
 }
 
 void FxDrawGL1WireSphere(float radius, unsigned slices, unsigned stacks) {

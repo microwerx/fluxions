@@ -26,20 +26,60 @@ bool FxDebugBindTexture(GLenum target, GLuint texture);
 bool FxCreateBuffer(GLenum target, unsigned* p, GLsizeiptr size, const void* data, unsigned usage);
 void FxDeleteBuffer(GLuint* p);
 
-void FxCreateVertexArray(GLuint* p);
+bool FxCreateProgram(GLuint* p);
+void FxDeleteProgram(GLuint* p);
+
+bool FxCreateShader(GLenum shaderType, GLuint* p);
+void FxDeleteShader(GLuint* p);
+
+bool FxCreateTexture(GLenum target, GLuint* p);
+void FxDeleteTexture(GLuint* p);
+
+bool FxCreateSampler(GLuint* p);
+void FxDeleteSampler(GLuint* p);
+
+bool FxCreateVertexArray(GLuint* p);
 void FxDeleteVertexArray(GLuint* p);
 
-void FxCreateRenderbuffer(GLuint* p);
+bool FxCreateRenderbuffer(GLuint* p);
 void FxDeleteRenderbuffer(GLuint* p);
-void FxCreateFramebuffer(GLuint* p);
+
+bool FxCreateFramebuffer(GLuint* p);
 void FxDeleteFramebuffer(GLuint* p);
 GLuint FxCheckFramebufferStatus();
 const char* FxGetFramebufferStatusAsString(GLenum status);
+
+inline void FxGenerateMipmap(GLenum target) { glGenerateMipmap(target); }
 
 void FxClearScreenRgb(GLfloat r, GLfloat g, GLfloat b);
 
 void FxGlutBitmapString(void* font, const char* str);
 void FxGlutStrokeString(void* font, const char* str);
+
+class FxSaveGraphicsState {
+public:
+	FxSaveGraphicsState();
+	~FxSaveGraphicsState();
+private:
+	GLint last_active_texture{ 0 };
+	GLint last_program{ 0 };
+	GLint last_texture{ 0 };
+	GLint last_array_buffer{ 0 };
+	GLint last_element_array_buffer{ 0 };
+	GLint last_vertex_array{ 0 };
+	GLint last_blend_src_rgb{ 0 };
+	GLint last_blend_dst_rgb{ 0 };
+	GLint last_blend_src_alpha{ 0 };
+	GLint last_blend_dst_alpha{ 0 };
+	GLint last_blend_equation_rgb{ 0 };
+	GLint last_blend_equation_alpha{ 0 };
+	GLint last_viewport[4];
+	GLint last_scissor_box[4];
+	GLboolean last_enable_blend{ 0 };
+	GLboolean last_enable_cull_face{ 0 };
+	GLboolean last_enable_depth_test{ 0 };
+	GLboolean last_enable_scissor_test{ 0 };
+};
 
 enum FX_GLUT_JUSTIFICATION {
 	LEFT,

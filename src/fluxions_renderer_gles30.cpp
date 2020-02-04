@@ -293,8 +293,7 @@ namespace Fluxions {
 			unsigned i = 0;
 			for (const auto& [k, dl] : pSSG->dirToLights) {
 				if (i >= ssgUbDirToLights.size()) break;
-				const BaseDirToLight* bdl = &dl;
-				ssgUbDirToLights.uniforms[i++] = dl;// *bdl;
+				ssgUbDirToLights.uniforms[i++] = dl;
 			}
 			ssgUbDirToLights.update();
 		}
@@ -363,8 +362,7 @@ namespace Fluxions {
 			this->abo = abo;
 			this->eabo = eabo;
 
-			glGenVertexArrays(1, &vao);
-			if (vao > 0) {
+			if (FxCreateVertexArray(&vao)) {
 				glBindVertexArray(vao);
 				glBindBuffer(GL_ARRAY_BUFFER, abo);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
@@ -388,8 +386,7 @@ namespace Fluxions {
 					glBindBuffer(GL_ARRAY_BUFFER, 0);
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 					glBindVertexArray(0);
-					glDeleteVertexArrays(1, &vao);
-					vao = 0;
+					FxDeleteVertexArray(&vao);
 					return;
 				}
 
@@ -409,9 +406,7 @@ namespace Fluxions {
 		}
 
 		~VertexArrayObject() {
-			if (vao > 0) {
-				glDeleteVertexArrays(1, &vao);
-			}
+			FxDeleteVertexArray(&vao);
 		}
 
 		void Draw() {
@@ -877,12 +872,8 @@ namespace Fluxions {
 			0, 3, 2 };
 
 		if (skybox.abo == 0) {
-			glGenBuffers(1, &skybox.abo);
-			glGenBuffers(1, &skybox.eabo);
-			glBindBuffer(GL_ARRAY_BUFFER, skybox.abo);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(buffer), buffer, GL_STATIC_DRAW);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skybox.eabo);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+			FxCreateBuffer(GL_ARRAY_BUFFER, &skybox.abo, sizeof(buffer), buffer, GL_STATIC_DRAW);
+			FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &skybox.eabo, sizeof(indices), indices, GL_STATIC_DRAW);
 		}
 
 		if (!pSkyboxCube && !renderskyboxname.empty()) {

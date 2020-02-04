@@ -572,6 +572,7 @@ namespace Fluxions {
 	}
 
 	bool SimpleSceneGraph::read(const std::string& keyword, std::istream& istr) {
+		if (keyword.empty() || !istr) return false;
 		return false;
 	}
 

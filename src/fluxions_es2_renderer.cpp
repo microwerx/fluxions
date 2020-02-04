@@ -16,10 +16,10 @@ namespace Fluxions {
 
 		class Resource {
 		protected:
-			GLuint resourceId;
+			GLuint resourceId{ 0 };
 
 		public:
-			Resource() : resourceId(0) {
+			Resource() {
 				Create();
 			}
 
@@ -55,11 +55,10 @@ namespace Fluxions {
 			virtual ~TextureResource() override {}
 
 			virtual void Create() override {
-				glGenTextures(1, &resourceId);
 			}
 
 			virtual void Delete() override {
-				glDeleteTextures(1, &resourceId);
+				FxDeleteTexture(&resourceId);
 				Resource::Delete();
 			}
 		};
@@ -79,9 +78,9 @@ namespace Fluxions {
 			}
 
 			void SetImageData(int width, int height, int internalformat, GLenum format, GLenum type, void* data) {
-				glBindTexture(GL_TEXTURE_2D, resourceId);
+				FxCreateTexture(GL_TEXTURE_2D, &resourceId);
 				glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, type, data);
-				glGenerateMipmap(GL_TEXTURE_2D);
+				FxGenerateMipmap(GL_TEXTURE_2D);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
@@ -110,14 +109,14 @@ namespace Fluxions {
 							  GLenum type,
 							  void* pPosX, void* pPosY, void* pPosZ,
 							  void* pNegX, void* pNegY, void* pNegZ) {
-				glBindTexture(GL_TEXTURE_CUBE_MAP, resourceId);
+				FxCreateTexture(GL_TEXTURE_CUBE_MAP, &resourceId);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, internalformat, width, height, 0, format, type, pPosX);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internalformat, width, height, 0, format, type, pPosY);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internalformat, width, height, 0, format, type, pPosZ);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, internalformat, width, height, 0, format, type, pNegX);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internalformat, width, height, 0, format, type, pNegY);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internalformat, width, height, 0, format, type, pNegZ);
-				glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+				FxGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 			}
 
@@ -137,18 +136,14 @@ namespace Fluxions {
 			virtual ~BufferResource() override {}
 
 			virtual void Create() override {
-				glGenBuffers(1, &resourceId);
 			}
 
 			virtual void Delete() override {
-				glDeleteBuffers(1, &resourceId);
-				resourceId = 0;
+				FxDeleteBuffer(&resourceId);
 			}
 
 			virtual void SetBufferData(GLsizeiptr size, const void* data, GLenum usage) {
-				glBindBuffer(target, resourceId);
-				glBufferData(target, size, data, usage);
-				glBindBuffer(target, 0);
+				FxCreateBuffer(target, &resourceId, size, data, usage);
 			}
 
 			virtual void Bind() override {

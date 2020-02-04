@@ -16,8 +16,8 @@ namespace Fluxions {
 	template <typename IndexType, GLenum GLIndexType>
 	class SimpleRenderer {
 	private:
-		GLuint arrayBuffer = 0;        // memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
-		GLuint elementArrayBuffer = 0; // memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
+		GLuint abo = 0;		// memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
+		GLuint eabo = 0;	// memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
 
 		std::vector<GLubyte> vertexMemoryBuffer;
 		std::vector<GLubyte> indexMemoryBuffer;

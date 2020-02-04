@@ -70,8 +70,6 @@ namespace Vf
 		float q1Z = 0.0f;
 		int pointIdx = 0;
 
-		void _showv(const char* m, const Fx::Vector3f& v);
-		void _showq(const char* m, const Fx::Quaternionf& q);
 		void _drawPath();
 	};
 

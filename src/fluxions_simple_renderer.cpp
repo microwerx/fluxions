@@ -378,43 +378,24 @@ namespace Fluxions {
 	template <typename IndexType, GLenum GLIndexType>
 	bool SimpleRenderer<IndexType, GLIndexType>::BuildBuffers() {
 		// Have we already built the buffers?
-		if (arrayBuffer && elementArrayBuffer)
+		if (abo && eabo)
 			return true;
-
-		if (!arrayBuffer) {
-			glGenBuffers(1, &arrayBuffer);
-		}
-
-		if (!elementArrayBuffer) {
-			glGenBuffers(1, &elementArrayBuffer);
-		}
 
 		BuildMemoryBuffers();
 
-		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+		FxCreateBuffer(GL_ARRAY_BUFFER, &abo, vertexMemoryBuffer.size(), &vertexMemoryBuffer[0], GL_STATIC_DRAW);
+		FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, indexMemoryBuffer.size(), &indexMemoryBuffer[0], GL_STATIC_DRAW);
 
-		if (!vertexMemoryBuffer.empty())
-			glBufferData(GL_ARRAY_BUFFER, vertexMemoryBuffer.size(), &vertexMemoryBuffer[0], GL_STATIC_DRAW);
-		if (!indexMemoryBuffer.empty())
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexMemoryBuffer.size(), &indexMemoryBuffer[0], GL_STATIC_DRAW);
-
-		if (zVAO)
-			glDeleteVertexArrays(1, &zVAO);
-		glGenVertexArrays(1, &zVAO);
-		glBindVertexArray(zVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+		FxCreateVertexArray(&zVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, abo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glBindVertexArray(0);
 
-		if (fastVAO)
-			glDeleteVertexArrays(1, &fastVAO);
-		glGenVertexArrays(1, &fastVAO);
-		glBindVertexArray(fastVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+		FxCreateVertexArray(&fastVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, abo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
@@ -426,15 +407,9 @@ namespace Fluxions {
 		glVertexAttribPointer(3, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(bufferInfo.fastVertexOffset + 20));
 		glVertexAttribPointer(4, 4, GL_SHORT, GL_FALSE, sizeof(SimpleFastVertex), (GLvoid*)(bufferInfo.fastVertexOffset + 24));
 
-		if (slowVAO) {
-			glDeleteVertexArrays(1, &slowVAO);
-			slowVAO = 0;
-		}
-
-		glGenVertexArrays(1, &slowVAO);
-		glBindVertexArray(slowVAO);
-		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+		FxCreateVertexArray(&slowVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, abo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
 		for (int i = 0; i < 8; i++) {
 			glEnableVertexAttribArray(i);
 			GLsizeiptr offset = bufferInfo.slowVertexOffset + i * 16;
@@ -451,38 +426,21 @@ namespace Fluxions {
 			if (surface->isIndexed) {
 				surface->baseIndexBufferOffset = bufferInfo.IndexOffset + surface->firstIndex * sizeof(IndexType);
 				surface->baseZIndexBufferOffset = surface->firstZIndex * sizeof(IndexType);
-				//surface->baseIndexBufferOffset = bufferInfo.IndexOffset;
-				//surface->baseZIndexBufferOffset = bufferInfo.zIndexOffset;
 			}
 		}
 
-		return (arrayBuffer && elementArrayBuffer);
+		return (abo && eabo);
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::reset() {
 		vertexCount = 0;
 		triangleCount = 0;
-		if (arrayBuffer) {
-			glDeleteBuffers(1, &arrayBuffer);
-			arrayBuffer = 0;
-		}
-		if (elementArrayBuffer) {
-			glDeleteBuffers(1, &elementArrayBuffer);
-			elementArrayBuffer = 0;
-		}
-		if (zVAO) {
-			glDeleteVertexArrays(1, &zVAO);
-			zVAO = 0;
-		}
-		if (fastVAO) {
-			glDeleteVertexArrays(1, &fastVAO);
-			fastVAO = 0;
-		}
-		if (slowVAO) {
-			glDeleteVertexArrays(1, &slowVAO);
-			slowVAO = 0;
-		}
+		FxDeleteBuffer(&abo);
+		FxDeleteBuffer(&eabo);
+		FxDeleteVertexArray(&zVAO);
+		FxDeleteVertexArray(&fastVAO);
+		FxDeleteVertexArray(&slowVAO);
 		slowVertices.clear();
 		fastVertices.clear();
 		zVertices.clear();
@@ -513,8 +471,8 @@ namespace Fluxions {
 		if (!BuildBuffers())
 			return;
 
-		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, abo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -572,7 +530,7 @@ namespace Fluxions {
 	//{
 	//	// Render all surfaces as slow/fast vertex types with appropriate programs.
 	//	if (debugging) std::cout << "SimpleRenderer::RenderIf() -- obj: " << objname << " mtllib: " << mtllib << " mtl: " << mtl << std::endl;
-	//	if (!arrayBuffer || !elementArrayBuffer)
+	//	if (!abo || !eabo)
 	//	{
 	//		BuildBuffers();
 	//	}
@@ -637,7 +595,7 @@ namespace Fluxions {
 	void SimpleRenderer<IndexType, GLIndexType>::RenderZOnly() {
 
 		// Render all surfaces as Z only with appropriate transformation matrices.
-		if (!zVAO || !arrayBuffer || !elementArrayBuffer) {
+		if (!zVAO || !abo || !eabo) {
 			BuildBuffers();
 		}
 

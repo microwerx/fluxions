@@ -310,12 +310,6 @@
     <ClCompile Include="src\fluxions_sphl.cpp">
       <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_ssphh_light.cpp">
-      <Filter>src\fluxions-ssphh</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_ssphh.cpp">
-      <Filter>src\fluxions-ssphh</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_gte_pch.cpp">
       <Filter>src\pch</Filter>
     </ClCompile>
@@ -348,6 +342,12 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_base.cpp">
       <Filter>src\fluxions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_ssg_ssphh.cpp">
+      <Filter>src\fluxions-ssphh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_ssg_ssphh_light.cpp">
+      <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -902,8 +902,5 @@
     <Filter Include="src\pch">
       <UniqueIdentifier>{dc25e626-f23d-4d00-b743-2e9c7b059405}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

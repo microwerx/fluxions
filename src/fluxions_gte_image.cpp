@@ -640,12 +640,12 @@ namespace Fluxions {
 		float minColorFound = (float)minrgb();
 		constexpr float scale = color_to_float_factor<scalar_type>();
 
-		float imageColorRange = 255;
+		int imageColorRange = 255;
 		if (std::is_integral_v<scalar_type>) {
-			imageColorRange = std::max(maxColorFound, 255.0f);
+			imageColorRange = std::max<int>(maxColorFound, 255);
 		}
 		else if (std::is_floating_point_v<scalar_type>) {
-			imageColorRange = std::min(65535, (int)std::floor(std::max(maxColorFound, 1.0f) * 255.99f));
+			imageColorRange = std::min<int>(65535, (int)std::floor(std::max(maxColorFound, 1.0f) * 255.99f));
 		}
 
 		// Typical cases:

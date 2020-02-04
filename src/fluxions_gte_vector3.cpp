@@ -143,11 +143,11 @@ namespace Fluxions {
 
 		FLUXIONS_TEST(TestTVector3<float>);
 		FLUXIONS_TEST(TestTVector3<double>);
-		FLUXIONS_TEST(TestTVector3<unsigned char>);
+		//FLUXIONS_TEST(TestTVector3<unsigned char>);
 		FLUXIONS_TEST(TestTVector3<signed char>);
-		FLUXIONS_TEST(TestTVector3<unsigned short>);
+		//FLUXIONS_TEST(TestTVector3<unsigned short>);
 		FLUXIONS_TEST(TestTVector3<short>);
 		FLUXIONS_TEST(TestTVector3<int>);
-		FLUXIONS_TEST(TestTVector3<unsigned int>);
+		//FLUXIONS_TEST(TestTVector3<unsigned int>);
 	}
 } // namespace Fluxions

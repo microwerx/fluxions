@@ -5,11 +5,11 @@
 
 namespace Df {
 	struct LexerToken {
-		TokenType type;
+		TokenType type{ TokenType::TT0_NOTHING };
 
-		size_t start;
-		size_t length;
-		char* cptr;
+		size_t start{ 0 };
+		size_t length{ 0 };
+		char* cptr{ nullptr };
 	};
 
 	struct LexerState {
@@ -17,15 +17,15 @@ namespace Df {
 		std::vector<LexerToken> tokens;
 
 		LexerToken tmptoken;
-		LexerToken* lasttoken;
-		bool eatChar;
+		LexerToken* lasttoken{ nullptr };
+		bool eatChar{ false };
 	};
 
 	struct Token {
 		TokenType type;
 		std::string sval;
-		int ival;
-		double dval;
+		int ival{ 0 };
+		double dval{ 0.0 };
 
 		bool IsInteger() const { return type == TokenType::TT2_INTEGER; }
 		bool IsDouble() const { return type == TokenType::TT2_DOUBLE; }

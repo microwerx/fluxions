@@ -59,9 +59,9 @@ namespace Vf {
 
 	protected:
 		GLuint fontTextureId = 0;
-		GLint program = 0;
-		GLint vshader = 0;
-		GLint fshader = 0;
+		GLuint program = 0;
+		GLuint vshader = 0;
+		GLuint fshader = 0;
 		GLint uTexture0Loc = 0;
 		GLint uProjectionMatrixLoc = 0;
 		GLint aPositionLoc = 0;
@@ -112,6 +112,47 @@ namespace Vf {
 		*size = 2 << *choice;
 	}
 
+	inline void ImGuiValueVector2(const char* m, const Fx::Vector2f& v) {
+		ImGui::Text(m);
+		ImGui::SameLine();
+		ImGui::Value("x", v.x);
+		ImGui::SameLine();
+		ImGui::Value("y", v.y);
+	}
+
+	inline void ImGuiValueVector3(const char* m, const Fx::Vector3f& v) {
+		ImGui::Text(m);
+		ImGui::SameLine();
+		ImGui::Value("x", v.x);
+		ImGui::SameLine();
+		ImGui::Value("y", v.y);
+		ImGui::SameLine();
+		ImGui::Value("z", v.z);
+	}
+
+	inline void ImGuiValueVector4(const char* m, const Fx::Vector4f& v) {
+		ImGui::Text(m);
+		ImGui::SameLine();
+		ImGui::Value("x", v.x);
+		ImGui::SameLine();
+		ImGui::Value("y", v.y);
+		ImGui::SameLine();
+		ImGui::Value("z", v.z);
+		ImGui::SameLine();
+		ImGui::Value("w", v.w);
+	}
+
+	inline void ImGuiValueQuaternion(const char* m, const Fx::Quaternionf& q) {
+		ImGui::Text(m);
+		ImGui::SameLine();
+		ImGui::Value("a", q.a);
+		ImGui::SameLine();
+		ImGui::Value("b", q.b);
+		ImGui::SameLine();
+		ImGui::Value("c", q.c);
+		ImGui::SameLine();
+		ImGui::Value("d", q.d);
+	}
 } // namespace Vf
 
 #endif // VIPERFISH_DEAR_IMGUI_HPP

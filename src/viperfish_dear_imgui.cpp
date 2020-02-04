@@ -177,14 +177,10 @@ namespace Vf {
 		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		HFLOGDEBUG("Creating Dear ImGui device objects...");
 		// Backup GL state
-		GLint last_texture, last_array_buffer, last_vertex_array;
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
+		FxSaveGraphicsState glstate;
 
 		bool result = true;
-		glGenTextures(1, &fontTextureId);
-		if (fontTextureId == 0) {
+		if (!FxCreateTexture(GL_TEXTURE_2D, &fontTextureId)) {
 			HFLOGERROR("Unable to create Dear ImGui font texture");
 			result = false;
 		}
@@ -197,7 +193,7 @@ namespace Vf {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			//glGenerateMipmap(GL_TEXTURE_2D);
+			//FxGenerateMipmap(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 		long long id = fontTextureId;
@@ -252,8 +248,7 @@ namespace Vf {
 			glGetShaderInfoLog(vshader, infoLogLength, NULL, infoLog);
 			HFLOGERROR("failed to compile Dear ImGui vertex shader\n-----\n%s-----\n%s\n-----\n", infoLog, vertex_shader);
 			delete[] infoLog;
-			glDeleteShader(vshader);
-			vshader = 0;
+			FxDeleteShader(&vshader);
 			result = false;
 		}
 
@@ -267,14 +262,12 @@ namespace Vf {
 			glGetShaderInfoLog(fshader, infoLogLength, NULL, infoLog);
 			HFLOGERROR("failed to compile Dear ImGui fragment shader\n-----\n%s-----\n%s\n-----\n", infoLog, fragment_shader);
 			delete[] infoLog;
-			glDeleteShader(fshader);
-			fshader = 0;
+			FxDeleteShader(&fshader);
 			result = false;
 		}
 
 		if (!result) {
-			glDeleteProgram(program);
-			program = 0;
+			FxDeleteProgram(&program);
 			return false;
 		}
 
@@ -298,12 +291,10 @@ namespace Vf {
 		aTexcoordLoc = glGetAttribLocation(program, "aTexcoord");
 		aColorLoc = glGetAttribLocation(program, "aColor");
 
-		glGenBuffers(1, &abo);
-		glGenBuffers(1, &eabo);
+		FxCreateVertexArray(&vao);
+		FxCreateBuffer(GL_ARRAY_BUFFER, &abo, 0, nullptr, GL_STREAM_DRAW);
+		FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, 0, nullptr, GL_STREAM_DRAW);
 
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, abo);
 		glEnableVertexAttribArray(aPositionLoc);
 		glEnableVertexAttribArray(aTexcoordLoc);
 		glEnableVertexAttribArray(aColorLoc);
@@ -314,45 +305,29 @@ namespace Vf {
 		glVertexAttribPointer(aColorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(ImDrawVert), (GLvoid*)OFFSETOF(ImDrawVert, col));
 #undef OFFSETOF
 
-		// Restore modified GL state
-		glBindTexture(GL_TEXTURE_2D, last_texture);
-		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
-		glBindVertexArray(last_vertex_array);
-
 		HFLOGDEBUG("Dear ImGui Device Objects Created");
 		return true;
 	}
 
 	void DearImGuiWidget::InvalidateDeviceObjects() {
 		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
-		if (vao)
-			glDeleteVertexArrays(1, &vao);
-		if (abo)
-			glDeleteBuffers(1, &abo);
-		if (eabo)
-			glDeleteBuffers(1, &eabo);
-		vao = abo = eabo = 0;
+		FxDeleteVertexArray(&vao);
+		FxDeleteBuffer(&abo);
+		FxDeleteBuffer(&eabo);
+
 
 		if (program && vshader)
 			glDetachShader(program, vshader);
-		if (vshader)
-			glDeleteShader(vshader);
-		vshader = 0;
-
 		if (program && fshader)
 			glDetachShader(program, fshader);
-		if (fshader)
-			glDeleteShader(fshader);
-		fshader = 0;
 
-		if (program)
-			glDeleteProgram(program);
-		program = 0;
+		FxDeleteShader(&vshader);
+		FxDeleteShader(&fshader);
+		FxDeleteProgram(&program);
 
 		if (fontTextureId) {
-			glDeleteTextures(1, &fontTextureId);
 			ImGui::GetIO().Fonts->TexID = 0;
-			fontTextureId = 0;
+			FxDeleteTexture(&fontTextureId);
 		}
 		HFLOGINFO("Dear ImGui Device Objects Invalidated");
 		ContextInitialized = false;
@@ -371,40 +346,7 @@ namespace Vf {
 			return;
 		draw_data->ScaleClipRects(io.DisplayFramebufferScale);
 
-		// Backup GL state
-		GLint last_active_texture;
-		glGetIntegerv(GL_ACTIVE_TEXTURE, &last_active_texture);
-		glActiveTexture(GL_TEXTURE0);
-		GLint last_program;
-		glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
-		GLint last_texture;
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-		GLint last_array_buffer;
-		glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
-		GLint last_element_array_buffer;
-		glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
-		GLint last_vertex_array;
-		glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &last_vertex_array);
-		GLint last_blend_src_rgb;
-		glGetIntegerv(GL_BLEND_SRC_RGB, &last_blend_src_rgb);
-		GLint last_blend_dst_rgb;
-		glGetIntegerv(GL_BLEND_DST_RGB, &last_blend_dst_rgb);
-		GLint last_blend_src_alpha;
-		glGetIntegerv(GL_BLEND_SRC_ALPHA, &last_blend_src_alpha);
-		GLint last_blend_dst_alpha;
-		glGetIntegerv(GL_BLEND_DST_ALPHA, &last_blend_dst_alpha);
-		GLint last_blend_equation_rgb;
-		glGetIntegerv(GL_BLEND_EQUATION_RGB, &last_blend_equation_rgb);
-		GLint last_blend_equation_alpha;
-		glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &last_blend_equation_alpha);
-		GLint last_viewport[4];
-		glGetIntegerv(GL_VIEWPORT, last_viewport);
-		GLint last_scissor_box[4];
-		glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
-		GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
-		GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
-		GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
-		GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
+		FxSaveGraphicsState glstate;
 
 		// Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled
 		glEnable(GL_BLEND);
@@ -422,6 +364,7 @@ namespace Vf {
 			{0.0f, 0.0f, -1.0f, 0.0f},
 			{-1.0f, 1.0f, 0.0f, 1.0f},
 		};
+		glActiveTexture(GL_TEXTURE0);
 		glUseProgram(program);
 		glUniform1i(uTexture0Loc, 0);
 		glUniformMatrix4fv(uProjectionMatrixLoc, 1, GL_FALSE, &ortho_projection[0][0]);
@@ -431,11 +374,8 @@ namespace Vf {
 			const ImDrawList* cmd_list = draw_data->CmdLists[n];
 			const ImDrawIdx* idx_buffer_offset = 0;
 
-			glBindBuffer(GL_ARRAY_BUFFER, abo);
-			glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eabo);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
+			FxCreateBuffer(GL_ARRAY_BUFFER, &abo, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
+			FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
 
 			for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
 				const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
@@ -450,33 +390,5 @@ namespace Vf {
 				idx_buffer_offset += pcmd->ElemCount;
 			}
 		}
-
-		// Restore modified GL state
-		glUseProgram(last_program);
-		glBindTexture(GL_TEXTURE_2D, last_texture);
-		glActiveTexture(last_active_texture);
-		glBindVertexArray(last_vertex_array);
-		glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
-		glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
-		glBlendFuncSeparate(last_blend_src_rgb, last_blend_dst_rgb, last_blend_src_alpha, last_blend_dst_alpha);
-		if (last_enable_blend)
-			glEnable(GL_BLEND);
-		else
-			glDisable(GL_BLEND);
-		if (last_enable_cull_face)
-			glEnable(GL_CULL_FACE);
-		else
-			glDisable(GL_CULL_FACE);
-		if (last_enable_depth_test)
-			glEnable(GL_DEPTH_TEST);
-		else
-			glDisable(GL_DEPTH_TEST);
-		if (last_enable_scissor_test)
-			glEnable(GL_SCISSOR_TEST);
-		else
-			glDisable(GL_SCISSOR_TEST);
-		glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
-		glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 	}
 } // namespace Vf

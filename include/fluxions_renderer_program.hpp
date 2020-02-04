@@ -22,7 +22,7 @@ namespace Fluxions {
 
 	public:
 		struct RequestedVertexAttrib {
-			int index = 0;
+			int index{ 0 };
 			std::string name;
 
 			RequestedVertexAttrib() {}
@@ -31,10 +31,10 @@ namespace Fluxions {
 		std::vector<RequestedVertexAttrib> requestedVertexAttribs;
 
 		struct AttribUniformInfo {
-			GLint size;
-			GLenum type;
-			GLint index;
-			GLint ubUniforms;
+			GLint size{ 0 };
+			GLenum type{ 0 };
+			GLint index{ 0 };
+			GLint ubUniforms{ 0 };
 			std::vector<int> ubUniformIndices;
 			std::string desc;
 

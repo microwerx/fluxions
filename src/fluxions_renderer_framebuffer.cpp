@@ -171,7 +171,7 @@ namespace Fluxions {
 				continue;
 
 			FxBindTexture(0, rt.target, rt.object);
-			glGenerateMipmap(rt.target);
+			FxGenerateMipmap(rt.target);
 			FxBindDefaultTextureAndSampler(rt.target);
 		}
 	}

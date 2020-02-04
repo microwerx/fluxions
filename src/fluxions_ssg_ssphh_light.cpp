@@ -516,7 +516,7 @@ namespace Fluxions {
 		for (int i = 0; i < 6; i++) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
 		}
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		FxGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		texture.unbind();
 		return true;
 	}
@@ -525,16 +525,11 @@ namespace Fluxions {
 		if (lightProbe.empty())
 			lightProbe.resize(32, 32, 6);
 
-		if (texture == 0) {
-			glGenTextures(1, &texture);
-		}
-		//texture = RendererGpuTexture(GL_TEXTURE_CUBE_MAP);
-		//texture.Bind(0);
-		FxDebugBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+		FxCreateTexture(GL_TEXTURE_CUBE_MAP, &texture);
 		for (int i = 0; i < 6; i++) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
 		}
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		FxGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		//texture.Unbind();
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 		return true;

@@ -3,6 +3,8 @@
 #include <fluxions_renderer_program.hpp>
 
 namespace Fluxions {
+	static bool verbose{ true };
+
 	RendererContext::RendererContext() {}
 
 	RendererContext::~RendererContext() {}
@@ -161,14 +163,8 @@ namespace Fluxions {
 				case 7:
 					result = k_sampler(tokens);
 					break;
-				case 8:
-					result = k_texture(tokens);
-					break;
 				case 9:
 					result = k_fbo(tokens);
-					break;
-				case 10:
-					result = k_renderbuffer(tokens);
 					break;
 				case 11:
 					result = k_geomshader(tokens);
@@ -207,23 +203,11 @@ namespace Fluxions {
 			}
 
 			HFLOGDEBUG("(Line: %03i) [%s] %s", lineno, Df::TokenVectorJoin(tokens, " ").c_str(),
-					   result ? "" : "(FALSE)");
+									result ? "" : "(FALSE)");
 		}
 
 		return true;
 	}
-
-	//bool RendererContext::isConfig(const std::string& name) const {
-	//	return RenderConfigs.count(name);
-	//}
-
-	//bool RendererContext::useConfig(const std::string& name) {
-	//	return use_renderconfig(name);
-	//}
-
-	//RenderConfigPtr RendererContext::getConfig(const std::string& name) {
-	//	return isConfig(name) ? RenderConfigs[name] : nullptr;
-	//}
 
 	void RendererContext::initTexUnits() {
 		killTexUnits();
@@ -294,80 +278,25 @@ namespace Fluxions {
 		HFLOGINFO("Loading shaders from renderconfig");
 		for (auto& [k, p] : programs) {
 			HFLOGINFO("Trying to load shader program '%s'",
-					  k.c_str());
+								   k.c_str());
 			p.detachShaders();
 			p.loadShaders();
 			p.link();
 		}
-
-		//Programs.clear();
-
-		//for (auto& [rcname, rc] : RenderConfigs) {
-		//	HFLOGINFO("loading renderconfig %s", rcname.c_str());
-
-		//	for (auto& p : rc->programs) {
-		//		HFLOGINFO("loading program %s", p.name.c_str());
-
-		//		std::string vspath = FindPathIfExists(p.vertshader, paths);
-		//		std::string fspath = FindPathIfExists(p.fragshader, paths);
-		//		std::string gspath = FindPathIfExists(p.geomshader, paths);
-
-		//		if (vspath.empty()) {
-		//			HFLOGERROR("vertex shader %s does not exist", p.vertshader.c_str());
-		//		}
-
-		//		if (fspath.empty()) {
-		//			HFLOGERROR("fragment shader %s does not exist", p.fragshader.c_str());
-		//		}
-		//		RendererShaderPtr spVS = CompileShaderFromFile(GL_VERTEX_SHADER, vspath);
-		//		RendererShaderPtr spFS = CompileShaderFromFile(GL_FRAGMENT_SHADER, fspath);
-		//		RendererShaderPtr spGS = CompileShaderFromFile(GL_GEOMETRY_SHADER, gspath);
-
-		//		if (!spVS->didCompile || !spFS->didCompile) {
-		//			HFLOGERROR("failed to load program %s because the vertex/fragment shaders did not compile.", p.name.c_str());
-		//			continue;
-		//		}
-
-		//		if (!gspath.empty() && !spGS->didCompile) {
-		//			HFLOGERROR("failed to load program %s because the geometryGroups_ shader did not compile.", p.name.c_str());
-		//		}
-
-		//		RendererProgramPtr program = std::make_shared<RendererProgram>();
-		//		program->init(p.name);
-		//		program->attachShaders(spVS);
-		//		program->attachShaders(spFS);
-		//		if (spGS->didCompile) {
-		//			program->attachShaders(spGS);
-		//		}
-
-		//		for (auto attrib : p.vertex_attribs) {
-		//			program->bindAttribLocation(attrib.index, attrib.name.c_str());
-		//		}
-		//		program->link();
-		//		if (program->isLinked()) {
-		//			for (auto attrib : p.vertex_attribs) {
-		//				HFLOGDEBUG("attrib (%02d) %s",
-		//						   program->getAttribLocation(attrib.name.c_str()),
-		//						   attrib.name.c_str());
-		//			}
-		//			p.program = program;
-		//		}
-		//	}
-		//}
 	}
 
 	void RendererContext::loadTextures() {
 		HFLOGINFO("Loading textures from renderconfig");
 		for (auto& [k, t] : texture2Ds) {
 			HFLOGINFO("Trying to load texture 2d '%s' ... %s",
-					  k.c_str(),
-					  t.loadMap() ? "success" : "failed");
+								   k.c_str(),
+								   t.loadMap() ? "success" : "failed");
 		}
 
 		for (auto& [k, t] : textureCubes) {
 			HFLOGINFO("Trying to load texture cube '%s' ... %s",
-					  k.c_str(),
-					  t.loadMap() ? "success" : "failed");
+								   k.c_str(),
+								   t.loadMap() ? "success" : "failed");
 		}
 	}
 
@@ -399,58 +328,6 @@ namespace Fluxions {
 		if (it == renderers.end()) return nullptr;
 		return &(it->second);
 	}
-
-	//TODO: remove findProgram which should be configured with renderconfig
-	//RendererProgramPtr RendererContext::findProgram(const std::string& renderConfigName, const std::string& name) {
-	//	RendererProgramPtr p = nullptr;
-
-	//	if (RenderConfigs.count(renderConfigName)) {
-	//		for (RenderConfig::Program& program :
-	//			 RenderConfigs[renderConfigName]->programs) {
-	//			if (program.name == name) {
-	//				p = program.program;
-	//			}
-	//		}
-	//	}
-
-	//	return p;
-	//}
-
-	//bool RendererContext::new_renderconfig(const std::string& name) {
-	//	RenderConfigs[name] = std::make_shared<RenderConfig>(name);
-
-	//	rendererConfigs[name].init(name, this);
-	//	pcurRendererConfig = &rendererConfigs[name];
-
-	//	return use_renderconfig(name);
-	//}
-
-	//bool RendererContext::use_renderconfig(const std::string& name) {
-	//	pcur_renderconfig = nullptr;
-	//	if (!RenderConfigs.count(name))
-	//		return false;
-	//	pcur_renderconfig = RenderConfigs[name];
-	//	return true;
-	//}
-
-	//bool RendererContext::new_program(const std::string& name) {
-	//	if (pcur_renderconfig == nullptr)
-	//		return false;
-	//	pcur_renderconfig->programs.push_back(RenderConfig::Program(name));
-	//	return use_program(name);
-	//}
-
-	//bool RendererContext::use_program(const std::string& name) {
-	//	if (pcur_renderconfig == nullptr)
-	//		return false;
-	//	std::vector<RenderConfig::Program>& p = pcur_renderconfig->programs;
-	//	auto it = std::find_if(p.begin(), p.end(),
-	//						   [&name](RenderConfig::Program& rc) { return rc.name == name; });
-	//	if (it == p.end())
-	//		return false;
-	//	pcur_program = &(*it);
-	//	return true;
-	//}
 
 	bool RendererContext::k_replaceVars(Df::TokenVector& args) {
 		bool replacedAny = false;
@@ -559,7 +436,6 @@ namespace Fluxions {
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
-		bool svalarg3 = k_sval(args, 3, arg3);
 		static const std::string WRITEFBO{ "writefbo" };
 		static const std::string READFBO{ "readfbo" };
 		static const std::string PROGRAM{ "program" };
@@ -665,7 +541,7 @@ namespace Fluxions {
 				return true;
 			}
 			else if (arg1 == SCISSOR && count == 6) {
-				int x = k_ivalue(args, 2);
+				//int x = k_ivalue(args, 2);
 				int y = k_ivalue(args, 3);
 				int w = k_ivalue(args, 4);
 				int h = k_ivalue(args, 5);
@@ -739,16 +615,16 @@ namespace Fluxions {
 					if (!fbos.count(arg2)) return false;
 					pcurRendererConfig->writeFBOs.push_back({ arg2, &fbos[arg2] });
 					HFLOGINFO("rendererconfig '%s' adding write fbo '%s'",
-							  pcurRendererConfig->name(),
-							  arg2.c_str());
+										   pcurRendererConfig->name(),
+										   arg2.c_str());
 					return true;
 				}
 				else if (arg1 == READFBO) {
 					if (!fbos.count(arg2)) return false;
 					pcurRendererConfig->readFBOs.push_back({ arg2, &fbos[arg2] });
 					HFLOGINFO("rendererconfig '%s' adding read fbo '%s'",
-							  pcurRendererConfig->name(),
-							  arg2.c_str());
+										   pcurRendererConfig->name(),
+										   arg2.c_str());
 					return true;
 				}
 				else if (arg1 == PROGRAM) {
@@ -756,8 +632,8 @@ namespace Fluxions {
 						pcurRendererConfig->rc_program = arg2;
 						pcurRendererConfig->rc_program_ptr = &programs[arg2];
 						HFLOGINFO("rendererconfig '%s' adding program '%s'",
-								  pcurRendererConfig->name(),
-								  arg2.c_str());
+											   pcurRendererConfig->name(),
+											   arg2.c_str());
 						return true;
 					}
 					else {
@@ -770,8 +646,8 @@ namespace Fluxions {
 				else if (arg1 == CAMERA) {
 					pcurRendererConfig->ssg_camera = arg2;
 					HFLOGINFO("rendererconfig '%s' adding camera '%s'",
-							  pcurRendererConfig->name(),
-							  arg2.c_str());
+										   pcurRendererConfig->name(),
+										   arg2.c_str());
 					return true;
 				}
 				else if (arg1 == TEXTURE2D && count == 4) {
@@ -887,29 +763,6 @@ namespace Fluxions {
 	}
 
 	bool RendererContext::k_sampler(const Df::TokenVector& args) {
-		//int count = (int)args.size();
-		//if (!k_check(args, 2, "sampler")) return false;
-		//std::string samplerName;
-		//if (count == 2 && k_sval(args, 1, samplerName)) {
-		//	Samplers[samplerName].name = samplerName;
-		//	cur_sampler = samplerName;
-		//}
-		//else if (!cur_sampler.empty() && count >= 3 && args[1].IsString()) {
-		//	GLenum pname = Fluxions::glNameTranslator.getEnum(args[1].sval);
-		//	GLenum param;
-
-		//	if (args[2].IsString()) {
-		//		param = Fluxions::glNameTranslator.getEnum(args[2].sval);
-		//	}
-		//	else if (args[2].IsInteger()) {
-		//		param = args[2].ival;
-		//	}
-
-		//	Samplers[cur_sampler].parameters.push_back(std::make_pair(pname, param));
-		//}
-
-		//if (!k_check(args, 2, "sampler")) return false;
-
 		if (!k_check(args, 2, "sampler")) return false;
 
 		std::string arg1;
@@ -956,57 +809,6 @@ namespace Fluxions {
 		return false;
 	}
 
-	bool RendererContext::k_texture(const Df::TokenVector& args) {
-		return false;
-		//size_t count = args.size();
-		//if (count < 2 || args[0].sval != "texture")
-		//	return false;
-		//if (count == 2 && args[1].IsString()) {
-		//	GLenum param = Fluxions::glNameTranslator.getEnum(args[1].sval);
-		//	if (args[1].sval == "generateMipmap")
-		//		Textures[cur_texture].genmipmap = true;
-		//	else if (param == GL_GENERATE_MIPMAP)
-		//		Textures[cur_texture].genmipmap = true;
-		//	else if (param == GL_TEXTURE_1D)
-		//		Textures[cur_texture].target = param;
-		//	else if (param == GL_TEXTURE_2D)
-		//		Textures[cur_texture].target = param;
-		//	else if (param == GL_TEXTURE_CUBE_MAP)
-		//		Textures[cur_texture].target = param;
-		//	else {
-		//		Textures[args[1].sval].name = args[1].sval;
-		//		cur_texture = args[1].sval;
-		//	}
-		//}
-		//else if (!cur_texture.empty()) {
-		//	if (count == 3 && args[1].IsString() && args[2].IsString()) {
-		//		GLenum param = Fluxions::glNameTranslator.getEnum(args[1].sval);
-		//		if (param == GL_TEXTURE_2D)
-		//			Textures[cur_texture].target = GL_TEXTURE_2D;
-		//		if (param >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && param <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
-		//			Textures[cur_texture].target = GL_TEXTURE_CUBE_MAP;
-		//		if (param == GL_TEXTURE_2D ||
-		//			(param >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && param <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)) {
-		//			std::string path = FindPathIfExists(args[2].sval, paths);
-		//			if (!path.empty())
-		//				Textures[cur_texture].files.push_back(std::make_pair(param, path));
-		//		}
-		//	}
-		//	else if (count == 7 && args[1].IsInteger() && args[2].IsString() &&
-		//			 args[3].IsInteger() && args[4].IsInteger() &&
-		//			 args[5].IsString() && args[6].IsString()) {
-		//		Textures[cur_texture].level = args[1].ival;
-		//		Textures[cur_texture].internalformat = Fluxions::glNameTranslator.getEnum(args[2].sval);
-		//		Textures[cur_texture].width = args[3].ival;
-		//		Textures[cur_texture].height = args[4].ival;
-		//		Textures[cur_texture].format = Fluxions::glNameTranslator.getEnum(args[5].sval);
-		//		Textures[cur_texture].type = Fluxions::glNameTranslator.getEnum(args[6].sval);
-		//	}
-		//}
-
-		//return true;
-	}
-
 	bool RendererContext::k_fbo(const Df::TokenVector& args) {
 		size_t count = args.size();
 		if (count < 2 || args[0].sval != "fbo")
@@ -1029,7 +831,7 @@ namespace Fluxions {
 				int height = k_ivalue(args, 3);
 				if (!width || !height) {
 					HFLOGERROR("fbo '%s' dimensions must be > 0",
-							   pcurFBO->name());
+											pcurFBO->name());
 				}
 				pcurFBO->setDimensions(width, height);
 				return true;
@@ -1062,8 +864,8 @@ namespace Fluxions {
 				}
 				else {
 					HFLOGERROR("target '%s' incorrect for fbo '%s'",
-							   args[2].sval.c_str(),
-							   pcurFBO->name());
+											args[2].sval.c_str(),
+											pcurFBO->name());
 					return false;
 				}
 
@@ -1087,8 +889,8 @@ namespace Fluxions {
 				}
 				else {
 					HFLOGERROR("attachment incorrect for fbo '%s'",
-							   args[3].sval.c_str(),
-							   pcurFBO->name());
+											args[3].sval.c_str(),
+											pcurFBO->name());
 					return false;
 				}
 
@@ -1113,8 +915,8 @@ namespace Fluxions {
 				}
 				else {
 					HFLOGERROR("internalformat %s incorrect for fbo '%s'",
-							   args[4].sval.c_str(),
-							   pcurFBO->name());
+											args[4].sval.c_str(),
+											pcurFBO->name());
 					return false;
 				}
 
@@ -1123,21 +925,21 @@ namespace Fluxions {
 					case GL_RENDERBUFFER:
 						pcurFBO->addRenderbuffer(attachment, internalformat);
 						HFLOGINFO("attaching renderbuffer to fbo '%s'",
-								  pcurFBO->name());
+											   pcurFBO->name());
 						break;
 					case GL_TEXTURE_2D:
 						pcurFBO->addTexture2D(attachment, target, internalformat, generateMipmaps);
 						pcurFBO->setMapName(mapName);
 						HFLOGINFO("attaching texture2D to fbo '%s' for map '%s'",
-								  pcurFBO->name(),
-								  mapName.c_str());
+											   pcurFBO->name(),
+											   mapName.c_str());
 						break;
 					case GL_TEXTURE_CUBE_MAP:
 						pcurFBO->addTextureCubeMap(attachment, target, internalformat, generateMipmaps);
 						pcurFBO->setMapName(mapName);
 						HFLOGINFO("attaching textureCube to fbo '%s' for map '%s'",
-								  pcurFBO->name(),
-								  mapName.c_str());
+											   pcurFBO->name(),
+											   mapName.c_str());
 						break;
 					}
 					return true;
@@ -1152,44 +954,6 @@ namespace Fluxions {
 		}
 
 		return false;
-	}
-
-	bool RendererContext::k_renderbuffer(const Df::TokenVector& args) {
-		return false;
-		//size_t count = args.size();
-		//if (count < 5 || args[0].sval != "renderbuffer")
-		//	return false;
-		//else {
-		//	Renderbuffer renderbuffer;
-
-		//	if (args[1].IsStringOrIdentifier())
-		//		renderbuffer.name = args[1].sval;
-		//	if (args[2].IsStringOrIdentifier())
-		//		renderbuffer.internalformat = glNameTranslator.getEnum(args[2].sval);
-		//	if (args[3].IsStringOrIdentifier()) {
-		//		renderbuffer.width = vars.get_var_integer(args[3].sval);
-		//	}
-		//	else if (args[3].IsInteger())
-		//		renderbuffer.width = args[3].ival;
-		//	else
-		//		renderbuffer.width = 0;
-
-		//	if (args[4].IsStringOrIdentifier()) {
-		//		renderbuffer.height = vars.get_var_integer(args[4].sval);
-		//	}
-		//	else if (args[4].IsInteger())
-		//		renderbuffer.height = args[4].ival;
-		//	else
-		//		renderbuffer.height = 0;
-
-		//	if (count == 6 && args[5].IsInteger())
-		//		renderbuffer.samples = args[5].ival;
-		//	else
-		//		renderbuffer.samples = 1;
-
-		//	Renderbuffers[renderbuffer.name] = renderbuffer;
-		//}
-		//return true;
 	}
 
 	bool RendererContext::k_texture2D(const Df::TokenVector& args) {
@@ -1299,5 +1063,4 @@ namespace Fluxions {
 		}
 		return false;
 	}
-
 } // namespace Fluxions

@@ -28,7 +28,7 @@ namespace Vf {
 	struct ParameterSource {
 		ParameterSource(AnimationScalar _x = 0) : x(_x) {}
 		virtual ~ParameterSource() {}
-
+#pragma warning(disable : 4100) // warning comes up because t is not used in these functions
 		virtual AnimationScalar scalar(AnimationTime t) const {
 			return x;
 		}
@@ -44,6 +44,7 @@ namespace Vf {
 		virtual AnimationTransformation transformation(AnimationTime t) const {
 			return T;
 		}
+#pragma warning(default : 4100)
 
 		AnimationScalar x;
 		AnimationVector V;

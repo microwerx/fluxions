@@ -62,8 +62,7 @@ namespace Fluxions {
 		scs.createTextureShadowCube(rc.viewportRect.w);
 
 		GLuint cubeShadowFbo = 0;
-		glGenFramebuffers(1, &cubeShadowFbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, cubeShadowFbo);
+		FxCreateFramebuffer(&cubeShadowFbo);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, scs.texture.GetTexture(), 0);
 		if (rc.fbo_gen_color) {
 			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, rc.fbo_color_map, 0);
@@ -98,7 +97,7 @@ namespace Fluxions {
 			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0);
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDeleteFramebuffers(1, &cubeShadowFbo);
+		FxDeleteFramebuffer(&cubeShadowFbo);
 
 		double dt = HFLOG_SECS_ELAPSED() - t0;
 		scs.buildTime = dt * 1000.0;

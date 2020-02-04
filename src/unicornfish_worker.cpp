@@ -229,6 +229,7 @@ namespace Uf {
 	bool Worker::SendCommandToClient(Majordomo::Command command, Message& msg) {
 		if (!msg)
 			msg.Create();
+		msg.Push(command);
 		msg.Push(Majordomo::ClientId);
 		if (verbose)
 			printf("worker: sending %d frames to client %s \n", (int)msg.Size(), replyToHexAddress.c_str());

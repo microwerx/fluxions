@@ -11,7 +11,6 @@ namespace Fluxions {
 		projectionMatrix_.LoadIdentity();
 		viewMatrix_.LoadIdentity();
 
-		bool isBadCamera = false;
 		if (camtype == "perspective_otrf") {
 			cameraType = CameraType::PerspectiveOTRF;
 			fov = ReadFloat(istr);

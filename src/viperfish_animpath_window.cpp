@@ -19,28 +19,6 @@ namespace Vf {
 		q = qZ * qX * qY;
 	}
 
-	void AnimPathWindow::_showv(const char* m, const Fx::Vector3f& v) {
-		ImGui::Text(m);
-		ImGui::SameLine();
-		ImGui::Value("x", v.x);
-		ImGui::SameLine();
-		ImGui::Value("y", v.y);
-		ImGui::SameLine();
-		ImGui::Value("z", v.z);
-	}
-
-	void AnimPathWindow::_showq(const char* m, const Fx::Quaternionf& q) {
-		ImGui::Text(m);
-		ImGui::SameLine();
-		ImGui::Value("a", q.a);
-		ImGui::SameLine();
-		ImGui::Value("b", q.b);
-		ImGui::SameLine();
-		ImGui::Value("c", q.c);
-		ImGui::SameLine();
-		ImGui::Value("d", q.d);
-	}
-
 	void AnimPathWindow::_drawPath() {
 		ImDrawList* dl = ImGui::GetWindowDrawList();
 		if (dl) {
@@ -130,17 +108,17 @@ namespace Vf {
 
 		ImGui::Separator();
 
-		_showv("p2", p2);
-		_showq("q2", q2);
+		ImGuiValueVector3("p2", p2);
+		ImGuiValueQuaternion("q2", q2);
 
 		ImGui::Text("Keyframe");
 
-		_showq("q1", q1);
-		_showv("p1", p1);
+		ImGuiValueVector3("p1", p1);
+		ImGuiValueQuaternion("q1", q1);
 
 		ImGui::Text("Modify active");
 
-		_showq("q", q);
+		ImGuiValueQuaternion("q", q);
 
 		ImGui::SliderFloat("X", &X, -90.0f, 90.0f);
 		ImGui::SliderFloat("Y", &Y, -360.0f, 360.0f);

@@ -62,7 +62,7 @@ namespace Fluxions {
 		for (int i = 0; i < 6; i++) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, (GLsizei)lightProbe.width(), (GLsizei)lightProbe.height(), 0, GL_RGBA, GL_FLOAT, lightProbe.getImageData(i));
 		}
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		FxGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		texture.unbind();
 		return true;
 	}

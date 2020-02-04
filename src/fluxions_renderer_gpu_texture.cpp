@@ -113,11 +113,7 @@ namespace Fluxions {
 
 	void RendererGpuTexture::kill() {
 		if (texture_.use_count() == 1) {
-			GLuint texture = *texture_;
-			if (texture != 0) {
-				glDeleteTextures(1, &texture);
-				//HFLOGINFO("Deleted texture %d", *texture_);
-			}
+			FxDeleteTexture(texture_.get());
 			texture_.reset();
 		}
 		RendererObject::kill();
@@ -127,9 +123,10 @@ namespace Fluxions {
 		return "RendererGpuTexture";
 	}
 
-	bool RendererGpuTexture::loadMap(const std::string& path, bool generateMipMaps) {
+	bool RendererGpuTexture::loadMap(const std::string& path, bool generateMipmaps) {
 		mappath = path;
 		maploaded = false;
+		useMipMaps = generateMipmaps;
 		return loadMap();
 	}
 
@@ -137,7 +134,7 @@ namespace Fluxions {
 		if (maploaded && !alwaysLoad) return true;
 		FilePathInfo fpi(mappath);
 		toupper(fpi.ext);
-		maploaded = gpuLoadTexture(*this, fpi.ext, mappath, true);
+		maploaded = gpuLoadTexture(*this, fpi.ext, mappath, useMipMaps);
 		return maploaded;
 	}
 
@@ -164,13 +161,7 @@ namespace Fluxions {
 		if (!texture_) {
 			texture_ = std::make_shared<GLuint>(0);
 		}
-		GLuint texture = *texture_;
-		if (texture != 0) {
-			//HFLOGINFO("Deleted texture %i", texture);
-			glDeleteTextures(1, &texture);
-		}
-		glGenTextures(1, &texture);
-		*texture_ = texture;
+		FxCreateTexture(target_, texture_.get());
 		usable_ = false;
 		FxDebugBindTexture(target_, *texture_);
 		FxDebugBindTexture(target_, 0);
@@ -351,7 +342,7 @@ namespace Fluxions {
 		if (!texture_ || !usable_ || !useMipMaps)
 			return;
 		bind(0);
-		glGenerateMipmap(target_);
+		FxGenerateMipmap(target_);
 		unbind();
 	}
 

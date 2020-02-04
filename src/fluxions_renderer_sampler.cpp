@@ -22,16 +22,11 @@ namespace Fluxions {
 
 	void RendererSampler::init(const std::string& newname, RendererObject* pparent) {
 		RendererObject::init(newname, pparent);
-		glGenSamplers(1, &id);
-		HFLOGINFO("Creating sampler '%s' = %i", name(), id);
+		FxCreateSampler(&id);
 	}
 
 	void RendererSampler::kill() {
-		if (id != 0) {
-			HFLOGINFO("Deleting sampler '%s' = %i", name(), id);
-			glDeleteSamplers(1, &id);
-			id = 0;
-		}
+		FxDeleteSampler(&id);
 		RendererObject::kill();
 	}
 

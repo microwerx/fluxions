@@ -41,16 +41,11 @@ namespace Fluxions {
 	void RendererTextureObject::init(const std::string& name, RendererObject* pparent) {
 		RendererObject::init(name, pparent);
 		name_ = name;
-		glGenTextures(1, &id);
-		HFLOGINFO("Creating texture '%s' = %i", name_.c_str(), id);
+		FxCreateTexture(target, &id);
 	}
 
 	void RendererTextureObject::kill() {
-		if (id != 0) {
-			HFLOGINFO("Deleting texture '%s' = %i", name_.c_str(), id);
-			glDeleteTextures(1, &id);
-			id = 0;
-		}
+		FxDeleteTexture(&id);
 		RendererObject::kill();
 	}
 
@@ -113,7 +108,7 @@ namespace Fluxions {
 		else {
 			FxSetActiveTexture(lastBoundUnit);
 		}
-		glGenerateMipmap(target);
+		FxGenerateMipmap(target);
 		if (didBindUnit) {
 			unbind();
 		}
@@ -165,11 +160,11 @@ namespace Fluxions {
 
 		this->image.setImageData(format, GL_UNSIGNED_BYTE, width, height, 1, data);
 
-		glGenTextures(1, &id);
+		FxCreateTexture(GL_TEXTURE_2D, &id);
 		FxBindTexture(0, target, id);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, type, data);
 		if (genMipMap != false) {
-			glGenerateMipmap(target);
+			FxGenerateMipmap(target);
 		}
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

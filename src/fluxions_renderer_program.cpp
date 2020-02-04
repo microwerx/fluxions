@@ -139,15 +139,12 @@ namespace Fluxions {
 	void RendererProgram::create_program() {
 		if (program)
 			return;
-		program = glCreateProgram();
-		HFLOGINFO("program %d created.", program);
+		FxCreateProgram(&program);
 	}
 
 	void RendererProgram::delete_program() {
 		if (program) {
-			HFLOGINFO("program %d deleted.", program);
-			glDeleteProgram(program);
-			program = 0;
+			FxDeleteProgram(&program);
 			for (RendererShaderPtr& s : attachedShaders) {
 				s.reset();
 			}

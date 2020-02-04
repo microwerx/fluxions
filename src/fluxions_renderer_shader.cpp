@@ -7,7 +7,7 @@ namespace Fluxions {
 		const char* typeName =
 			(type == GL_VERTEX_SHADER) ? "vertex" :
 			(type == GL_FRAGMENT_SHADER) ? "fragment" :
-			(type == GL_GEOMETRY_SHADER) ? "geometryGroups_" :
+			(type == GL_GEOMETRY_SHADER) ? "geometry" :
 			"unknown";
 
 		FilePathInfo fpi(filename);
@@ -72,21 +72,14 @@ namespace Fluxions {
 	}
 
 	void RendererShader::create_shader(GLenum shaderType_) {
-		if (shader)
-			delete_shader();
 		shaderType = shaderType_;
 		source = "";
 		didCompile = false;
 		hadError = false;
-		shader = glCreateShader(shaderType);
-		HFLOGDEBUG("shader %d created.", shader);
+		FxCreateShader(shaderType_, &shader);
 	}
 
 	void RendererShader::delete_shader() {
-		if (shader != 0) {
-			glDeleteShader(shader);
-			HFLOGDEBUG("shader %d deleted.", shader);
-			shader = 0;
-		}
+		FxDeleteShader(&shader);
 	}
 }
