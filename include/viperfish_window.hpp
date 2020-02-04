@@ -3,9 +3,7 @@
 
 #include <viperfish_dear_imgui.hpp>
 
-namespace Vf
-{
-
+namespace Vf {
 	class Window : public Widget {
 	public:
 		Window(const std::string& name);

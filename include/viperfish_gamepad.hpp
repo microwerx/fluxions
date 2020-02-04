@@ -1,45 +1,20 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef VIPERFISH_GAMEPAD_HPP
 #define VIPERFISH_GAMEPAD_HPP
 
-#include <map>
-#include <string>
-#include <fluxions_gte_vector2.hpp>
+#include <viperfish_base.hpp>
 
-namespace Vf
-{
-
-	class AnalogBitset
-	{
+namespace Vf {
+	class AnalogBitset {
 	public:
 		AnalogBitset();
 
 		bool BitTest(unsigned bitsToTest) const;
-		float GetBitf(unsigned which) const
-		{
+		float GetBitf(unsigned which) const {
 			if (within(which, 0, 31))
 				return fbits[which];
 			return 0.0f;
 		}
-		bool GetBiti(unsigned which) const
-		{
+		bool GetBiti(unsigned which) const {
 			if (within(which, 0, 31))
 				return ibits & (1 << which);
 			return false;
@@ -56,8 +31,7 @@ namespace Vf
 		unsigned ibits;
 	};
 
-	enum class GamePadBitNum
-	{
+	enum class GamePadBitNum {
 		A = 0,
 		B = 1,
 		X = 2,
@@ -83,8 +57,7 @@ namespace Vf
 		NUMBITS = 22
 	};
 
-	enum class GamePadBits
-	{
+	enum class GamePadBits {
 		A = 1 << (int)GamePadBitNum::A,
 		B = 1 << (int)GamePadBitNum::B,
 		X = 1 << (int)GamePadBitNum::X,
@@ -109,11 +82,9 @@ namespace Vf
 		RTRIGGER = 1 << (int)GamePadBitNum::RTRIGGER
 	};
 
-	class GamepadState
-	{
+	class GamepadState {
 	public:
-		struct GamepadButton
-		{
+		struct GamepadButton {
 			float value;
 			bool pressed;
 		};

@@ -1,35 +1,11 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_SIMPLE_RENDERER_HPP
 #define FLUXIONS_SIMPLE_RENDERER_HPP
 
-#include <memory>
-#include <fluxions_gte.hpp>
-#include <fluxions_opengl.hpp>
-#include <fluxions_simple_materials.hpp>
 #include <fluxions_simple_vertex.hpp>
 #include <fluxions_simple_surface.hpp>
 #include <fluxions_simple_geometry_mesh.hpp>
-#include <fluxions_renderer_program.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	/// <summary>SimpleRenderer handles the needs of several different rendering approaches</summary>
 	/// It is designed to accomodate a variety of different rendering options.
 	/// Z Only. This outputs a 3-float position only for 12 bytes/vertex.
@@ -38,8 +14,7 @@ namespace Fluxions
 	/// <code>RenderZOnly()</code> renders all surfaces as Z only.
 	/// <code>Render()</code> renders all surfaces as slow/fast vertex according to how data was input.
 	template <typename IndexType, GLenum GLIndexType>
-	class SimpleRenderer
-	{
+	class SimpleRenderer {
 	private:
 		GLuint arrayBuffer = 0;        // memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
 		GLuint elementArrayBuffer = 0; // memory structure [ZONLY, FAST VERTICES, SLOW VERTICES]
@@ -54,8 +29,7 @@ namespace Fluxions
 		std::vector<IndexType> zIndices;
 		std::vector<SimpleSurface> surfaces;
 
-		struct BUFFERINFO
-		{
+		struct BUFFERINFO {
 			GLsizeiptr zVertexOffset = 0;
 			GLsizeiptr zVertexSize = 0;
 			GLsizeiptr fastVertexOffset = 0;
@@ -108,8 +82,6 @@ namespace Fluxions
 	public:
 		SimpleRenderer();
 		~SimpleRenderer();
-
-		std::map<std::string, RendererProgramPtr> programs;
 
 		void SetCurrentMtlLibId(GLuint value) { currentMtlLibId = value; }
 		void SetCurrentMtlId(GLuint value) { currentMtlId = value; }

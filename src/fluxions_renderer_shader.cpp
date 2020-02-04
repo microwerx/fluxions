@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_shader.hpp>
 
@@ -22,7 +22,7 @@ namespace Fluxions {
 			return false;
 		}
 		shader->compileSource(ReadTextFile(filename));
-		
+
 		if (shader->hadError) {
 			HFLOGERROR("shader %d compile error for %s\n%s", shader->shader, fpi.fullfname.c_str(), shader->infoLog.c_str());
 			return false;

@@ -3,8 +3,7 @@
 
 #include <viperfish_window.hpp>
 
-namespace Vf
-{
+namespace Vf {
 	class RootWindow : public Widget {
 	public:
 		RootWindow(const std::string& name);

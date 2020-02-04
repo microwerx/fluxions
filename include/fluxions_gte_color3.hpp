@@ -1,42 +1,11 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_GTE_COLOR3_HPP
 #define FLUXIONS_GTE_COLOR3_HPP
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
-#ifdef min
-#undef min
-#endif
-
-#ifdef max
-#undef max
-#endif
-
-#include <fluxions_gte_scalar_math.hpp>
+#include <fluxions_gte_base.hpp>
 #include <fluxions_gte_color4.hpp>
 #include <fluxions_gte_vector3.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	template <typename T>
 	class TColor4;
 	template <typename T>
@@ -45,8 +14,7 @@ namespace Fluxions
 	class TVector4;
 
 	template <typename T>
-	class TColor3 : public TCommonColor<T>
-	{
+	class TColor3 : public TCommonColor<T> {
 	public:
 		T r, g, b;
 
@@ -412,7 +380,7 @@ namespace Fluxions
 				std::max(a.g, b.g),
 				std::max(a.b, b.b));
 		}
-	}; // class TColor3
+}; // class TColor3
 
 	template <typename T>
 	constexpr TColor3<T> abs(TColor3<T> color) {

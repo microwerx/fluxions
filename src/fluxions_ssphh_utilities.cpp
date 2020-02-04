@@ -1,11 +1,7 @@
-#include "pch.hpp"
-#include <fstream>
-#include <sstream>
-#include <iomanip>
+#include "fluxions_ssg_pch.hpp"
 #include <fluxions_ssphh_utilities.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	bool SaveSphlOBJ(const std::string& path,
 					 const std::string& name,
 					 const Color3f Kd,
@@ -127,4 +123,4 @@ namespace Fluxions
 			ostr << "_" << MaxDegrees;
 		return ostr.str();
 	} // MakeHIERName
-}
+} // namespace Fluxions

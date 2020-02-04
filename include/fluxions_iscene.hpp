@@ -3,30 +3,20 @@
 
 #include <vector>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	// SCENE INTERFACE
-	class IScene
-	{
+	class IScene {
 	public:
 		virtual bool Load(const char* filename) = 0;
 		virtual bool Save(const char* filename) = 0;
 
-		struct Light
-		{
-		};
+		struct Light {};
 
-		struct Camera
-		{
-		};
+		struct Camera {};
 
-		struct Mesh
-		{
-		};
+		struct Mesh {};
 
-		struct MtlLib
-		{
-		};
+		struct MtlLib {};
 
 		std::vector<Camera> Cameras;
 		std::vector<Mesh> Meshes;

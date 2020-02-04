@@ -1,21 +1,3 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef HATCHETFISH_LOG_HPP
 #define HATCHETFISH_LOG_HPP
 
@@ -51,10 +33,8 @@
 #define HFLOG_HISTORYSIZE() ((int)(Hf::Log.getHistoryItemsSize()))
 #define HFLOG_DTG() (Hf::Log.makeDTG())
 
-namespace Hf
-{
-	class HatchetfishLog
-	{
+namespace Hf {
+	class HatchetfishLog {
 	private:
 		FILE* fout = stdout;
 		std::string timeStamp;
@@ -86,33 +66,28 @@ namespace Hf
 		size_t maxHistoryLines = 10;
 
 	public:
-		struct TimeDataPoint
-		{
+		struct TimeDataPoint {
 			double timeMeasured = 0.0;
 			double x = 0.0;
 			double r = 0.0;
 		};
 
-		struct TimeDataPoints
-		{
+		struct TimeDataPoints {
 			std::vector<TimeDataPoint> X;
 			double xbar;
 			double rbar;
 			double lcl;
 			double ucl;
 
-			void computeStats()
-			{
+			void computeStats() {
 				xbar = 0.0;
 				rbar = 0.0;
 				size_t i = 0;
-				for (auto& datapoint : X)
-				{
+				for (auto& datapoint : X) {
 					if (i == 0)
 						X[0].r = 0.0;
 					xbar += datapoint.x;
-					if (i > 0)
-					{
+					if (i > 0) {
 						X[i].r = std::fabs(X[i].x - X[i - 1].x);
 						rbar += datapoint.r;
 					}

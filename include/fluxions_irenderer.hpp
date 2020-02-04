@@ -3,11 +3,9 @@
 
 #include <fluxions_iscene.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	// RENDERER INTERFACE
-	class IRenderer
-	{
+	class IRenderer {
 	public:
 		virtual bool UploadCompileLink() = 0;
 		virtual void Render(const IScene* pScene) = 0;

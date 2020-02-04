@@ -1,4 +1,4 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_shader_program_locations.hpp>
 
 namespace Fluxions {
@@ -134,4 +134,4 @@ namespace Fluxions {
 	//			MakeSharedIntProperty(uniform.second.index);
 	//	}
 	//}
-}
+} // namespace Fluxions

@@ -1,29 +1,10 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program_ is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program_ is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program_.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_gte_matrix_math.hpp>
 #include <fluxions_renderer_gles30.hpp>
 #include <fluxions_renderer_context.hpp>
 #include <hatchetfish_stopwatch.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	//////////////////////////////////////////////////////////////////////
 	// RendererGLES30 ////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////

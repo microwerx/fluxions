@@ -3,8 +3,7 @@
 
 #include <fluxions_gte_image.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	bool LoadImage4f(const std::string& path, Image4f& image);
 }
 

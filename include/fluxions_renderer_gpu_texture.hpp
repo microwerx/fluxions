@@ -1,16 +1,15 @@
-#ifndef FLUXIONS_SIMPLE_GPU_TEXTURE_HPP
-#define FLUXIONS_SIMPLE_GPU_TEXTURE_HPP
+#ifndef FLUXIONS_RENDERER_GPU_TEXTURE_HPP
+#define FLUXIONS_RENDERER_GPU_TEXTURE_HPP
 
 #include <fluxions_gte_image.hpp>
 #include <fluxions_renderer_object.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class RendererGpuTexture : public RendererObject {
 	public:
 		GLint unit = 0;
 		GLint samplerId = 0;
-		
+
 		// This value is used to count how long it took to build this object
 		double buildTime = 0.0;
 		// This zfar is used to for rendering shadow maps

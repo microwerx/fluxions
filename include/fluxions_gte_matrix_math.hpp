@@ -14,8 +14,7 @@
 #include <fluxions_gte_matrix3.hpp>
 #include <fluxions_gte_matrix4.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	template <typename T>
 	constexpr TVector2<T> operator*(const TMatrix2<T>& lhs, const TVector2<T>& rhs) noexcept {
 		return TVector2<T>(

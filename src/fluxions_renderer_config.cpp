@@ -1,8 +1,7 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_renderer_config.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	RendererConfig::RendererConfig() {}
 
 	RendererConfig::~RendererConfig() {

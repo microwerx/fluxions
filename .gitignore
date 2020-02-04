@@ -366,3 +366,6 @@ GRTAGS
 # cmake
 build/**/
 !build/.keep
+
+docs/html
+docs/latex

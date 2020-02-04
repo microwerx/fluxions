@@ -1,13 +1,12 @@
-#ifndef FLUXIONS_SIMPLE_PROGRAM_HPP
-#define FLUXIONS_SIMPLE_PROGRAM_HPP
+#ifndef FLUXIONS_RENDERER_PROGRAM_HPP
+#define FLUXIONS_RENDERER_PROGRAM_HPP
 
 #include <fluxions_renderer_object.hpp>
 #include <fluxions_renderer_shader.hpp>
 #include <fluxions_renderer_uniform.hpp>
 #include <fluxions_renderer_uniform_blocks.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class RendererProgram : public RendererObject {
 	private:
 		GLuint program = 0;
@@ -45,7 +44,7 @@ namespace Fluxions
 		std::map<std::string, AttribUniformInfo> activeAttributes;
 		std::map<std::string, AttribUniformInfo> activeUniforms;
 		std::map<std::string, AttribUniformInfo> activeUniformBlocks;
-		
+
 		//std::string vertshaderpath;
 		//std::string fragshaderpath;
 		//std::string geomshaderpath;

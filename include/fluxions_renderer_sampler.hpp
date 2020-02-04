@@ -5,13 +5,12 @@
 #include <fluxions_renderer_object.hpp>
 
 namespace Fluxions {
-	class RendererSampler: public RendererObject
-	{
+	class RendererSampler : public RendererObject {
 	public:
 		RendererSampler();
 		~RendererSampler();
 
-		void init(const std::string& newname, RendererObject *pparent) override;
+		void init(const std::string& newname, RendererObject* pparent) override;
 		void kill() override;
 		const char* type() const noexcept override;
 

@@ -1,10 +1,8 @@
-#include "pch.hpp"
-#include <fluxions_fileio_iostream.hpp>
-#include <fluxions_renderer_context.hpp>
+#include "fluxions_ssg_pch.hpp"
+#include <fluxions_renderer_gles30.hpp>
 #include <fluxions_ssg_ssphh_renderer_plugin.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	SSG_SSPHHRendererPlugin::SSG_SSPHHRendererPlugin(SimpleSceneGraph* pointerToSSG)
 		: ISimpleRendererPlugin(pointerToSSG) {
 		pssg = pointerToSSG;
@@ -61,7 +59,8 @@ namespace Fluxions
 	}
 
 	bool SSG_SSPHHRendererPlugin::readUniformLocs(RendererProgram* rc_program_ptr) {
-		if (!rc_program_ptr) return false;
+		if (!rc_program_ptr)
+			return false;
 		RendererProgram& program = *rc_program_ptr;
 
 		for (int i = 0; i < 16; i++) {
@@ -95,7 +94,8 @@ namespace Fluxions
 	}
 
 	bool SSG_SSPHHRendererPlugin::prog() {
-		if (!pRenderer) return false;
+		if (!pRenderer)
+			return false;
 		int v_Enabled[16] = { 0 };
 		Vector3f v_E0[16];
 		Vector3f v_Position[16];
@@ -175,7 +175,8 @@ namespace Fluxions
 	}
 
 	bool SSG_SSPHHRendererPlugin::draw() {
-		if (!pRenderer) return false;
+		if (!pRenderer)
+			return false;
 		for (unsigned i = 0; i < 16; i++) {
 			if (ssphhLights.size() > i&& ssphhLights[i].colorSphlMap.unit > 0) {
 				pRenderer->freeTexUnit(ssphhLights[i].colorSphlMap.unit);

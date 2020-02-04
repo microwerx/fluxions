@@ -4,14 +4,13 @@
 #include <random>
 #include <fluxions_gte_scalar_math.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class Noise {
 	public:
 		Noise() {
 			gen.seed(rd());
 			std::uniform_real_distribution<float> urd(0.0f, 1.0f);
-			
+
 			samples.resize(MAX_SAMPLES);
 			for (auto& s : samples) {
 				s = urd(gen);
@@ -47,7 +46,7 @@ namespace Fluxions
 			}
 			return value;
 		}
-	private:	
+	private:
 		std::vector<float> samples;
 		std::random_device rd;
 		std::mt19937 gen;

@@ -1,10 +1,9 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <hatchetfish.hpp>
 #include <hatchetfish_stopwatch.hpp>
 #include <fluxions_renderer_utilities.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	bool RenderImage(RendererContext& rendererContext,
 					 SimpleSceneGraph& ssg,
 					 const std::string& rendererName,

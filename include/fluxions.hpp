@@ -1,25 +1,5 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_HPP
 #define FLUXIONS_HPP
-
-#include <fluxions_stdcxx.hpp>
 
 // TODO:
 // * Should be composed of the main modules
@@ -43,20 +23,12 @@
 //                        -- OpenGL 1.1 like materials
 //                        -- fluxions_xor.hpp
 
-#include <hatchetfish.hpp>
 #include <fluxions_base.hpp>
 #include <fluxions_utilities.hpp>
-#include <fluxions_uniform_library.hpp>
-#include <fluxions_simple_renderer.hpp>
-#include <fluxions_simple_scene_graph.hpp>
-#include <fluxions_simple_geometry_mesh.hpp>
-#include <fluxions_renderer_context.hpp>
+#include <fluxions_ssg.hpp>
+#include <fluxions_renderer.hpp>
 
-namespace Fluxions
-{
-	extern bool debugging;
-	extern const std::string BlankString;
-
+namespace Fluxions {
 	std::string GetPathTracerName(const std::string& sceneName, bool ks, int mrd, int pl);
 	std::string GetSphlRenderName(const std::string& sceneName, int md);
 	std::string GetPathTracerSphlRenderName(const std::string& sceneName, bool ks, int mrd, int pl, int md);

@@ -1,11 +1,9 @@
 #ifndef FLUXIONS_SIMPLE_GEOMETRY_MESH_HPP
 #define FLUXIONS_SIMPLE_GEOMETRY_MESH_HPP
 
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_gte.hpp>
+#include <fluxions_base.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class SimpleGeometryMesh {
 	public:
 		// These constants match the GL_POINTS, GL_LINES, ... constants

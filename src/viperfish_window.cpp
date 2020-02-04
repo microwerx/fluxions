@@ -1,11 +1,8 @@
-#include "pch.hpp"
+#include "viperfish_pch.hpp"
 #include <sstream>
-#include <viperfish_dear_imgui.hpp>
 #include <viperfish_window.hpp>
 
-namespace Vf
-{
-
+namespace Vf {
 	Window::Window(const std::string& name)
 		: Widget(name) {
 		std::ostringstream ostr;

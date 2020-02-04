@@ -1,14 +1,11 @@
 #ifndef VIPERFISH_ANIMATION_WINDOW_HPP
 #define VIPERFISH_ANIMATION_WINDOW_CPP
 
-#include <fluxions_base.hpp>
-#include <fluxions_gte_transformation.hpp>
+#include <viperfish_base.hpp>
 #include <viperfish_window.hpp>
 #include <viperfish_stats_window.hpp>
 
-namespace Vf
-{
-
+namespace Vf {
 	using AnimationTime = float;
 	using AnimationFrame = float;
 	using AnimationScalar = float;

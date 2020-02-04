@@ -1,36 +1,11 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_SPHL_HPP
 #define FLUXIONS_SPHL_HPP
 
-#include <vector>
-#include <fluxions_opengl.hpp>
-#include <fluxions_gte.hpp>
-#include <fluxions_simple_geometry_mesh.hpp>
-#include <fluxions_gte_image.hpp>
 #include <fluxions_ssphh.hpp>
-#include <fluxions_simple_ssphh_light.hpp>
+#include <fluxions_ssg_ssphh_light.hpp>
 
-namespace Fluxions
-{
-	struct FxModel
-	{
+namespace Fluxions {
+	struct FxModel {
 		std::vector<Vector3f> vertices;
 		std::vector<Vector3i> triangles;
 		unsigned vertexCount = 0;
@@ -40,8 +15,7 @@ namespace Fluxions
 		void makeModel(SimpleGeometryMesh& model);
 	};
 
-	struct Sphl
-	{
+	struct Sphl {
 		// constants
 		const static int MaxCoefficients = 121;
 		const static int MaxComponents = 6;

@@ -1,9 +1,8 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_base.hpp>
 #include <fluxions_renderer_uniform_blocks.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	const char* UniformBlockNames[(unsigned)UbBindings::MaxBindingPoints] = {
 		"UnknownBlock",
 		"EnviroBlock",

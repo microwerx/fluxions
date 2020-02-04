@@ -1,21 +1,3 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef VIPERFISH_WIDGET_HPP
 #define VIPERFISH_WIDGET_HPP
 
@@ -24,8 +6,7 @@
 #include <viperfish_keyboard.hpp>
 #include <viperfish_gamepad.hpp>
 
-namespace Vf
-{
+namespace Vf {
 	// Use the decorator pattern
 	class Widget : public std::enable_shared_from_this<Widget> {
 	public:
@@ -112,9 +93,9 @@ namespace Vf
 		inline int getYi() const { return (int)windowRect_.y; }
 		inline int getHeighti() const { return (int)windowRect_.h; }
 		inline int getWidthi() const { return (int)windowRect_.w; }
-		inline const Rectf& windowRect() const { return windowRect_; }
-		inline Recti windowRecti() const { return (Recti)windowRect_; }
-		inline Rectf& windowRect() { return windowRect_; }
+		inline const Fx::Rectf& windowRect() const { return windowRect_; }
+		inline Fx::Recti windowRecti() const { return (Fx::Recti)windowRect_; }
+		inline Fx::Rectf& windowRect() { return windowRect_; }
 
 		inline bool isVisible() const { return visible_; }
 		inline bool isOrphan() const { return !parent_; }
@@ -190,7 +171,7 @@ namespace Vf
 
 		bool leaveMainLoop_ = false;
 
-		Rectf windowRect_;
+		Fx::Rectf windowRect_;
 		bool visible_ = true;
 
 		// A class should set leaf_ to false if it's okay to be a container, true if not

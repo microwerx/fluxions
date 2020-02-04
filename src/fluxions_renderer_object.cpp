@@ -1,10 +1,9 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_fileio_iostream.hpp>
 #include <fluxions_renderer_object.hpp>
 #include <hatchetfish.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	RendererObject::RendererObject() {}
 
 	RendererObject::~RendererObject() {
@@ -17,7 +16,7 @@ namespace Fluxions
 		setParent(pparent);
 		HFLOGDEBUG("Initializing renderer object (%s) --> [%s] '%s'",
 				   parent_ ? parent_->name() : "noparent",
-				   type(), 
+				   type(),
 				   name());
 		initialized_ = true;
 	}

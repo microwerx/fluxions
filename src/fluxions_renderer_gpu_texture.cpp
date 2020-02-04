@@ -1,9 +1,8 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_gpu_texture.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	// Image loading routines
 	void saveCubeMapVariations(const std::string& path, const Image4f& image4) {
 		{Image4f tmp;

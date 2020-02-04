@@ -1,18 +1,19 @@
-#include "pch.hpp"
+#include "fluxions_pch.hpp"
 #include <hatchetfish.hpp>
 #include <fluxions_fileio_iostream.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	bool ReadLines(const std::string& path, std::vector<std::string>& lines, bool noBlanksOrComments) {
 		std::ifstream fin(path);
-		if (!fin) return false;
+		if (!fin)
+			return false;
 
 		lines.clear();
 		while (fin) {
 			std::string line;
 			std::getline(fin, line);
-			if (noBlanksOrComments && (line.empty() || line[0] == '#')) continue;
+			if (noBlanksOrComments && (line.empty() || line[0] == '#'))
+				continue;
 			lines.emplace_back(line);
 		}
 		fin.close();
@@ -489,4 +490,4 @@ namespace Fluxions
 		}
 		return is;
 	}
-}
+} // namespace Fluxions

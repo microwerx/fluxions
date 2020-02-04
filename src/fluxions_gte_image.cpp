@@ -1,21 +1,4 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
+#include "fluxions_gte_pch.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -42,8 +25,7 @@
 
 #undef _CRT_SECURE_NO_WARNINGS
 
-namespace Fluxions
-{
+namespace Fluxions {
 	// C++ Specializations Must Come First
 
 	Color3ub RGBFloatToUint8(const Color3f& c) {
@@ -609,7 +591,8 @@ namespace Fluxions
 	template <typename ColorType>
 	bool TImage<ColorType>::loadPPM(const std::string& filename) {
 		std::ifstream fin(filename.c_str());
-		if (!fin) return false;
+		if (!fin)
+			return false;
 		std::string magicNumber;
 		unsigned width;
 		unsigned height;
@@ -648,8 +631,10 @@ namespace Fluxions
 
 	template <typename ColorType>
 	bool TImage<ColorType>::savePPM(const std::string& filename, unsigned z, bool flipy) const {
-		if (pixels.empty()) return false;
-		if (pixels[0].size() < 3) return false;
+		if (pixels.empty())
+			return false;
+		if (pixels[0].size() < 3)
+			return false;
 
 		float maxColorFound = (float)maxrgb();
 		float minColorFound = (float)minrgb();
@@ -679,7 +664,8 @@ namespace Fluxions
 		comment += "] scaled by " + std::to_string(scale);
 
 		std::ofstream fout(filename.c_str());
-		fout << "P3" << "\n";
+		fout << "P3"
+			<< "\n";
 		fout << comment << "\n";
 		fout << imageWidth << " ";
 		fout << imageHeight << " ";
@@ -725,9 +711,12 @@ namespace Fluxions
 	template <typename ColorType>
 	bool TImage<ColorType>::savePPMi(const std::string& filename, float scale, int minValue, int maxValue, unsigned z, bool flipy) const {
 		std::ofstream fout(filename.c_str());
-		if (!fout) return false;
-		if (pixels.empty()) return false;
-		if (pixels[0].size() < 3) return false;
+		if (!fout)
+			return false;
+		if (pixels.empty())
+			return false;
+		if (pixels[0].size() < 3)
+			return false;
 
 		fout << "P3" << std::endl;
 		fout << imageWidth << " ";
@@ -748,8 +737,7 @@ namespace Fluxions
 				Color3i color(
 					clamp<int>((int)(c[0] * scale), minValue, maxValue),
 					clamp<int>((int)(c[1] * scale), minValue, maxValue),
-					clamp<int>((int)(c[2] * scale), minValue, maxValue)
-				);
+					clamp<int>((int)(c[2] * scale), minValue, maxValue));
 				fout << color.r << " " << color.g << " " << color.b << "\n";
 			}
 		}
@@ -839,8 +827,7 @@ namespace Fluxions
 			unsigned i;
 			char c[4];
 		} endianness = { 0x01020304 };
-		return
-			((endianness.c[0] == 1) && (byte_order > 0)) ||
+		return ((endianness.c[0] == 1) && (byte_order > 0)) ||
 			((endianness.c[0] == 4) && (byte_order < 0));
 	}
 
@@ -849,13 +836,15 @@ namespace Fluxions
 	template <typename ColorType>
 	bool TImage<ColorType>::loadPFM(const std::string& path) {
 		std::ifstream fin(path, std::ios::binary);
-		if (!fin) return false;
+		if (!fin)
+			return false;
 		std::string input;
 		int newline_count = 0;
 		while (newline_count < 3) {
 			char c = 0;
 			fin.read(&c, 1);
-			if (c == 0x0a) newline_count++;
+			if (c == 0x0a)
+				newline_count++;
 			input.push_back(c);
 			if (!fin) {
 				return false;
@@ -868,14 +857,16 @@ namespace Fluxions
 		double byte_order = 0;
 		int stride = 0;
 		istr >> type >> xres >> yres >> byte_order;
-		if (type == "PF") stride = 12;
-		else if (type == "Pf") stride = 4;
-		else return false;
+		if (type == "PF")
+			stride = 12;
+		else if (type == "Pf")
+			stride = 4;
+		else
+			return false;
 		const int count = (stride == 12 ? 3 : 1);
 		resize(xres, yres, 1);
 
-		auto rb = same_byte_order((int)byte_order) ? reverse_donothing :
-			stride == 4 ? reverse_bytes1 : reverse_bytes3;
+		auto rb = same_byte_order((int)byte_order) ? reverse_donothing : stride == 4 ? reverse_bytes1 : reverse_bytes3;
 
 		constexpr float to_scalar_type = color_from_float_factor<scalar_type>();
 		float v[3]{ 0.0f, 0.0f, 0.0f };
@@ -906,7 +897,8 @@ namespace Fluxions
 	template <typename ColorType>
 	bool TImage<ColorType>::savePFM(const std::string& path) const {
 		std::ofstream fout(path, std::ios::binary);
-		if (!fout) return false;
+		if (!fout)
+			return false;
 		std::ostringstream ostr;
 		ostr << "PF" << char(0xa);
 		ostr << imageWidth << char(0x20);
@@ -1007,9 +999,7 @@ namespace Fluxions
 		constexpr unsigned glconstant_RGB = 0x1907;
 		constexpr unsigned glconstant_RGBA = 0x1908;
 
-		return (format == glconstant_RGB ? 3 :
-				format == glconstant_RGBA ? 4 :
-				format);
+		return (format == glconstant_RGB ? 3 : format == glconstant_RGBA ? 4 : format);
 	}
 
 	template <typename ColorType>
@@ -1280,7 +1270,8 @@ namespace Fluxions
 		// Determine smallest range and return if any are zero
 		range = tight_bounds(srange, range);
 		range = tight_bounds(drange, range);
-		if (range_empty(range)) return;
+		if (range_empty(range))
+			return;
 
 		//HFLOGDEBUG("Actual->(%i, %i, %i) cube from (%i, %i, %i) to (%i, %i, %i)",
 		//		   range.x, range.y, range.z,
@@ -1312,7 +1303,6 @@ namespace Fluxions
 			dzoffset += dzdiff;
 		}
 	}
-
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertRectToCubeMap() {
@@ -1382,8 +1372,8 @@ namespace Fluxions
 
 		int size = (int)imageHeight;
 		dst.resize(size, size, 6);
-		if (use_corona_swizzle) {			
-			const std::vector<ColorType>& src = pixels;			
+		if (use_corona_swizzle) {
+			const std::vector<ColorType>& src = pixels;
 
 			unsigned zdiff = imageWidth * imageHeight;
 			for (int i = 0; i < 6; i++) {
@@ -1402,8 +1392,8 @@ namespace Fluxions
 			}
 		}
 		else {
-			int h[6] = { 0,1,2,3,4,5 };
-			int v[6] = { 0,0,0,0,0,0 };
+			int h[6] = { 0, 1, 2, 3, 4, 5 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
 			for (int i = 0; i < 6; i++) {
 				blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
 			}
@@ -1458,23 +1448,23 @@ namespace Fluxions
 
 		if (use_corona_swizzle) {
 			for (unsigned i = 0; i < 6; i++) {
-			unsigned k = swizzle[i];
-			// demultiplex the data
-			unsigned src_offset = i * size * size;
-			unsigned dst_offset = k * size;
-			for (unsigned y = 0; y < size; y++) {
-				void* pdst = &dst.pixels[dst_offset];
-				const void* psrc = &pixels[src_offset];
-				unsigned n = size * sizeof(ColorType);
-				memcpy(pdst, psrc, n);
-				src_offset += size;
-				dst_offset += 6 * size;
+				unsigned k = swizzle[i];
+				// demultiplex the data
+				unsigned src_offset = i * size * size;
+				unsigned dst_offset = k * size;
+				for (unsigned y = 0; y < size; y++) {
+					void* pdst = &dst.pixels[dst_offset];
+					const void* psrc = &pixels[src_offset];
+					unsigned n = size * sizeof(ColorType);
+					memcpy(pdst, psrc, n);
+					src_offset += size;
+					dst_offset += 6 * size;
+				}
 			}
 		}
-		}
 		else {
-			int h[6] = { 0,1,2,3,4,5 };
-			int v[6] = { 0,0,0,0,0,0 };
+			int h[6] = { 0, 1, 2, 3, 4, 5 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
 			for (int i = 0; i < 6; i++) {
 				blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
 			}
@@ -1524,14 +1514,12 @@ namespace Fluxions
 		return tmp.convertCrossToCubeMap(*this);
 	}
 
-
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCubeMapToCross(bool horizontal) {
 		TImage<ColorType> tmp = *this;
 		return tmp.convertCubeMapToCross(*this, horizontal);
 		return true;
 	}
-
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCrossToCubeMap(TImage<ColorType>& dst) const {
@@ -1541,15 +1529,16 @@ namespace Fluxions
 		// VERTICAL is 3x4 aspect ratio
 		bool vertical = (imageWidth * 4 == imageHeight * 3 && imageDepth == 1);
 
-		if (!horizontal && !vertical) return false;
+		if (!horizontal && !vertical)
+			return false;
 
 		int size = (int)(vertical ? (imageHeight >> 2) : (imageWidth >> 2));
 		dst.resize(size, size, 6);
 
-		int hh[6] = { 2,0,1,1,1,3 };
-		int hv[6] = { 1,1,0,2,1,1 };
-		int vh[6] = { 2,0,1,1,1,1 };
-		int vv[6] = { 1,1,0,2,1,3 };
+		int hh[6] = { 2, 0, 1, 1, 1, 3 };
+		int hv[6] = { 1, 1, 0, 2, 1, 1 };
+		int vh[6] = { 2, 0, 1, 1, 1, 1 };
+		int vv[6] = { 1, 1, 0, 2, 1, 3 };
 
 		int* h = horizontal ? hh : vh;
 		int* v = horizontal ? hv : vv;
@@ -1558,7 +1547,8 @@ namespace Fluxions
 			blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
 		}
 
-		if (!horizontal) dst.flipXY(5);
+		if (!horizontal)
+			dst.flipXY(5);
 
 		return true;
 	}
@@ -1580,24 +1570,24 @@ namespace Fluxions
 
 		//int hh[6] = { 2,0,3,1,1,1 };
 		//int hv[6] = { 1,1,1,1,2,0 };
-		int hh[6] = { 2,0,1,1,1,3 };
-		int hv[6] = { 1,1,0,2,1,1 };
+		int hh[6] = { 2, 0, 1, 1, 1, 3 };
+		int hv[6] = { 1, 1, 0, 2, 1, 1 };
 		//int vh[6] = { 2,0,1,1,1,1 };
 		//int vv[6] = { 1,1,3,1,2,0 };
-		int vh[6] = { 2,0,1,1,1,1 };
-		int vv[6] = { 1,1,0,2,1,3 };
+		int vh[6] = { 2, 0, 1, 1, 1, 1 };
+		int vv[6] = { 1, 1, 0, 2, 1, 3 };
 
 		int* h = horizontal ? hh : vh;
 		int* v = horizontal ? hv : vv;
 
-		if (!horizontal) src.flipXY(5);
+		if (!horizontal)
+			src.flipXY(5);
 		for (int i = 0; i < 6; i++) {
 			src.blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
 		}
 
 		return true;
 	}
-
 
 	template <typename ColorType>
 	double TImage<ColorType>::getTotalIntensity() const {
@@ -1652,7 +1642,6 @@ namespace Fluxions
 
 	// TESTS //////////////////////////////////////////////////////////////////////
 
-
 	template <typename ColorType>
 	bool TestTImage(const char* testbase) noexcept {
 		constexpr int width = 8;
@@ -1671,7 +1660,7 @@ namespace Fluxions
 		cerr << "|<-- " << (double)grey1;
 		cerr << "-->| " << (double)white << "\n";
 
-		{	// Write rectangular image
+		{ // Write rectangular image
 			ColorType blackPixel{ grey1, grey2, grey3 };
 			ColorType whitePixel{ grey3, grey1, grey2 };
 			TImage<ColorType> image(width, height, 1);
@@ -1688,24 +1677,24 @@ namespace Fluxions
 			image.savePPM(testbase + std::string("-rect-test-flipped.ppm"), 0, true);
 		}
 
-		{	// Write out Cube image
+		{ // Write out Cube image
 			std::vector<ColorType> pixelColors[2]{
 				{
-					{ grey3, grey1, grey1 }, // +X
-					{ grey1, grey3, grey3 }, // -X
-					{ grey1, grey3, grey1 }, // +Y
-					{ grey3, grey1, grey3 }, // -Y
-					{ grey1, grey1, grey3 }, // +Z
-					{ grey3, grey3, grey1 }, // -Z
-				},{
-					{ grey3, grey2, grey2 }, // +X
-					{ grey2, grey3, grey3 }, // -X
-					{ grey2, grey3, grey2 }, // +Y
-					{ grey3, grey2, grey3 }, // -Y
-					{ grey2, grey2, grey3 }, // +Z
-					{ grey3, grey3, grey2 }, // -Z
-				}
-			};
+					{grey3, grey1, grey1}, // +X
+					{grey1, grey3, grey3}, // -X
+					{grey1, grey3, grey1}, // +Y
+					{grey3, grey1, grey3}, // -Y
+					{grey1, grey1, grey3}, // +Z
+					{grey3, grey3, grey1}, // -Z
+				},
+				{
+					{grey3, grey2, grey2}, // +X
+					{grey2, grey3, grey3}, // -X
+					{grey2, grey3, grey2}, // +Y
+					{grey3, grey2, grey3}, // -Y
+					{grey2, grey2, grey3}, // +Z
+					{grey3, grey3, grey2}, // -Z
+				} };
 			TImage<ColorType> cubeimage(width, height, 6);
 			for (unsigned z = 0; z < 6; z++) {
 				bool rowColorChoice = false;
@@ -1714,8 +1703,7 @@ namespace Fluxions
 				for (unsigned y = 0; y < height; y++) {
 					bool colColorChoice = rowColorChoice;
 					for (unsigned x = 0; x < width; x++) {
-						cubeimage.setPixel(x, y, z, colColorChoice ?
-										   blackPixel : whitePixel);
+						cubeimage.setPixel(x, y, z, colColorChoice ? blackPixel : whitePixel);
 						colColorChoice = !colColorChoice;
 					}
 					rowColorChoice = !rowColorChoice;

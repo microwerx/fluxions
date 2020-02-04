@@ -1,42 +1,20 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_ASTRONOMY_HPP
 #define FLUXIONS_ASTRONOMY_HPP
 
 #include <fluxions_gte_scalar_math.hpp>
 #include <time.h>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	//////////////////////////////////////////////////////////////////////
 	// A S T R O N O M Y   C A L C U L A T I O N S ///////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	namespace Astronomy
-	{
+	namespace Astronomy {
 		using Real = double;
 
 		// namespace for Practical Astronomy functions
-		namespace PA
-		{
-			struct CivilDateTime
-			{
+		namespace PA {
+			struct CivilDateTime {
 				int day = 0;
 				int month = 0;
 				int year = 0;
@@ -80,14 +58,12 @@ namespace Fluxions
 
 		// T Y P E S /////////////////////////////////////////////////////
 
-		struct Vector
-		{
+		struct Vector {
 			Real x, y, z;
 
 			Vector() : x(0.0), y(0.0), z(0.0) {}
 			Vector(Real x_, Real y_, Real z_) : x(x_), y(y_), z(z_) {}
-			Vector(Real mu, Real nu)
-			{
+			Vector(Real mu, Real nu) {
 				Real mu_ = mu * FX_DEGREES_TO_RADIANS;
 				Real nu_ = nu * FX_DEGREES_TO_RADIANS;
 				x = std::cos(mu_) * std::cos(nu_);
@@ -95,68 +71,55 @@ namespace Fluxions
 				z = std::sin(nu_);
 			}
 
-			void toAngles(Real& mu, Real& nu) const
-			{
+			void toAngles(Real& mu, Real& nu) const {
 				mu = atan2(y, x) * FX_RADIANS_TO_DEGREES;
 				nu = asin(z) * FX_RADIANS_TO_DEGREES;
 			}
 
-			Real length()
-			{
+			Real length() {
 				return std::sqrt(x * x + y * y + z * z);
 			}
 
-			Vector unit()
-			{
+			Vector unit() {
 				Real inv_length = 1.0 / length();
 				return Vector(x * inv_length, y * inv_length, z * inv_length);
 			}
 		};
 
-		struct Matrix
-		{
+		struct Matrix {
 			Real m11, m12, m13;
 			Real m21, m22, m23;
 			Real m31, m32, m33;
 
 			Matrix() : m11(1.0), m12(0.0), m13(0.0),
 				m21(0.0), m22(1.0), m23(0.0),
-				m31(0.0), m32(0.0), m33(1.0)
-			{
-			}
+				m31(0.0), m32(0.0), m33(1.0) {}
 			Matrix(
 				Real a11, Real a12, Real a13,
 				Real a21, Real a22, Real a23,
 				Real a31, Real a32, Real a33)
 				: m11(a11), m12(a12), m13(a13),
 				m21(a21), m22(a22), m23(a23),
-				m31(a31), m32(a32), m33(a33)
-			{
-			}
+				m31(a31), m32(a32), m33(a33) {}
 			Matrix(const Matrix& M) : m11(M.m11), m12(M.m12), m13(M.m13),
 				m21(M.m21), m22(M.m22), m23(M.m23),
-				m31(M.m31), m32(M.m32), m33(M.m33)
-			{
-			}
+				m31(M.m31), m32(M.m32), m33(M.m33) {}
 
-			Matrix times(const Matrix& M) const
-			{
+			Matrix times(const Matrix& M) const {
 				return Matrix(
 					m11 * M.m11 + m12 * M.m21 + m13 * M.m31, m11 * M.m12 + m12 * M.m22 + m13 * M.m32, m11 * M.m13 + m12 * M.m23 + m13 * M.m33,
 					m21 * M.m11 + m22 * M.m21 + m23 * M.m31, m21 * M.m12 + m22 * M.m22 + m23 * M.m32, m21 * M.m13 + m22 * M.m23 + m23 * M.m33,
 					m31 * M.m11 + m32 * M.m21 + m33 * M.m31, m31 * M.m12 + m32 * M.m22 + m33 * M.m32, m31 * M.m13 + m32 * M.m23 + m33 * M.m33);
 			}
 
-			Vector times(const Vector& V) const
-			{
+			Vector times(const Vector& V) const {
 				return Vector(
 					m11 * V.x + m12 * V.y + m13 * V.z,
 					m21 * V.x + m22 * V.y + m23 * V.z,
 					m31 * V.x + m32 * V.y + m33 * V.z);
 			}
 
-			Matrix transpose() const
-			{
+			Matrix transpose() const {
 				return Matrix(
 					m11, m21, m31,
 					m12, m22, m32,
@@ -164,24 +127,21 @@ namespace Fluxions
 			}
 		};
 
-		struct HorizonCoord
-		{
+		struct HorizonCoord {
 			Real A = 0.0;
 			Real a = 0.0;
 
 			HorizonCoord() : A(0.0), a(0.0) {}
 			HorizonCoord(Real A_, Real a_) : A(A_), a(a_) {}
 
-			Vector toOpenGLVector() const
-			{
+			Vector toOpenGLVector() const {
 				Vector v(90.0 - A, a);
 				// return Vector(-ptr.y, ptr.z, -ptr.X);
 				return Vector(v.x, v.z, -v.y);
 			}
 		};
 
-		struct EclipticCoord
-		{
+		struct EclipticCoord {
 			// ecliptic longitude
 			Real lambda = 0.0;
 			// ecliptic latitude
@@ -191,8 +151,7 @@ namespace Fluxions
 			EclipticCoord(Real lambda_, Real beta_) : lambda(lambda_), beta(beta_) {}
 		};
 
-		struct HEquatorialCoord
-		{
+		struct HEquatorialCoord {
 			Real delta = 0.0;
 			Real H = 0.0;
 
@@ -200,22 +159,19 @@ namespace Fluxions
 			HEquatorialCoord(Real delta_, Real H_) : delta(delta_), H(H_) {}
 		};
 
-		struct EquatorialCoord
-		{
+		struct EquatorialCoord {
 			Real delta = 0.0;
 			Real alpha = 0.0;
 
 			EquatorialCoord() : delta(0.0), alpha(0.0) {}
 			EquatorialCoord(Real delta_, Real alpha_) : delta(delta_), alpha(alpha_) {}
-			double H(Real LST)
-			{
+			double H(Real LST) {
 				Real result = LST - alpha;
 				return result < 0.0 ? result + 24.0 : result;
 			}
 		};
 
-		struct GalacticCoord
-		{
+		struct GalacticCoord {
 			Real l = 0.0;
 			Real b = 0.0;
 
@@ -225,8 +181,7 @@ namespace Fluxions
 
 		// struct SunPosition
 		// Elevation and Azimuth
-		struct SunPosition
-		{
+		struct SunPosition {
 			// Elevation is from the horizon plane toward the zenith. -PI/2 <= elevation <= PI/2
 			Real elevation;
 			// Azimuth is angle from north clockwise to the east. 0 <= azimuth <= 2 PI
@@ -235,8 +190,7 @@ namespace Fluxions
 
 		// struct ECEF
 		// Earth Centered Earth Fixed coordinates
-		struct ECEF
-		{
+		struct ECEF {
 			// X and y are coordinates in the earths equatorial plane
 			// X = 1, y = 0 is the prime meridian
 			// Latitude is phi and -PI/2 <= phi <= PI/2 measured from the equatorial plane
@@ -247,8 +201,7 @@ namespace Fluxions
 			Real z;
 		};
 
-		class AstroCalc
-		{
+		class AstroCalc {
 		public:
 			AstroCalc();
 			AstroCalc(time_t t, Real fractSeconds, Real latitude, Real longitude);

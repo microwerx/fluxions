@@ -1,35 +1,14 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include <sstream>
+#include "damselfish_pch.hpp"
 #include <damselfish_json.hpp>
 
-namespace Df
-{
+namespace Df {
 	const std::string JSON::NullString = "";
 
-	JSON::JSON(JSON::Type whichType)
-	{
+	JSON::JSON(JSON::Type whichType) {
 		type_ = whichType;
 	}
 
-	JSON::JSON(const JSON &json)
-	{
+	JSON::JSON(const JSON& json) {
 		type_ = json.type_;
 		if (IsNumber())
 			dval_ = json.dval_;
@@ -41,8 +20,7 @@ namespace Df
 			copyMap(json.map_);
 	}
 
-	JSON::JSON(const JSONPtr &json)
-	{
+	JSON::JSON(const JSONPtr& json) {
 		if (!json)
 			return;
 		type_ = json->type_;
@@ -56,21 +34,18 @@ namespace Df
 			copyMap(json->map_);
 	}
 
-	JSON::~JSON()
-	{
+	JSON::~JSON() {
 		sval_.clear();
 		array_.clear();
 		map_.clear();
 	}
 
-	JSONPtr JSON::operator=(const JSONPtr &rhs)
-	{
+	JSONPtr JSON::operator=(const JSONPtr& rhs) {
 		Clear();
 		if (!rhs)
 			return shared_from_this();
 		type_ = rhs->type_;
-		switch (type_)
-		{
+		switch (type_) {
 		case Type::Number:
 			dval_ = rhs->dval_;
 			break;
@@ -93,8 +68,7 @@ namespace Df
 		return shared_from_this();
 	}
 
-	bool JSON::Equals(const JSONPtr &rhs) const
-	{
+	bool JSON::Equals(const JSONPtr& rhs) const {
 		if (!rhs || rhs->type_ != type_)
 			return false;
 
@@ -109,14 +83,12 @@ namespace Df
 		if (type_ == Type::String)
 			return sval_ == rhs->sval_;
 
-		if (type_ == Type::Array)
-		{
+		if (type_ == Type::Array) {
 			if (Length() != rhs->Length())
 				return false;
 
 			size_t length = array_.size();
-			for (size_t i = 0; i < length; i++)
-			{
+			for (size_t i = 0; i < length; i++) {
 				// This should actually never be the case because nullptr != JSON(JSON::Type::Null).
 				if (!array_[i] || !rhs->array_[i])
 					return false;
@@ -127,15 +99,13 @@ namespace Df
 			return true;
 		}
 
-		if (type_ == Type::Object)
-		{
+		if (type_ == Type::Object) {
 			if (Length() != rhs->Length())
 				return false;
 
 			auto m1It = map_.begin();
 			auto m2It = rhs->map_.begin();
-			while (m1It != map_.end())
-			{
+			while (m1It != map_.end()) {
 				// are the keys the same?
 				if (m1It->first != m2It->first)
 					return false;
@@ -150,27 +120,22 @@ namespace Df
 		return true;
 	}
 
-	void JSON::copyArray(const std::vector<JSONPtr> &a)
-	{
+	void JSON::copyArray(const std::vector<JSONPtr>& a) {
 		size_t length = a.size();
-		for (size_t i = 0; i < length; i++)
-		{
+		for (size_t i = 0; i < length; i++) {
 			JSONPtr json = JSON::New((a[i]));
 			array_.push_back(json);
 		}
 	}
 
-	void JSON::copyMap(const std::map<std::string, JSONPtr> &m)
-	{
-		for (auto it = m.begin(); it != m.end(); it++)
-		{
+	void JSON::copyMap(const std::map<std::string, JSONPtr>& m) {
+		for (auto it = m.begin(); it != m.end(); it++) {
 			JSONPtr json = JSON::New((it->second));
 			map_[it->first] = json;
 		}
 	}
 
-	std::string JSON::Serialize() const
-	{
+	std::string JSON::Serialize() const {
 		std::ostringstream ostr;
 
 		if (IsNull())
@@ -179,15 +144,12 @@ namespace Df
 			return "true";
 		else if (IsFalse())
 			return "false";
-		else if (IsNumber())
-		{
+		else if (IsNumber()) {
 			ostr << dval_;
 		}
-		else if (IsString())
-		{
+		else if (IsString()) {
 			ostr << "\"";
-			for (size_t i = 0, len = sval_.length(); i < len; i++)
-			{
+			for (size_t i = 0, len = sval_.length(); i < len; i++) {
 				if (sval_[i] == '\"')
 					ostr << "\\\"";
 				else
@@ -195,13 +157,11 @@ namespace Df
 			}
 			ostr << "\"";
 		}
-		else if (IsArray())
-		{
+		else if (IsArray()) {
 			ostr << "[";
 			int i = 0;
-			for (const JSONPtr &j : array_)
-			{
-				const JSON *json = j.get();
+			for (const JSONPtr& j : array_) {
+				const JSON* json = j.get();
 				if (!json)
 					continue;
 
@@ -214,13 +174,11 @@ namespace Df
 			}
 			ostr << " ]";
 		}
-		else if (IsObject())
-		{
+		else if (IsObject()) {
 			ostr << "{";
 			int i = 0;
-			for (const std::pair<std::string, JSONPtr> &j : map_)
-			{
-				const JSON *json = j.second.get();
+			for (const std::pair<std::string, JSONPtr>& j : map_) {
+				const JSON* json = j.second.get();
 				if (!json)
 					continue;
 
@@ -238,8 +196,7 @@ namespace Df
 		return ostr.str();
 	}
 
-	bool JSON::Deserialize(const std::string &json)
-	{
+	bool JSON::Deserialize(const std::string& json) {
 		Clear();
 
 		// Let's LEX it!
@@ -249,18 +206,14 @@ namespace Df
 		return DeserializeParseTokens(tokens);
 	}
 
-	long JSON::DeserializeParseTokens(const TokenVector &tokens, size_t startIndex)
-	{
+	long JSON::DeserializeParseTokens(const TokenVector& tokens, size_t startIndex) {
 		size_t len = tokens.size();
-		for (size_t i = startIndex; i < len; i++)
-		{
-			if (tokens[i].IsIntegerOrDouble())
-			{
+		for (size_t i = startIndex; i < len; i++) {
+			if (tokens[i].IsIntegerOrDouble()) {
 				*this = tokens[i].dval;
 				return (long)i;
 			}
-			else if (tokens[i].IsIdentifier())
-			{
+			else if (tokens[i].IsIdentifier()) {
 				if (tokens[i].sval == "null")
 					;
 				else if (tokens[i].sval == "true")
@@ -271,40 +224,33 @@ namespace Df
 					return -1;
 				return (long)i;
 			}
-			else if (tokens[i].IsString())
-			{
+			else if (tokens[i].IsString()) {
 				*this = tokens[i].sval;
 				return (long)i;
 			}
-			else if (tokens[i].IsType(TokenType::TT1_LBRACE))
-			{
+			else if (tokens[i].IsType(TokenType::TT1_LBRACE)) {
 				// Object
 				type_ = Type::Object;
 
 				i++;
-				while (i < len)
-				{
+				while (i < len) {
 					// next we're expecting a STRING, a COLON, and a value, and an optional comma etc...
 					if (i + 3 > len)
 						break;
 
 					std::string key;
-					if (tokens[i].IsString())
-					{
+					if (tokens[i].IsString()) {
 						key = tokens[i].sval;
 						i++;
 					}
-					else
-					{
+					else {
 						return -1;
 					}
 
-					if (tokens[i].IsType(TokenType::TT1_COLON))
-					{
+					if (tokens[i].IsType(TokenType::TT1_COLON)) {
 						i++;
 					}
-					else
-					{
+					else {
 						return -1;
 					}
 
@@ -317,13 +263,11 @@ namespace Df
 
 					if (i + 1 >= len)
 						return -1;
-					if (tokens[i].IsType(TokenType::TT1_COMMA))
-					{
+					if (tokens[i].IsType(TokenType::TT1_COMMA)) {
 						// we're expecting another object now
 						i++;
 					}
-					else
-					{
+					else {
 						break;
 					}
 				}
@@ -331,14 +275,12 @@ namespace Df
 					return -1;
 				return (long)i;
 			}
-			else if (tokens[i].IsType(TokenType::TT1_LBRACKET))
-			{
+			else if (tokens[i].IsType(TokenType::TT1_LBRACKET)) {
 				// Array
 				type_ = Type::Array;
 
 				i++;
-				while (i < len)
-				{
+				while (i < len) {
 					// next we're expecting a a value and an optional comma etc...
 					if (i + 1 > len)
 						break;
@@ -352,13 +294,11 @@ namespace Df
 
 					if (i + 1 >= len)
 						return -1;
-					if (tokens[i].IsType(TokenType::TT1_COMMA))
-					{
+					if (tokens[i].IsType(TokenType::TT1_COMMA)) {
 						// we're expecting another value now
 						i++;
 					}
-					else
-					{
+					else {
 						break;
 					}
 				}
@@ -366,8 +306,7 @@ namespace Df
 					return -1;
 				return (long)i;
 			}
-			else
-			{
+			else {
 				return -1;
 			}
 		}

@@ -1,11 +1,15 @@
+#include "fluxions_gte_pch.hpp"
 #include <iostream>
 #include <iomanip>
 #include <fluxions_gte_color_math.hpp>
 
-namespace Fluxions
-{
-#define TEST(test) if (!(test)) { result = false; \
-	std::cerr << "Test Failed(Line " << __LINE__ << "): " << #test << std::endl; }
+namespace Fluxions {
+#define TEST(test)                                                                   \
+	if (!(test))                                                                     \
+	{                                                                                \
+		result = false;                                                              \
+		std::cerr << "Test Failed(Line " << __LINE__ << "): " << #test << std::endl; \
+	}
 
 	template <typename ColorType>
 	bool TestTColor3() {
@@ -47,4 +51,4 @@ namespace Fluxions
 		FLUXIONS_TEST(TestTColor3<Color3i>());
 		FLUXIONS_TEST(TestTColor4<Color4i>());
 	}
-}
+} // namespace Fluxions

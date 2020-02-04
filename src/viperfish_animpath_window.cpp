@@ -1,12 +1,9 @@
-#include "pch.hpp"
+#include "viperfish_pch.hpp"
 #include <viperfish_base.hpp>
 #include <viperfish_animpath_window.hpp>
 #include <fluxions_gte_noise.hpp>
 
-namespace Vf
-{
-	namespace Fx = Fluxions;
-
+namespace Vf {
 	AnimPathWindow::AnimPathWindow(const std::string& name)
 		: Window(name) {}
 
@@ -15,14 +12,14 @@ namespace Vf
 	void AnimPathWindow::OnUpdate(double timeStamp) {
 		Window::OnUpdate(timeStamp);
 
-		Quaternionf qX = Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
-		Quaternionf qY = Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
-		Quaternionf qZ = Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
+		Fx::Quaternionf qX = Fx::Quaternionf::makeFromAngleAxis(X, 1.0, 0.0, 0.0);
+		Fx::Quaternionf qY = Fx::Quaternionf::makeFromAngleAxis(Y, 0.0, 1.0, 0.0);
+		Fx::Quaternionf qZ = Fx::Quaternionf::makeFromAngleAxis(Z, 0.0, 0.0, 1.0);
 
 		q = qZ * qX * qY;
 	}
 
-	void AnimPathWindow::_showv(const char* m, const Vector3f& v) {
+	void AnimPathWindow::_showv(const char* m, const Fx::Vector3f& v) {
 		ImGui::Text(m);
 		ImGui::SameLine();
 		ImGui::Value("x", v.x);
@@ -32,7 +29,7 @@ namespace Vf
 		ImGui::Value("z", v.z);
 	}
 
-	void AnimPathWindow::_showq(const char* m, const Quaternionf& q) {
+	void AnimPathWindow::_showq(const char* m, const Fx::Quaternionf& q) {
 		ImGui::Text(m);
 		ImGui::SameLine();
 		ImGui::Value("a", q.a);
@@ -52,7 +49,7 @@ namespace Vf
 			ImVec2 ip = ImGui::GetCursorScreenPos();
 			ip.y += 100.0f;
 
-			Vector3f Z(q2.m13(), q2.m23(), q2.m33());
+			Fx::Vector3f Z(q2.m13(), q2.m23(), q2.m33());
 			Z.normalize();
 			Z *= 2;
 			ImVec2 curp{ ip.x + (p2.x - offsetX) * size, ip.y + (p2.z - offsetY) * size };
@@ -164,7 +161,7 @@ namespace Vf
 		ImGui::SliderFloat("pZ", &p1.z, -30.0f, 30.0f);
 
 		if (ImGui::Button("Set Key")) {
-			q1 = Quaternionf::makeFromAngles(q1Y, q1X, q1Z);
+			q1 = Fx::Quaternionf::makeFromAngles(q1Y, q1X, q1Z);
 			action = PathAnimActions::SetKey;
 		}
 		ImGui::SameLine();

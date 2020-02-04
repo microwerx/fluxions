@@ -1,13 +1,12 @@
-#ifndef FLUXIONS_CORONA_DATABASE_HPP
-#define FLUXIONS_CORONA_DATABASE_HPP
+#ifndef UNICORNFISH_CORONA_DATABASE_HPP
+#define UNICORNFISH_CORONA_DATABASE_HPP
 
+#include <unicornfish_base.hpp>
 #include <fluxions_stdcxx.hpp>
 #include <fluxions_gte.hpp>
 
-namespace Uf
-{
-	class CoronaDatabase
-	{
+namespace Uf {
+	class CoronaDatabase {
 	public:
 		//Fluxions::SimpleRenderer_GLuint renderer;
 		std::map<std::string, Fluxions::SimpleGeometryMesh> models;

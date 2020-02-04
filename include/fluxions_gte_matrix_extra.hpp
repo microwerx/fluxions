@@ -1,31 +1,12 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_GTE_MATRIX_EXTRA_HPP
 #define FLUXIONS_GTE_MATRIX_EXTRA_HPP
 
-#include <vector>
+#include <fluxions_gte_base.hpp>
 #include <fluxions_gte_matrix2.hpp>
 #include <fluxions_gte_matrix3.hpp>
 #include <fluxions_gte_matrix4.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	// Forward declarations
 	template <typename T>
 	class TMatrix2x3;
@@ -46,8 +27,7 @@ namespace Fluxions
 	class TColor4;
 
 	template <typename T>
-	class TMatrixM
-	{
+	class TMatrixM {
 	public:
 		T m11, m21, m31, m41;
 		T m12, m22, m32, m42;
@@ -827,8 +807,7 @@ namespace Fluxions
 	//};
 
 	template <typename T>
-	class TMatrix
-	{
+	class TMatrix {
 	public:
 		std::vector<T> m;
 		int cols = 0;

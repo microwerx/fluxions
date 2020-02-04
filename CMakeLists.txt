@@ -78,24 +78,24 @@ add_library(fluxions STATIC
     src/fluxions_scene_graph_reader.cpp
     src/fluxions_scene_graph_writer.cpp
     src/fluxions_shader_program_locations.cpp
-    src/fluxions_simple_aniso_light.cpp
-    src/fluxions_simple_camera.cpp
-    src/fluxions_simple_dirto_light.cpp
-    src/fluxions_simple_environment.cpp
-    src/fluxions_simple_geometry_mesh.cpp
-    src/fluxions_simple_material_library.cpp
-    src/fluxions_simple_materials.cpp
-    src/fluxions_simple_path_animation.cpp
-    src/fluxions_simple_point_light.cpp
-    src/fluxions_simple_property.cpp
-    src/fluxions_simple_renderer.cpp
-    src/fluxions_simple_renderer_plugin.cpp
-    src/fluxions_simple_scene_graph.cpp
-    src/fluxions_simple_scene_graph_node.cpp
-    src/fluxions_simple_sphere.cpp
-    src/fluxions_simple_ssphh.cpp
-    src/fluxions_simple_ssphh_light.cpp
-    src/fluxions_simple_unfinished_geometry_mesh.cpp
+    src/fluxions_ssg_aniso_light.cpp
+    src/fluxions_ssg_camera.cpp
+    src/fluxions_ssg_dirto_light.cpp
+    src/fluxions_ssg_environment.cpp
+    src/fluxions_ssg_geometry_mesh.cpp
+    src/fluxions_ssg_material_library.cpp
+    src/fluxions_ssg_materials.cpp
+    src/fluxions_ssg_path_animation.cpp
+    src/fluxions_ssg_point_light.cpp
+    src/fluxions_ssg_property.cpp
+    src/fluxions_ssg_renderer.cpp
+    src/fluxions_ssg_renderer_plugin.cpp
+    src/fluxions_ssg_scene_graph.cpp
+    src/fluxions_ssg_scene_graph_node.cpp
+    src/fluxions_ssg_sphere.cpp
+    src/fluxions_ssg_ssphh.cpp
+    src/fluxions_ssg_ssphh_light.cpp
+    src/fluxions_ssg_unfinished_geometry_mesh.cpp
     src/fluxions_sphl.cpp
     src/fluxions_sphl_image_texture.cpp
     src/fluxions_sphl_sampler.cpp

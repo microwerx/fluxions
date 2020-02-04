@@ -1,12 +1,11 @@
-#ifndef FLUXIONS_SIMPLE_UNIFORM_HPP
-#define FLUXIONS_SIMPLE_UNIFORM_HPP
+#ifndef FLUXIONS_RENDERER_UNIFORM_HPP
+#define FLUXIONS_RENDERER_UNIFORM_HPP
 
 #include <fluxions_base.hpp>
 #include <fluxions_gl1gl2_tools.hpp>
 #include <fluxions_gte_matrix_math.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	// FIXME: Support uniform blocks in the future
 
 	//struct RendererUniformBlock
@@ -32,16 +31,15 @@ namespace Fluxions
 	//	void UpdateSubData(GLsizei offset, GLsizei size, GLbyte* data);
 	//};
 
-	class RendererUniform
-	{
+	class RendererUniform {
 	public:
 		RendererUniform() { changeType(GL_INT, 1, GL_FALSE, NULL); }
 		~RendererUniform() { buffer.clear(); }
 
-		RendererUniform(GLint intValue) { changeType(GL_INT, 1, GL_FALSE, (GLubyte*)& intValue); }
-		RendererUniform(GLuint uintValue) { changeType(GL_UNSIGNED_INT, 1, GL_FALSE, (GLubyte*)& uintValue); }
-		RendererUniform(GLfloat floatValue) { changeType(GL_FLOAT, 1, GL_FALSE, (GLubyte*)& floatValue); }
-		RendererUniform(GLdouble doubleValue) { changeType(GL_DOUBLE, 1, GL_FALSE, (GLubyte*)& doubleValue); }
+		RendererUniform(GLint intValue) { changeType(GL_INT, 1, GL_FALSE, (GLubyte*)&intValue); }
+		RendererUniform(GLuint uintValue) { changeType(GL_UNSIGNED_INT, 1, GL_FALSE, (GLubyte*)&uintValue); }
+		RendererUniform(GLfloat floatValue) { changeType(GL_FLOAT, 1, GL_FALSE, (GLubyte*)&floatValue); }
+		RendererUniform(GLdouble doubleValue) { changeType(GL_DOUBLE, 1, GL_FALSE, (GLubyte*)&doubleValue); }
 		RendererUniform(GLsizei count, GLfloat* v) { changeType(GL_FLOAT, count, GL_FALSE, (GLubyte*)v); }
 		RendererUniform(GLsizei count, GLdouble* v) { changeType(GL_DOUBLE, count, GL_FALSE, (GLubyte*)v); }
 		RendererUniform(GLenum newType, GLint newCount, GLboolean newTranspose, const GLubyte* newData) { changeType(newType, newCount, newTranspose, newData); }
@@ -269,94 +267,94 @@ namespace Fluxions
 			}
 			switch (whichType) {
 			case GL_FLOAT:
-				glUniform1fv(uniformLocation, count, (GLfloat*)& buffer[0]);
+				glUniform1fv(uniformLocation, count, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_VEC2:
-				glUniform2fv(uniformLocation, count, (GLfloat*)& buffer[0]);
+				glUniform2fv(uniformLocation, count, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_VEC3:
-				glUniform3fv(uniformLocation, count, (GLfloat*)& buffer[0]);
+				glUniform3fv(uniformLocation, count, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_VEC4:
-				glUniform4fv(uniformLocation, count, (GLfloat*)& buffer[0]);
+				glUniform4fv(uniformLocation, count, (GLfloat*)&buffer[0]);
 				break;
 			case GL_INT:
-				glUniform1iv(uniformLocation, count, (GLint*)& buffer[0]);
+				glUniform1iv(uniformLocation, count, (GLint*)&buffer[0]);
 				break;
 			case GL_INT_VEC2:
-				glUniform2iv(uniformLocation, count, (GLint*)& buffer[0]);
+				glUniform2iv(uniformLocation, count, (GLint*)&buffer[0]);
 				break;
 			case GL_INT_VEC3:
-				glUniform3iv(uniformLocation, count, (GLint*)& buffer[0]);
+				glUniform3iv(uniformLocation, count, (GLint*)&buffer[0]);
 				break;
 			case GL_INT_VEC4:
-				glUniform4iv(uniformLocation, count, (GLint*)& buffer[0]);
+				glUniform4iv(uniformLocation, count, (GLint*)&buffer[0]);
 				break;
 			case GL_UNSIGNED_INT:
-				glUniform1uiv(uniformLocation, count, (GLuint*)& buffer[0]);
+				glUniform1uiv(uniformLocation, count, (GLuint*)&buffer[0]);
 				break;
 			case GL_UNSIGNED_INT_VEC2:
-				glUniform2uiv(uniformLocation, count, (GLuint*)& buffer[0]);
+				glUniform2uiv(uniformLocation, count, (GLuint*)&buffer[0]);
 				break;
 			case GL_UNSIGNED_INT_VEC3:
-				glUniform3uiv(uniformLocation, count, (GLuint*)& buffer[0]);
+				glUniform3uiv(uniformLocation, count, (GLuint*)&buffer[0]);
 				break;
 			case GL_UNSIGNED_INT_VEC4:
-				glUniform4uiv(uniformLocation, count, (GLuint*)& buffer[0]);
+				glUniform4uiv(uniformLocation, count, (GLuint*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT2:
-				glUniformMatrix2fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix2fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT3:
-				glUniformMatrix3fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix3fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT4:
-				glUniformMatrix4fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix4fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT2x3:
-				glUniformMatrix2x3fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix2x3fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT2x4:
-				glUniformMatrix2x4fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix2x4fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT3x2:
-				glUniformMatrix3x2fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix3x2fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT3x4:
-				glUniformMatrix3x4fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix3x4fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT4x2:
-				glUniformMatrix4x2fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix4x2fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_FLOAT_MAT4x3:
-				glUniformMatrix4x3fv(uniformLocation, count, transpose, (GLfloat*)& buffer[0]);
+				glUniformMatrix4x3fv(uniformLocation, count, transpose, (GLfloat*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT2:
-				glUniformMatrix2dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix2dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT3:
-				glUniformMatrix3dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix3dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT4:
-				glUniformMatrix4dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix4dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT2x3:
-				glUniformMatrix2x3dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix2x3dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT2x4:
-				glUniformMatrix2x4dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix2x4dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT3x2:
-				glUniformMatrix3x2dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix3x2dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT3x4:
-				glUniformMatrix3x4dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix3x4dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT4x2:
-				glUniformMatrix4x2dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix4x2dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			case GL_DOUBLE_MAT4x3:
-				glUniformMatrix4x3dv(uniformLocation, count, transpose, (GLdouble*)& buffer[0]);
+				glUniformMatrix4x3dv(uniformLocation, count, transpose, (GLdouble*)&buffer[0]);
 				break;
 			}
 		}

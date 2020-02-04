@@ -1,6 +1,7 @@
 #ifndef VIPERFISH_HPP
 #define VIPERFISH_HPP
 
+#include <viperfish_base.hpp>
 #include <viperfish_keyboard.hpp>
 #include <viperfish_mouse.hpp>
 #include <viperfish_gamepad.hpp>
@@ -10,8 +11,7 @@
 #include <viperfish_dear_imgui.hpp>
 #include <viperfish_window.hpp>
 
-namespace Vf
-{
+namespace Vf {
 	using namespace Fluxions;
 
 	template <class T, class... _Types>

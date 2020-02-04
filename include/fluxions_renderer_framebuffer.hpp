@@ -4,12 +4,10 @@
 #include <fluxions_renderer_object.hpp>
 #include <fluxions_gte_matrix4.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class RendererGpuTexture;
 
-	class RendererFramebuffer : public RendererObject
-	{
+	class RendererFramebuffer : public RendererObject {
 		GLint lastBoundUnit = 0;
 
 	public:

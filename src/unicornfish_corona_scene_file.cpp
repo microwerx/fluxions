@@ -1,31 +1,12 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-
+#include "unicornfish_pch.hpp"
 #include <fluxions_base.hpp>
 #include <fluxions_file_system.hpp>
-#include <fluxions_scene_graph_writer.hpp>
+#include <fluxions_ssg_writer.hpp>
 #include <fluxions_ssg_ssphh_renderer_plugin.hpp>
 #include <unicornfish_corona_scene_file.hpp>
 #include <unicornfish_corona_job.hpp>
 
-namespace Uf
-{
+namespace Uf {
 	namespace Fx = Fluxions;
 
 	CoronaSceneFile::CoronaSceneFile() {}
@@ -82,7 +63,8 @@ namespace Uf
 	}
 
 	bool CoronaSceneFile::writeSphlGenSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, unsigned lightIndex) {
-		if (!ssg.anisoLights.isAHandle(lightIndex + 1)) return false;
+		if (!ssg.anisoLights.isAHandle(lightIndex + 1))
+			return false;
 		const Fluxions::SimpleAnisoLight& light = ssg.anisoLights[lightIndex + 1];
 
 		Fluxions::XmlSceneGraphWriter writer;
@@ -94,7 +76,8 @@ namespace Uf
 		Fluxions::Vector3f roll = { 0.0f, 1.0f, 0.0f };
 		writer.setCubeMapCamera(origin, target, roll);
 
-		GEN.confname = fpi.fname + ".conf";;
+		GEN.confname = fpi.fname + ".conf";
+		;
 		_copyConf(GEN, writer);
 		ssg.Save(fpi.fullfname, &writer);
 		GEN.write(fpi.dir + GEN.confname, "cubemap");
@@ -102,8 +85,10 @@ namespace Uf
 	}
 
 	bool CoronaSceneFile::writeSphlVizSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, int sourceLightIndex, int receivingLightIndex) {
-		if (!ssg.anisoLights.isAHandle(sourceLightIndex + 1)) return false;
-		if (!ssg.anisoLights.isAHandle(receivingLightIndex + 1)) return false;
+		if (!ssg.anisoLights.isAHandle(sourceLightIndex + 1))
+			return false;
+		if (!ssg.anisoLights.isAHandle(receivingLightIndex + 1))
+			return false;
 		const Fluxions::SimpleAnisoLight& src_sphl = ssg.anisoLights[sourceLightIndex + 1];
 		const Fluxions::SimpleAnisoLight& rcv_sphl = ssg.anisoLights[receivingLightIndex + 1];
 
@@ -160,16 +145,15 @@ namespace Uf
 		return true;
 	}
 
-
 	void CoronaSceneFile::_copyConf(const CoronaConfig& config, Fluxions::XmlSceneGraphWriter& writer) {
 		writer.enableKs = config.enableSpecular;
 		writer.clearCache = config.clearCache;
 		writer.extra_tags.push_back({ "conffile", config.confname });
 	}
 
-
 	void CoronaConfig::write(const std::string& path, const std::string& cameraType) {
-		if (path.empty()) return;
+		if (path.empty())
+			return;
 		std::ofstream conf(path);
 		if (resolution.lengthSquared() > 1) {
 			int w = resolution.x;

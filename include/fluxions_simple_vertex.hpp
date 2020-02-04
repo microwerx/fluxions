@@ -4,18 +4,15 @@
 #include <fluxions_gte_color_math.hpp>
 #include <fluxions_opengl.hpp>
 
-namespace Fluxions
-{
-	enum class VertexType
-	{
+namespace Fluxions {
+	enum class VertexType {
 		UNDECIDED,
 		FAST_VERTEX,
 		SLOW_VERTEX
 	};
 
 	// 12 bytes/vertex
-	struct SimpleZVertex
-	{
+	struct SimpleZVertex {
 		GLfloat position[3];
 
 		SimpleZVertex() {
@@ -39,8 +36,7 @@ namespace Fluxions
 	};
 
 	// 32 bytes/vertex
-	struct SimpleFastVertex
-	{
+	struct SimpleFastVertex {
 		GLshort position[4] = { 0, 0, 0, 0 };
 		GLshort normal[4] = { 0, 0, 0, 0 };
 		GLshort texCoord[2] = { 0, 0 };
@@ -58,8 +54,7 @@ namespace Fluxions
 	};
 
 	// new type 64 bytes/vertex
-	struct SimpleBoneVertex
-	{
+	struct SimpleBoneVertex {
 		Vector3f aPosition;   // 12 bytes
 		Vector3f aNormal;     // 12 bytes
 		Vector2f aTexCoord;   //  8 bytes
@@ -70,8 +65,7 @@ namespace Fluxions
 	};
 
 	// 128 bytes/vertex
-	struct SimpleSlowVertex
-	{
+	struct SimpleSlowVertex {
 		//static constexpr int aPosition = 0;
 		//static constexpr int aNormal = 1;
 		//static constexpr int aTexCoord = 2;
@@ -83,13 +77,8 @@ namespace Fluxions
 
 		GLfloat attrib[8][4] = { 0.0f };
 
-		SimpleSlowVertex() {
-			return;
-		}
-
-		~SimpleSlowVertex() {
-			return;
-		}
+		SimpleSlowVertex() {}
+		~SimpleSlowVertex() {}
 	};
 } // namespace Fluxions
 

@@ -1,0 +1,140 @@
+#ifndef DAMSELFISH_BASE_HPP
+#define DAMSELFISH_BASE_HPP
+
+#include <map>
+#include <string>
+#include <vector>
+#include <cmath>
+#include <memory>
+#include <stdexcept>
+#include <initializer_list>
+#include <thread>
+#include <mutex>
+#include <deque>
+
+namespace Df {
+	using StringType = std::string;
+
+	enum class TokenType {
+		TT0_NOTHING,
+		TT0_CHAR,
+		TT0_SPACE,
+		TT0_TAB,
+		TT0_NEWLINE,
+		TT0_DIGIT,
+		TT0_ALPHA,
+		TT0_CNTRL,
+		TT0_PUNCT,
+		TT1_EXCLAMATION_POINT,
+		TT1_DOUBLE_QUOTE,
+		TT1_NUMBER_SIGN,
+		TT1_DOLLAR_SIGN,
+		TT1_PERCENT_SIGN,
+		TT1_AMPERSAND,
+		TT1_SINGLE_QUOTE,
+		TT1_LPAREN,
+		TT1_RPAREN,
+		TT1_ASTERICK,
+		TT1_PLUS_SIGN,
+		TT1_COMMA,
+		TT1_DASH,
+		TT1_PERIOD,
+		TT1_FORWARD_SLASH,
+		TT1_COLON,
+		TT1_SEMICOLON,
+		TT1_LESS_THAN_SIGN,
+		TT1_EQUAL_SIGN,
+		TT1_GREATER_THAN_SIGN,
+		TT1_QUESTION_MARK,
+		TT1_AT_SYMBOL,
+		TT1_LBRACKET,
+		TT1_BACK_SLASH,
+		TT1_RBRACKET,
+		TT1_CARET,
+		TT1_UNDERSCORE,
+		TT1_GRAVE_ACCENT,
+		TT1_LBRACE,
+		TT1_VERTICAL_BAR,
+		TT1_RBRACE,
+		TT1_TILDE,
+		TT2_ID,
+		TT2_STRING,
+		TT2_DOUBLE,
+		TT2_INTEGER,
+		TT2_HEXINTEGER
+	};
+
+	enum CharClass {
+		CC_NUL = 0,
+		CC_SOH = 1,
+		CC_STX = 2,
+		CC_ETX = 3,
+		CC_EOT = 4,
+		CC_ENQ = 5,
+		CC_ACK = 6,
+		CC_BEL = 7,
+		CC_BS = 8,
+		CC_TAB = 9,
+		CC_LF = 10,
+		CC_VT = 11,
+		CC_FF = 12,
+		CC_CR = 13,
+		CC_SO = 14,
+		CC_SI = 15,
+		CC_DLE = 16,
+		CC_DC1 = 17,
+		CC_DC2 = 18,
+		CC_DC3 = 19,
+		CC_DC4 = 20,
+		CC_NAK = 21,
+		CC_SYN = 22,
+		CC_ETB = 23,
+		CC_CAN = 24,
+		CC_EM = 25,
+		CC_SUB = 26,
+		CC_ESC = 27,
+		CC_FS = 28,
+		CC_GS = 29,
+		CC_RS = 30,
+		CC_US = 31,
+		CC_SPACE = 32,
+		CC_EXCLAMATION_POINT = 33,
+		CC_DOUBLE_QUOTE = 34,
+		CC_NUMBER_SIGN = 35,
+		CC_DOLLAR_SIGN = 36,
+		CC_PERCENT_SIGN = 37,
+		CC_AMPERSAND = 38,
+		CC_SINGLE_QUOTE = 39,
+		CC_LPAREN = 40,
+		CC_RPAREN = 41,
+		CC_ASTERICK = 42,
+		CC_PLUS_SIGN = 43,
+		CC_COMMA = 44,
+		CC_DASH = 45,
+		CC_PERIOD = 46,
+		CC_FORWARD_SLASH = 47,
+		CC_DIGIT = 48,
+		CC_COLON = 58,
+		CC_SEMICOLON = 59,
+		CC_LESS_THAN_SIGN = 60,
+		CC_EQUAL_SIGN = 61,
+		CC_GREATER_THAN_SIGN = 62,
+		CC_QUESTION_MARK = 63,
+		CC_AT_SYMBOL = 64,
+		CC_UPPER = 65,
+		CC_LBRACKET = 91,
+		CC_BACK_SLASH = 92,
+		CC_RBRACKET = 93,
+		CC_CARET = 94,
+		CC_UNDERSCORE = 95,
+		CC_GRAVE_ACCENT = 96,
+		CC_LOWER = 97,
+		CC_LBRACE = 123,
+		CC_VERTICAL_BAR = 124,
+		CC_RBRACE = 125,
+		CC_TILDE = 126,
+		CC_DEL = 127
+	};
+}
+
+#endif

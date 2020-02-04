@@ -2,11 +2,10 @@
 #define FLUXIONS_SHADER_PROGRAM_LOCATIONS_HPP
 
 #include <fluxions_opengl.hpp>
-#include <fluxions_simple_property.hpp>
+#include <fluxions_ssg_property.hpp>
 #include <fluxions_renderer_program.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	struct __ShaderProgramMapInfo {
 		int mapNameLoc{ -1 };
 		int mapNameMixLoc{ -1 };
@@ -14,8 +13,7 @@ namespace Fluxions
 		std::string altMtlMapName;
 	};
 
-	struct __ShaderProgramLocations
-	{
+	struct __ShaderProgramLocations {
 		//using int_int = std::pair<int, int>;
 		//int_int map_Ka{ -1, -1 };
 		//int_int map_Kd{ -1, -1 };

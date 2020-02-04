@@ -1,12 +1,9 @@
 #ifndef FLUXIONS_RENDERER_UNIFORM_BLOCKS_HPP
 #define FLUXIONS_RENDERER_UNIFORM_BLOCKS_HPP
 
-#include <fluxions_stdcxx.hpp>
-#include <fluxions_opengl.hpp>
-#include <fluxions_simple_scene_graph_base.hpp>
+#include <fluxions_ssg_base.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	constexpr int MaxLights = 8;
 	constexpr int MaxMaterials = 32;
 

@@ -1,31 +1,12 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#ifndef FLUXIONS_SIMPLE_TEXTURE_HPP
-#define FLUXIONS_SIMPLE_TEXTURE_HPP
+#ifndef FLUXIONS_RENDERER_TEXTURE_HPP
+#define FLUXIONS_RENDERER_TEXTURE_HPP
 
 #include <fluxions_gte_image.hpp>
 #include <fluxions_opengl.hpp>
 #include <fluxions_renderer_object.hpp>
 #include <fluxions_renderer_sampler.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class RendererTextureObject : RendererObject {
 	public:
 		RendererTextureObject(GLenum whichTarget = GL_TEXTURE_2D);
@@ -74,7 +55,7 @@ namespace Fluxions
 		inline Image4f& getImage() noexcept { return image; }
 
 		struct {
-			RendererSampler* samplerObject{ nullptr };			
+			RendererSampler* samplerObject{ nullptr };
 		} cached;
 	private:
 		GLuint id;

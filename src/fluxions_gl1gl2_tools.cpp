@@ -1,22 +1,4 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.hpp"
+#include "fluxions_pch.hpp"
 #include <hatchetfish.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_scalar_math.hpp>
@@ -25,8 +7,7 @@
 GLint g_MaxCombinedTextureUnits = 0;
 std::string g_CurrentDebugMessage;
 
-struct GLTypeInfo
-{
+struct GLTypeInfo {
 	GLenum type;
 	GLenum baseType;
 	GLint components;
@@ -376,8 +357,8 @@ void FxGlutTestLitSolidTeapotScene(double fovy, double aspect) {
 	using Fluxions::Vector3f;
 	Matrix4f lookAt;
 	lookAt.LookAt(Vector3f(0.0f, 0.0f, 10.0f),
-		Vector3f(0.0f, 0.0f, 0.0f),
-		Vector3f(0.0f, 1.0f, 0.0f));
+				  Vector3f(0.0f, 0.0f, 0.0f),
+				  Vector3f(0.0f, 1.0f, 0.0f));
 	glMultMatrixf(lookAt.const_ptr());
 
 #ifdef FLUXIONS_USE_FREEGLUT
@@ -546,7 +527,7 @@ void FxDrawGL1Camera(double fov, float r, float g, float b, float zfar, const fl
 	glColor4f(r, g, b, 1.0f);
 	glPushMatrix(); // for cone
 	glTranslatef(0.0f, 0.0f, -1.0f);
-	float angle = (float)(fov * Fluxions::FX_DEGREES_TO_RADIANS * 0.5);
+	float angle = (float)(fov * FX_DEGREES_TO_RADIANS * 0.5);
 	FxDrawGL1WireCone(sinf(angle), 1.0f, 32, 2);
 	glPopMatrix(); // for cone
 
@@ -606,16 +587,14 @@ void FxDrawGL1WireFrustumd(const double* m) {
 	FxDrawGL1WireFrustumf(f32m);
 }
 
-struct Matrix
-{
+struct Matrix {
 	float m11, m21, m31, m41;
 	float m12, m22, m32, m42;
 	float m13, m23, m33, m43;
 	float m14, m24, m34, m44;
 };
 
-struct Vector
-{
+struct Vector {
 	float x, y, z, w;
 
 	Vector scale(float amount) const {
@@ -660,8 +639,7 @@ struct Vector
 	}
 };
 
-struct Plane
-{
+struct Plane {
 	float a, b, c, d;
 
 	void normalize() {
@@ -1350,17 +1328,17 @@ void FxDrawGL1SolidTeapot(float size) {
 }
 
 void FxDrawGL1Superquadric(float radius, unsigned slices, unsigned stacks, float n, float e) {
-	float du = Fluxions::FX_F32_2_PI / slices;
-	float dv = Fluxions::FX_F32_PI / stacks;
+	float du = FX_F32_2_PI / slices;
+	float dv = FX_F32_PI / stacks;
 	float ds = 1.0f / slices;
 	float dt = 1.0f / stacks;
 
 	float t = 0.0f;
-	float v = -Fluxions::FX_F32_PI_2;
+	float v = -FX_F32_PI_2;
 	for (unsigned stack = 0; stack < stacks; stack++) {
 		glBegin(GL_TRIANGLE_STRIP);
 		float s = 0.0f;
-		float u = -Fluxions::FX_F32_PI;
+		float u = -FX_F32_PI;
 		for (unsigned slice = 0; slice <= slices; slice++) {
 			float x, y, z;
 			float nx, ny, nz;

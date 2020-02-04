@@ -6,8 +6,7 @@
 #include <fluxions_gte_rect.hpp>
 
 namespace Fluxions {
-	class RendererGLES30Snapshot
-	{
+	class RendererGLES30Snapshot {
 	public:
 		GLint framebuffer = 0;
 		GLint renderbuffer = 0;

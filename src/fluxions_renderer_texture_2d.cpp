@@ -1,8 +1,7 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_renderer_texture_2d.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	RendererTexture2D::RendererTexture2D()
 		:RendererGpuTexture(GL_TEXTURE_2D) {}
 

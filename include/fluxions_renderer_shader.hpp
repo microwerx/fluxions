@@ -1,10 +1,9 @@
-#ifndef FLUXIONS_SIMPLE_SHADER_HPP
-#define FLUXIONS_SIMPLE_SHADER_HPP
+#ifndef FLUXIONS_RENDERER_SHADER_HPP
+#define FLUXIONS_RENDERER_SHADER_HPP
 
 #include <fluxions_renderer_object.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	struct RendererShader : public RendererObject {
 		GLenum shaderType = 0;
 		GLuint shader = 0;

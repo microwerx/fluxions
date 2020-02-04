@@ -3,8 +3,7 @@
 
 #include <fluxions_stdcxx.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class IBaseObject {
 	public:
 		IBaseObject() {}

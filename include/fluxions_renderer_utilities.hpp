@@ -1,11 +1,10 @@
 #ifndef FLUXIONS_RENDERER_UTILITIES_HPP
 #define FLUXIONS_RENDERER_UTILITIES_HPP
 
-#include <fluxions_simple_scene_graph.hpp>
+#include <fluxions_ssg_scene_graph.hpp>
 #include <fluxions_renderer_context.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	bool RenderImage(RendererContext& rendererContext,
 					 SimpleSceneGraph& ssg,
 					 const std::string& rendererName,

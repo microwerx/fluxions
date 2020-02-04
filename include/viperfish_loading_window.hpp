@@ -3,8 +3,7 @@
 
 #include <viperfish_window.hpp>
 
-namespace Vf
-{
+namespace Vf {
 	class LoadingWindow : public Window {
 	public:
 		LoadingWindow(const std::string& name);
@@ -15,7 +14,7 @@ namespace Vf
 		std::string msg;
 	};
 
-	using LoadingWindowPtr = std::shared_ptr<LoadingWindow>;	
+	using LoadingWindowPtr = std::shared_ptr<LoadingWindow>;
 }
 
 #endif

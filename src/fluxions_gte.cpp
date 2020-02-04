@@ -1,3 +1,4 @@
+#include "fluxions_gte_pch.hpp"
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_bounding_box.hpp>
 #include <fluxions_gte_color3.hpp>

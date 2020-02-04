@@ -3,16 +3,14 @@
 
 #include <fluxions_simple_vertex.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	/// <summary>SimpleSurface is a class representing a drawable object</summary>
 	/// A Simple Surface represents a geometrical object with prescribed properties.
 	/// It is consistent in the following respects:
 	/// - One type of mode (POINTS, LINES, LINE_LOOP, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP
 	/// - Specified by a vertex array or an indexed vertex array
 	/// - A surface may be rendered multiple times with different programs/uniforms but not vice versa
-	struct SimpleSurface
-	{
+	struct SimpleSurface {
 		VertexType vertexType = VertexType::UNDECIDED;
 		bool isIndexed = false;
 

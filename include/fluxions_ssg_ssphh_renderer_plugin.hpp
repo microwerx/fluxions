@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <fluxions_simple_scene_graph.hpp>
-#include <fluxions_simple_ssphh_light.hpp>
-#include <fluxions_simple_renderer_plugin.hpp>
+#include <fluxions_ssg_scene_graph.hpp>
+#include <fluxions_ssg_ssphh_light.hpp>
+#include <fluxions_ssg_renderer_plugin.hpp>
 
 namespace Fluxions
 {

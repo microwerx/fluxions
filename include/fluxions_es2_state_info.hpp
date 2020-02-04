@@ -1,35 +1,12 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #ifndef FLUXIONS_ES2_STATE_INFO_HPP
 #define FLUXIONS_ES2_STATE_INFO_HPP
 
-#include <vector>
-#include <memory>
-
+#include <fluxions_base.hpp>
 #include <fluxions_gte.hpp>
 #include <fluxions_opengl.hpp>
 
-namespace Fluxions
-{
-
-	namespace ES2
-	{
+namespace Fluxions {
+	namespace ES2 {
 		//template <typename T>
 		//union TVector3 {
 		//	struct
@@ -52,8 +29,7 @@ namespace Fluxions
 		//};
 
 		template <typename T>
-		struct TVector3
-		{
+		struct TVector3 {
 			T x, y, z;
 			TVector3() : x(0), y(0), z(0) {}
 
@@ -83,8 +59,7 @@ namespace Fluxions
 		//};
 
 		template <typename T>
-		struct TVector4
-		{
+		struct TVector4 {
 			T x, y, z, w;
 
 			TVector4() : x(0), y(0), z(0), w(0) {}
@@ -98,8 +73,7 @@ namespace Fluxions
 		using Vector4f = TVector4<GLfloat>;
 		using Vector4d = TVector4<GLdouble>;
 
-		struct RasterStateInfo
-		{
+		struct RasterStateInfo {
 			float lineWidth;
 			GLenum frontFaceDir;
 			GLenum cullFaceMode;
@@ -132,8 +106,7 @@ namespace Fluxions
 			}
 		};
 
-		struct ViewportStateInfo
-		{
+		struct ViewportStateInfo {
 			GLint x;
 			GLint y;
 			GLsizei width;
@@ -149,8 +122,7 @@ namespace Fluxions
 			}
 		};
 
-		struct ScissorStateInfo
-		{
+		struct ScissorStateInfo {
 			bool enabled;
 			GLint x;
 			GLint y;
@@ -172,8 +144,7 @@ namespace Fluxions
 			}
 		};
 
-		class ColorBlendStateInfo
-		{
+		class ColorBlendStateInfo {
 		public:
 			bool enabled;
 			GLenum blendEquationModeRGB;
@@ -214,8 +185,7 @@ namespace Fluxions
 			}
 		};
 
-		struct StencilOpStateInfo
-		{
+		struct StencilOpStateInfo {
 			GLenum sfailOp;
 			GLenum dpfailOp;
 			GLenum dppassOp;
@@ -236,8 +206,7 @@ namespace Fluxions
 			}
 		};
 
-		struct DepthStencilStateInfo
-		{
+		struct DepthStencilStateInfo {
 			bool depthTestEnable;
 			bool depthWriteEnable;
 			GLenum depthFunc;
@@ -272,8 +241,7 @@ namespace Fluxions
 			}
 		};
 
-		struct MsaaStateInfo
-		{
+		struct MsaaStateInfo {
 			bool sampleAlphaToCoverageEnabled;
 			bool sampleCoverageEnabled;
 			float sampleCoverageValue;
@@ -297,8 +265,7 @@ namespace Fluxions
 			}
 		};
 
-		struct DynamicPipelineState
-		{
+		struct DynamicPipelineState {
 			ES2::RasterStateInfo rasterState;
 			ES2::ViewportStateInfo viewportState;
 			ES2::ScissorStateInfo scissorState;
@@ -316,10 +283,8 @@ namespace Fluxions
 			}
 		};
 
-		namespace Pipeline
-		{
-			struct InputAssemblerStateInfo
-			{
+		namespace Pipeline {
+			struct InputAssemblerStateInfo {
 				// This is not really configurable for OpenGL ES 2.0.
 				// This is really here for Mantle/Vulkan potential usage.
 				// I think this is in reference to glPolygonMode to draw points, lines, or triangles.
@@ -329,8 +294,7 @@ namespace Fluxions
 				void Apply() {}
 			};
 
-			struct ShaderStateInfo
-			{
+			struct ShaderStateInfo {
 				GLint shaderObject;
 
 				ShaderStateInfo() : shaderObject(0) {}
@@ -338,8 +302,7 @@ namespace Fluxions
 				void Apply() {}
 			};
 
-			struct ProgramStateInfo
-			{
+			struct ProgramStateInfo {
 				GLint programObject;
 
 				ProgramStateInfo() : programObject(0) {}
@@ -349,8 +312,7 @@ namespace Fluxions
 				}
 			};
 
-			struct RasterizerStateInfo
-			{
+			struct RasterizerStateInfo {
 				// This is to configure whether clipping happens or not,
 				// so this probably won't get used.
 
@@ -359,8 +321,7 @@ namespace Fluxions
 				void Apply() {}
 			};
 
-			struct DepthStencilBufferStateInfo
-			{
+			struct DepthStencilBufferStateInfo {
 				GLenum format;
 
 				DepthStencilBufferStateInfo() : format(GL_DEPTH_COMPONENT16) {}
@@ -368,8 +329,7 @@ namespace Fluxions
 				void Apply() {}
 			};
 
-			struct ColorBufferStateInfo
-			{
+			struct ColorBufferStateInfo {
 				GLenum format;
 
 				ColorBufferStateInfo() : format(GL_RGB8) {}
@@ -378,8 +338,7 @@ namespace Fluxions
 			};
 		} // namespace Pipeline
 
-		struct StaticPipelineState
-		{
+		struct StaticPipelineState {
 			static const int MAX_COLOR_BUFFERS = 1;
 			Pipeline::InputAssemblerStateInfo IA;
 			Pipeline::ShaderStateInfo VS;

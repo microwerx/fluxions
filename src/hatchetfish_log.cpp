@@ -1,21 +1,3 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
 #include <hatchetfish_log.hpp>
 #include <iostream>
 #include <iomanip>
@@ -31,12 +13,10 @@
 #define __unix__ 1
 #endif
 
-namespace Hf
-{
+namespace Hf {
 	HatchetfishLog Log;
 
-	namespace ansi
-	{
+	namespace ansi {
 		const char* black = "\033[0;30m";
 		const char* red = "\033[0;91m";
 		const char* green = "\033[0;92m";
@@ -48,8 +28,7 @@ namespace Hf
 		const char* normal = "\033[0m";
 	}
 
-	namespace hf
-	{
+	namespace hf {
 		const char* info = "INFO ";
 		const char* warning = "WARN ";
 		const char* error = "ERROR";

@@ -1,22 +1,4 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.hpp"
+#include "fluxions_pch.hpp"
 #include <fluxions_base.hpp>
 #include <fluxions_file_path_info.hpp>
 
@@ -28,8 +10,7 @@
 #include <Windows.h>
 #endif
 
-namespace Fluxions
-{
+namespace Fluxions {
 	using FXubyte = unsigned char;
 	using FXbyte = char;
 	using FXshort = short;
@@ -107,8 +88,10 @@ namespace Fluxions
 		std::string p = std::regex_replace(_path, path_replace, "/");
 		origpath = p;
 
-		if (origpath[0] == '.' && origpath[1] == '/') relativePath = true;
-		if (origpath[0] == '.' && origpath[1] == '.' && origpath[2] == '/') relativePath = true;
+		if (origpath[0] == '.' && origpath[1] == '/')
+			relativePath = true;
+		if (origpath[0] == '.' && origpath[1] == '.' && origpath[2] == '/')
+			relativePath = true;
 
 		// updated to use realpath on POSIX
 #ifdef __unix__

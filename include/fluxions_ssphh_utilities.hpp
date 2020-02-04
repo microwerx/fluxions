@@ -5,8 +5,7 @@
 #include <vector>
 #include <fluxions_gte_color_math.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	bool SaveSphlOBJ(const std::string& path,
 					 const std::string& name,
 					 const Color3f Kd,

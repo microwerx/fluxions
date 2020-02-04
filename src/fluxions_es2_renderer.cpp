@@ -1,33 +1,12 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.hpp"
+#include "fluxions_pch.hpp"
 #include <fluxions_opengl.hpp>
 #include <fluxions_es2_state_info.hpp>
 #include <fluxions_es2_renderer.hpp>
 
-namespace Fluxions
-{
-	namespace ES2
-	{
+namespace Fluxions {
+	namespace ES2 {
 		// RESOURCES ////////////////////////////////////////////////////////
-		enum class ResourceType
-		{
+		enum class ResourceType {
 			NONE,
 			IMAGE_2D,
 			IMAGE_CUBE_MAP,
@@ -35,137 +14,102 @@ namespace Fluxions
 			ELEMENT_ARRAY_BUFFER,
 		};
 
-		class Resource
-		{
+		class Resource {
 		protected:
 			GLuint resourceId;
 
 		public:
-			Resource() : resourceId(0)
-			{
+			Resource() : resourceId(0) {
 				Create();
 			}
 
-			virtual ~Resource()
-			{
+			virtual ~Resource() {
 				Delete();
 			}
 
-			virtual ResourceType GetType()
-			{
+			virtual ResourceType GetType() {
 				return ResourceType::NONE;
 			}
 
-			virtual GLuint GetHandle()
-			{
+			virtual GLuint GetHandle() {
 				return resourceId;
 			}
 
-			virtual GLenum GetTarget()
-			{
+			virtual GLenum GetTarget() {
 				return 0;
 			}
 
-			virtual void Create()
-			{
-			}
+			virtual void Create() {}
 
-			virtual void Delete()
-			{
+			virtual void Delete() {
 				resourceId = 0;
 			}
 
-			virtual void Bind()
-			{
-			}
+			virtual void Bind() {}
 		};
 
-		class TextureResource : public Resource
-		{
+		class TextureResource : public Resource {
 		public:
-			TextureResource()
-			{
-			}
+			TextureResource() {}
 
-			virtual ~TextureResource() override
-			{
-			}
+			virtual ~TextureResource() override {}
 
-			virtual void Create() override
-			{
+			virtual void Create() override {
 				glGenTextures(1, &resourceId);
 			}
 
-			virtual void Delete() override
-			{
+			virtual void Delete() override {
 				glDeleteTextures(1, &resourceId);
 				Resource::Delete();
 			}
 		};
 
-		class Image2DResource : public TextureResource
-		{
+		class Image2DResource : public TextureResource {
 		public:
-			Image2DResource()
-			{
-			}
+			Image2DResource() {}
 
-			virtual ~Image2DResource() override
-			{
-			}
+			virtual ~Image2DResource() override {}
 
-			virtual ResourceType GetType() override
-			{
+			virtual ResourceType GetType() override {
 				return ResourceType::IMAGE_2D;
 			}
 
-			virtual GLenum GetTarget() override
-			{
+			virtual GLenum GetTarget() override {
 				return GL_TEXTURE_2D;
 			}
 
-			void SetImageData(int width, int height, int internalformat, GLenum format, GLenum type, void* data)
-			{
+			void SetImageData(int width, int height, int internalformat, GLenum format, GLenum type, void* data) {
 				glBindTexture(GL_TEXTURE_2D, resourceId);
 				glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, type, data);
 				glGenerateMipmap(GL_TEXTURE_2D);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
-			virtual void Bind() override
-			{
+			virtual void Bind() override {
 				glBindTexture(GL_TEXTURE_2D, resourceId);
 			}
 		};
 
-		class ImageCubeMapResource : public TextureResource
-		{
+		class ImageCubeMapResource : public TextureResource {
 		public:
-			ImageCubeMapResource()
-			{
-			}
+			ImageCubeMapResource() {}
 
-			virtual ~ImageCubeMapResource() override
-			{
-			}
+			virtual ~ImageCubeMapResource() override {}
 
-			virtual ResourceType GetType() override
-			{
+			virtual ResourceType GetType() override {
 				return ResourceType::IMAGE_CUBE_MAP;
 			}
 
-			virtual GLenum GetTarget() override
-			{
+			virtual GLenum GetTarget() override {
 				return GL_TEXTURE_CUBE_MAP;
 			}
 
 			void SetImageData(int width, int height,
-				int internalformat,
-				GLenum format,
-				GLenum type,
-				void* pPosX, void* pPosY, void* pPosZ,
-				void* pNegX, void* pNegY, void* pNegZ)
-			{
+							  int internalformat,
+							  GLenum format,
+							  GLenum type,
+							  void* pPosX, void* pPosY, void* pPosZ,
+							  void* pNegX, void* pNegY, void* pNegZ) {
 				glBindTexture(GL_TEXTURE_CUBE_MAP, resourceId);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, internalformat, width, height, 0, format, type, pPosX);
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internalformat, width, height, 0, format, type, pPosY);
@@ -177,82 +121,61 @@ namespace Fluxions
 				glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 			}
 
-			virtual void Bind() override
-			{
+			virtual void Bind() override {
 				glBindTexture(GL_TEXTURE_CUBE_MAP, resourceId);
 			}
 		};
 
-		class BufferResource : public Resource
-		{
+		class BufferResource : public Resource {
 		private:
 			GLenum target;
+
 		public:
 			BufferResource(GLenum target)
-				: target(target)
-			{
-			}
+				: target(target) {}
 
-			virtual ~BufferResource() override
-			{
-			}
+			virtual ~BufferResource() override {}
 
-			virtual void Create() override
-			{
+			virtual void Create() override {
 				glGenBuffers(1, &resourceId);
 			}
 
-			virtual void Delete() override
-			{
+			virtual void Delete() override {
 				glDeleteBuffers(1, &resourceId);
 				resourceId = 0;
 			}
 
-			virtual void SetBufferData(GLsizeiptr size, const void* data, GLenum usage)
-			{
+			virtual void SetBufferData(GLsizeiptr size, const void* data, GLenum usage) {
 				glBindBuffer(target, resourceId);
 				glBufferData(target, size, data, usage);
 				glBindBuffer(target, 0);
 			}
 
-			virtual void Bind() override
-			{
+			virtual void Bind() override {
 				glBindBuffer(target, resourceId);
 			}
 		};
 
-		class ArrayBufferResource : public BufferResource
-		{
+		class ArrayBufferResource : public BufferResource {
 		public:
 			ArrayBufferResource()
-				: BufferResource(GL_ARRAY_BUFFER)
-			{
-			}
+				: BufferResource(GL_ARRAY_BUFFER) {}
 
-			virtual ~ArrayBufferResource() override
-			{
-			}
+			virtual ~ArrayBufferResource() override {}
 
-			virtual ResourceType GetType() override
-			{
+			virtual ResourceType GetType() override {
 				return ResourceType::ARRAY_BUFFER;
 			}
 		};
 
-		class ElementArrayBuffer : public BufferResource
-		{
+		class ElementArrayBuffer : public BufferResource {
 		public:
 			ElementArrayBuffer()
-				: BufferResource(GL_ELEMENT_ARRAY_BUFFER)
-			{
-			}
+				: BufferResource(GL_ELEMENT_ARRAY_BUFFER) {}
 
-			virtual ~ElementArrayBuffer() override
-			{
-			}
+			virtual ~ElementArrayBuffer() override {}
 
-			virtual ResourceType GetType() override
-			{
+			virtual ResourceType GetType() override {
 				return ResourceType::ELEMENT_ARRAY_BUFFER;
 			}
 		};
@@ -270,8 +193,7 @@ namespace Fluxions
 		// RENDER PASSES ////////////////////////////////////////////////////
 	} // namespace ES2
 
-	struct ES2Renderer::Impl
-	{
+	struct ES2Renderer::Impl {
 		std::vector<std::shared_ptr<ES2::Resource>> resources; // i.e. used to store memory buffers and images
 		//	std::vector<std::shared_ptr<Shader>> shaders;				// i.e. used to store the shaders
 		//	std::vector<std::shared_ptr<StateSet>> stateSets;			// i.e. what's the depth test, etc. set to?
@@ -281,8 +203,7 @@ namespace Fluxions
 		//	std::vector<std::shared_ptr<CommandBuffer>> commandBuffers;	// i.e. a list of commands to execute
 		//	std::vector<std::shared_ptr<RenderPass>> renderPasses;		// i.e. framebuffer objects and a list of commands to execute
 
-		void Clear()
-		{
+		void Clear() {
 			//renderPasses.clear();
 			//commandBuffers.clear();
 			//pipelines.clear();
@@ -294,12 +215,9 @@ namespace Fluxions
 		}
 	};
 
-	ES2Renderer::ES2Renderer() : pImpl(std::make_unique<Impl>())
-	{
-	}
+	ES2Renderer::ES2Renderer() : pImpl(std::make_unique<Impl>()) {}
 
-	ES2Renderer::~ES2Renderer()
-	{
+	ES2Renderer::~ES2Renderer() {
 		// Delete these in reverse order...
 		//	std::vector<std::shared_ptr<Resource>> resources;			// i.e. used to store memory buffers and images
 		//	std::vector<std::shared_ptr<Shader>> shaders;				// i.e. used to store the shaders
@@ -321,8 +239,8 @@ namespace Fluxions
 																	  //ES2Renderer & ES2Renderer::operator=(const ES2Renderer& rhs) = default;	// copy
 #endif
 
-	void ES2Renderer::Render(const IScene* pScene)
-	{
-		if (!pScene) return;
+	void ES2Renderer::Render(const IScene* pScene) {
+		if (!pScene)
+			return;
 	}
 } // namespace Fluxions

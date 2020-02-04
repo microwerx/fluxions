@@ -3,8 +3,7 @@
 
 #include <viperfish_window.hpp>
 
-namespace Vf
-{
+namespace Vf {
 	class FloatStat {
 	public:
 		FloatStat(int max_samples = 100, float metric_low = FLT_MIN, float metric_high = FLT_MAX);

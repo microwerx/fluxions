@@ -1,10 +1,9 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_framebuffer.hpp>
 #include <fluxions_renderer_gpu_texture.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	RendererFramebuffer::RendererFramebuffer() {}
 
 	RendererFramebuffer::~RendererFramebuffer() {

@@ -1,35 +1,15 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#ifndef FLUXIONS_RENDERER_HPP
-#define FLUXIONS_RENDERER_HPP
+#ifndef FLUXIONS_RENDERER_CONTEXT_HPP
+#define FLUXIONS_RENDERER_CONTEXT_HPP
 
+#include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_object.hpp>
 #include <fluxions_renderer_config.hpp>
-#include <damselfish.hpp>
-#include <fluxions_gte.hpp>
 #include <fluxions_renderer_sampler.hpp>
 #include <fluxions_renderer_texture_object.hpp>
 #include <fluxions_renderer_gles30.hpp>
 #include <fluxions_renderer_texture_2d.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class RendererContext : public RendererObject {
 	public:
 		//struct RenderConfig {

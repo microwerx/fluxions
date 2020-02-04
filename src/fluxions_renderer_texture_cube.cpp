@@ -1,8 +1,7 @@
-#include "pch.hpp"
+#include "fluxions_renderer_pch.hpp"
 #include <fluxions_renderer_texture_cube.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	RendererTextureCube::RendererTextureCube()
 		: RendererGpuTexture(GL_TEXTURE_CUBE_MAP) {}
 

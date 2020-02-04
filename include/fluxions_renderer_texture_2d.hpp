@@ -3,8 +3,7 @@
 
 #include <fluxions_renderer_gpu_texture.hpp>
 
-namespace Fluxions
-{
+namespace Fluxions {
 	class RendererTexture2D : public RendererGpuTexture {
 	public:
 		RendererTexture2D();

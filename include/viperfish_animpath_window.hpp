@@ -36,12 +36,12 @@ namespace Vf
 		void OnRenderDearImGui() override;
 
 		std::string msg;
-		Quaternionf q;
-		Quaternionf q1;
-		Quaternionf q2;
+		Fx::Quaternionf q;
+		Fx::Quaternionf q1;
+		Fx::Quaternionf q2;
 
-		Vector3f p1;
-		Vector3f p2;
+		Fx::Vector3f p1;
+		Fx::Vector3f p2;
 		float speed = 0.1f;
 		float t = 0.0f;
 		float alpha = 0.0f;
@@ -70,8 +70,8 @@ namespace Vf
 		float q1Z = 0.0f;
 		int pointIdx = 0;
 
-		void _showv(const char* m, const Vector3f& v);
-		void _showq(const char* m, const Quaternionf& q);
+		void _showv(const char* m, const Fx::Vector3f& v);
+		void _showq(const char* m, const Fx::Quaternionf& q);
 		void _drawPath();
 	};
 

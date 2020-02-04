@@ -1,29 +1,7 @@
-// SSPHH/Fluxions/Unicornfish/Viperfish/Hatchetfish/Sunfish/Damselfish/GLUT Extensions
-// Copyright (C) 2017-2019 Jonathan Metzgar
-// All rights reserved.
-//
-// This program is free software : you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.If not, see <https://www.gnu.org/licenses/>.
-//
-// For any other type of licensing, please contact me at jmetzgar@outlook.com
-#include "pch.hpp"
-#include <fstream>
+#include "fluxions_pch.hpp"
 #include <fluxions_simple_renderer.hpp>
-#include <fluxions_simple_materials.hpp>
 
-namespace Fluxions
-{
-
+namespace Fluxions {
 	// explicit template instantiation is after the implementation
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -528,19 +506,12 @@ namespace Fluxions
 		currentGroupId = 0;
 		currentObjectId = 0;
 		currentProgramId = 0;
-
-		for (auto& [pname, program] : programs) {
-			if (program.use_count() > 1) {
-				HFLOGWARN("Program count not 1: %i", program->getProgram());
-			}
-			program.reset();
-		}
-		programs.clear();
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::BindBuffers() {
-		if (!BuildBuffers()) return;
+		if (!BuildBuffers())
+			return;
 
 		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
@@ -554,11 +525,12 @@ namespace Fluxions
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::RenderFast() {
-		if (!BuildBuffers()) return;
+		if (!BuildBuffers())
+			return;
 
 		glBindVertexArray(fastVAO);
 
-		for (auto& surface: surfaces) {
+		for (auto& surface : surfaces) {
 			if (surface.vertexType != VertexType::FAST_VERTEX)
 				continue;
 
@@ -575,7 +547,8 @@ namespace Fluxions
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::RenderSlow() {
-		if (!BuildBuffers()) return;
+		if (!BuildBuffers())
+			return;
 
 		glBindVertexArray(slowVAO);
 
@@ -802,8 +775,10 @@ namespace Fluxions
 
 	template <typename IndexType, GLenum GLIndexType>
 	int SimpleRenderer<IndexType, GLIndexType>::RenderIf(GLuint objectId, int mtlId, bool onlyRenderZ) {
-		if (objectId == 0) return 0;
-		if (!BuildBuffers()) return 0;
+		if (objectId == 0)
+			return 0;
+		if (!BuildBuffers())
+			return 0;
 
 		GLuint lastUsedVAO = 0;
 
@@ -812,7 +787,7 @@ namespace Fluxions
 		}
 
 		int count = 0;
-		for (auto& surface: surfaces) {
+		for (auto& surface : surfaces) {
 			if (surface.vertexType == VertexType::UNDECIDED)
 				continue;
 			if (objectId != 0 && objectId != surface.objectId)

@@ -3,8 +3,7 @@
 
 #include <fluxions_gte_color3.hpp>
 
-namespace FxColors3
-{
+namespace FxColors3 {
 	const Fluxions::Color3f Black{ 0.000f, 0.000f, 0.000f };
 	const Fluxions::Color3f Gray33{ 0.333f, 0.333f, 0.333f };
 	const Fluxions::Color3f Gray67{ 0.667f, 0.667f, 0.667f };
