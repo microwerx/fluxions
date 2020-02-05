@@ -74,6 +74,7 @@ add_library(fluxions STATIC
     src/fluxions_renderer_texture_object.cpp
     src/fluxions_renderer_uniform_blocks.cpp
     src/fluxions_renderer_utilities.cpp
+    src/fluxions_simple_geometry_mesh.cpp
     src/fluxions_shader_program_locations.cpp
     src/fluxions_simple_renderer.cpp
     src/fluxions_sphl.cpp
@@ -83,7 +84,6 @@ add_library(fluxions STATIC
     src/fluxions_ssg_camera.cpp
     src/fluxions_ssg_dirto_light.cpp
     src/fluxions_ssg_environment.cpp
-    src/fluxions_ssg_geometry_mesh.cpp
     src/fluxions_ssg_material_library.cpp
     src/fluxions_ssg_materials.cpp
     src/fluxions_ssg_node.cpp
