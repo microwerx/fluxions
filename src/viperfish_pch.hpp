@@ -1,4 +1,7 @@
 #pragma once
 #include <viperfish_base.hpp>
 
-constexpr int MAX_RUN_MESSAGES = 0;
+#ifdef MAX_RUN_MESSAGES
+#undef MAX_RUN_MESSAGES
+#endif
+#define MAX_RUN_MESSAGES 0

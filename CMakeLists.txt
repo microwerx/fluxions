@@ -20,22 +20,22 @@ set(IMGUIDIR ${PROJECT_SOURCE_DIR}/../imgui/)
 add_library(fluxions STATIC
     src/ArHosekSkyModel.cpp
     src/damselfish.cpp
-    src/damselfish_evaluator.cpp
     src/damselfish_json.cpp
     src/damselfish_lexer.cpp
     src/damselfish_python.cpp
+    src/damselfish_variable_list.cpp
     src/fluxions_astronomy.cpp
+    src/fluxions_base.cpp
     src/fluxions_bbox.cpp
-    src/fluxions.cpp
     src/fluxions_es2_renderer.cpp
-    src/fluxions_fileio_iostream.cpp
     src/fluxions_file_path_info.cpp
+    src/fluxions_fileio_iostream.cpp
     src/fluxions_gl1gl2_tools.cpp
+    src/fluxions_gte.cpp
     src/fluxions_gte_bounding_box.cpp
     src/fluxions_gte_color3.cpp
     src/fluxions_gte_color4.cpp
     src/fluxions_gte_color_tests.cpp
-    src/fluxions_gte.cpp
     src/fluxions_gte_geometric_algebra.cpp
     src/fluxions_gte_image.cpp
     src/fluxions_gte_image_operations.cpp
@@ -56,7 +56,6 @@ add_library(fluxions STATIC
     src/fluxions_gte_vector2.cpp
     src/fluxions_gte_vector3.cpp
     src/fluxions_gte_vector4.cpp
-    src/fluxions_ibase_object.cpp
     src/fluxions_image_loader.cpp
     src/fluxions_opengl.cpp
     src/fluxions_pbsky.cpp
@@ -75,9 +74,11 @@ add_library(fluxions STATIC
     src/fluxions_renderer_texture_object.cpp
     src/fluxions_renderer_uniform_blocks.cpp
     src/fluxions_renderer_utilities.cpp
-    src/fluxions_scene_graph_reader.cpp
-    src/fluxions_scene_graph_writer.cpp
     src/fluxions_shader_program_locations.cpp
+    src/fluxions_simple_renderer.cpp
+    src/fluxions_sphl.cpp
+    src/fluxions_sphl_image_texture.cpp
+    src/fluxions_sphl_sampler.cpp
     src/fluxions_ssg_aniso_light.cpp
     src/fluxions_ssg_camera.cpp
     src/fluxions_ssg_dirto_light.cpp
@@ -85,32 +86,28 @@ add_library(fluxions STATIC
     src/fluxions_ssg_geometry_mesh.cpp
     src/fluxions_ssg_material_library.cpp
     src/fluxions_ssg_materials.cpp
+    src/fluxions_ssg_node.cpp
     src/fluxions_ssg_path_animation.cpp
     src/fluxions_ssg_point_light.cpp
     src/fluxions_ssg_property.cpp
-    src/fluxions_ssg_renderer.cpp
+    src/fluxions_ssg_reader.cpp
     src/fluxions_ssg_renderer_plugin.cpp
     src/fluxions_ssg_scene_graph.cpp
-    src/fluxions_ssg_scene_graph_node.cpp
     src/fluxions_ssg_sphere.cpp
     src/fluxions_ssg_ssphh.cpp
     src/fluxions_ssg_ssphh_light.cpp
-    src/fluxions_ssg_unfinished_geometry_mesh.cpp
-    src/fluxions_sphl.cpp
-    src/fluxions_sphl_image_texture.cpp
-    src/fluxions_sphl_sampler.cpp
     src/fluxions_ssg_ssphh_renderer_plugin.cpp
+    src/fluxions_ssg_writer.cpp
     src/fluxions_ssphh_utilities.cpp
     src/fluxions_xml.cpp
     src/hatchetfish_log.cpp
     src/hatchetfish_stopwatch.cpp
-    src/pch.cpp
+    src/unicornfish.cpp
     src/unicornfish_broker.cpp
     src/unicornfish_client.cpp
     src/unicornfish_corona_database.cpp
     src/unicornfish_corona_job.cpp
     src/unicornfish_corona_scene_file.cpp
-    src/unicornfish.cpp
     src/unicornfish_curl.cpp
     src/unicornfish_frame.cpp
     src/unicornfish_majordomo.cpp
@@ -137,7 +134,13 @@ add_library(fluxions STATIC
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
     message("Using precompiled headers")
-    target_precompile_headers(fluxions PRIVATE src/pch.hpp)
+    target_precompile_headers(fluxions PRIVATE src/viperfish_pch.cpp)
+    target_precompile_headers(fluxions PRIVATE src/damselfish_pch.cpp)
+    target_precompile_headers(fluxions PRIVATE src/fluxions_gte_pch.cpp)
+    target_precompile_headers(fluxions PRIVATE src/fluxions_pch.cpp)
+    target_precompile_headers(fluxions PRIVATE src/fluxions_renderer_pch.cpp)
+    target_precompile_headers(fluxions PRIVATE src/fluxions_ssg_pch.cpp)
+    target_precompile_headers(fluxions PRIVATE src/unicornfish_pch.cpp)
 endif()
 
 install(TARGETS fluxions DESTINATION lib)

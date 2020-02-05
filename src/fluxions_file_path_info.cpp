@@ -6,6 +6,10 @@
 #define __unix__ 1
 #endif
 
+#ifdef __unix__
+#include <sys/stat.h>
+#endif
+
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -94,13 +98,23 @@ namespace Fluxions {
 		std::string p = std::regex_replace(_path, path_replace, "/");
 		origpath = p;
 
-		if (origpath[0] == '.' && origpath[1] == '/')
+		if (!origpath.empty() && origpath[0] != '/')
 			relativePath = true;
-		if (origpath[0] == '.' && origpath[1] == '.' && origpath[2] == '/')
+		else if (origpath[0] == '.' && origpath[1] == '/')
+			relativePath = true;
+		else if (origpath[0] == '.' && origpath[1] == '.' && origpath[2] == '/')
 			relativePath = true;
 
+#if __has_include(<filesystem>)
+		fname = "";
+		dir = "";
+		ext = "";
+		path = "";
+		fullfname = "";
+		path = getFullPathName(origpath)
+
+#elif defined(__unix__)
 		// updated to use realpath on POSIX
-#ifdef __unix__
 		fname = "";
 		dir = "";
 		ext = "";
