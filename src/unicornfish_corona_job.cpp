@@ -236,6 +236,7 @@ namespace Uf {
 	}
 
 	bool CoronaJob::_runMagickEXRtoPNG() {
+#ifdef USE_MAGICK_TO_CONVERT
 		std::ostringstream cmd;
 		cmd << "magick " << output_path_exr << " " << output_path_png;
 		const char* pcmd = cmd.str().c_str();
@@ -245,10 +246,12 @@ namespace Uf {
 			HFLOGERROR("unable to convert EXR to PNG");
 			return false;
 		}
+#endif
 		return true;
 	}
 
 	bool CoronaJob::_runMagickEXRtoPPM() {
+#ifdef USE_MAGICK_TO_CONVERT
 		std::ostringstream cmd;
 		cmd << "magick " << output_path_png << " -compress none " << output_path_ppm;
 		const char* pcmd = cmd.str().c_str();
@@ -258,6 +261,7 @@ namespace Uf {
 			HFLOGERROR("unable to convert PNG to PPM");
 			return false;
 		}
+#endif
 		return true;
 	}
 

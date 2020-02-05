@@ -10,6 +10,12 @@
 #include <Windows.h>
 #endif
 
+#if __has_include(<filesystem>)
+#include <filesystem>
+namespace fs = std::filesystem;
+#define USING_FILESYSTEM
+#endif
+
 namespace Fluxions {
 	using FXubyte = unsigned char;
 	using FXbyte = char;
@@ -173,7 +179,8 @@ namespace Fluxions {
 
 	std::string FilePathInfo::getFullPathName(const std::string& filename) {
 		std::string outputStr;
-#ifdef __unix__
+#ifdef USING_FILESYSTEM
+#elif defined(__unix__)
 		errno = 0;
 		char* pathstr = realpath(filename.c_str(), NULL);
 		if (pathstr != NULL) {
@@ -201,7 +208,10 @@ namespace Fluxions {
 
 	std::string FilePathInfo::getCurrentDirectory() {
 		std::string output;
-#ifdef __unix__
+#ifdef USING_FILESYSTEM
+		fs::path path = fs::current_path();
+		output = path.string();
+#elif defined(__unix__)
 		char* buffer;
 		buffer = getcwd(NULL, 0);
 		if (buffer == NULL) {
