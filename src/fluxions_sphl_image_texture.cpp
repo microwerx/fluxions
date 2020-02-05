@@ -5,12 +5,12 @@
 namespace Fluxions {
 	bool SphlImageTexture::loadLightProbe(const std::string& path) {
 		FilePathInfo fpi(path);
-		if (fpi.DoesNotExist())
+		if (fpi.notFound())
 			return false;
 
-		if (fpi.ext == ".ppm")
+		if (fpi.extension() == ".ppm")
 			lightProbe.loadPPM(path);
-		else if (fpi.ext == ".exr")
+		else if (fpi.extension() == ".exr")
 			lightProbe.loadEXR(path);
 		else
 			HFLOGERROR("Path %s is not a PPM or EXR", path.c_str());

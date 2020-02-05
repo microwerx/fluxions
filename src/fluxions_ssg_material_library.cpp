@@ -19,10 +19,10 @@ namespace Fluxions {
 
 	bool SimpleMaterialLibrary::load(const std::string& filename) {
 		FilePathInfo fpi(filename);
-		if (mtllibs.count(fpi.fname)) return true;
+		if (mtllibs.count(fpi.stem())) return true;
 
-		std::string name = fpi.fname;
-		std::string pathToMTL = fpi.path;
+		std::string name = fpi.stem();
+		std::string pathToMTL = fpi.shortestPath();
 		mtllibs[name] = pathToMTL;
 
 		std::vector<std::string> lines;
@@ -113,7 +113,7 @@ namespace Fluxions {
 				std::string mapName = str;
 				std::string pathToMap = ReadString(istr);
 				curmtl->maps[mapName] = pathToMap;
-				readMap(pathToMap, mapName, fpi.dir);
+				readMap(pathToMap, mapName, fpi.parentPath());
 
 				if (str == "map_Kd") {
 					curmtl->Kd.a = 1.0f;
@@ -234,7 +234,7 @@ namespace Fluxions {
 				std::string map_name = "assets/" + mapName;
 				toidentifier(map_name);
 				FilePathInfo mapfpi(imagePath);
-				std::string map_path = "assets/" + mapfpi.fullfname;
+				std::string map_path = "assets/" + mapfpi.filename();
 
 				XmlCoronaMapTexture(mtlxml_fout, "mapDefinition", map_name, map_path, 1, 2.2f) << "\n\n";
 			}
@@ -272,29 +272,29 @@ namespace Fluxions {
 		return &mtls.back();
 	}
 
-	bool SimpleMaterialLibrary::readMap(std::string& pathToMap, std::string& mapname, std::string& basepath) {
+	bool SimpleMaterialLibrary::readMap(std::string& pathToMap, std::string& mapname, const std::string& basepath) {
 		FilePathInfo fpi(basepath + pathToMap);
 
 		// Check if we have added this map already
-		if (maps.count(fpi.fname)) {
+		if (maps.count(fpi.stem())) {
 			return true;
 		}
 
 		// If it doesn't exist, try the working directory
-		if (fpi.DoesNotExist()) {
-			fpi.Set("./" + pathToMap);
+		if (fpi.notFound()) {
+			fpi.reset("./" + pathToMap);
 		}
 
-		if (fpi.DoesNotExist()) {
+		if (fpi.notFound()) {
 			HFLOGWARN("Map '%s' cannot be located", mapname.c_str());
-			pathToMap = fpi.fullfname;
+			pathToMap = fpi.filename();
 		}
 		else {
-			pathToMap = fpi.path;
+			pathToMap = fpi.shortestPath();
 		}
 
 		// update the information in the map list
-		mapname = fpi.fullfname;
+		mapname = fpi.filename();
 		maps[mapname] = pathToMap;
 		return true;
 	}

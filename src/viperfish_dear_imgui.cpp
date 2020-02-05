@@ -33,7 +33,7 @@ namespace Vf {
 		pIO->DeltaTime = 0.0f;
 
 		FilePathInfo urwdock("resources/fonts/dock-medium.otf");
-		if (urwdock.Exists()) {
+		if (urwdock.exists()) {
 			ImFont* font = pIO->Fonts->AddFontFromFileTTF("resources/fonts/dock-medium.otf", 24.0f);
 			if (!font) {
 				HFLOGWARN("Dock Font cannot to be loaded");

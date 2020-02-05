@@ -224,7 +224,7 @@ namespace Fluxions {
 		if (path.empty()) return;
 		FilePathInfo fpi(path);
 		RendererShaderPtr shader = std::make_shared<RendererShader>();
-		shader->init(fpi.fullfname, this, type);
+		shader->init(fpi.filename(), this, type);
 		if (CompileShaderFromFile(shader, type, path))
 			attachShaders(shader);
 		else HFLOGERROR("shader '%s' compile failed", path.c_str());

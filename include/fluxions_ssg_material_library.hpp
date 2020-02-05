@@ -30,7 +30,7 @@ namespace Fluxions {
 	private:
 		SimpleMaterial* set_mtl(std::string&& name);
 		// Looks for map location, modifies mapname to be user friendly
-		bool readMap(std::string& pathToMap, std::string& mapname, std::string& mtlpath);
+		bool readMap(std::string& pathToMap, std::string& mapname, const std::string& mtlpath);
 		std::ostream& printMap(std::ostream& ostr, const std::string& maptype, const std::string& mapname) const;
 	};
 }

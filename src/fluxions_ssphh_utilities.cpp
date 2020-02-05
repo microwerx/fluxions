@@ -1,4 +1,5 @@
 #include "fluxions_ssg_pch.hpp"
+#include <fluxions_stdcxx.hpp>
 #include <fluxions_ssphh_utilities.hpp>
 
 namespace Fluxions {

@@ -11,11 +11,11 @@ namespace Fluxions {
 			"unknown";
 
 		FilePathInfo fpi(filename);
-		if (!fpi.IsFile()) {
+		if (!fpi.isFile()) {
 			HFLOGERROR("file '%s' does not exist", filename.c_str());
 			return false;
 		}
-		HFLOGDEBUG("loading %s shader `%s'", typeName, fpi.fullfname.c_str());
+		HFLOGDEBUG("loading %s shader `%s'", typeName, fpi.filename().c_str());
 
 		if (shader->shader == 0) {
 			HFLOGERROR("%s shader could not be created!", typeName);
@@ -24,7 +24,7 @@ namespace Fluxions {
 		shader->compileSource(ReadTextFile(filename));
 
 		if (shader->hadError) {
-			HFLOGERROR("shader %d compile error for %s\n%s", shader->shader, fpi.fullfname.c_str(), shader->infoLog.c_str());
+			HFLOGERROR("shader %d compile error for %s\n%s", shader->shader, fpi.filename().c_str(), shader->infoLog.c_str());
 			return false;
 		}
 		if (shader->didCompile) {

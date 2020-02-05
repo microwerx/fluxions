@@ -2,25 +2,9 @@
 #include <fluxions_base.hpp>
 #include <fluxions_file_path_info.hpp>
 
-#ifdef __APPLE__
-#define __unix__ 1
-#endif
-
-#ifdef __unix__
-#include <sys/stat.h>
-#endif
-
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-
-#if __has_include(<filesystem>)
-#include <filesystem>
-namespace fs = std::filesystem;
-#define USING_FILESYSTEM
-#endif
-
 namespace Fluxions {
+	namespace fs = std::filesystem;
+
 	using FXubyte = unsigned char;
 	using FXbyte = char;
 	using FXshort = short;
@@ -32,258 +16,116 @@ namespace Fluxions {
 	using FXfloat = float;
 	using FXdouble = double;
 
-#ifdef _WIN32
-	const int bitIsDirectory = _S_IFDIR;
-	const int bitIsRegularFile = _S_IFREG;
-#elif __unix__
-	const int bitIsDirectory = S_IFDIR;
-	const int bitIsRegularFile = S_IFREG;
-#endif
-
-	// const std::string BlankString;
-	static std::string FpiBlankString;
-
-#ifdef __unix__
-#ifndef _MAX_DRIVE
-#define _MAX_DRIVE 3
-#endif
-#ifndef _MAX_DIR
-#define _MAX_DIR 256
-#endif
-#ifndef _MAX_FNAME
-#define _MAX_FNAME 256
-#endif
-#ifndef _MAX_EXT
-#define _MAX_EXT 256
-#endif
-#endif
-
-	int stat_with_errno(const std::string& path, void* Stat) {
-#ifdef _WIN32
-		_set_errno(0);
-#elif __unix__
-		errno = 0;
-#endif
-
-#ifdef _WIN32
-		return _stat(path.c_str(), (struct _stat*)Stat);
-#elif __unix__
-		return stat(path.c_str(), (struct stat*)Stat);
-#endif
+	std::string& make_path_forward_slashes(std::string& s) {
+		std::regex path_replace("[/\\\\]+");
+		s = std::move(std::regex_replace(s, path_replace, "/"));
+		return s;
 	}
 
 	FilePathInfo::FilePathInfo() {}
 
-	FilePathInfo::FilePathInfo(const std::string& filename) {
-		Set(filename);
+	FilePathInfo::FilePathInfo(const std::string& path) {
+		reset(path);
 	}
 
-	void FilePathInfo::Clear() {
-		pathType = PathType::DoesNotExist;
-		atime = 0;
-		ctime = 0;
-		dir.clear();
+	FilePathInfo::FilePathInfo(const std::string& path, const string_vector& paths) {
+		reset(path, paths);
+	}
+
+	void FilePathInfo::_clear() {
+		pathType_ = PathType::None;
+		//atime = 0;
+		last_write_time_ = fs::file_time_type();
+		root_path_.clear();
 		origpath.clear();
-		path.clear();
-		fullfname.clear();
-		fname.clear();
-		ext.clear();
-		relativePath = false;
+		absolute_path_.clear();
+		filename_.clear();
+		stem_.clear();
+		extension_.clear();
 	}
 
-	void FilePathInfo::Set(const std::string& _path) {
-		Clear();
+	bool FilePathInfo::reset(const std::string& path) {
+		_clear();
 
 		std::regex path_replace("[/\\\\]+");
-		std::string p = std::regex_replace(_path, path_replace, "/");
-		origpath = p;
+		origpath = std::move(std::regex_replace(path, path_replace, "/"));
 
-		if (!origpath.empty() && origpath[0] != '/')
-			relativePath = true;
-		else if (origpath[0] == '.' && origpath[1] == '/')
-			relativePath = true;
-		else if (origpath[0] == '.' && origpath[1] == '.' && origpath[2] == '/')
-			relativePath = true;
+		if (!fs::exists(origpath)) return false;
 
-#if __has_include(<filesystem>)
-		fname = "";
-		dir = "";
-		ext = "";
-		path = "";
-		fullfname = "";
-		path = getFullPathName(origpath)
+		fs::path abs_path = fs::absolute(origpath, fpi_ec_);
+		fs::path rel_path = fs::relative(abs_path, fs::current_path(), fpi_ec_);
 
-#elif defined(__unix__)
-		// updated to use realpath on POSIX
-		fname = "";
-		dir = "";
-		ext = "";
-		path = "";
-		fullfname = "";
+		root_name_ = abs_path.root_name().string();
+		absolute_path_ = abs_path.string();
+		relative_path_ = rel_path.string();
+		root_path_ = abs_path.parent_path().string();
+		parent_path_ = rel_path.parent_path().string();
+		extension_ = rel_path.extension().string();
+		filename_ = rel_path.filename().string();
+		stem_ = rel_path.stem().string();
 
-		path = getFullPathName(origpath);
-		char* pathcopy = new char[path.size() + 1];
-		memcpy(pathcopy, &path[0], path.size());
-		char* dirnamePtr = dirname(pathcopy);
-		if (dirnamePtr) {
-			dir = dirnamePtr;
+		make_path_forward_slashes(absolute_path_);
+		make_path_forward_slashes(relative_path_);
+		make_path_forward_slashes(parent_path_);
+		make_path_forward_slashes(root_path_);
+
+		if (!parent_path_.empty()) {
+			if (parent_path_.back() != '/') parent_path_.append("/");
 		}
-		else {
-			// check errno for error
-			dir = getCurrentDirectory();
-		}
-		delete[] pathcopy;
-		pathcopy = new char[path.size() + 1];
-		memcpy(pathcopy, &path[0], path.size());
-		char* basenamePtr = basename(pathcopy);
-		if (basenamePtr) {
-			fullfname = basenamePtr;
-		}
-		else {
-			// check errno for error
-			fullfname = path;
-		}
-		delete[] pathcopy;
-
-		std::string::size_type idx = fullfname.find_last_of(".");
-		if (idx != std::string::npos) {
-			ext = fullfname.substr(idx + 1);
-			fname = fullfname.substr(0, idx);
-		}
-		else {
-			ext = "";
-			fname = fullfname;
-		}
-#elif defined(WIN32)
-		char driveStr[_MAX_DRIVE] = { 0 };
-		char dirStr[_MAX_DIR] = { 0 };
-		char fnameStr[_MAX_FNAME] = { 0 };
-		char extStr[_MAX_EXT] = { 0 };
-
-		path = getFullPathName(origpath);
-
-		_splitpath_s(path.c_str(), driveStr, _MAX_DRIVE, dirStr, _MAX_DIR, fnameStr, _MAX_FNAME, extStr, _MAX_EXT);
-
-		std::string drive = driveStr;
-		dir = dirStr;
-		std::string testpath = drive + dir;
-		dir = regex_replace(testpath, path_replace, "/");
-		fname = fnameStr;
-		ext = extStr;
-		fullfname = fname + ext;
-
-		if (dir.empty()) {
-			testpath = getCurrentDirectory();
-			dir = regex_replace(testpath, path_replace, "/");
+		if (!root_path_.empty()) {
+			if (root_path_.back() != '/') root_path_.append("/");
 		}
 
-		if (!dir.empty()) {
-			char backChar = dir.back();
-
-			if (backChar != '/' && backChar != '\\') {
-				dir += "/";
-			}
-		}
-
-		fullfname = fname + ext;
-		path = dir + fullfname;
-#endif
-		fill_stat_info();
+		return _fill_stat_info();
 	}
 
-	std::string FilePathInfo::getFullPathName(const std::string& filename) {
-		std::string outputStr;
-#ifdef USING_FILESYSTEM
-#elif defined(__unix__)
-		errno = 0;
-		char* pathstr = realpath(filename.c_str(), NULL);
-		if (pathstr != NULL) {
-			outputStr = pathstr;
-			free(pathstr);
+	bool FilePathInfo::reset(const std::string& path, const string_vector& paths) {
+		if (reset(path)) return true;
+		for (auto& dir : paths) {
+			if (reset(dir + path)) return true;
 		}
-		else {
-			// check errno
-			// default behavior is to return the filename (it doesn't exist, but that's okay)
-			outputStr = filename;
-		}
-#elif defined(WIN32)
-		char pathStr[4096] = { 0 };
-		char** lppPart = { NULL };
-
-		::GetFullPathNameA(filename.c_str(), 4096, pathStr, lppPart);
-
-		outputStr = pathStr;
-#endif
-		std::regex path_replace("[/\\\\]+");
-		std::string p = std::regex_replace(outputStr, path_replace, "/");
-
-		return p;
+		return false;
 	}
 
-	std::string FilePathInfo::getCurrentDirectory() {
-		std::string output;
-#ifdef USING_FILESYSTEM
-		fs::path path = fs::current_path();
-		output = path.string();
-#elif defined(__unix__)
-		char* buffer;
-		buffer = getcwd(NULL, 0);
-		if (buffer == NULL) {
-			// error
-		}
-		else {
-			output = buffer;
-			free(buffer);
-		}
-#elif defined(WIN32)
-		char dirStr[_MAX_DIR + 1];
-		DWORD result = ::GetCurrentDirectoryA(_MAX_DIR, dirStr);
-		if (result > 0) {
-			output = dirStr;
-		}
-		else {
-			output = "";
-		}
-#endif
-		std::regex path_replace("[/\\\\]+");
-		std::string p = std::regex_replace(output, path_replace, "/");
-
-		return p;
+	std::string FilePathInfo::GetAbsolutePath(const std::string& path) {
+		std::error_code ec;
+		fs::path absolute_path = fs::absolute(path, ec);
+		std::string p = absolute_path.string();
+		return make_path_forward_slashes(p);
 	}
 
-	bool FilePathInfo::TestIfFileExists(const std::string& filename) {
-#ifdef _WIN32
-		struct _stat Stat;
-#elif __unix__
-		struct stat Stat;
-#endif
-		int retval = stat_with_errno(filename.c_str(), &Stat);
-		if (retval == 0)
-			return true;
-		else
-			return false;
+	std::string FilePathInfo::GetCurrentPath() {
+		std::error_code ec;
+		fs::path absolute_path = fs::current_path(ec);
+		std::string p = absolute_path.string();
+		return make_path_forward_slashes(p);
 	}
 
-	bool FilePathInfo::FindFileIfExists(
-		const std::vector<std::string>& dirsToTry,
-		std::string& pathFilename) {
+	bool FilePathInfo::TestIfPathExists(const std::string& filename) {
+		std::error_code ec;
+		return fs::exists(filename, ec);
+	}
+
+	bool FilePathInfo::FindIfPathExists(std::string& path, const string_vector& paths) {
 		// Is there a file name to test?
-		if (pathFilename.empty())
+		if (path.empty())
 			return false;
 
-		if (TestIfFileExists(pathFilename))
+		std::error_code ec;
+		if (fs::exists(path, ec))
 			return true;
 
-		for (const std::string& dirToTry : dirsToTry) {
-			char backChar = dirToTry.back();
-			std::string testPath = dirToTry;
+		for (const std::string& dir : paths) {
+			if (dir.empty()) continue;
+			char backChar = dir.back();
+			std::string testPath = dir;
 			if ((backChar != '/') && (backChar != '\\'))
-				testPath += std::string("/") + pathFilename;
+				testPath += std::string("/") + path;
 			else
-				testPath += pathFilename;
+				testPath += path;
 
-			if (TestIfFileExists(testPath)) {
-				pathFilename = testPath;
+			if (fs::exists(path, ec)) {
+				path = testPath;
 				return true;
 			}
 		}
@@ -291,69 +133,34 @@ namespace Fluxions {
 		return false;
 	}
 
-	void FilePathInfo::fill_stat_info() {
-		if (path.empty()) {
-			pathType = PathType::DoesNotExist;
-			atime = 0;
-			ctime = 0;
-			return;
+	bool FilePathInfo::_fill_stat_info() {
+		if (absolute_path_.empty()) {
+			pathType_ = PathType::DoesNotExist;
+			last_write_time_ = FileTimeValue();
+			return false;
 		}
-		std::string testpath;
-		if (path.back() == '/' || path.back() == '\\')
-			testpath = path.substr(0, path.size() - 1);
-		else
-			testpath = path;
 
-#ifdef _WIN32
-		struct _stat Stat;
-#define S_IF
-#elif __unix__
-		struct stat Stat;
-#endif
-		int retval = stat_with_errno(testpath.c_str(), &Stat);
-
-		if (retval != 0) {
-			pathType = PathType::DoesNotExist;
+		pathType_ = PathType::DoesNotExist;
+		if (fs::exists(absolute_path_)) {
+			fs::file_status status = fs::status(absolute_path_);
+			switch (status.type()) {
+			case fs::file_type::directory:
+				pathType_ = PathType::Directory;
+				relative_path_.push_back('/');
+				absolute_path_.push_back('/');
+				break;
+			case fs::file_type::regular:
+				pathType_ = PathType::File;
+				break;
+			case fs::file_type::not_found:
+				pathType_ = PathType::DoesNotExist;
+				break;
+			default:
+				pathType_ = PathType::Other;
+			}
+			last_write_time_ = fs::last_write_time(absolute_path_);
 		}
-		else {
-			if (Stat.st_mode & bitIsDirectory) {
-				pathType = PathType::Directory;
-				// we need to reset dir because it would contain the parent directory
-				dir = testpath;
-			}
-			else if (Stat.st_mode & bitIsRegularFile) {
-				pathType = PathType::File;
-			}
-			else {
-				pathType = PathType::Other;
-			}
-			ctime = Stat.st_ctime;
-			atime = Stat.st_atime;
-		}
-	}
-
-	bool FilePathInfo::DoesNotExist() const {
-		return pathType == PathType::DoesNotExist;
-	}
-
-	bool FilePathInfo::Exists() const {
-		return pathType != PathType::DoesNotExist;
-	}
-
-	bool FilePathInfo::IsDirectory() const {
-		return pathType == PathType::Directory;
-	}
-
-	bool FilePathInfo::IsFile() const {
-		return pathType == PathType::File;
-	}
-
-	bool FilePathInfo::IsOther() const {
-		return pathType == PathType::Other;
-	}
-
-	bool FilePathInfo::IsRelative() const {
-		return relativePath == true;
+		return exists();
 	}
 
 	std::string ReadTextFile(const std::string& filename) {
@@ -366,19 +173,10 @@ namespace Fluxions {
 		sstr << fin.rdbuf();
 		fin.close();
 		return sstr.str();
-		// std::string str;
-		// fin.seekg(0, std::ios::end);
-		// size_t size = (size_t)fin.tellg();
-		// str.resize(size);
-		// fin.seekg(0, std::ios::beg);
-		// fin.read(&str[0], size);
-
-		// fin.close();
-		// return str;
 	}
 
-	std::vector<FXubyte> ReadBinaryFile(const std::string& filename) {
-		std::vector<FXubyte> buffer;
+	byte_array ReadBinaryFile(const std::string& filename) {
+		byte_array buffer;
 		std::ifstream fin(filename.c_str(), std::ios::binary);
 
 		if (!fin)
@@ -395,120 +193,120 @@ namespace Fluxions {
 		return buffer;
 	}
 
-	std::string FindPathIfExists(const std::string& path, const std::vector<std::string> pathsToTry) {
-		std::string output;
-
-		// Is there a file name to test?
-		FilePathInfo fpi(path);
-		if (fpi.fullfname.empty())
-			return output;
-
-		if (TestIfFileExists(path)) {
-			output = path;
-		}
-		else {
-			for (auto testPathIt : pathsToTry) {
-				std::string testPath = testPathIt;
-				if (testPath.back() != '/' && testPath.back() != '\\')
-					testPath += "/";
-				testPath += fpi.fullfname;
-				if (TestIfFileExists(testPath)) {
-					output = testPath;
-					break;
-				}
-			}
-		}
-
-		return output;
-	}
-
-	std::string NormalizePathName(const std::string& basepath, const std::string& path) {
-		FpiBlankString = "";
-
-		FilePathInfo p1(basepath + "/" + path);
-		FilePathInfo p2(path);
-
-		if (p1.pathType == PathType::DoesNotExist) {
-			if (p2.pathType == PathType::DoesNotExist) {
-				return FpiBlankString;
-			}
-			else {
-				return p2.origpath;
-			}
-		}
-		else {
-			return p1.origpath;
-		}
-	}
-
-	PathType GetPathType(const std::string& path) {
-#ifdef _WIN32
-		struct _stat Stat;
-#elif __unix__
-		struct stat Stat;
-#endif
-		int retval = stat_with_errno(path, &Stat);
-		if (retval != 0) {
-			// do not print errors...
-			return PathType::DoesNotExist;
-		}
-		if (Stat.st_mode & bitIsDirectory)
-			return PathType::Directory;
-		else if (Stat.st_mode & bitIsRegularFile)
-			return PathType::File;
-		return PathType::Other;
-	}
-
-	TimeValue GetPathCreationTime(const std::string& path) {
-#ifdef _WIN32
-		struct _stat Stat;
-#elif __unix__
-		struct stat Stat;
-#endif
-
-		int retval = stat_with_errno(path, &Stat);
-
-		if (retval != 0) {
-			switch (errno) {
-			case ENOENT:
-				std::cerr << __func__ << ": file not found" << std::endl;
-				break;
-			case EINVAL:
-				std::cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
-				break;
-			default:
-				std::cerr << __func__ << ": unknown error in _stat()" << std::endl;
-			}
-		}
-		else {
-			return Stat.st_ctime;
-		}
-		return 0;
-	}
-
-	TimeValue GetPathAccessTime(const std::string& path) {
-#ifdef _WIN32
-		struct _stat Stat;
-#elif __unix__
-		struct stat Stat;
-#endif
-		int retval = stat_with_errno(path, &Stat);
-
-		if (retval != 0) {
-			switch (errno) {
-			case ENOENT:
-				std::cerr << __func__ << ": file not found" << std::endl;
-				break;
-			case EINVAL:
-				std::cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
-				break;
-			default:
-				std::cerr << __func__ << ": unknown error in _stat()" << std::endl;
-			}
-		}
-		else {
-			return Stat.st_atime;
-		}
-		return 0;
-	}
+	//	std::string FindPathIfExists(const std::string& path, const std::vector<std::string> paths) {
+	//		std::string output;
+	//
+	//		// Is there a file name to test?
+	//		FilePathInfo fpi(path);
+	//		if (fpi.filename().empty())
+	//			return output;
+	//
+	//		if (TestIfFileExists(path)) {
+	//			output = path;
+	//		}
+	//		else {
+	//			for (auto testPathIt : paths) {
+	//				std::string testPath = testPathIt;
+	//				if (testPath.back() != '/' && testPath.back() != '\\')
+	//					testPath += "/";
+	//				testPath += fpi.filename();
+	//				if (TestIfFileExists(testPath)) {
+	//					output = testPath;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//
+	//		return output;
+	//	}
+	//
+	//	std::string NormalizePathName(const std::string& basepath, const std::string& path) {
+	//		FpiBlankString = "";
+	//
+	//		FilePathInfo p1(basepath + "/" + path);
+	//		FilePathInfo p2(path);
+	//
+	//		if (p1.pathType_ == PathType::DoesNotExist) {
+	//			if (p2.pathType_ == PathType::DoesNotExist) {
+	//				return FpiBlankString;
+	//			}
+	//			else {
+	//				return p2.origpath;
+	//			}
+	//		}
+	//		else {
+	//			return p1.origpath;
+	//		}
+	//	}
+	//
+	//	PathType GetPathType(const std::string& path) {
+	//#ifdef _WIN32
+	//		struct _stat Stat;
+	//#elif __unix__
+	//		struct stat Stat;
+	//#endif
+	//		int retval = stat_with_errno(path, &Stat);
+	//		if (retval != 0) {
+	//			// do not print errors...
+	//			return PathType::DoesNotExist;
+	//		}
+	//		if (Stat.st_mode & bitIsDirectory)
+	//			return PathType::Directory;
+	//		else if (Stat.st_mode & bitIsRegularFile)
+	//			return PathType::File;
+	//		return PathType::Other;
+	//	}
+	//
+	//	TimeValue GetPathCreationTime(const std::string& path) {
+	//#ifdef _WIN32
+	//		struct _stat Stat;
+	//#elif __unix__
+	//		struct stat Stat;
+	//#endif
+	//
+	//		int retval = stat_with_errno(path, &Stat);
+	//
+	//		if (retval != 0) {
+	//			switch (errno) {
+	//			case ENOENT:
+	//				std::cerr << __func__ << ": file not found" << std::endl;
+	//				break;
+	//			case EINVAL:
+	//				std::cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
+	//				break;
+	//			default:
+	//				std::cerr << __func__ << ": unknown error in _stat()" << std::endl;
+	//			}
+	//		}
+	//		else {
+	//			return Stat.st_ctime;
+	//		}
+	//		return 0;
+	//	}
+	//
+	//	TimeValue GetPathAccessTime(const std::string& path) {
+	//#ifdef _WIN32
+	//		struct _stat Stat;
+	//#elif __unix__
+	//		struct stat Stat;
+	//#endif
+	//		int retval = stat_with_errno(path, &Stat);
+	//
+	//		if (retval != 0) {
+	//			switch (errno) {
+	//			case ENOENT:
+	//				std::cerr << __func__ << ": file not found" << std::endl;
+	//				break;
+	//			case EINVAL:
+	//				std::cerr << __func__ << ": invalid parameter to _stat()" << std::endl;
+	//				break;
+	//			default:
+	//				std::cerr << __func__ << ": unknown error in _stat()" << std::endl;
+	//			}
+	//		}
+	//		else {
+	//			return Stat.st_atime;
+	//		}
+	//		return 0;
+	//	}
 } // namespace Fluxions

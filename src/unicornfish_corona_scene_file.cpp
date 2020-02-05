@@ -20,12 +20,12 @@ namespace Uf {
 									ssg.camera.roll(),
 									ssg.camera.actualFov);
 		Fx::FilePathInfo fpi(filename);
-		writer.export_path_prefix = fpi.dir;
+		writer.export_path_prefix = fpi.parentPath();
 		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "export_corona_ground_truth.conf" });
-		currentConfig.confname = fpi.fname + ".conf";
+		currentConfig.confname = fpi.stem() + ".conf";
 		_copyConf(currentConfig, writer);
-		ssg.Save(fpi.fullfname, &writer);
-		currentConfig.write(fpi.dir + currentConfig.confname, "perspective");
+		ssg.Save(fpi.filename(), &writer);
+		currentConfig.write(fpi.parentPath() + currentConfig.confname, "perspective");
 	}
 
 	void CoronaSceneFile::writeCubeMapSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg) {
@@ -39,12 +39,12 @@ namespace Uf {
 								cameraPosition + Fluxions::Vector3f(0.0f, 0.0f, -1.0f),
 								Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
 		Fx::FilePathInfo fpi(filename);
-		writer.export_path_prefix = fpi.dir;
+		writer.export_path_prefix = fpi.parentPath();
 		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "export_corona_ground_truth_cube.conf" });
-		currentConfig.confname = fpi.fname + ".conf";
+		currentConfig.confname = fpi.stem() + ".conf";
 		_copyConf(currentConfig, writer);
-		ssg.Save(fpi.fullfname, &writer);
-		currentConfig.write(fpi.dir + currentConfig.confname, "cubemap");
+		ssg.Save(fpi.filename(), &writer);
+		currentConfig.write(fpi.parentPath() + currentConfig.confname, "cubemap");
 	}
 
 	void CoronaSceneFile::writeSkySCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg) {
@@ -53,13 +53,13 @@ namespace Uf {
 								Fluxions::Vector3f(0.0f, 1.0f, 0.0f),
 								Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
 		Fx::FilePathInfo fpi(filename);
-		writer.export_path_prefix = fpi.dir;
+		writer.export_path_prefix = fpi.parentPath();
 		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "ssphh_sky.conf" });
 		writer.write_geometry = false;
 		SKY.confname = "ssphh_sky.conf";
 		_copyConf(SKY, writer);
-		ssg.Save(fpi.fullfname, &writer);
-		SKY.write(fpi.dir + SKY.confname, "cubemap");
+		ssg.Save(fpi.filename(), &writer);
+		SKY.write(fpi.parentPath() + SKY.confname, "cubemap");
 	}
 
 	bool CoronaSceneFile::writeSphlGenSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg, unsigned lightIndex) {
@@ -69,18 +69,18 @@ namespace Uf {
 
 		Fluxions::XmlSceneGraphWriter writer;
 		Fx::FilePathInfo fpi(filename);
-		writer.export_path_prefix = fpi.dir;
+		writer.export_path_prefix = fpi.parentPath();
 
 		Fluxions::Vector3f origin = light.position.xyz();
 		Fluxions::Vector3f target = origin - Fluxions::Vector3f(0.0f, 0.0f, 1.0f);
 		Fluxions::Vector3f roll = { 0.0f, 1.0f, 0.0f };
 		writer.setCubeMapCamera(origin, target, roll);
 
-		GEN.confname = fpi.fname + ".conf";
+		GEN.confname = fpi.stem() + ".conf";
 		;
 		_copyConf(GEN, writer);
-		ssg.Save(fpi.fullfname, &writer);
-		GEN.write(fpi.dir + GEN.confname, "cubemap");
+		ssg.Save(fpi.filename(), &writer);
+		GEN.write(fpi.parentPath() + GEN.confname, "cubemap");
 		return true;
 	}
 
@@ -94,7 +94,7 @@ namespace Uf {
 
 		Fluxions::XmlSceneGraphWriter writer;
 		Fx::FilePathInfo fpi(filename);
-		writer.export_path_prefix = fpi.dir;
+		writer.export_path_prefix = fpi.parentPath();
 		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "sphlviz.conf" });
 
 		Fluxions::Vector3f src_sphl_position = src_sphl.position.xyz();
@@ -109,7 +109,7 @@ namespace Uf {
 		Fluxions::Vector3f rcv_sphl_position = rcv_sphl.position.xyz();
 		Fluxions::Matrix4f lightMatrix = Fluxions::Matrix4f::MakeTranslation(rcv_sphl_position);
 
-		if (!fpi.Exists()) {
+		if (!fpi.exists()) {
 			HFLOGINFO("Writing out sphlviz.mtl");
 			std::ofstream svout("sphlviz.mtl");
 			svout << "<mtlLib>"
@@ -138,10 +138,10 @@ namespace Uf {
 		Fx::XmlEndTag(fout, "geometryGroup", 1) << "\n";
 		writer.extra_tags.push_back({ "", fout.str() });
 
-		VIZ.confname = fpi.fname + ".conf";
+		VIZ.confname = fpi.stem() + ".conf";
 		_copyConf(VIZ, writer);
-		ssg.Save(fpi.fullfname, &writer);
-		VIZ.write(fpi.dir + VIZ.confname, "cubemap");
+		ssg.Save(fpi.filename(), &writer);
+		VIZ.write(fpi.parentPath() + VIZ.confname, "cubemap");
 		return true;
 	}
 

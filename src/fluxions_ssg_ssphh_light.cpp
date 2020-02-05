@@ -108,12 +108,12 @@ namespace Fluxions {
 	// Reads from a Path Traced Light Probe (a cube map stored images from left to right in a single image).
 	bool SimpleSSPHHLight::readPtrcLightProbe(const std::string& path) {
 		FilePathInfo fpi(path);
-		if (fpi.DoesNotExist())
+		if (fpi.notFound())
 			return false;
 
-		if (fpi.ext == ".ppm")
+		if (fpi.extension() == ".ppm")
 			ptrcLightProbeImage.loadPPM(path);
-		else if (fpi.ext == ".exr")
+		else if (fpi.extension() == ".exr")
 			ptrcLightProbeImage.loadEXR(path);
 		else
 			HFLOGERROR("Path %s is not a PPM or EXR", path.c_str());
@@ -144,9 +144,9 @@ namespace Fluxions {
 
 		sphToLightProbe(msph, msphLightProbeImage);
 		msphLightProbeImage.convertCubeMapToRect();
-		if (fpi.ext == ".ppm")
+		if (fpi.extension() == ".ppm")
 			msphLightProbeImage.savePPMi(path, 255.99f, 0, 255, 0, false);
-		else if (fpi.ext == ".exr")
+		else if (fpi.extension() == ".exr")
 			msphLightProbeImage.saveEXR(path);
 
 		return false;
@@ -182,7 +182,7 @@ namespace Fluxions {
 												  });
 		meta->PushBack(m_meta);
 
-		std::ofstream fout(fpi.path);
+		std::ofstream fout(fpi.shortestPath());
 		fout << json->Serialize();
 		fout.close();
 
@@ -192,9 +192,9 @@ namespace Fluxions {
 	// Reads a JSON format of a multispectral (RGBL) of this SPH. L represents a monochromatic version of the RGB components. { maxDegree: (1-10), coefs : [] }
 	bool SimpleSSPHHLight::readJsonSph(const std::string& path) {
 		FilePathInfo fpi(path);
-		if (fpi.DoesNotExist())
+		if (fpi.notFound())
 			return false;
-		std::ifstream fin(fpi.path);
+		std::ifstream fin(fpi.shortestPath());
 		std::string buffer;
 		while (!fin) {
 			std::string line;
@@ -261,7 +261,7 @@ namespace Fluxions {
 		static std::vector<Vector3ui> triangles;
 		static std::vector<Vector3f> rgbiy[5];
 
-		if (!fpi.IsDirectory()) {
+		if (!fpi.isDirectory()) {
 			HFLOGERROR("Path %s is not a directory!", path.c_str());
 			return false;
 		}
@@ -269,7 +269,7 @@ namespace Fluxions {
 		if (numTriangles == 0) {
 			FilePathInfo geosphere(icos_path);
 
-			if (!geosphere.Exists()) {
+			if (!geosphere.exists()) {
 				HFLOGERROR("Icosahedron %s does not exist", icos_path);
 				return false;
 			}

@@ -274,9 +274,6 @@
     <ClCompile Include="src\fluxions_ssg_environment.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_geometry_mesh.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_ssg_material_library.cpp">
       <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
@@ -348,6 +345,9 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_ssphh_light.cpp">
       <Filter>src\fluxions-ssphh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
+      <Filter>src\fluxions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

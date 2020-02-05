@@ -265,7 +265,7 @@ namespace Fluxions {
 
 		for (const auto& [mapname, mappath] : ssg.materials.maps) {
 			FilePathInfo fpi(mappath);
-			std::string asset_path = export_path_prefix + "assets/" + fpi.fullfname;
+			std::string asset_path = export_path_prefix + "assets/" + fpi.filename();
 			if (std::filesystem::exists(asset_path))
 				continue;
 			if (std::filesystem::exists(mappath)) {

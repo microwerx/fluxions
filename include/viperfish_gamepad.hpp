@@ -8,22 +8,22 @@ namespace Vf {
 	public:
 		AnalogBitset();
 
-		bool BitTest(unsigned bitsToTest) const;
-		float GetBitf(unsigned which) const {
+		bool bitTest(unsigned bitsToTest) const;
+		float getBitf(unsigned which) const {
 			if (within(which, 0, 31))
 				return fbits[which];
 			return 0.0f;
 		}
-		bool GetBiti(unsigned which) const {
+		bool getBiti(unsigned which) const {
 			if (within(which, 0, 31))
 				return ibits & (1 << which);
 			return false;
 		}
-		void BitOn(unsigned which);
-		void BitOff(unsigned which);
-		void BitSetf(unsigned which, float value);
-		void BitSet(unsigned bitsToSet);
-		inline void BitSet(unsigned which, bool value) { BitSetf(which, value ? 1.0f : 0.0f); }
+		void bitOn(unsigned which);
+		void bitOff(unsigned which);
+		void bitSetf(unsigned which, float value);
+		void bitSet(unsigned bitsToSet);
+		inline void bitSet(unsigned which, bool value) { bitSetf(which, value ? 1.0f : 0.0f); }
 		inline bool within(unsigned x, unsigned a, unsigned b) const { return x >= a && x <= b; }
 
 	private:
@@ -114,22 +114,22 @@ namespace Vf {
 		void SetButton(GamePadBitNum bit, bool pressed);
 		void SetButton(GamePadBitNum bit, float value);
 
-		inline bool aPressed() const { return curState.GetBiti((int)GamePadBitNum::A); }
-		inline bool bPressed() const { return curState.GetBiti((int)GamePadBitNum::B); }
-		inline bool xPressed() const { return curState.GetBiti((int)GamePadBitNum::X); }
-		inline bool yPressed() const { return curState.GetBiti((int)GamePadBitNum::Y); }
-		inline bool r1Pressed() const { return curState.GetBiti((int)GamePadBitNum::R1); }
-		inline bool l1Pressed() const { return curState.GetBiti((int)GamePadBitNum::L1); }
-		inline bool r2Pressed() const { return curState.GetBiti((int)GamePadBitNum::R2); }
-		inline bool l2Pressed() const { return curState.GetBiti((int)GamePadBitNum::L2); }
-		inline bool selectPressed() const { return curState.GetBiti((int)GamePadBitNum::SELECT); }
-		inline bool startPressed() const { return curState.GetBiti((int)GamePadBitNum::START); }
-		inline bool l3Pressed() const { return curState.GetBiti((int)GamePadBitNum::L3); }
-		inline bool r3Pressed() const { return curState.GetBiti((int)GamePadBitNum::R3); }
-		inline bool upPressed() const { return curState.GetBiti((int)GamePadBitNum::UP); }
-		inline bool downPressed() const { return curState.GetBiti((int)GamePadBitNum::DOWN); }
-		inline bool leftPressed() const { return curState.GetBiti((int)GamePadBitNum::LEFT); }
-		inline bool rightPressed() const { return curState.GetBiti((int)GamePadBitNum::RIGHT); }
+		inline bool aPressed() const { return curState.getBiti((int)GamePadBitNum::A); }
+		inline bool bPressed() const { return curState.getBiti((int)GamePadBitNum::B); }
+		inline bool xPressed() const { return curState.getBiti((int)GamePadBitNum::X); }
+		inline bool yPressed() const { return curState.getBiti((int)GamePadBitNum::Y); }
+		inline bool r1Pressed() const { return curState.getBiti((int)GamePadBitNum::R1); }
+		inline bool l1Pressed() const { return curState.getBiti((int)GamePadBitNum::L1); }
+		inline bool r2Pressed() const { return curState.getBiti((int)GamePadBitNum::R2); }
+		inline bool l2Pressed() const { return curState.getBiti((int)GamePadBitNum::L2); }
+		inline bool selectPressed() const { return curState.getBiti((int)GamePadBitNum::SELECT); }
+		inline bool startPressed() const { return curState.getBiti((int)GamePadBitNum::START); }
+		inline bool l3Pressed() const { return curState.getBiti((int)GamePadBitNum::L3); }
+		inline bool r3Pressed() const { return curState.getBiti((int)GamePadBitNum::R3); }
+		inline bool upPressed() const { return curState.getBiti((int)GamePadBitNum::UP); }
+		inline bool downPressed() const { return curState.getBiti((int)GamePadBitNum::DOWN); }
+		inline bool leftPressed() const { return curState.getBiti((int)GamePadBitNum::LEFT); }
+		inline bool rightPressed() const { return curState.getBiti((int)GamePadBitNum::RIGHT); }
 		inline bool lthumbDown() const { return lthumb_y() < 0.0f; }
 		inline bool lthumbUp() const { return lthumb_y() > 0.0f; }
 		inline bool lthumbLeft() const { return lthumb_x() < 0.0f; }
@@ -139,26 +139,26 @@ namespace Vf {
 		inline bool rthumbLeft() const { return rthumb_x() < 0.0f; }
 		inline bool rthumbRight() const { return rthumb_x() > 0.0f; }
 
-		inline float a() const { return curState.GetBitf((int)GamePadBitNum::A); }
-		inline float b() const { return curState.GetBitf((int)GamePadBitNum::B); }
-		inline float x() const { return curState.GetBitf((int)GamePadBitNum::X); }
-		inline float y() const { return curState.GetBitf((int)GamePadBitNum::Y); }
-		inline float r1() const { return curState.GetBitf((int)GamePadBitNum::R1); }
-		inline float l1() const { return curState.GetBitf((int)GamePadBitNum::L1); }
-		inline float r2() const { return curState.GetBitf((int)GamePadBitNum::R2); }
-		inline float l2() const { return curState.GetBitf((int)GamePadBitNum::L2); }
-		inline float select() const { return curState.GetBitf((int)GamePadBitNum::SELECT); }
-		inline float start() const { return curState.GetBitf((int)GamePadBitNum::START); }
-		inline float l3() const { return curState.GetBitf((int)GamePadBitNum::L3); }
-		inline float r3() const { return curState.GetBitf((int)GamePadBitNum::R3); }
-		inline float up() const { return curState.GetBitf((int)GamePadBitNum::UP); }
-		inline float down() const { return curState.GetBitf((int)GamePadBitNum::DOWN); }
-		inline float left() const { return curState.GetBitf((int)GamePadBitNum::LEFT); }
-		inline float right() const { return curState.GetBitf((int)GamePadBitNum::RIGHT); }
-		inline float lthumb_x() const { return curState.GetBitf((int)GamePadBitNum::LTHUMB_X); }
-		inline float lthumb_y() const { return curState.GetBitf((int)GamePadBitNum::LTHUMB_Y); }
-		inline float rthumb_x() const { return curState.GetBitf((int)GamePadBitNum::RTHUMB_X); }
-		inline float rthumb_y() const { return curState.GetBitf((int)GamePadBitNum::RTHUMB_Y); }
+		inline float a() const { return curState.getBitf((int)GamePadBitNum::A); }
+		inline float b() const { return curState.getBitf((int)GamePadBitNum::B); }
+		inline float x() const { return curState.getBitf((int)GamePadBitNum::X); }
+		inline float y() const { return curState.getBitf((int)GamePadBitNum::Y); }
+		inline float r1() const { return curState.getBitf((int)GamePadBitNum::R1); }
+		inline float l1() const { return curState.getBitf((int)GamePadBitNum::L1); }
+		inline float r2() const { return curState.getBitf((int)GamePadBitNum::R2); }
+		inline float l2() const { return curState.getBitf((int)GamePadBitNum::L2); }
+		inline float select() const { return curState.getBitf((int)GamePadBitNum::SELECT); }
+		inline float start() const { return curState.getBitf((int)GamePadBitNum::START); }
+		inline float l3() const { return curState.getBitf((int)GamePadBitNum::L3); }
+		inline float r3() const { return curState.getBitf((int)GamePadBitNum::R3); }
+		inline float up() const { return curState.getBitf((int)GamePadBitNum::UP); }
+		inline float down() const { return curState.getBitf((int)GamePadBitNum::DOWN); }
+		inline float left() const { return curState.getBitf((int)GamePadBitNum::LEFT); }
+		inline float right() const { return curState.getBitf((int)GamePadBitNum::RIGHT); }
+		inline float lthumb_x() const { return curState.getBitf((int)GamePadBitNum::LTHUMB_X); }
+		inline float lthumb_y() const { return curState.getBitf((int)GamePadBitNum::LTHUMB_Y); }
+		inline float rthumb_x() const { return curState.getBitf((int)GamePadBitNum::RTHUMB_X); }
+		inline float rthumb_y() const { return curState.getBitf((int)GamePadBitNum::RTHUMB_Y); }
 
 		const std::string& GetHexRepresentation() const { return hexRepresentation_; }
 

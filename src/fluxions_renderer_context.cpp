@@ -85,11 +85,28 @@ namespace Fluxions {
 		}
 	}
 
+	bool RendererContext::_addPath(const std::string& path) {
+		auto it = std::find(paths.begin(), paths.end(), path);
+		if (it == paths.end()) {
+			FilePathInfo fpi(path);
+			if (fpi.notFound()) {
+				fpi.reset(basepath + path);
+			}
+			if (fpi.notFound()) {
+				return false;
+			}
+			HFLOGINFO("Path added \"%s\"", fpi.shortestPathC());
+			paths.push_back(fpi.shortestPath());
+		}
+		return false;
+	}
+
 	bool RendererContext::loadConfig(const std::string& filename) {
 		FilePathInfo fpi(filename);
-		basepath = fpi.dir;
-		if (fpi.DoesNotExist())
+		if (fpi.notFound())
 			return false;
+		basepath = fpi.parentPath();
+		_addPath(basepath);
 
 		std::ifstream fin(filename);
 		if (!fin)
@@ -203,7 +220,7 @@ namespace Fluxions {
 			}
 
 			HFLOGDEBUG("(Line: %03i) [%s] %s", lineno, Df::TokenVectorJoin(tokens, " ").c_str(),
-									result ? "" : "(FALSE)");
+					   result ? "" : "(FALSE)");
 		}
 
 		return true;
@@ -268,9 +285,11 @@ namespace Fluxions {
 	}
 
 	bool RendererContext::findPath(std::string& path) {
-		std::string foundPath = FindPathIfExists(path, paths);
-		if (foundPath.empty()) return false;
-		path = foundPath;
+		FilePathInfo fpi(path, paths);
+		if (fpi.notFound()) {
+			HFLOGWARN("file '%s' not found", fpi.shortestPathC());
+			return false;
+		}
 		return true;
 	}
 
@@ -278,7 +297,7 @@ namespace Fluxions {
 		HFLOGINFO("Loading shaders from renderconfig");
 		for (auto& [k, p] : programs) {
 			HFLOGINFO("Trying to load shader program '%s'",
-								   k.c_str());
+					  k.c_str());
 			p.detachShaders();
 			p.loadShaders();
 			p.link();
@@ -289,14 +308,14 @@ namespace Fluxions {
 		HFLOGINFO("Loading textures from renderconfig");
 		for (auto& [k, t] : texture2Ds) {
 			HFLOGINFO("Trying to load texture 2d '%s' ... %s",
-								   k.c_str(),
-								   t.loadMap() ? "success" : "failed");
+					  k.c_str(),
+					  t.loadMap() ? "success" : "failed");
 		}
 
 		for (auto& [k, t] : textureCubes) {
 			HFLOGINFO("Trying to load texture cube '%s' ... %s",
-								   k.c_str(),
-								   t.loadMap() ? "success" : "failed");
+					  k.c_str(),
+					  t.loadMap() ? "success" : "failed");
 		}
 	}
 
@@ -615,16 +634,16 @@ namespace Fluxions {
 					if (!fbos.count(arg2)) return false;
 					pcurRendererConfig->writeFBOs.push_back({ arg2, &fbos[arg2] });
 					HFLOGINFO("rendererconfig '%s' adding write fbo '%s'",
-										   pcurRendererConfig->name(),
-										   arg2.c_str());
+							  pcurRendererConfig->name(),
+							  arg2.c_str());
 					return true;
 				}
 				else if (arg1 == READFBO) {
 					if (!fbos.count(arg2)) return false;
 					pcurRendererConfig->readFBOs.push_back({ arg2, &fbos[arg2] });
 					HFLOGINFO("rendererconfig '%s' adding read fbo '%s'",
-										   pcurRendererConfig->name(),
-										   arg2.c_str());
+							  pcurRendererConfig->name(),
+							  arg2.c_str());
 					return true;
 				}
 				else if (arg1 == PROGRAM) {
@@ -632,8 +651,8 @@ namespace Fluxions {
 						pcurRendererConfig->rc_program = arg2;
 						pcurRendererConfig->rc_program_ptr = &programs[arg2];
 						HFLOGINFO("rendererconfig '%s' adding program '%s'",
-											   pcurRendererConfig->name(),
-											   arg2.c_str());
+								  pcurRendererConfig->name(),
+								  arg2.c_str());
 						return true;
 					}
 					else {
@@ -646,8 +665,8 @@ namespace Fluxions {
 				else if (arg1 == CAMERA) {
 					pcurRendererConfig->ssg_camera = arg2;
 					HFLOGINFO("rendererconfig '%s' adding camera '%s'",
-										   pcurRendererConfig->name(),
-										   arg2.c_str());
+							  pcurRendererConfig->name(),
+							  arg2.c_str());
 					return true;
 				}
 				else if (arg1 == TEXTURE2D && count == 4) {
@@ -674,25 +693,9 @@ namespace Fluxions {
 	bool RendererContext::k_path(const Df::TokenVector& args) {
 		if (!k_check(args, 2, "path")) return false;
 		if (args[1].IsStringOrIdentifier()) {
-			FilePathInfo fpi(args[1].sval);
-			if (!fpi.IsRelative() && fpi.IsDirectory()) {
-				HFLOGDEBUG("Path added \"%s\"", fpi.path.c_str());
-				paths.push_back(fpi.path);
-			}
-			else {
-				std::string testpath = basepath + "/" + args[1].sval;
-				fpi.Set(testpath);
-				bool isdir = fpi.IsDirectory();
-				if (isdir) {
-					HFLOGDEBUG("Path added \"%s\"", fpi.path.c_str());
-					paths.push_back(fpi.path);
-				}
-				else {
-					return false;
-				}
-			}
+			return _addPath(args[1].sval);
 		}
-		return true;
+		return false;
 	}
 
 	bool RendererContext::k_program(const Df::TokenVector& args) {
@@ -708,12 +711,16 @@ namespace Fluxions {
 
 	bool RendererContext::k_vertshader(const Df::TokenVector& args) {
 		if (!k_check(args, 2, "vertshader")) return false;
-		std::string arg1;
-		bool svalarg1 = k_sval(args, 1, arg1);
+		std::string path;
+		bool svalarg1 = k_sval(args, 1, path);
 		if (svalarg1) {
 			if (pcurProgram) {
-				std::string path = Fluxions::FindPathIfExists(arg1, paths);
-				pcurProgram->shaderpaths[arg1] = { path, GL_VERTEX_SHADER };
+				FilePathInfo fpi(path, paths);
+				if (fpi.notFound()) {
+					HFLOGWARN("file '%s' not found", path.c_str());
+					return false;
+				}
+				pcurProgram->shaderpaths[path] = { fpi.shortestPath(), GL_VERTEX_SHADER };
 				return true;
 			}
 		}
@@ -722,12 +729,16 @@ namespace Fluxions {
 
 	bool RendererContext::k_fragshader(const Df::TokenVector& args) {
 		if (!k_check(args, 2, "fragshader")) return false;
-		std::string arg1;
-		bool svalarg1 = k_sval(args, 1, arg1);
+		std::string path;
+		bool svalarg1 = k_sval(args, 1, path);
 		if (svalarg1) {
 			if (pcurProgram) {
-				std::string path = Fluxions::FindPathIfExists(arg1, paths);
-				pcurProgram->shaderpaths[arg1] = { path, GL_FRAGMENT_SHADER };
+				FilePathInfo fpi(path, paths);
+				if (fpi.notFound()) {
+					HFLOGWARN("file '%s' not found", path.c_str());
+					return false;
+				}
+				pcurProgram->shaderpaths[path] = { fpi.shortestPath(), GL_FRAGMENT_SHADER };
 				return true;
 			}
 		}
@@ -736,12 +747,16 @@ namespace Fluxions {
 
 	bool RendererContext::k_geomshader(const Df::TokenVector& args) {
 		if (!k_check(args, 2, "geomshader")) return false;
-		std::string arg1;
-		bool svalarg1 = k_sval(args, 1, arg1);
+		std::string path;
+		bool svalarg1 = k_sval(args, 1, path);
 		if (svalarg1) {
 			if (pcurProgram) {
-				std::string path = Fluxions::FindPathIfExists(arg1, paths);
-				pcurProgram->shaderpaths[arg1] = { path, GL_GEOMETRY_SHADER };
+				FilePathInfo fpi(path, paths);
+				if (fpi.notFound()) {
+					HFLOGWARN("file '%s' not found", path.c_str());
+					return false;
+				}
+				pcurProgram->shaderpaths[path] = { fpi.shortestPath(), GL_GEOMETRY_SHADER };
 				return true;
 			}
 		}
@@ -831,7 +846,7 @@ namespace Fluxions {
 				int height = k_ivalue(args, 3);
 				if (!width || !height) {
 					HFLOGERROR("fbo '%s' dimensions must be > 0",
-											pcurFBO->name());
+							   pcurFBO->name());
 				}
 				pcurFBO->setDimensions(width, height);
 				return true;
@@ -864,8 +879,8 @@ namespace Fluxions {
 				}
 				else {
 					HFLOGERROR("target '%s' incorrect for fbo '%s'",
-											args[2].sval.c_str(),
-											pcurFBO->name());
+							   args[2].sval.c_str(),
+							   pcurFBO->name());
 					return false;
 				}
 
@@ -889,8 +904,8 @@ namespace Fluxions {
 				}
 				else {
 					HFLOGERROR("attachment incorrect for fbo '%s'",
-											args[3].sval.c_str(),
-											pcurFBO->name());
+							   args[3].sval.c_str(),
+							   pcurFBO->name());
 					return false;
 				}
 
@@ -915,8 +930,8 @@ namespace Fluxions {
 				}
 				else {
 					HFLOGERROR("internalformat %s incorrect for fbo '%s'",
-											args[4].sval.c_str(),
-											pcurFBO->name());
+							   args[4].sval.c_str(),
+							   pcurFBO->name());
 					return false;
 				}
 
@@ -925,21 +940,21 @@ namespace Fluxions {
 					case GL_RENDERBUFFER:
 						pcurFBO->addRenderbuffer(attachment, internalformat);
 						HFLOGINFO("attaching renderbuffer to fbo '%s'",
-											   pcurFBO->name());
+								  pcurFBO->name());
 						break;
 					case GL_TEXTURE_2D:
 						pcurFBO->addTexture2D(attachment, target, internalformat, generateMipmaps);
 						pcurFBO->setMapName(mapName);
 						HFLOGINFO("attaching texture2D to fbo '%s' for map '%s'",
-											   pcurFBO->name(),
-											   mapName.c_str());
+								  pcurFBO->name(),
+								  mapName.c_str());
 						break;
 					case GL_TEXTURE_CUBE_MAP:
 						pcurFBO->addTextureCubeMap(attachment, target, internalformat, generateMipmaps);
 						pcurFBO->setMapName(mapName);
 						HFLOGINFO("attaching textureCube to fbo '%s' for map '%s'",
-											   pcurFBO->name(),
-											   mapName.c_str());
+								  pcurFBO->name(),
+								  mapName.c_str());
 						break;
 					}
 					return true;
@@ -973,8 +988,12 @@ namespace Fluxions {
 		}
 		if (pcurTexture2D && svalarg1 && svalarg2) {
 			if (arg1 == "map") {
-				arg2 = FindPathIfExists(arg2, paths);
-				pcurTexture2D->mappath = arg2;
+				FilePathInfo fpi(arg2, paths);
+				if (fpi.notFound()) {
+					HFLOGWARN("file '%s' not found", fpi.shortestPathC());
+					return false;
+				}
+				pcurTexture2D->mappath = fpi.shortestPath();
 				return true;
 			}
 			else if (arg1 == "uniform") {
@@ -1012,8 +1031,12 @@ namespace Fluxions {
 		}
 		if (pcurTextureCube && svalarg1 && svalarg2) {
 			if (arg1 == "map") {
-				arg2 = FindPathIfExists(arg2, paths);
-				pcurTextureCube->mappath = arg2;
+				FilePathInfo fpi(arg2, paths);
+				if (fpi.notFound()) {
+					HFLOGWARN("file '%s' not found", fpi.shortestPathC());
+					return false;
+				}
+				pcurTextureCube->mappath = fpi.shortestPath();
 				return true;
 			}
 			else if (arg1 == "uniform") {

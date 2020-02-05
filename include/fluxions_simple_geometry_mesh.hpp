@@ -215,7 +215,8 @@ namespace Fluxions {
 		std::vector<Surface> Surfaces;
 		BoundingBoxf BoundingBox;
 	private:
-		bool add_mtllib(std::istream& istr, std::string& mtllibname, std::string& basepath);
+		// note: modifies mtllibname
+		bool add_mtllib(std::istream& istr, std::string& mtllibname, const std::string& basepath);
 	};
 }
 

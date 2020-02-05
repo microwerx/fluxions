@@ -88,8 +88,8 @@ namespace Fluxions {
 		//RendererProgramPtr gbufferProgram = nullptr;
 		//RenderConfigPtr deferredConfigs[4] = { nullptr, nullptr, nullptr, nullptr };
 		//RendererProgramPtr deferredPrograms[4] = { nullptr, nullptr, nullptr, nullptr };
-		Vector2i deferredSplitPoint = Vector2i(0, 0);
-		Recti deferredRect = Recti(0, 0, 0, 0);
+		Vector2i deferredSplitPoint{ 0, 0 };
+		Recti deferredRect{ 0, 0, 0, 0 };
 
 		std::string name_{ "noname RendererContext" };
 
@@ -107,6 +107,8 @@ namespace Fluxions {
 		RendererTexture2D* pcurTexture2D{ nullptr };
 		RendererTextureCube* pcurTextureCube{ nullptr };
 		RendererFramebuffer* pcurFBO{ nullptr };
+
+		bool _addPath(const std::string& path);
 
 		//virtual bool new_renderconfig(const std::string& name);
 		//virtual bool use_renderconfig(const std::string& name);

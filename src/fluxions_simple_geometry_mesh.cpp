@@ -14,12 +14,12 @@ namespace Fluxions {
 		FilePathInfo fpi_cache(cache_filename);
 
 		// Save name and path for possible reload later
-		name = fpi_original.fname;
-		path = fpi_original.path;
+		name = fpi_original.stem();
+		path = fpi_original.shortestPath();
 
-		if (fpi_cache.Exists()) {
+		if (fpi_cache.exists()) {
 			// Is the original file newer than the cache?
-			if (fpi_original.ctime <= fpi_cache.ctime) {
+			if (fpi_original.lastWriteTime() <= fpi_cache.lastWriteTime()) {
 				return loadCache(cache_filename);
 			}
 		}
@@ -130,7 +130,7 @@ namespace Fluxions {
 				HFLOGINFO("'%s' ... using material '%s' from '%s'", name.c_str(), str.c_str(), materialLibrary.c_str());
 			}
 			else if (str == "mtllib") {
-				add_mtllib(istr, materialLibrary, fpi_original.dir);
+				add_mtllib(istr, materialLibrary, fpi_original.parentPath());
 			}
 			else if (str == "v") {
 				istr >> v[0] >> v[1] >> v[2];
@@ -271,28 +271,28 @@ namespace Fluxions {
 		return saveCache(cache_filename);
 	}
 
-	bool SimpleGeometryMesh::add_mtllib(std::istream& istr, std::string& mtllibname, std::string& basepath) {
+	bool SimpleGeometryMesh::add_mtllib(std::istream& istr, std::string& mtllibname, const std::string& basepath) {
 		std::string pathToMTL = ReadString(istr);
 		FilePathInfo fpi(basepath + pathToMTL);
 
 		// Check if we have added this map already
-		if (mtllibs.count(fpi.fname)) {
+		if (mtllibs.count(fpi.stem())) {
 			return true;
 		}
 
 		// If it doesn't exist, try the working directory
-		if (fpi.DoesNotExist()) {
-			fpi.Set("./" + pathToMTL);
+		if (fpi.notFound()) {
+			fpi.reset("./" + pathToMTL);
 		}
 
-		if (fpi.DoesNotExist()) {
+		if (fpi.notFound()) {
 			HFLOGWARN("Material Library '%s' cannot be located", mtllibname.c_str());
 			return false;
 		}
 
 		// update the information in the map list
-		mtllibname = fpi.fname;
-		mtllibs[mtllibname] = fpi.path;
+		mtllibname = fpi.stem();
+		mtllibs[mtllibname] = fpi.shortestPath();
 		HFLOGINFO("'%s' ... adding mtllib '%s' to load list", name.c_str(), mtllibname.c_str());
 		return true;
 	}

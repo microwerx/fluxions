@@ -89,7 +89,7 @@ namespace Fluxions {
 
 	bool SimpleSceneGraph::Load(const std::string& filename) {
 		FilePathInfo scenefpi(filename);
-		setName(scenefpi.fname);
+		setName(scenefpi.stem());
 		std::ifstream fin(filename.c_str());
 
 		if (!fin) {
@@ -102,7 +102,7 @@ namespace Fluxions {
 		reset();
 		// Use the path of the scene graph as the default path, then the current
 		// directory
-		pathsToTry.push_back(scenefpi.dir);
+		pathsToTry.push_back(scenefpi.parentPath());
 		pathsToTry.push_back("./");
 
 		// proceed to parse the file and read each line.
@@ -229,11 +229,11 @@ namespace Fluxions {
 
 		// 6. Output geometryGroups_ files
 		for (auto& [k, mesh] : staticMeshes) {
-			mesh.saveOBJ(fpi.dir + mesh.name + ".obj");
+			mesh.saveOBJ(fpi.parentPath() + mesh.name + ".obj");
 		}
 
 		// 7. Output mtllib files
-		materials.saveMTL(fpi.dir + name_str() + ".mtl");
+		materials.saveMTL(fpi.parentPath() + name_str() + ".mtl");
 
 		return true;
 
@@ -372,13 +372,15 @@ namespace Fluxions {
 	bool SimpleSceneGraph::ReadMaterialLibrary(const std::string& type, std::istream& istr) {
 		if (type != "mtllib")
 			return false;
-		std::string filename = ReadString(istr);
-		std::string path = FindPathIfExists(filename, pathsToTry);
-		FilePathInfo fpi(path);
-		if (materials.load(fpi.path)) {
+		std::string path = ReadString(istr);
+		FilePathInfo fpi(path, pathsToTry);
+		if (fpi.notFound()) {
+			HFLOGERROR("MTLLIB %s was not found.", path.c_str());
+			return false;
+		}
+		if (materials.load(fpi.shortestPath())) {
 			return true;
 		}
-		HFLOGERROR("MTLLIB %s was not found.", filename.c_str());
 		return false;
 	}
 
@@ -386,27 +388,26 @@ namespace Fluxions {
 		if (type != "geometryGroup")
 			return false;
 
-		std::string filename = ReadString(istr);
-		std::string path = FindPathIfExists(filename, pathsToTry);
-		FilePathInfo fpi(path);
-		if (path.empty()) {
-			HFLOGERROR("OBJ file %s was not found.", filename.c_str());
+		std::string path = ReadString(istr);
+		FilePathInfo fpi(path, pathsToTry);
+		if (fpi.notFound()) {
+			HFLOGERROR("OBJ file %s was not found.", path.c_str());
 			return false;
 		}
-		if (!ReadObjFile(path, fpi.fname)) {
-			HFLOGERROR("OBJ file %s had an error while loading", filename.c_str());
+		if (!ReadObjFile(fpi.shortestPath(), fpi.stem())) {
+			HFLOGERROR("OBJ file %s had an error while loading", path.c_str());
 			return false;
 		}
-		createGeometry(fpi.fname);
+		createGeometry(fpi.stem());
 		unsigned id = geometryGroups.lastId;
 
 		SimpleGeometryGroup& geometryGroup = geometryGroups[id];
 		geometryGroup.transform = currentTransform;
-		geometryGroup.bbox = staticMeshes[fpi.fname].BoundingBox;
+		geometryGroup.bbox = staticMeshes[fpi.stem()].BoundingBox;
 		geometryGroup.objectId = 0;
-		geometryGroup.objectName = fpi.fname;
+		geometryGroup.objectName = fpi.stem();
 
-		HFLOGINFO("OBJ file %s loaded.", filename.c_str());
+		HFLOGINFO("OBJ file %s loaded.", path.c_str());
 		return true;
 	}
 

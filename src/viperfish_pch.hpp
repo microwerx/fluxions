@@ -5,3 +5,5 @@
 #undef MAX_RUN_MESSAGES
 #endif
 #define MAX_RUN_MESSAGES 0
+
+#include <viperfish.hpp>

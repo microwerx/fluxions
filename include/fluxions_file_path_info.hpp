@@ -2,9 +2,11 @@
 #define FLUXIONS_FILEIO_HPP
 
 #include <fluxions_stdcxx.hpp>
+#include <filesystem>
 
 namespace Fluxions {
 	enum class PathType {
+		None,
 		DoesNotExist,
 		Directory,
 		File,
@@ -12,99 +14,93 @@ namespace Fluxions {
 	};
 
 	std::string ReadTextFile(const std::string& filename);
+	byte_array ReadBinaryFile(const std::string& filename);
 
-	using TimeValue = time_t;
+	using FileTimeValue = std::filesystem::file_time_type;
 
 	struct FilePathInfo {
-	private:
-		/// <summary>The drive letter for this file. Not applicable for POSIX.</summary>
-		// std::string  drive;
 	public:
-		/// <summary>Original path string for this structure</summary>
-		std::string origpath;
-		/// <summary>The directory for this file with final slash.</summary>
-		std::string dir;
-		/// <summary>The full filename with extension.</summary>
-		std::string fullfname;
-		/// <summary>The filename minus the final extension.</summary>
-		std::string fname;
-		/// <summary>The extension from the filename.</summary>
-		std::string ext;
-		/// <summary>The full path name for the filename.</summary>
-		std::string path;
-
-		bool relativePath = false;
-
-		PathType pathType = PathType::DoesNotExist;
-		TimeValue atime = 0;
-		TimeValue ctime = 0;
-
 		FilePathInfo();
-		FilePathInfo(const std::string& filename);
-		void Clear();
-		void Set(const std::string& filename);
-		std::string getFullPathName(const std::string& filename);
-		std::string getCurrentDirectory();
+		FilePathInfo(const std::string& path);
+		FilePathInfo(const std::string& path, const string_vector& paths);
 
-		bool TestIfFileExists(const std::string& filename);
-		bool FindFileIfExists(
-			const std::vector<std::string>& pathsToTry,
-			std::string& pathFilename);
+		// returns true if path exists
+		bool reset(const std::string& path);
 
-		void fill_stat_info();
-		bool DoesNotExist() const;
-		bool Exists() const;
-		bool IsDirectory() const;
-		bool IsOther() const;
-		bool IsFile() const;
-		bool IsRelative() const;
-		// inline bool DoesNotExist() const { return pathType == PathType::DoesNotExist; }
-		// inline bool Exists() const { return pathType != PathType::DoesNotExist; }
-		// inline bool IsDirectory() const { return pathType == PathType::Directory; }
-		// inline bool IsFile() const { return pathType == PathType::File; }
-		// inline bool IsOther() const { return pathType == PathType::Other; }
-		// inline bool IsRelative() const { return relativePath == true; }
+		// returns true if path exists, searching through paths as necessary
+		bool reset(const std::string& path, const string_vector& paths);
+
+		const char* shortestPathC() const { return shortestPath().c_str(); }
+		const std::string& shortestPath() const { return relative_path_.empty() ? absolute_path_ : relative_path_; }
+		const std::string& relativePath() const { return relative_path_; }
+		const std::string& absolutePath() const { return absolute_path_; }
+		const std::string& parentPath() const { return parent_path_.empty() ? root_path_ : parent_path_; }
+		const std::string& filename() const { return filename_; }
+		const char* filenameC() const { return filename_.c_str(); }
+		const std::string& stem() const { return stem_; }
+		const std::string& extension() const { return extension_; }
+		const FileTimeValue& lastWriteTime() const { return last_write_time_; }
+
+		// returns true if path was not found
+		bool notFound() const { return absolute_path_.empty(); }
+
+		// returns true if path exists
+		bool exists() const { return !absolute_path_.empty(); }
+
+		// returns true if path is a directory
+		bool isDirectory() const { return pathType_ == PathType::Directory; }
+
+		// returns true if path is not a directory or regular file
+		bool isOther() const { return pathType_ == PathType::Other; }
+
+		// returns true if path is a regular file
+		bool isFile() const { return pathType_ == PathType::File; }
+
+		// returns true if relative path exists
+		bool isRelative() const { return !relative_path_.empty(); }
+
+		// returns absolute path of file
+		static std::string GetAbsolutePath(const std::string& path);
+
+		// returns absolute path of current working directory
+		static std::string GetCurrentPath();
+
+		// returns true if path exists
+		static bool TestIfPathExists(const std::string& path);
+
+		// returns true if path exists, searching through paths as necessary
+		static bool FindIfPathExists(std::string& path, const string_vector& paths);
+	private:
+		// The type of path, initially PathType::None
+		PathType pathType_{ PathType::None };
+
+		// time file last changed
+		FileTimeValue last_write_time_;
+
+		// error code for std::filesystem issues
+		std::error_code fpi_ec_;
+		// Original path string for this structure
+		std::string origpath;
+		// The directory for this file with final slash.
+		std::string root_path_;
+		// The directory for this file with the final slash.
+		std::string parent_path_;
+		// The full filename with extension.
+		std::string filename_;
+		// The filename minus the final extension.
+		std::string stem_;
+		// The extension from the filename.
+		std::string extension_;
+		// The full path name for the filename.
+		std::string absolute_path_;
+		// The relative path name
+		std::string relative_path_;
+		// The root name of the file (such as C: or //resource)
+		std::string root_name_;
+
+		void _clear();
+		bool _fill_stat_info();
 	};
-
-	//inline std::string  GetFileDrive(const std::string  &filename) { FilePathInfo fpi(filename); return fpi.drive; }
-	inline std::string GetFileDir(const std::string& path) {
-		FilePathInfo fpi(path);
-		return fpi.dir;
-	}
-	inline std::string GetFileNameWithExtension(const std::string& path) {
-		FilePathInfo fpi(path);
-		return fpi.fullfname;
-	}
-	inline std::string GetFileName(const std::string& path) {
-		FilePathInfo fpi(path);
-		return fpi.fname;
-	}
-	inline std::string GetFileExtension(const std::string& path) {
-		FilePathInfo fpi(path);
-		return fpi.ext;
-	}
-
-	inline bool TestIfFileExists(const std::string& filename) {
-		std::ifstream fin(filename.c_str(), std::ios::binary);
-		if (!fin)
-			return false;
-		fin.close();
-		return true;
-	}
-
-	std::string FindPathIfExists(const std::string& path, const std::vector<std::string> pathsToTry);
-	std::string NormalizePathName(const std::string& basepath, const std::string& path);
-	inline std::string NormalizePathName(const std::string& path) { return NormalizePathName("", path); }
-	PathType GetPathType(const std::string& path);
-	TimeValue GetPathAccessTime(const std::string& path);
-	TimeValue GetPathCreationTime(const std::string& path);
-	inline bool IsPathDirectory(const std::string& fname) { return GetPathType(fname) == PathType::Directory; }
-	inline bool IsPathFile(const std::string& fname) { return GetPathType(fname) == PathType::File; }
-	inline bool IsPathValid(const std::string& path) {
-		auto pt = GetPathType(path);
-		return pt == PathType::Directory || pt == PathType::File;
-	}
-	inline bool IsPathWeird(const std::string& fname) { return GetPathType(fname) == PathType::Other; }
 } // namespace Fluxions
 
 #endif

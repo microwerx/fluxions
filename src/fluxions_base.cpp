@@ -10,30 +10,6 @@ namespace Fluxions {
 	std::string gl_renderer;
 	std::string gl_vendor;
 
-	std::string FindFileIfExists(const std::string& filename, const std::vector<std::string>& pathsToTry) {
-		std::string output;
-
-		// Is there a file name to test?
-		FilePathInfo fpi(filename);
-		if (fpi.fullfname.empty())
-			return output;
-
-		if (TestIfFileExists(filename)) {
-			output = filename;
-		}
-		else {
-			for (auto testPathIt : pathsToTry) {
-				std::string testPath = testPathIt + fpi.fullfname;
-				if (TestIfFileExists(testPath)) {
-					output = testPath;
-					break;
-				}
-			}
-		}
-
-		return output;
-	}
-
 	std::map<std::string, std::string> MakeOptionsFromArgs(int argc, const char** argv) {
 		std::map<std::string, std::string> argv_options;
 		for (int i = 0; i < argc; i++) {

@@ -66,7 +66,7 @@ namespace Uf {
 
 		if (usePreviousRun_) {
 			Fluxions::FilePathInfo fpi(isHQ ? hq_output_path_exr : output_path_exr);
-			if (fpi.Exists()) {
+			if (fpi.exists()) {
 				state = State::Finished;
 				return;
 			}

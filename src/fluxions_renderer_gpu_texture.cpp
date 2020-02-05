@@ -133,8 +133,13 @@ namespace Fluxions {
 	bool RendererGpuTexture::loadMap() {
 		if (maploaded && !alwaysLoad) return true;
 		FilePathInfo fpi(mappath);
-		toupper(fpi.ext);
-		maploaded = gpuLoadTexture(*this, fpi.ext, mappath, useMipMaps);
+		if (fpi.notFound()) {
+			HFLOGERROR("map '%s' not found", fpi.filenameC());
+			return false;
+		}
+		std::string ext = fpi.extension();
+		toupper(ext);
+		maploaded = gpuLoadTexture(*this, ext, mappath, useMipMaps);
 		return maploaded;
 	}
 

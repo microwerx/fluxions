@@ -1,4 +1,5 @@
 #include "viperfish_pch.hpp"
+#include <fluxions_stdcxx.hpp>
 #include <viperfish_widget.hpp>
 
 namespace Vf {
@@ -7,11 +8,11 @@ namespace Vf {
 		ibits = 0;
 	}
 
-	bool AnalogBitset::BitTest(unsigned bitsToTest) const {
+	bool AnalogBitset::bitTest(unsigned bitsToTest) const {
 		return (ibits & bitsToTest) != 0;
 	}
 
-	void AnalogBitset::BitOn(unsigned which) {
+	void AnalogBitset::bitOn(unsigned which) {
 		unsigned value = 1 << which;
 
 		if (within(which, 0, 31)) {
@@ -20,7 +21,7 @@ namespace Vf {
 		}
 	}
 
-	void AnalogBitset::BitOff(unsigned which) {
+	void AnalogBitset::bitOff(unsigned which) {
 		unsigned value = 1 << which;
 		if (within(which, 0, 31)) {
 			ibits &= ~value;
@@ -28,7 +29,7 @@ namespace Vf {
 		}
 	}
 
-	void AnalogBitset::BitSetf(unsigned which, float value) {
+	void AnalogBitset::bitSetf(unsigned which, float value) {
 		unsigned ivalue = 1 << which;
 		if (within(which, 0, 31)) {
 			if (value == 0.0) {
@@ -44,10 +45,10 @@ namespace Vf {
 		}
 	}
 
-	void AnalogBitset::BitSet(unsigned bits) {
+	void AnalogBitset::bitSet(unsigned bits) {
 		for (int i = 0; i < 32; i++) {
 			unsigned value = bits & 1;
-			BitSet(i, value ? 1.0f : 0.0f);
+			bitSet(i, value ? 1.0f : 0.0f);
 			bits >>= 1;
 		}
 	}
