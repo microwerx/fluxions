@@ -364,7 +364,7 @@ GRTAGS
 *.gch
 
 # cmake
-build/**/
+build/
 !build/.keep
 
 docs/html

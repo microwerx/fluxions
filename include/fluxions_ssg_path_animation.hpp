@@ -50,11 +50,13 @@ namespace Fluxions
 
 		Vector3f p() const;
 		Quaternionf q() const;
-
-		bool operator<(const PathKeyframe& b) {
-			return t < b.t;
-		}
 	};
+
+	inline bool operator<(const PathKeyframe& a, const PathKeyframe& b) {
+			return a. t < b.t;
+		}
+
+
 
 	class SimplePathAnimation : public SimpleSceneGraphNode {
 	public:

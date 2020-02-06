@@ -1,5 +1,5 @@
 #ifndef VIPERFISH_ANIMATION_WINDOW_HPP
-#define VIPERFISH_ANIMATION_WINDOW_CPP
+#define VIPERFISH_ANIMATION_WINDOW_HPP
 
 #include <viperfish_base.hpp>
 #include <viperfish_window.hpp>

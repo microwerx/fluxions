@@ -444,6 +444,105 @@ namespace Fluxions {
 	using Color4b = TColor4<char>;
 	using Color4ub = TColor4<unsigned char>;
 
+	template <>
+	float TColor4<float>::to_float_factor = 1.0f;
+	template <>
+	float TColor4<float>::from_float_factor = 1.0f;
+	template <>
+	float TColor4<double>::to_float_factor = 1.0f;
+	template <>
+	float TColor4<double>::from_float_factor = 1.0f;
+	template <>
+	float TColor4<unsigned char>::to_float_factor = 255.99f;
+	template <>
+	float TColor4<unsigned char>::from_float_factor = 1.0f / 255.00f;
+	template <>
+	float TColor4<unsigned int>::to_float_factor = 255.99f;
+	template <>
+	float TColor4<unsigned int>::from_float_factor = 1.0f / 255.00f;
+	template <>
+	float TColor4<unsigned short>::to_float_factor = 255.99f;
+	template <>
+	float TColor4<unsigned short>::from_float_factor = 1.0f / 255.00f;
+	template <>
+	float TColor4<char>::to_float_factor = 127.99f;
+	template <>
+	float TColor4<char>::from_float_factor = 1.0f / 127.00f;
+	template <>
+	float TColor4<int>::to_float_factor = 255.99f;
+	template <>
+	float TColor4<int>::from_float_factor = 1.0f / 255.00f;
+	template <>
+	float TColor4<short>::to_float_factor = 255.99f;
+	template <>
+	float TColor4<short>::from_float_factor = 1.0f / 255.00f;
+
+	template <>
+	TColor4<float>::value_type TColor4<float>::min_value = 0.0f;
+	template <>
+	TColor4<float>::value_type TColor4<float>::max_value = 1.0f;
+	template <>
+	TColor4<double>::value_type TColor4<double>::min_value = 0.0;
+	template <>
+	TColor4<double>::value_type TColor4<double>::max_value = 1.0;
+	template <>
+	TColor4<char>::value_type TColor4<char>::min_value = 0;
+	template <>
+	TColor4<char>::value_type TColor4<char>::max_value = 127;
+	template <>
+	TColor4<short>::value_type TColor4<short>::min_value = 0;
+	template <>
+	TColor4<short>::value_type TColor4<short>::max_value = 255;
+	template <>
+	TColor4<int>::value_type TColor4<int>::min_value = 0;
+	template <>
+	TColor4<int>::value_type TColor4<int>::max_value = 65535;
+	template <>
+	TColor4<unsigned char>::value_type TColor4<unsigned char>::min_value = 0;
+	template <>
+	TColor4<unsigned char>::value_type TColor4<unsigned char>::max_value = 255;
+	template <>
+	TColor4<unsigned short>::value_type TColor4<unsigned short>::min_value = 0;
+	template <>
+	TColor4<unsigned short>::value_type TColor4<unsigned short>::max_value = 65535;
+	template <>
+	TColor4<unsigned int>::value_type TColor4<unsigned int>::min_value = 0;
+	template <>
+	TColor4<unsigned int>::value_type TColor4<unsigned int>::max_value = 65535;
+
+	template <>
+	unsigned int TColor4<float>::gl_type = 0x1406; // GL_FLOAT
+	template <>
+	unsigned int TColor4<double>::gl_type = 0x140A; // GL_DOUBLE
+	template <>
+	unsigned int TColor4<char>::gl_type = 0x1400; // GL_BYTE
+	template <>
+	unsigned int TColor4<unsigned char>::gl_type = 0x1401; // GL_UNSIGNED_BYTE
+	template <>
+	unsigned int TColor4<short>::gl_type = 0x1402; // GL_SHORT
+	template <>
+	unsigned int TColor4<unsigned short>::gl_type = 0x1403; // GL_UNSIGNED_SHORT
+	template <>
+	unsigned int TColor4<int>::gl_type = 0x1404; // GL_INT
+	template <>
+	unsigned int TColor4<unsigned int>::gl_type = 0x1405; // GL_UNSIGNED_INT
+	template <>
+	unsigned int TColor4<float>::gl_size = 4;
+	template <>
+	unsigned int TColor4<double>::gl_size = 4;
+	template <>
+	unsigned int TColor4<char>::gl_size = 4;
+	template <>
+	unsigned int TColor4<unsigned char>::gl_size = 4;
+	template <>
+	unsigned int TColor4<short>::gl_size = 4;
+	template <>
+	unsigned int TColor4<unsigned short>::gl_size = 4;
+	template <>
+	unsigned int TColor4<int>::gl_size = 4;
+	template <>
+	unsigned int TColor4<unsigned int>::gl_size = 4;
+
 #ifndef FLUXIONS_NO_EXTERN_TEMPLATES
 	extern template class TColor4<float>;
 	extern template class TColor4<double>;

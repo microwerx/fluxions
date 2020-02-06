@@ -253,8 +253,6 @@ namespace Fluxions {
 		rt.internalformat = whichInternalformat;
 		_setFormats(rt);
 		rt.target = GL_RENDERBUFFER;
-		width_ = width_;
-		height_ = height_;
 		rt.samples = samples;
 		rt.useMultisamples = useMultisamples;
 		rt.object = 0;
@@ -293,8 +291,6 @@ namespace Fluxions {
 		rt.levels = generateMipmaps ? (int)(log(std::max(width_, height_)) / log(2.0)) : 1;
 		rt.levels = std::max(1, rt.levels);
 		rt.object = 0;
-		width_ = width_;
-		height_ = height_;
 		rt.samples = samples;
 		rt.currentCubeFace = currentCubeFace;
 		rt.useMultisamples = useMultisamples;
