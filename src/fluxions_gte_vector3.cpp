@@ -1,4 +1,5 @@
 #include "fluxions_gte_pch.hpp"
+#include <fluxions_stdcxx.hpp>
 #define FLUXIONS_NO_EXTERN_TEMPLATES
 #include <fluxions_gte_vector3.hpp>
 

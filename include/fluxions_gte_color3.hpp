@@ -380,7 +380,7 @@ namespace Fluxions {
 				std::max(a.g, b.g),
 				std::max(a.b, b.b));
 		}
-}; // class TColor3
+	}; // class TColor3
 
 	template <typename T>
 	constexpr TColor3<T> abs(TColor3<T> color) {

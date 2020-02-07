@@ -5,7 +5,6 @@
 
 namespace Vf {
 	using namespace Fluxions;
-	// static constexpr int MAX_RUN_MESSAGES = 2;
 
 	bool DearImGuiWidget::ContextInitialized = false;
 
