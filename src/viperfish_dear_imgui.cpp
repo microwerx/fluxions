@@ -31,14 +31,22 @@ namespace Vf {
 		pIO->DisplaySize.y = 480.0f;
 		pIO->DeltaTime = 0.0f;
 
-		FilePathInfo urwdock("resources/fonts/dock-medium.otf");
-		if (urwdock.exists()) {
-			ImFont* font = pIO->Fonts->AddFontFromFileTTF("resources/fonts/dock-medium.otf", 24.0f);
-			if (!font) {
-				HFLOGWARN("Dock Font cannot to be loaded");
+		std::vector<std::string> fontpaths{
+			"resources/fonts/ibmplexsanscond-medium.ttf",
+			"resources/fonts/dock-medium.otf",
+			"resources/fonts/inconsolata.ttf" };
+		FilePathInfo fontfpi;
+		ImFont* font{ nullptr };
+		for (auto fontpath : fontpaths) {
+			fontfpi.reset(fontpath);
+			if (fontfpi.exists()) {
+				font = pIO->Fonts->AddFontFromFileTTF(fontfpi.shortestPathC(), 24.0f);
+				break;
 			}
 		}
-
+		if (!font) {
+			HFLOGWARN("custom DearImGui fonts were not found");
+		}
 
 		pIO->KeyMap[ImGuiKey_Tab] = 0x09; // Keyboard mapping. ImGui will use those indices to peek into the pIO.KeyDown[] array.
 		pIO->KeyMap[ImGuiKey_LeftArrow] = VF_KEY_LEFT;
