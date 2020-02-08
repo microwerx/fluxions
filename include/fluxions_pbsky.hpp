@@ -37,6 +37,13 @@ namespace Fluxions {
 		const Vector3f& GetSunVector() const noexcept { return sunVector; }
 		void SetGroundAlbedo(float r, float g, float b) noexcept { groundAlbedo.reset(r, g, b); };
 		const Color4f& GetGroundAlbedo() const noexcept { return groundAlbedo; }
+
+		// Compute MODIS Albedo at the specified latitude and longitude, measured in degrees
+		Color3f computeModisAlbedo(float latitude, float longitude, float month) const;
+
+		float getDayOfYear() const { return (float)astroCalc.getDayOfYear(); }
+		float getMonthOfYear() const { return (float)astroCalc.getMonthOfYear(); }
+
 		void SetNumSamples(int samples) noexcept { nSamples = clamp(samples, 1, 16); }
 		int GetNumSamples() const noexcept { return nSamples; }
 		void ComputeSunFromLocale() noexcept;

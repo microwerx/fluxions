@@ -67,7 +67,9 @@ namespace Fluxions {
 		bool read(const std::string& keyword, std::istream& istr) override;
 		bool write(std::ostream& ostr) const override;
 
+		void addPath(const std::string& path);
 	private:
+		std::string _findPath(std::string path) const;
 		SimpleSceneGraphNode* createNode(const std::string& name, SimpleSceneGraphNode* node);
 		SimpleSceneGraphNode* createCamera(const std::string& name);
 		SimpleSceneGraphNode* createSphere(const std::string& name);

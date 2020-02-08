@@ -206,8 +206,8 @@ namespace Fluxions {
 		return (x > T(1)) ? T(1) : x;
 	}
 
-	template <typename T>
-	constexpr T lerp(T t, T a, T b) noexcept {
+	template <typename T, typename U>
+	constexpr U lerp(T t, U a, U b) noexcept {
 		return (T(1) - t) * a + t * b;
 	}
 

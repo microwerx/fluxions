@@ -66,7 +66,7 @@ namespace Fluxions {
 	void SimpleSceneGraph::reset() {
 		boundingBox.reset();
 		sceneFileLines.clear();
-		pathsToTry.clear();
+		//pathsToTry.clear();
 		spheres.clear();
 		currentTransform.LoadIdentity();
 		geometryGroups.clear();
@@ -87,8 +87,26 @@ namespace Fluxions {
 		// geometryGroups_.clear();
 	}
 
+	std::string SimpleSceneGraph::_findPath(std::string path) const {
+		std::string p;
+		FilePathInfo fpi(path, pathsToTry);
+		if (fpi.exists()) p = fpi.shortestPath();
+		return fpi.shortestPath();
+	}
+
+	void SimpleSceneGraph::addPath(const std::string& path) {
+		FilePathInfo fpi(path);
+		if (!fpi.isDirectory()) return;
+		if (std::find(pathsToTry.begin(), pathsToTry.end(), fpi.shortestPath()) == pathsToTry.end()) {
+			pathsToTry.push_back(path);
+		}
+	}
+
 	bool SimpleSceneGraph::Load(const std::string& filename) {
 		FilePathInfo scenefpi(filename);
+		if (!scenefpi.exists()) return false;
+
+		HFLOGINFO("Loading '%s'", scenefpi.shortestPathC());
 		setName(scenefpi.stem());
 		std::ifstream fin(filename.c_str());
 
@@ -103,7 +121,12 @@ namespace Fluxions {
 		// Use the path of the scene graph as the default path, then the current
 		// directory
 		pathsToTry.push_back(scenefpi.parentPath());
-		pathsToTry.push_back("./");
+
+		static constexpr int LOADED_DATETIME = 1;
+		static constexpr int LOADED_CAMERA = 2;
+		static constexpr int LOADED_GEOMETRY_GROUP = 4;
+		static constexpr int LOADED_ENVIRONMENT = 8;
+		int flags = 0;
 
 		// proceed to parse the file and read each line.
 		while (fin) {
@@ -151,6 +174,7 @@ namespace Fluxions {
 				ReadMaterialLibrary(token, istr);
 			}
 			else if (token == "geometryGroup") {
+				flags |= LOADED_GEOMETRY_GROUP;
 				ReadGeometryGroup(token, istr);
 			}
 			else if (token == "pathanim") {
@@ -161,12 +185,15 @@ namespace Fluxions {
 				ReadEnviro(token, istr);
 			}
 			else if (token == "pbsky") {
+				flags |= LOADED_ENVIRONMENT;
 				ReadEnviroPbsky(token, istr);
 			}
 			else if (token == "datetime") {
+				flags |= LOADED_DATETIME;
 				ReadEnviroDatetime(token, istr);
 			}
 			else if (token == "camera") {
+				flags |= LOADED_CAMERA;
 				currentTransform.LoadIdentity();
 				ReadCamera(token, istr);
 			}
@@ -207,6 +234,11 @@ namespace Fluxions {
 		}
 
 		fin.close();
+
+		if (!(flags & LOADED_DATETIME)) HFLOGWARN("Did not specify datetime");
+		if (!(flags & LOADED_GEOMETRY_GROUP)) HFLOGWARN("Did not specify geometry");
+		if (!(flags & LOADED_CAMERA)) HFLOGWARN("Did not specify camera");
+		if (!(flags & LOADED_ENVIRONMENT)) HFLOGWARN("Did not specify environment");
 
 		calcBounds();
 
@@ -375,7 +407,7 @@ namespace Fluxions {
 		std::string path = ReadString(istr);
 		FilePathInfo fpi(path, pathsToTry);
 		if (fpi.notFound()) {
-			HFLOGERROR("MTLLIB %s was not found.", path.c_str());
+			HFLOGERROR("MTLLIB '%s' was not found.", path.c_str());
 			return false;
 		}
 		if (materials.load(fpi.shortestPath())) {
@@ -391,7 +423,7 @@ namespace Fluxions {
 		std::string path = ReadString(istr);
 		FilePathInfo fpi(path, pathsToTry);
 		if (fpi.notFound()) {
-			HFLOGERROR("OBJ file %s was not found.", path.c_str());
+			HFLOGERROR("OBJ file '%s' was not found.", path.c_str());
 			return false;
 		}
 		if (!ReadObjFile(fpi.shortestPath(), fpi.stem())) {
@@ -407,7 +439,7 @@ namespace Fluxions {
 		geometryGroup.objectId = 0;
 		geometryGroup.objectName = fpi.stem();
 
-		HFLOGINFO("OBJ file %s loaded.", path.c_str());
+		HFLOGINFO("OBJ file '%s' loaded.", path.c_str());
 		return true;
 	}
 
@@ -456,11 +488,24 @@ namespace Fluxions {
 		istr >> groundAlbedo.g;
 		istr >> groundAlbedo.b;
 
+		if (groundAlbedo.maxrgb() == 0) {
+			groundAlbedo = environment.pbsky.computeModisAlbedo(latitude, longitude, environment.pbsky.getMonthOfYear());
+		}
+
 		environment.pbsky.SetNumSamples(samples);
 		environment.pbsky.SetLocation(latitude, longitude);
 		environment.pbsky.SetTurbidity(turbidity);
-		environment.pbsky.SetGroundAlbedo(groundAlbedo.r, groundAlbedo.g,
+		environment.pbsky.SetGroundAlbedo(groundAlbedo.r,
+										  groundAlbedo.g,
 										  groundAlbedo.b);
+		HFLOGINFO("PBSKY: numSamples=%f, lat/lon=(% 3.2f, % 3.2f), T=%2.1f, A=(%1.2f, %1.2f, %1.2f)",
+				  samples,
+				  latitude,
+				  longitude,
+				  turbidity,
+				  groundAlbedo.r,
+				  groundAlbedo.g,
+				  groundAlbedo.b);
 		return true;
 	}
 
@@ -484,6 +529,9 @@ namespace Fluxions {
 
 		environment.pbsky.SetLocalDate(day, month, year, isdst != 0, 0);
 		environment.pbsky.SetLocalTime(hours, minutes, seconds, 0.0f);
+		HFLOGINFO("Setting date to %04d-%02d-%02dT%02d:%02d:%02d",
+				  year, month, day,
+				  hours, minutes, seconds);
 		return true;
 	}
 

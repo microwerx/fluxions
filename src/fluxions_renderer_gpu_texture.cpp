@@ -1,6 +1,7 @@
 #include "fluxions_renderer_pch.hpp"
 #include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_gpu_texture.hpp>
+#include <fluxions_image_loader.hpp>
 
 namespace Fluxions {
 	// Image loading routines
@@ -14,28 +15,6 @@ namespace Fluxions {
 		{Image4f tmp;
 		image4.convertCubeMapToCross(tmp, true);
 		tmp.savePPM(path + "-hcross-converted.ppm"); }
-	}
-
-	bool loadIMG(const std::string& path, Image4f& image4) {
-		SDL_Surface* imageSurface = IMG_Load(path.c_str());
-		if (imageSurface == NULL) {
-			HFLOGERROR("IMG_GetError() reports: %s", IMG_GetError());
-			return false;
-		}
-
-		unsigned width = imageSurface->w;
-		unsigned height = imageSurface->h;
-		void* data = imageSurface->pixels;
-		int format = imageSurface->format->BitsPerPixel == 24 ? GL_RGB
-			: imageSurface->format->BitsPerPixel == 32 ? GL_RGBA
-			: 0;
-		//int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_RGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_RGBA8 : 0;
-		// int internalformat = imageSurface->format->BitsPerPixel == 24 ? GL_SRGB8 : imageSurface->format->BitsPerPixel == 32 ? GL_SRGB_ALPHA : 0;
-		if (format == 0)
-			return false;
-		image4.setImageData(format, GL_UNSIGNED_BYTE, width, height, 1, data);
-		SDL_FreeSurface(imageSurface);
-		return true;
 	}
 
 	bool gpuLoadTexture(RendererGpuTexture& t, const std::string& ext, const std::string& path, bool genMipMap) {
@@ -59,7 +38,7 @@ namespace Fluxions {
 				return false;
 		}
 		else if (ext == ".PNG" || ext == ".JPG") {
-			if (!loadIMG(path, image4))
+			if (!LoadImage4f(path, image4))
 				return false;
 		}
 		else {
@@ -134,7 +113,7 @@ namespace Fluxions {
 		if (maploaded && !alwaysLoad) return true;
 		FilePathInfo fpi(mappath);
 		if (fpi.notFound()) {
-			HFLOGERROR("map '%s' not found", fpi.filenameC());
+			HFLOGERROR("map '%s' not found", mappath.c_str());
 			return false;
 		}
 		std::string ext = fpi.extension();

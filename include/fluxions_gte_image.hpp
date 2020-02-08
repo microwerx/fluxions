@@ -43,6 +43,8 @@ namespace Fluxions {
 			imageDepth = image.imageDepth;
 		}
 
+		operator bool() const { return !pixels.empty(); }
+
 		constexpr void setBorderColor(const ColorType& color) { borderColor = color; }
 		constexpr const ColorType& getBorderColor() const { return borderColor; }
 		constexpr unsigned width() const { return imageWidth; }

@@ -2,6 +2,7 @@
 #include <hatchetfish.hpp>
 #include <fluxions_pbsky.hpp>
 #include <ArHosekSkyModel.h>
+#include <fluxions_image_loader.hpp>
 
 namespace Fluxions {
 	using Real = float;
@@ -965,6 +966,50 @@ namespace Fluxions {
 		hwpbsky->Init(turbidity, groundAlbedo, static_cast<float>(sunPosition.a), static_cast<float>(sunPosition.A));
 		if (resetStats)
 			hwpbsky->resetStatisticSamples();
+	}
+
+	Color3f PhysicallyBasedSky::computeModisAlbedo(float latitude, float longitude, float month) const {
+		static string_vector modis_data_294x196{
+			"world.200401x294x196.jpg",
+			"world.200402x294x196.jpg",
+			"world.200403x294x196.jpg",
+			"world.200404x294x196.jpg",
+			"world.200405x294x196.jpg",
+			"world.200406x294x196.jpg",
+			"world.200407x294x196.jpg",
+			"world.200408x294x196.jpg",
+			"world.200409x294x196.jpg",
+			"world.200410x294x196.jpg",
+			"world.200411x294x196.jpg",
+			"world.200412x294x196.jpg",
+		};
+		static constexpr int width = 294;
+		static constexpr int height = 196;
+		static constexpr int width_over_2 = width >> 1;
+		static constexpr int height_over_2 = height >> 1;
+		static std::vector<SDL_Surface*> surfaces(12, nullptr);
+		static std::vector<Image3f> modis(12);
+		float fract = std::trunc(month);
+		int month1 = (int)(month - fract - 1);
+		int month2 = month1 + 1;
+		month1 = month1 % 12;
+		month2 = month2 % 12;
+		latitude = clamp(latitude, -90.0f, 90.0f) / 180.0f + 0.5f;
+		longitude = wrap(longitude, -180.0f, 180.0f) / 360.0f + 0.5f;
+		int s = clamp((int)((height - .001f) * latitude), 0, height - 1);
+		int t = clamp((int)((width - 0.001f) * longitude), 0, width - 1);
+		Image3f& s1 = modis[month1];
+		Image3f& s2 = modis[month2];
+		if (!s1) {
+			LoadImage3f(modis_data_294x196[month1].c_str(), s1);
+		}
+		if (!s2) {
+			LoadImage3f(modis_data_294x196[month2].c_str(), s2);
+		}
+		if (!s1 || !s2) return { 0.0f, 0.0f, 0.0f };
+		Color3f p1 = s1.getPixel(s, t);
+		Color3f p2 = s2.getPixel(s, t);
+		return lerp(fract, p1, p2);
 	}
 
 } // namespace Fluxions

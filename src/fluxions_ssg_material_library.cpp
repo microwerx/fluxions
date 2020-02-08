@@ -132,7 +132,7 @@ namespace Fluxions {
 				}
 			}
 			else if (!str.empty()) {
-				HFLOGWARN("property %s not officially supported", str.c_str());
+				//HFLOGWARN("property %s not officially supported", str.c_str());
 			}
 		}
 

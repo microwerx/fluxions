@@ -990,7 +990,7 @@ namespace Fluxions {
 			if (arg1 == "map") {
 				FilePathInfo fpi(arg2, paths);
 				if (fpi.notFound()) {
-					HFLOGWARN("file '%s' not found", fpi.shortestPathC());
+					HFLOGWARN("file '%s' not found", arg2.c_str());
 					return false;
 				}
 				pcurTexture2D->mappath = fpi.shortestPath();
@@ -1033,7 +1033,7 @@ namespace Fluxions {
 			if (arg1 == "map") {
 				FilePathInfo fpi(arg2, paths);
 				if (fpi.notFound()) {
-					HFLOGWARN("file '%s' not found", fpi.shortestPathC());
+					HFLOGWARN("file '%s' not found", arg2.c_str());
 					return false;
 				}
 				pcurTextureCube->mappath = fpi.shortestPath();

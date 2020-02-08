@@ -140,6 +140,20 @@ namespace Fluxions {
 				return mktime(&localtime);
 			}
 
+			Real CivilDateTime::getDayOfYear() const {
+				static constexpr Real days[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+				Real a = 0;
+				for (int i = 0; i < month; i++) {
+					a += days[i];
+				}
+				a += (hh * 3600 + mm * 60 + ss) / 86400.0f;
+				return a;
+			}
+
+			Real CivilDateTime::getMonthOfYear() const {
+				return getDayOfYear() / 12.0f;
+			}
+
 			Real DDDeg(Real dd) {
 				Real a = fabs(dd);
 				Real b = a * 3600.0;

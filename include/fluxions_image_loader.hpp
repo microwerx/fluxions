@@ -4,6 +4,7 @@
 #include <fluxions_gte_image.hpp>
 
 namespace Fluxions {
+	bool LoadImage3f(const std::string& path, Image3f& image);
 	bool LoadImage4f(const std::string& path, Image4f& image);
 }
 

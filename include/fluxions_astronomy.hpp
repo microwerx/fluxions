@@ -33,6 +33,9 @@ namespace Fluxions {
 				Real GST();
 
 				time_t GetTime() const;
+
+				Real getDayOfYear() const;
+				Real getMonthOfYear() const;
 			};
 
 			typedef double Real;
@@ -252,6 +255,9 @@ namespace Fluxions {
 
 			Real kepler(Real M, Real e) const;
 			const PA::CivilDateTime GetDateTime() const { return paTime; }
+
+			Real getDayOfYear() const { return paTime.getDayOfYear(); }
+			Real getMonthOfYear() const { return paTime.getMonthOfYear(); }
 
 		private:
 			PA::CivilDateTime paTime;
