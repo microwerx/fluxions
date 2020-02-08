@@ -112,7 +112,7 @@ namespace Vf {
 		*size = 2 << *choice;
 	}
 
-	inline void ImGuiValueVector2(const char* m, const Fx::Vector2f& v) {
+	inline void ImGuiValue2f(const char* m, const Fx::Vector2f& v) {
 		ImGui::Text(m);
 		ImGui::SameLine();
 		ImGui::Value("x", v.x);
@@ -120,7 +120,7 @@ namespace Vf {
 		ImGui::Value("y", v.y);
 	}
 
-	inline void ImGuiValueVector3(const char* m, const Fx::Vector3f& v) {
+	inline void ImGuiValue3f(const char* m, const Fx::Vector3f& v) {
 		ImGui::Text(m);
 		ImGui::SameLine();
 		ImGui::Value("x", v.x);
@@ -130,7 +130,7 @@ namespace Vf {
 		ImGui::Value("z", v.z);
 	}
 
-	inline void ImGuiValueVector4(const char* m, const Fx::Vector4f& v) {
+	inline void ImGuiValue4f(const char* m, const Fx::Vector4f& v) {
 		ImGui::Text(m);
 		ImGui::SameLine();
 		ImGui::Value("x", v.x);
@@ -140,6 +140,28 @@ namespace Vf {
 		ImGui::Value("z", v.z);
 		ImGui::SameLine();
 		ImGui::Value("w", v.w);
+	}
+
+	inline void ImGuiValue3f(const char* m, const Fx::Color3f& v) {
+		ImGui::Text(m);
+		ImGui::SameLine();
+		ImGui::Value("r", v.r);
+		ImGui::SameLine();
+		ImGui::Value("g", v.g);
+		ImGui::SameLine();
+		ImGui::Value("b", v.b);
+	}
+
+	inline void ImGuiValue4f(const char* m, const Fx::Color4f& v) {
+		ImGui::Text(m);
+		ImGui::SameLine();
+		ImGui::Value("r", v.r);
+		ImGui::SameLine();
+		ImGui::Value("g", v.g);
+		ImGui::SameLine();
+		ImGui::Value("b", v.b);
+		ImGui::SameLine();
+		ImGui::Value("a", v.a);
 	}
 
 	inline void ImGuiValueQuaternion(const char* m, const Fx::Quaternionf& q) {

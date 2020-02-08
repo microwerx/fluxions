@@ -108,12 +108,12 @@ namespace Vf {
 
 		ImGui::Separator();
 
-		ImGuiValueVector3("p2", p2);
+		ImGuiValue3f("p2", p2);
 		ImGuiValueQuaternion("q2", q2);
 
 		ImGui::Text("Keyframe");
 
-		ImGuiValueVector3("p1", p1);
+		ImGuiValue3f("p1", p1);
 		ImGuiValueQuaternion("q1", q1);
 
 		ImGui::Text("Modify active");
