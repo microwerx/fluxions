@@ -25,7 +25,7 @@ namespace Fluxions {
 		std::vector<SimpleZVertex> zVertices;
 		std::vector<SimpleFastVertex> fastVertices;
 		std::vector<SimpleSlowVertex> slowVertices;
-		std::vector<IndexType> Indices;
+		std::vector<IndexType> indices;
 		std::vector<IndexType> zIndices;
 		std::vector<SimpleSurface> surfaces;
 
@@ -39,8 +39,8 @@ namespace Fluxions {
 
 			GLsizeiptr zIndexOffset = 0;
 			GLsizeiptr zIndexSize = 0;
-			GLsizeiptr IndexOffset = 0;
-			GLsizeiptr IndexSize = 0;
+			GLsizeiptr indexOffset = 0;
+			GLsizeiptr indexSize = 0;
 
 			GLsizeiptr vertexBufferSizeInBytes = 0;
 			GLsizeiptr indexBufferSizeInBytes = 0;
@@ -148,7 +148,7 @@ namespace Fluxions {
 
 		bool BuildBuffers();
 		void BindBuffers();
-		void reset();
+		void reset(bool softReset);
 		void Render();
 		void RenderIf(const std::string& objectName, const std::string& groupName, const std::string& mtllibName, const std::string& mtlName, bool onlyRenderZ = false);
 		void RenderIf(GLuint objectId = 0, GLuint groupId = 0, GLuint mtllibId = 0, GLuint mtlId = 0, bool onlyRenderZ = false);
