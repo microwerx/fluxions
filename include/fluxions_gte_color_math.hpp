@@ -90,5 +90,35 @@ namespace Fluxions {
 		dst[2] = (typename TColor4<T>::value_type)(TColor4<T>::from_float_factor * (float)src.b);
 		return dst;
 	}
+
+	template <typename T>
+	constexpr T intensity(TColor3<T> c) {
+		return (T)((c.r + c.g + c.b) * 0.333333f);
+	}
+
+	template <typename T>
+	constexpr T luma601(TColor3<T> c) {
+		return (T)(0.299f * c.r + 0.587f * c.g + 0.114f * c.b);
+	}
+
+	template <typename T>
+	constexpr T luma709(TColor3<T> c) {
+		return (T)(0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b);
+	}
+
+	template <typename T>
+	constexpr T intensity(TColor4<T> c) {
+		return (T)((c.r + c.g + c.b) * 0.333333f);
+	}
+
+	template <typename T>
+	constexpr T luma601(TColor4<T> c) {
+		return (T)(0.299f * c.r + 0.587f * c.g + 0.114f * c.b);
+	}
+
+	template <typename T>
+	constexpr T luma709(TColor4<T> c) {
+		return (T)(0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b);
+	}
 } // namespace Fluxions
 #endif
