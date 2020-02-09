@@ -96,6 +96,18 @@ namespace Fluxions {
 					&& pRendererProgram != nullptr);
 		}
 
+		static constexpr int UPDATE_VIZ = 1;
+		static constexpr int UPDATE_SSG = 2;
+
+		void update(int flags) {
+			if (flags & UPDATE_VIZ) {
+				viz.buffersBuilt = false;
+			}
+			if (flags & UPDATE_SSG) {
+				scene.buffersBuilt = false;
+			}
+		}
+
 		int getTexUnit();
 		void freeTexUnit(int id);
 
@@ -134,7 +146,7 @@ namespace Fluxions {
 			int mtlIdLoc{ -1 };
 			int worldMatrixLoc{ -1 };
 			Matrix4f worldMatrix;
-			bool areBuffersBuilt{ false };
+			bool buffersBuilt{ false };
 		} scene;
 
 		struct SKYBOXINFO {
