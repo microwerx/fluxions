@@ -546,22 +546,31 @@ namespace Fluxions {
 	bool SimpleSceneGraph::ReadOldDirectionalLight(const std::string& type, std::istream& istr) {
 		if (type != "dirTo")
 			return false;
-		std::string sunopt;
-		environment.hasSun = true;
-		sunopt = ReadString(istr);
-		if (sunopt == "dirTo") {
-			environment.sunDirTo = ReadVector3f(istr);
-		}
-		sunopt = ReadString(istr);
-		if (sunopt == "color") {
-			environment.sunColor = ReadVector3f(istr);
-		}
-		sunopt = ReadString(istr);
-		if (sunopt == "sizeMult") {
-			environment.sunSize = ReadFloat(istr);
-		}
-		environment.sunDirTo.normalize();
-		environment.curSunDirTo = environment.sunDirTo;
+		
+		return true;
+		// THIS comment code needs to be handled differently
+		//std::string sunopt;
+		//environment.hasSun = true;
+		//sunopt = ReadString(istr);
+		//if (sunopt == "sunDirTo") {
+		//	environment.sunDirTo = ReadVector3f(istr);
+		//}
+		//if (sunopt == "moonDirTo") {
+		//	environment.moonDirTo = ReadVector3f(istr);
+		//}
+		//sunopt = ReadString(istr);
+		//if (sunopt == "color") {
+		//	environment.sunColor = ReadVector3f(istr);
+		//}
+		//sunopt = ReadString(istr);
+		//if (sunopt == "sizeMult") {
+		//	environment.sunSize = ReadFloat(istr);
+		//}
+		//environment.sunDirTo.normalize();
+		//environment.moonDirTo.normalize();
+		//environment.curSunDirTo = environment.sunDirTo;
+		//environment.curMoonDirTo = environment.moonDirTo;
+
 		//environment.sunShadowBiasMatrix.LoadIdentity();
 		//environment.sunShadowBiasMatrix.ShadowBias();
 		//environment.sunShadowProjectionMatrix.LoadIdentity();

@@ -720,7 +720,7 @@ namespace Fluxions {
 
 	void PhysicallyBasedSky::SetLocation(float latitude, float longitude) {
 		astroCalc.SetLocation(latitude, longitude);
-		ComputeSunFromLocale();
+		computeSunFromLocale();
 	}
 
 	time_t PhysicallyBasedSky::GetTime() const {
@@ -729,54 +729,80 @@ namespace Fluxions {
 
 	void PhysicallyBasedSky::SetTime(time_t t, float fractSeconds) {
 		astroCalc.SetTime(t, fractSeconds);
-		ComputeSunFromLocale();
+		computeSunFromLocale();
+		computeMoonFromLocale();
 	}
 
 	void PhysicallyBasedSky::SetLocalDate(int day, int month, int year, bool isdst, int timeOffset) {
 		astroCalc.SetDate(day, month, year, isdst, timeOffset);
-		ComputeSunFromLocale();
+		computeSunFromLocale();
 	}
 
 	void PhysicallyBasedSky::SetCivilDateTime(const Astronomy::PA::CivilDateTime& dtg) {
 		astroCalc.SetDateTime(dtg.day, dtg.month, dtg.year, dtg.isdst, dtg.timeZoneOffset, dtg.hh, dtg.mm, dtg.ss, dtg.ss_frac);
-		ComputeSunFromLocale();
+		computeSunFromLocale();
 	}
 
 	void PhysicallyBasedSky::SetLocalTime(int hh, int mm, int ss, float ss_frac) {
 		astroCalc.SetTime(hh, mm, ss, ss_frac);
-		ComputeSunFromLocale();
+		computeSunFromLocale();
 	}
 
-	void PhysicallyBasedSky::SetTurbidity(float T) noexcept {
+	void PhysicallyBasedSky::SetTurbidity(float T) {
 		turbidity = T;
 	}
 
-	float PhysicallyBasedSky::GetTurbidity() const noexcept {
+	float PhysicallyBasedSky::GetTurbidity() const {
 		return turbidity;
 	}
 
-	void PhysicallyBasedSky::SetSunPosition(double azimuth, double altitude) noexcept {
+	void PhysicallyBasedSky::setSunPosition(double azimuth, double altitude) {
 		sunPosition.A = azimuth;
 		sunPosition.a = altitude;
 	}
 
-	void PhysicallyBasedSky::SetSunPosition(double sunLong) {
+	void PhysicallyBasedSky::setSunPosition(double sunLong) {
 		Astronomy::EclipticCoord sunCoord(sunLong, 0.0);
 		sunPosition = astroCalc.ecliptic_to_horizon(sunCoord);
 		Astronomy::Vector v = sunPosition.toOpenGLVector();
-		sunVector = Vector3f(static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z));
+		sunVector_ = { (float)v.x, (float)v.y, (float)v.z };
 	}
 
-	float PhysicallyBasedSky::GetAverageRadiance() const noexcept {
+	void PhysicallyBasedSky::setMoonPosition(double RA, double dec) {
+		setMoonPosition({ RA, dec });
+	}
+
+	void PhysicallyBasedSky::setMoonPosition(Astronomy::EquatorialCoord moonRADec) {
+		Astronomy::HorizonCoord p = astroCalc.equatorial_to_horizon(moonRADec);
+		Astronomy::Vector v = p.toOpenGLVector();
+		moonVector_ = { (float)v.x, (float)v.y, (float)v.z };
+	}
+
+	float PhysicallyBasedSky::GetAverageRadiance() const {
 		return hwpbsky->totalValue / hwpbsky->nSamples;
 	}
 
-	void PhysicallyBasedSky::ComputeSunFromLocale() noexcept {
+	void PhysicallyBasedSky::computeSunFromLocale() {
 		double sunLong = wrap(astroCalc.getSun().lambda, 360.0);
-		SetSunPosition(sunLong);
+		setSunPosition(sunLong);
 	}
 
-	void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sampleScale, bool flipY) noexcept {
+	void PhysicallyBasedSky::computeMoonFromLocale() {
+		Astronomy::EquatorialCoord moonRADec = astroCalc.getMoon();
+		setMoonPosition(moonRADec);
+		static int count = 5;
+		if (count-- > 0) {
+			HFLOGDEBUG("Moon RA: %f / Dec: %f @ %02d-%02d-%04dT%02d:%02d:%02d", moonRADec.alpha, moonRADec.delta,
+					   astroCalc.GetDateTime().month,
+					   astroCalc.GetDateTime().day,
+					   astroCalc.GetDateTime().year,
+					   astroCalc.GetDateTime().hh,
+					   astroCalc.GetDateTime().mm,
+					   astroCalc.GetDateTime().ss);
+		}
+	}
+
+	void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sampleScale, bool flipY) {
 		prepareForCompute();
 		generatedCubeMap.resize(resolution, resolution, 6);
 
@@ -877,7 +903,7 @@ namespace Fluxions {
 		maxRgbValue = hwpbsky->maxValue;
 	}
 
-	void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normalize, float sampleScale) noexcept {
+	void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normalize, float sampleScale) {
 		prepareForCompute();
 		generatedCylMap.resize(width, height);
 
@@ -954,13 +980,13 @@ namespace Fluxions {
 	//{
 	//}
 
-	void PhysicallyBasedSky::ComputeSunGroundRadiances() noexcept {
+	void PhysicallyBasedSky::ComputeSunGroundRadiances() {
 		prepareForCompute(false);
 		sunDiskRadiance = hwpbsky->GetSunDiskRadiance();
 		groundRadiance = hwpbsky->GetGroundRadiance();
 	}
 
-	void PhysicallyBasedSky::prepareForCompute(bool resetStats) noexcept {
+	void PhysicallyBasedSky::prepareForCompute(bool resetStats) {
 		minRgbValue = FLT_MAX;
 		maxRgbValue = -FLT_MAX;
 		hwpbsky->Init(turbidity, groundAlbedo, static_cast<float>(sunPosition.a), static_cast<float>(sunPosition.A));

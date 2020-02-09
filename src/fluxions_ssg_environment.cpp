@@ -26,9 +26,17 @@ namespace Fluxions {
 
 	void SimpleEnvironment::Update(const BoundingBoxf& bbox) {
 		pbsky.ComputeSunGroundRadiances();
-		curSunDirTo = pbsky.GetSunVector();
+		sunDirTo = pbsky.sunDirTo().normalize();
+		moonDirTo = pbsky.moonDirTo().normalize();
 		curGroundRadiance = pbsky.GetGroundRadiance();
 		curSunDiskRadiance = pbsky.GetSunDiskRadiance();
+
+		if (hasSun) {
+			curSunDirTo = sunDirTo.normalize();
+		}
+		if (hasMoon) {
+			curMoonDirTo = moonDirTo.normalize();
+		}
 
 		if (within(bbox.MaxSize(), 0.0f, 1000.0f)) {
 			// const float padding = 1.0f;

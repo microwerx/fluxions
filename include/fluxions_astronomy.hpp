@@ -14,6 +14,15 @@ namespace Fluxions {
 
 		// namespace for Practical Astronomy functions
 		namespace PA {
+			typedef double Real;
+
+			struct GreenwichDateTime {
+				Real day{ 0 };
+				Real month{ 0 };
+				Real year{ 0 };
+				Real UT{ 0 };
+			};
+
 			struct CivilDateTime {
 				int day = 0;
 				int month = 0;
@@ -32,13 +41,13 @@ namespace Fluxions {
 				Real LST();
 				Real GST();
 
-				time_t GetTime() const;
+				time_t getTime() const;
+				GreenwichDateTime getGreenwich() const;
 
 				Real getDayOfYear() const;
 				Real getMonthOfYear() const;
 			};
 
-			typedef double Real;
 			Real DDDeg(Real dd);
 			Real DDMin(Real dd);
 			Real DDSec(Real dd);
@@ -53,7 +62,8 @@ namespace Fluxions {
 			Real JDCDay(Real JD);
 			Real JDCMonth(Real JD);
 			Real JDCYear(Real JD);
-
+			Real ECRA(Real ELD, Real ELM, Real ELS, Real BD, Real BM, Real BS, Real GD, Real GM, Real GY);
+			
 			Real TrueAnomaly(Real AM, Real EC);
 			Real EccentricAnomaly(Real AM, Real EC);
 			Real SunLong(Real DJ, Real UT);
@@ -163,11 +173,11 @@ namespace Fluxions {
 		};
 
 		struct EquatorialCoord {
-			Real delta = 0.0;
-			Real alpha = 0.0;
+			Real alpha{ 0 };
+			Real delta{ 0 };
 
-			EquatorialCoord() : delta(0.0), alpha(0.0) {}
-			EquatorialCoord(Real delta_, Real alpha_) : delta(delta_), alpha(alpha_) {}
+			EquatorialCoord() {}
+			EquatorialCoord(Real alpha_, Real delta_) : delta(delta_), alpha(alpha_) {}
 			double H(Real LST) {
 				Real result = LST - alpha;
 				return result < 0.0 ? result + 24.0 : result;
@@ -252,6 +262,7 @@ namespace Fluxions {
 			time_t GetTime() const;
 
 			EclipticCoord getSun() const;
+			EquatorialCoord getMoon() const;
 
 			Real kepler(Real M, Real e) const;
 			const PA::CivilDateTime GetDateTime() const { return paTime; }

@@ -8,10 +8,18 @@ namespace Fluxions {
 		bool hasColor = false;
 		bool hasTexmap = false;
 		bool hasSun = false;
+		bool hasMoon = false;
 		Color3f color;
 		std::string texmap;
+		
+		// sun and moon directions as read from file
 		Vector3f sunDirTo;
+		Vector3f moonDirTo;
+		
+		// sun and moon directions as rendered
 		Vector3f curSunDirTo;
+		Vector3f curMoonDirTo;
+
 		Color4f curSunDiskRadiance;
 		Color4f curGroundRadiance;
 		//float toneMapScale = -6.0f;

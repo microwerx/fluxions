@@ -563,12 +563,12 @@ namespace Fluxions {
 
 	template <typename T>
 	constexpr T Radians(T angleInDegrees) noexcept {
-		return (T)(angleInDegrees * FX_RADIANS_TO_DEGREES);
+		return (T)(angleInDegrees * FX_DEGREES_TO_RADIANS);
 	}
 
 	template <typename T>
 	constexpr T Degrees(T angleInRadians) noexcept {
-		return (T)(angleInRadians * FX_DEGREES_TO_RADIANS);
+		return (T)(angleInRadians * FX_RADIANS_TO_DEGREES);
 	}
 
 	template <class T>
