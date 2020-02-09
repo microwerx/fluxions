@@ -67,6 +67,20 @@ namespace Fluxions {
 
 		const T& operator[](unsigned handle) const;
 		const T& operator[](const std::string& name) const;
+
+		T* getPtr(unsigned handle) {
+			auto handleObjIt = resources_.find(handle);
+			if (handleObjIt == resources_.end())
+				return nullptr;
+			return &handleObjIt->second;
+		}
+
+		T* getPtr(const std::string& name) {
+			unsigned handle = getHandleFromName(name);
+			if (handle == 0)
+				return nullptr;
+			return getPtr(handle);
+		}
 	};
 
 	template <typename T>
