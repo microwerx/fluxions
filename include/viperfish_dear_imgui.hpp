@@ -131,15 +131,16 @@ namespace Vf {
 	}
 
 	inline void ImGuiValue4f(const char* m, const Fx::Vector4f& v) {
-		ImGui::Text(m);
-		ImGui::SameLine();
-		ImGui::Value("x", v.x);
-		ImGui::SameLine();
-		ImGui::Value("y", v.y);
-		ImGui::SameLine();
-		ImGui::Value("z", v.z);
-		ImGui::SameLine();
-		ImGui::Value("w", v.w);
+		ImGui::LabelText(m, "% 2.3f % 2.3f % 2.3f %2.3f", v.x, v.y, v.z, v.w);
+		//ImGui::Text(m);
+		//ImGui::SameLine();
+		//ImGui::Value("x", v.x);
+		//ImGui::SameLine();
+		//ImGui::Value("y", v.y);
+		//ImGui::SameLine();
+		//ImGui::Value("z", v.z);
+		//ImGui::SameLine();
+		//ImGui::Value("w", v.w);
 	}
 
 	inline void ImGuiValue3f(const char* m, const Fx::Color3f& v) {
