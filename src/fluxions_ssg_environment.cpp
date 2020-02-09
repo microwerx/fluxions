@@ -12,7 +12,7 @@ namespace Fluxions {
 		}
 		if (genCylMap) {
 			pbsky->ComputeCylinderMap(128, 32);
-			// pbsky.generatedCylMap.savePPM("pbsky.ppm");
+			// pbsky.generatedSunCylMap.savePPM("pbsky.ppm");
 		}
 
 		stopwatch.Stop();
@@ -84,8 +84,8 @@ namespace Fluxions {
 		//	FxSetErrorMessage(__FILE__, __LINE__, "%s", __FUNCTION__);
 		//	glBindTexture(GL_TEXTURE_CUBE_MAP, pbskyColorMapId);
 		//	for (int i = 0; i < 6; i++) {
-		//		GLsizei size = (GLsizei)pbsky.generatedCubeMap.width();
-		//		void* pixels = pbsky.generatedCubeMap.getPixels(i);
+		//		GLsizei size = (GLsizei)pbsky.generatedSunCubeMap.width();
+		//		void* pixels = pbsky.generatedSunCubeMap.getPixels(i);
 		//		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA32F, size,
 		//					 size, 0, GL_RGBA, GL_FLOAT, pixels);
 		//	}

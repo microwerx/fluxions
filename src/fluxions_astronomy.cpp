@@ -189,7 +189,7 @@ namespace Fluxions {
 			}
 
 			Real CivilDateTime::getMonthOfYear() const {
-				return getDayOfYear() / 12.0f;
+				return clamp(1.0f + getDayOfYear() / 366.0f * 11.0f, 1.0f, 12.0f);
 			}
 
 			Real DDDeg(Real dd) {
