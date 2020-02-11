@@ -60,6 +60,9 @@ namespace Fluxions {
 		bool ReadSphere(const std::string& type, std::istream& istr);
 		bool ReadPath(const std::string& keyword, std::istream& istr);
 
+		bool addGeometryGroup(const std::string name, const std::string& path);
+		bool addDirToLight(const std::string& name);
+
 		const char* type() const override { return "SimpleSceneGraph"; }
 		const char* keyword() const override { return "scenegraph"; }
 		const char* status() const override { return "unknown"; }
