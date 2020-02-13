@@ -63,7 +63,7 @@ namespace Fluxions {
 	void RendererGLES30::setSceneGraph(SimpleSceneGraph* pSSG_) {
 		if (pSSG == pSSG_) return;
 		pSSG = pSSG_;
-		scene.areBuffersBuilt = false;
+		scene.buffersBuilt = false;
 	}
 
 	SimpleSceneGraph* RendererGLES30::getSceneGraph() {
@@ -441,7 +441,7 @@ namespace Fluxions {
 	}
 
 	void RendererGLES30::renderCubeImages() {
-		if (!scene.areBuffersBuilt)
+		if (!scene.buffersBuilt)
 			buildBuffers();
 
 		GLsizei s = pRendererConfig->viewportRect.w;
@@ -981,7 +981,7 @@ namespace Fluxions {
 
 	void RendererGLES30::_renderSceneGraph() {
 		Hf::StopWatch stopwatch;
-		if (!scene.areBuffersBuilt) buildBuffers();
+		if (!scene.buffersBuilt) buildBuffers();
 
 		pRendererProgram->use();
 
@@ -1088,6 +1088,7 @@ namespace Fluxions {
 	bool RendererGLES30::_initVIZ() {
 		if (viz.buffersBuilt) return true;
 
+		viz.renderer.reset(true);
 		BoundingBoxf bbox = pSSG->getBoundingBox();
 		Matrix4f identity;
 		_vizBBox(bbox, identity, FxColors3::White);
@@ -1107,12 +1108,19 @@ namespace Fluxions {
 		}
 
 		for (auto& [k, n] : pSSG->pointLights) {
-			_vizBall(n.position, 0.5f, FxColors3::Yellow);
+			_vizBall(n.position.xyz(), 0.5f, FxColors3::Yellow);
 		}
 
 		for (auto& [k, n] : pSSG->dirToLights) {
-			Vector3f outThere = n.dirTo.xyz() * 95.0f;
-			_vizBall(outThere, 0.5f, FxColors3::White);
+			Vector3f N = n.dirTo.xyz().normalize();
+			Vector3f outThere = N * 95.0f;
+			viz.renderer.NewObject();
+			viz.renderer.Begin(GL_LINES);
+			viz.renderer.Color3f(n.color());
+			viz.renderer.Position3f({ 0.0f, 0.0f, 0.0f });
+			viz.renderer.Position3f(outThere);
+			viz.renderer.End();
+			_vizBall(outThere, 0.5f, n.color());
 		}
 
 		for (auto& [k, n] : pSSG->spheres) {
@@ -1133,7 +1141,7 @@ namespace Fluxions {
 
 	void RendererGLES30::buildBuffers() {
 		if (!validate()) return;
-		scene.renderer.reset();
+		scene.renderer.reset(true);
 		//for (auto& [geoindex, geo] : pSSG->geometryGroups) {
 			//scene.renderer.SetCurrentObjectId(geo.objectId);
 			//scene.renderer.SetCurrentMtlLibId(geo.mtllibId);
@@ -1152,6 +1160,6 @@ namespace Fluxions {
 		//scene.renderer.AssignMaterialIds(pSSG->materialSystem);
 		//scene.renderer.SetCurrentMtlLibName("");
 		//scene.renderer.SetCurrentMtlLibId(0);
-		scene.areBuffersBuilt = true;
+		scene.buffersBuilt = true;
 	}
 } // namespace Fluxions

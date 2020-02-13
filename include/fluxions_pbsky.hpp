@@ -27,58 +27,81 @@ namespace Fluxions {
 		void SetTime(time_t t, float fractSeconds = 0.0f);
 		void SetLocalDate(int day, int month, int year, bool isdst, int timeOffset);
 		void SetLocalTime(int hh, int mm, int ss, float ss_frac);
-		void SetTurbidity(float T) noexcept;
-		float GetTurbidity() const noexcept;
-		void SetSunPosition(double azimuth, double altitude) noexcept;
-		void SetSunPosition(double sunLong);
-		float GetAverageRadiance() const noexcept;
-		float GetSunAzimuth() const noexcept { return static_cast<float>(sunPosition.A); }
-		float GetSunAltitude() const noexcept { return static_cast<float>(sunPosition.a); }
-		const Vector3f& GetSunVector() const noexcept { return sunVector; }
-		void SetGroundAlbedo(float r, float g, float b) noexcept { groundAlbedo.reset(r, g, b); };
-		const Color4f& GetGroundAlbedo() const noexcept { return groundAlbedo; }
+		void SetTurbidity(float T);
+		float GetTurbidity() const;
+		void setSunPosition(double azimuth, double altitude);
+		void setSunPosition(double sunLong);
+		void setMoonPosition(double RA, double dec);
+		void setMoonPosition(Astronomy::EquatorialCoord moonRADec);
+		float GetAverageRadiance() const;
+		float GetSunAzimuth() const { return (float)sunPosition_.A; }
+		float GetSunAltitude() const { return (float)sunPosition_.a; }
+		void SetGroundAlbedo(float r, float g, float b) { groundAlbedo.reset(r, g, b); };
+		const Color4f& GetGroundAlbedo() const { return groundAlbedo; }
 
 		// Compute MODIS Albedo at the specified latitude and longitude, measured in degrees
+		Color3f computeModisAlbedo(bool recalc) const;
 		Color3f computeModisAlbedo(float latitude, float longitude, float month) const;
 
 		float getDayOfYear() const { return (float)astroCalc.getDayOfYear(); }
 		float getMonthOfYear() const { return (float)astroCalc.getMonthOfYear(); }
 
-		void SetNumSamples(int samples) noexcept { nSamples = clamp(samples, 1, 16); }
-		int GetNumSamples() const noexcept { return nSamples; }
-		void ComputeSunFromLocale() noexcept;
-		void ComputeCubeMap(int resolution, bool normalize = false, float sampleScale = 8.0f, bool flipY = false) noexcept;
+		void SetNumSamples(int samples) { nSamples = clamp(samples, 1, 16); }
+		int GetNumSamples() const { return nSamples; }
+
+		void computeAstroFromLocale();
+
+		void ComputeCubeMap(int resolution, bool normalize = false, float sampleScale = 8.0f, bool flipY = false);
 		// not implemented
-		void ComputeCylinderMap(int width, int height, bool normalize = false, float sampleScale = 8.0f) noexcept;
+		void ComputeCylinderMap(int width, int height, bool normalize = false, float sampleScale = 8.0f);
 		// not implemented
-		//void ComputeSphereMap(int width, int height, bool normalize = false, float sampleScale = 8.0f) noexcept;
+		//void ComputeSphereMap(int width, int height, bool normalize = false, float sampleScale = 8.0f);
 
-		void ComputeSunGroundRadiances() noexcept;
-		Color4f GetSunDiskRadiance() const noexcept { return sunDiskRadiance; }
-		Color4f GetGroundRadiance() const noexcept { return groundRadiance; }
+		void ComputeSunGroundRadiances();
+		Color4f GetSunDiskRadiance() const { return sunDiskRadiance; }
+		Color4f GetGroundRadiance() const { return groundRadiance; }
 
-		float getMinRgbValue() const noexcept { return minRgbValue; }
-		float getMaxRgbValue() const noexcept { return maxRgbValue; }
+		float getMinRgbValue() const { return minRgbValue; }
+		float getMaxRgbValue() const { return maxRgbValue; }
 
-		Image4f generatedCubeMap;
+		Image4f generatedSunCubeMap;
 		// unused
-		Image4f generatedSphMap;
+		Image4f generatedSunSphMap;
 		// unused
-		Image4f generatedCylMap;
+		Image4f generatedSunCylMap;
 
-		int getDay() const noexcept { return astroCalc.GetDateTime().day; }
-		int getMonth() const noexcept { return astroCalc.GetDateTime().month; }
-		int getYear() const noexcept { return astroCalc.GetDateTime().year; }
-		int getHour() const noexcept { return astroCalc.GetDateTime().hh; }
-		int getMin() const noexcept { return astroCalc.GetDateTime().mm; }
-		int getSec() const noexcept { return astroCalc.GetDateTime().ss; }
-		double getSecFract() const noexcept { return astroCalc.GetDateTime().ss_frac; }
-		double getLST() const noexcept { return astroCalc.getLST(); }
+		Image4f generatedMoonCubeMap;
+		Image4f generagedMoonCylMap;
 
+		int getDay() const { return astroCalc.GetDateTime().day; }
+		int getMonth() const { return astroCalc.GetDateTime().month; }
+		int getYear() const { return astroCalc.GetDateTime().year; }
+		int getHour() const { return astroCalc.GetDateTime().hh; }
+		int getMin() const { return astroCalc.GetDateTime().mm; }
+		int getSec() const { return astroCalc.GetDateTime().ss; }
+		double getSecFract() const { return astroCalc.GetDateTime().ss_frac; }
+		double getLST() const { return astroCalc.getLST(); }
+
+		Vector3f sunDirTo() const { return  sunVector_; }
+		Vector3f moonDirTo() const { return moonVector_; }
+		Astronomy::EquatorialCoord getSunRADec() const { return sunRADec_; }
+		Astronomy::EquatorialCoord getMoonRADec() const { return moonRADec_; }
+		Astronomy::HorizonCoord getSunPosition() const { return sunPosition_; }
+		Astronomy::HorizonCoord getMoonPosition() const { return moonPosition_; }
 	private:
+		void _computeSunFromLocale();
+		void _computeMoonFromLocale();
+
+		mutable bool recalcModis_{ true };
+		mutable Color3f modisColor_;
+
 		Astronomy::AstroCalc astroCalc;
-		Astronomy::HorizonCoord sunPosition;
-		Vector3f sunVector;
+		Astronomy::HorizonCoord sunPosition_;
+		Astronomy::HorizonCoord moonPosition_;
+		Astronomy::EquatorialCoord sunRADec_;
+		Astronomy::EquatorialCoord moonRADec_;
+		Vector3f sunVector_;
+		Vector3f moonVector_;
 		float turbidity = 1.0f;
 		Color4f groundAlbedo;
 		Color4f groundRadiance;
@@ -86,9 +109,10 @@ namespace Fluxions {
 		int nSamples;
 		float minRgbValue;
 		float maxRgbValue;
-		std::unique_ptr<HosekWilkiePBSky> hwpbsky;
+		std::shared_ptr<HosekWilkiePBSky> hwSunPbsky;
+		std::shared_ptr<HosekWilkiePBSky> hwMoonPbsky;
 
-		void prepareForCompute(bool resetStats = true) noexcept;
+		void prepareForCompute(bool resetStats = true);
 	};
 } // namespace Fluxions
 

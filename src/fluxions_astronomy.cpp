@@ -57,6 +57,34 @@ namespace Fluxions {
 			return trunc(x);
 		}
 
+		inline Real Fix(Real x) {
+			return std::trunc(x);
+		}
+
+		inline Real Int(Real x) {
+			return std::floor(x);
+		}
+
+		inline Real Sin(Real x) {
+			return std::sin(x);
+		}
+
+		inline Real Cos(Real x) {
+			return std::cos(x);
+		}
+
+		inline Real Tan(Real x) {
+			return std::tan(x);
+		}
+
+		inline Real Atan2(Real x, Real y) {
+			return std::atan2(y, x);
+		}
+
+		inline Real Unwind(Real x) {
+			return x - 6.283185308 * Int(x / 6.283185308);
+		}
+
 		namespace PA {
 			Real CivilDateTime::GST() {
 				Real julian = JD();
@@ -126,7 +154,7 @@ namespace Fluxions {
 				return 24.0 * (E - E1);
 			}
 
-			time_t CivilDateTime::GetTime() const {
+			time_t CivilDateTime::getTime() const {
 				tm localtime;
 				localtime.tm_hour = hh;
 				localtime.tm_min = mm;
@@ -140,6 +168,16 @@ namespace Fluxions {
 				return mktime(&localtime);
 			}
 
+			GreenwichDateTime CivilDateTime::getGreenwich() const {
+				GreenwichDateTime gdt;
+				Real ds = isdst ? 1 : 0;
+				gdt.day = LctGDay(hh, mm, ss, ds, timeZoneOffset, day, month, year);
+				gdt.month = LctGMonth(hh, mm, ss, ds, timeZoneOffset, day, month, year);
+				gdt.year = LctGYear(hh, mm, ss, ds, timeZoneOffset, day, month, year);
+				gdt.UT = LctUT(hh, mm, ss, ds, timeZoneOffset, day, month, year);
+				return gdt;
+			}
+
 			Real CivilDateTime::getDayOfYear() const {
 				static constexpr Real days[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
 				Real a = 0;
@@ -151,7 +189,7 @@ namespace Fluxions {
 			}
 
 			Real CivilDateTime::getMonthOfYear() const {
-				return getDayOfYear() / 12.0f;
+				return clamp(1.0f + getDayOfYear() / 366.0f * 11.0f, 1.0f, 12.0f);
 			}
 
 			Real DDDeg(Real dd) {
@@ -220,13 +258,33 @@ namespace Fluxions {
 				return dh * 15.0;
 			}
 
+			// Function DMSDD(D As Double, M As Double, S As Double) As Double
+			//     A = Abs(S) / 60
+			//     B = (Abs(M) + A) / 60
+			//     C = Abs(D) + B
+
+			//     If ((D < 0) Or (M < 0) Or (S < 0)) Then
+			//         DMSDD = -C
+			//     Else
+			//         DMSDD = C
+			//     End If    
+			// End Function
+			Real DMSDD(Real D, Real M, Real S) {
+				Real A = std::abs(S) / 60.0;
+				Real B = (std::abs(M) + A) / 60.0;
+				Real C = std::abs(D) + B;
+				if ((D < 0) || (M < 0) || (S < 0))
+					return -C;
+				return C;
+			}
+
 			Real LctGDay(Real LCH, Real LCM, Real LCS, Real DS, Real ZC, Real LD, Real LM, Real LY) {
 				Real A = HMSDH(LCH, LCM, LCS);
 				Real B = A - DS - ZC;
 				Real C = LD + (B / 24.0);
 				Real D = CDJD(C, LM, LY);
 				Real E = JDCDay(D);
-				return trunc(E);
+				return Fix(E);
 			}
 
 			Real LctGMonth(Real LCH, Real LCM, Real LCS, Real DS, Real ZC, Real LD, Real LM, Real LY) {
@@ -302,6 +360,10 @@ namespace Fluxions {
 				return B + C + D + day + 1720994.5;
 			}
 
+			Real CDJD(GreenwichDateTime gdt) {
+				return CDJD(gdt.day, gdt.month, gdt.year);
+			}
+
 			Real JDCDay(Real JD) {
 				Real I = trunc(JD + 0.5);
 				Real F = JD + 0.5 - I;
@@ -370,8 +432,137 @@ namespace Fluxions {
 				Real C = LD + (B / 24.0);
 				Real D = CDJD(C, LM, LY);
 				Real E = JDCDay(D);
-				Real E1 = trunc(E);
+				Real E1 = Fix(E);
 				return 24.0 * (E - E1);
+			}
+
+			// Function NutatObl(GD As Double, GM As Double, GY As Double) As Double
+			//         DJ = CDJD(GD, GM, GY) - 2415020#: T = DJ / 36525#: T2 = T * T
+			//         A = 100.0021358 * T: B = 360# * (A - Int(A))
+			//         L1 = 279.6967 + 0.000303 * T2 + B: l2 = 2# * Radians(L1)
+			//         A = 1336.855231 * T: B = 360# * (A - Int(A))
+			//         D1 = 270.4342 - 0.001133 * T2 + B: D2 = 2# * Radians(D1)
+			//         A = 99.99736056 * T: B = 360# * (A - Int(A))
+			//         M1 = 358.4758 - 0.00015 * T2 + B: M1 = Radians(M1)
+			//         A = 1325.552359 * T: B = 360# * (A - Int(A))
+			//         M2 = 296.1046 + 0.009192 * T2 + B: M2 = Radians(M2)
+			//         A = 5.372616667 * T: B = 360# * (A - Int(A))
+			//         N1 = 259.1833 + 0.002078 * T2 - B: N1 = Radians(N1)
+			//         N2 = 2 * N1
+
+			//         DDO = (9.21 + 0.00091 * T) * Cos(N1)
+			//         DDO = DDO + (0.5522 - 0.00029 * T) * Cos(l2) - 0.0904 * Cos(N2)
+			//         DDO = DDO + 0.0884 * Cos(D2) + 0.0216 * Cos(l2 + M1)
+			//         DDO = DDO + 0.0183 * Cos(D2 - N1) + 0.0113 * Cos(D2 + M2)
+			//         DDO = DDO - 0.0093 * Cos(l2 - M1) - 0.0066 * Cos(l2 - N1)
+
+			//         NutatObl = DDO / 3600#        
+			// End Function
+			Real NutatObl(Real GD, Real GM, Real GY) {
+				Real DJ = CDJD(GD, GM, GY) - 2415020.0; Real T = DJ / 36525.0; Real T2 = T * T;
+				Real A = 100.0021358 * T; Real B = 360.0 * (A - int(A));
+				Real L1 = 279.6967 + 0.000303 * T2 + B; Real l2 = 2.0 * Radians(L1);
+				A = 1336.855231 * T; B = 360.0 * (A - int(A));
+				Real D1 = 270.4342 - 0.001133 * T2 + B; Real D2 = 2.0 * Radians(D1);
+				A = 99.99736056 * T; B = 360.0 * (A - int(A));
+				Real M1 = 358.4758 - 0.00015 * T2 + B; M1 = Radians(M1);
+				A = 1325.552359 * T; B = 360.0 * (A - int(A));
+				Real M2 = 296.1046 + 0.009192 * T2 + B; M2 = Radians(M2);
+				A = 5.372616667 * T; B = 360.0 * (A - int(A));
+				Real N1 = 259.1833 + 0.002078 * T2 - B; N1 = Radians(N1);
+				Real N2 = 2 * N1;
+
+				Real DDO = (9.21 + 0.00091 * T) * std::cos(N1);
+				DDO = DDO + (0.5522 - 0.00029 * T) * std::cos(l2) - 0.0904 * std::cos(N2);
+				DDO = DDO + 0.0884 * std::cos(D2) + 0.0216 * std::cos(l2 + M1);
+				DDO = DDO + 0.0183 * std::cos(D2 - N1) + 0.0113 * std::cos(D2 + M2);
+				DDO = DDO - 0.0093 * std::cos(l2 - M1) - 0.0066 * std::cos(l2 - N1);
+
+				return DDO / 3600.0;
+			}
+
+			// Function NutatLong(GD As Double, GM As Double, GY As Double) As Double
+			//         DJ = CDJD(GD, GM, GY) - 2415020#: T = DJ / 36525#: T2 = T * T
+			//         A = 100.0021358 * T: B = 360# * (A - Int(A))
+			//         L1 = 279.6967 + 0.000303 * T2 + B: l2 = 2# * Radians(L1)
+			//         A = 1336.855231 * T: B = 360# * (A - Int(A))
+			//         D1 = 270.4342 - 0.001133 * T2 + B: D2 = 2# * Radians(D1)
+			//         A = 99.99736056 * T: B = 360# * (A - Int(A))
+			//         M1 = 358.4758 - 0.00015 * T2 + B: M1 = Radians(M1)
+			//         A = 1325.552359 * T: B = 360# * (A - Int(A))
+			//         M2 = 296.1046 + 0.009192 * T2 + B: M2 = Radians(M2)
+			//         A = 5.372616667 * T: B = 360# * (A - Int(A))
+			//         N1 = 259.1833 + 0.002078 * T2 - B: N1 = Radians(N1)
+			//         N2 = 2 * N1
+
+			//         DP = (-17.2327 - 0.01737 * T) * Sin(N1)
+			//         DP = DP + (-1.2729 - 0.00013 * T) * Sin(l2) + 0.2088 * Sin(N2)
+			//         DP = DP - 0.2037 * Sin(D2) + (0.1261 - 0.00031 * T) * Sin(M1)
+			//         DP = DP + 0.0675 * Sin(M2) - (0.0497 - 0.00012 * T) * Sin(l2 + M1)
+			//         DP = DP - 0.0342 * Sin(D2 - N1) - 0.0261 * Sin(D2 + M2)
+			//         DP = DP + 0.0214 * Sin(l2 - M1) - 0.0149 * Sin(l2 - D2 + M2)
+			//         DP = DP + 0.0124 * Sin(l2 - N1) + 0.0114 * Sin(D2 - M2)
+
+			//         NutatLong = DP / 3600#
+			// End Function
+			Real NutatLong(GreenwichDateTime gdt) {
+				Real DJ = CDJD(gdt) - 2415020.0; Real T = DJ / 36525.0; Real T2 = T * T;
+				Real A = 100.0021358 * T; Real B = 360.0 * (A - Int(A));
+				Real L1 = 279.6967 + 0.000303 * T2 + B; Real L2 = 2.0 * Radians(L1);
+				A = 1336.855231 * T; B = 360.0 * (A - Int(A));
+				Real D1 = 270.4342 - 0.001133 * T2 + B; Real D2 = 2.0 * Radians(D1);
+				A = 99.99736056 * T; B = 360.0 * (A - Int(A));
+				Real M1 = 358.4758 - 0.00015 * T2 + B; M1 = Radians(M1);
+				A = 1325.552359 * T; B = 360.0 * (A - Int(A));
+				Real M2 = 296.1046 + 0.009192 * T2 + B; M2 = Radians(M2);
+				A = 5.372616667 * T; B = 360.0 * (A - Int(A));
+				Real N1 = 259.1833 + 0.002078 * T2 - B; N1 = Radians(N1);
+				Real N2 = 2 * N1;
+
+				Real DP = (-17.2327 - 0.01737 * T) * Sin(N1);
+				DP = DP + (-1.2729 - 0.00013 * T) * Sin(L2) + 0.2088 * Sin(N2);
+				DP = DP - 0.2037 * Sin(D2) + (0.1261 - 0.00031 * T) * Sin(M1);
+				DP = DP + 0.0675 * Sin(M2) - (0.0497 - 0.00012 * T) * Sin(L2 + M1);
+				DP = DP - 0.0342 * Sin(D2 - N1) - 0.0261 * Sin(D2 + M2);
+				DP = DP + 0.0214 * Sin(L2 - M1) - 0.0149 * Sin(L2 - D2 + M2);
+				DP = DP + 0.0124 * Sin(L2 - N1) + 0.0114 * Sin(D2 - M2);
+
+				return DP / 3600.0;
+			}
+
+			// Function Obliq(GD As Double, GM As Double, GY As Double) As Double
+			//     A = CDJD(GD, GM, GY)
+			//     B = A - 2415020#
+			//     C = (B / 36525#) - 1#
+			//     D = C * (46.815 + C * (0.0006 - (C * 0.00181)))
+			//     E = D / 3600#
+			//     Obliq = 23.43929167 - E + NutatObl(GD, GM, GY)
+			// End Function
+			Real Obliq(Real GD, Real GM, Real GY) {
+				Real A = CDJD(GD, GM, GY);
+				Real B = A - 2415020.0;
+				Real C = (B / 36525.0) - 1.0;
+				Real D = C * (46.815 + C * (0.00006 - (C * 0.00181)));
+				Real E = D / 3600.0f;
+				return 23.43929167 - E + NutatObl(GD, GM, GY);
+			}
+
+			Real ECRA(Real ELD, Real ELM, Real ELS, Real BD, Real BM, Real BS, Real GD, Real GM, Real GY) {
+				Real A = Radians(DMSDD(ELD, ELM, ELS));
+				Real B = Radians(DMSDD(BD, BM, BS));
+				Real C = Radians(Obliq(GD, GM, GY));
+				Real D = std::sin(A) * std::cos(C) - std::tan(B) * std::sin(C);
+				Real E = std::cos(A);
+				Real F = Degrees(Atan2(E, D));
+				return F - 360.0f * Int(F / 360.0);
+			}
+
+			Real ECdec(Real ELD, Real ELM, Real ELS, Real BD, Real BM, Real BS, Real GD, Real GM, Real GY) {
+				Real A = Radians(DMSDD(ELD, ELM, ELS));
+				Real B = Radians(DMSDD(BD, BM, BS));
+				Real C = Radians(Obliq(GD, GM, GY));
+				Real D = std::sin(B) * std::cos(C) + std::cos(B) * std::sin(C) * std::sin(A);
+				return Degrees(std::asin(D));
 			}
 
 			Real TrueAnomaly(Real AM, Real EC) {
@@ -445,6 +636,384 @@ namespace Fluxions {
 				SR = SR - FX_TWOPI * trunc(SR / FX_TWOPI);
 				return SR * FX_RADIANS_TO_DEGREES;
 			}
+
+			// Function MoonLong(LH As Double, LM As Double, LS As Double, DS As Double, ZC As Double, DY As Double, MN As Double, YR As Double) As Double
+			//         UT = LctUT(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GD = LctGDay(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GM = LctGMonth(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GY = LctGYear(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         T = ((CDJD(GD, GM, GY) - 2415020#) / 36525#) + (UT / 876600#)
+			//         T2 = T * T
+
+			//         M1 = 27.32158213: M2 = 365.2596407: M3 = 27.55455094
+			//         M4 = 29.53058868: M5 = 27.21222039: M6 = 6798.363307
+			//         Q = CDJD(GD, GM, GY) - 2415020# + (UT / 24#)
+			//         M1 = Q / M1: M2 = Q / M2: M3 = Q / M3
+			//         M4 = Q / M4: M5 = Q / M5: M6 = Q / M6
+			//         M1 = 360 * (M1 - Int(M1)): M2 = 360 * (M2 - Int(M2))
+			//         M3 = 360 * (M3 - Int(M3)): M4 = 360 * (M4 - Int(M4))
+			//         M5 = 360 * (M5 - Int(M5)): M6 = 360 * (M6 - Int(M6))
+
+			//         ML = 270.434164 + M1 - (0.001133 - 0.0000019 * T) * T2
+			//         MS = 358.475833 + M2 - (0.00015 + 0.0000033 * T) * T2
+			//         MD = 296.104608 + M3 + (0.009192 + 0.0000144 * T) * T2
+			//         ME1 = 350.737486 + M4 - (0.001436 - 0.0000019 * T) * T2
+			//         MF = 11.250889 + M5 - (0.003211 + 0.0000003 * T) * T2
+			//         NA = 259.183275 - M6 + (0.002078 + 0.0000022 * T) * T2
+			//         A = Radians(51.2 + 20.2 * T): S1 = Sin(A): S2 = Sin(Radians(NA))
+			//         B = 346.56 + (132.87 - 0.0091731 * T) * T
+			//         S3 = 0.003964 * Sin(Radians(B))
+			//         C = Radians(NA + 275.05 - 2.3 * T): S4 = Sin(C)
+			//         ML = ML + 0.000233 * S1 + S3 + 0.001964 * S2
+			//         MS = MS - 0.001778 * S1
+			//         MD = MD + 0.000817 * S1 + S3 + 0.002541 * S2
+			//         MF = MF + S3 - 0.024691 * S2 - 0.004328 * S4
+			//         ME1 = ME1 + 0.002011 * S1 + S3 + 0.001964 * S2
+			//         E = 1# - (0.002495 + 0.00000752 * T) * T: E2 = E * E
+			//         ML = Radians(ML): MS = Radians(MS): NA = Radians(NA)
+			//         ME1 = Radians(ME1): MF = Radians(MF): MD = Radians(MD)
+
+			//         L = 6.28875 * Sin(MD) + 1.274018 * Sin(2 * ME1 - MD)
+			//         L = L + 0.658309 * Sin(2 * ME1) + 0.213616 * Sin(2 * MD)
+			//         L = L - E * 0.185596 * Sin(MS) - 0.114336 * Sin(2 * MF)
+			//         L = L + 0.058793 * Sin(2 * (ME1 - MD))
+			//         L = L + 0.057212 * E * Sin(2 * ME1 - MS - MD) + 0.05332 * Sin(2 * ME1 + MD)
+			//         L = L + 0.045874 * E * Sin(2 * ME1 - MS) + 0.041024 * E * Sin(MD - MS)
+			//         L = L - 0.034718 * Sin(ME1) - E * 0.030465 * Sin(MS + MD)
+			//         L = L + 0.015326 * Sin(2 * (ME1 - MF)) - 0.012528 * Sin(2 * MF + MD)
+			//         L = L - 0.01098 * Sin(2 * MF - MD) + 0.010674 * Sin(4 * ME1 - MD)
+			//         L = L + 0.010034 * Sin(3 * MD) + 0.008548 * Sin(4 * ME1 - 2 * MD)
+			//         L = L - E * 0.00791 * Sin(MS - MD + 2 * ME1) - E * 0.006783 * Sin(2 * ME1 + MS)
+			//         L = L + 0.005162 * Sin(MD - ME1) + E * 0.005 * Sin(MS + ME1)
+			//         L = L + 0.003862 * Sin(4 * ME1) + E * 0.004049 * Sin(MD - MS + 2 * ME1)
+			//         L = L + 0.003996 * Sin(2 * (MD + ME1)) + 0.003665 * Sin(2 * ME1 - 3 * MD)
+			//         L = L + E * 0.002695 * Sin(2 * MD - MS) + 0.002602 * Sin(MD - 2 * (MF + ME1))
+			//         L = L + E * 0.002396 * Sin(2 * (ME1 - MD) - MS) - 0.002349 * Sin(MD + ME1)
+			//         L = L + E2 * 0.002249 * Sin(2 * (ME1 - MS)) - E * 0.002125 * Sin(2 * MD + MS)
+			//         L = L - E2 * 0.002079 * Sin(2 * MS) + E2 * 0.002059 * Sin(2 * (ME1 - MS) - MD)
+			//         L = L - 0.001773 * Sin(MD + 2 * (ME1 - MF)) - 0.001595 * Sin(2 * (MF + ME1))
+			//         L = L + E * 0.00122 * Sin(4 * ME1 - MS - MD) - 0.00111 * Sin(2 * (MD + MF))
+			//         L = L + 0.000892 * Sin(MD - 3 * ME1) - E * 0.000811 * Sin(MS + MD + 2 * ME1)
+			//         L = L + E * 0.000761 * Sin(4 * ME1 - MS - 2 * MD)
+			//         L = L + E2 * 0.000704 * Sin(MD - 2 * (MS + ME1))
+			//         L = L + E * 0.000693 * Sin(MS - 2 * (MD - ME1))
+			//         L = L + E * 0.000598 * Sin(2 * (ME1 - MF) - MS)
+			//         L = L + 0.00055 * Sin(MD + 4 * ME1) + 0.000538 * Sin(4 * MD)
+			//         L = L + E * 0.000521 * Sin(4 * ME1 - MS) + 0.000486 * Sin(2 * MD - ME1)
+			//         L = L + E2 * 0.000717 * Sin(MD - 2 * MS)
+			//         MM = Unwind(ML + Radians(L))
+
+			//         MoonLong = Degrees(MM)
+			// End Function
+			Real MoonLong(GreenwichDateTime gdt) {
+				//UT = LctUT(LH, LM, LS, DS, ZC, DY, MN, YR);
+				//GD = LctGDay(LH, LM, LS, DS, ZC, DY, MN, YR);
+				//GM = LctGMonth(LH, LM, LS, DS, ZC, DY, MN, YR);
+				//GY = LctGYear(LH, LM, LS, DS, ZC, DY, MN, YR);
+				Real T = ((CDJD(gdt) - 2415020.0) / 36525.0) + (gdt.UT / 876600.0);
+				Real T2 = T * T;
+
+				Real M1 = 27.32158213; Real M2 = 365.2596407; Real M3 = 27.55455094;
+				Real M4 = 29.53058868; Real M5 = 27.21222039; Real M6 = 6798.363307;
+				Real Q = CDJD(gdt) - 2415020.0 + (gdt.UT / 24.0);
+				M1 = Q / M1; M2 = Q / M2; M3 = Q / M3;
+				M4 = Q / M4; M5 = Q / M5; M6 = Q / M6;
+				M1 = 360 * (M1 - Int(M1)); M2 = 360 * (M2 - Int(M2));
+				M3 = 360 * (M3 - Int(M3)); M4 = 360 * (M4 - Int(M4));
+				M5 = 360 * (M5 - Int(M5)); M6 = 360 * (M6 - Int(M6));
+
+				Real ML = 270.434164 + M1 - (0.001133 - 0.0000019 * T) * T2;
+				Real MS = 358.475833 + M2 - (0.00015 + 0.0000033 * T) * T2;
+				Real MD = 296.104608 + M3 + (0.009192 + 0.0000144 * T) * T2;
+				Real ME1 = 350.737486 + M4 - (0.001436 - 0.0000019 * T) * T2;
+				Real MF = 11.250889 + M5 - (0.003211 + 0.0000003 * T) * T2;
+				Real NA = 259.183275 - M6 + (0.002078 + 0.0000022 * T) * T2;
+				Real A = Radians(51.2 + 20.2 * T); Real S1 = Sin(A); Real S2 = Sin(Radians(NA));
+				Real B = 346.56 + (132.87 - 0.0091731 * T) * T;
+				Real S3 = 0.003964 * Sin(Radians(B));
+				Real C = Radians(NA + 275.05 - 2.3 * T); Real S4 = Sin(C);
+				ML = ML + 0.000233 * S1 + S3 + 0.001964 * S2;
+				MS = MS - 0.001778 * S1;
+				MD = MD + 0.000817 * S1 + S3 + 0.002541 * S2;
+				MF = MF + S3 - 0.024691 * S2 - 0.004328 * S4;
+				ME1 = ME1 + 0.002011 * S1 + S3 + 0.001964 * S2;
+				Real E = 1.0 - (0.002495 + 0.00000752 * T) * T; Real E2 = E * E;
+				ML = Radians(ML); MS = Radians(MS); NA = Radians(NA);
+				ME1 = Radians(ME1); MF = Radians(MF); MD = Radians(MD);
+
+				Real L = 6.28875 * Sin(MD) + 1.274018 * Sin(2 * ME1 - MD);
+				L = L + 0.658309 * Sin(2 * ME1) + 0.213616 * Sin(2 * MD);
+				L = L - E * 0.185596 * Sin(MS) - 0.114336 * Sin(2 * MF);
+				L = L + 0.058793 * Sin(2 * (ME1 - MD));
+				L = L + 0.057212 * E * Sin(2 * ME1 - MS - MD) + 0.05332 * Sin(2 * ME1 + MD);
+				L = L + 0.045874 * E * Sin(2 * ME1 - MS) + 0.041024 * E * Sin(MD - MS);
+				L = L - 0.034718 * Sin(ME1) - E * 0.030465 * Sin(MS + MD);
+				L = L + 0.015326 * Sin(2 * (ME1 - MF)) - 0.012528 * Sin(2 * MF + MD);
+				L = L - 0.01098 * Sin(2 * MF - MD) + 0.010674 * Sin(4 * ME1 - MD);
+				L = L + 0.010034 * Sin(3 * MD) + 0.008548 * Sin(4 * ME1 - 2 * MD);
+				L = L - E * 0.00791 * Sin(MS - MD + 2 * ME1) - E * 0.006783 * Sin(2 * ME1 + MS);
+				L = L + 0.005162 * Sin(MD - ME1) + E * 0.005 * Sin(MS + ME1);
+				L = L + 0.003862 * Sin(4 * ME1) + E * 0.004049 * Sin(MD - MS + 2 * ME1);
+				L = L + 0.003996 * Sin(2 * (MD + ME1)) + 0.003665 * Sin(2 * ME1 - 3 * MD);
+				L = L + E * 0.002695 * Sin(2 * MD - MS) + 0.002602 * Sin(MD - 2 * (MF + ME1));
+				L = L + E * 0.002396 * Sin(2 * (ME1 - MD) - MS) - 0.002349 * Sin(MD + ME1);
+				L = L + E2 * 0.002249 * Sin(2 * (ME1 - MS)) - E * 0.002125 * Sin(2 * MD + MS);
+				L = L - E2 * 0.002079 * Sin(2 * MS) + E2 * 0.002059 * Sin(2 * (ME1 - MS) - MD);
+				L = L - 0.001773 * Sin(MD + 2 * (ME1 - MF)) - 0.001595 * Sin(2 * (MF + ME1));
+				L = L + E * 0.00122 * Sin(4 * ME1 - MS - MD) - 0.00111 * Sin(2 * (MD + MF));
+				L = L + 0.000892 * Sin(MD - 3 * ME1) - E * 0.000811 * Sin(MS + MD + 2 * ME1);
+				L = L + E * 0.000761 * Sin(4 * ME1 - MS - 2 * MD);
+				L = L + E2 * 0.000704 * Sin(MD - 2 * (MS + ME1));
+				L = L + E * 0.000693 * Sin(MS - 2 * (MD - ME1));
+				L = L + E * 0.000598 * Sin(2 * (ME1 - MF) - MS);
+				L = L + 0.00055 * Sin(MD + 4 * ME1) + 0.000538 * Sin(4 * MD);
+				L = L + E * 0.000521 * Sin(4 * ME1 - MS) + 0.000486 * Sin(2 * MD - ME1);
+				L = L + E2 * 0.000717 * Sin(MD - 2 * MS);
+				Real MM = Unwind(ML + Radians(L));
+
+				return Degrees(MM);
+			}
+
+			// Function MoonLat(LH As Double, LM As Double, LS As Double, DS As Double, ZC As Double, DY As Double, MN As Double, YR As Double) As Double
+
+			//         UT = LctUT(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GD = LctGDay(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GM = LctGMonth(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GY = LctGYear(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         T = ((CDJD(GD, GM, GY) - 2415020#) / 36525#) + (UT / 876600#)
+			//         T2 = T * T
+
+			//         M1 = 27.32158213: M2 = 365.2596407: M3 = 27.55455094
+			//         M4 = 29.53058868: M5 = 27.21222039: M6 = 6798.363307
+			//         Q = CDJD(GD, GM, GY) - 2415020# + (UT / 24#)
+			//         M1 = Q / M1: M2 = Q / M2: M3 = Q / M3
+			//         M4 = Q / M4: M5 = Q / M5: M6 = Q / M6
+			//         M1 = 360 * (M1 - Int(M1)): M2 = 360 * (M2 - Int(M2))
+			//         M3 = 360 * (M3 - Int(M3)): M4 = 360 * (M4 - Int(M4))
+			//         M5 = 360 * (M5 - Int(M5)): M6 = 360 * (M6 - Int(M6))
+
+			//         ML = 270.434164 + M1 - (0.001133 - 0.0000019 * T) * T2
+			//         MS = 358.475833 + M2 - (0.00015 + 0.0000033 * T) * T2
+			//         MD = 296.104608 + M3 + (0.009192 + 0.0000144 * T) * T2
+			//         ME1 = 350.737486 + M4 - (0.001436 - 0.0000019 * T) * T2
+			//         MF = 11.250889 + M5 - (0.003211 + 0.0000003 * T) * T2
+			//         NA = 259.183275 - M6 + (0.002078 + 0.0000022 * T) * T2
+			//         A = Radians(51.2 + 20.2 * T): S1 = Sin(A): S2 = Sin(Radians(NA))
+			//         B = 346.56 + (132.87 - 0.0091731 * T) * T
+			//         S3 = 0.003964 * Sin(Radians(B))
+			//         C = Radians(NA + 275.05 - 2.3 * T): S4 = Sin(C)
+			//         ML = ML + 0.000233 * S1 + S3 + 0.001964 * S2
+			//         MS = MS - 0.001778 * S1
+			//         MD = MD + 0.000817 * S1 + S3 + 0.002541 * S2
+			//         MF = MF + S3 - 0.024691 * S2 - 0.004328 * S4
+			//         ME1 = ME1 + 0.002011 * S1 + S3 + 0.001964 * S2
+			//         E = 1# - (0.002495 + 0.00000752 * T) * T: E2 = E * E
+			//         ML = Radians(ML): MS = Radians(MS): NA = Radians(NA)
+			//         ME1 = Radians(ME1): MF = Radians(MF): MD = Radians(MD)
+
+			//         G = 5.128189 * Sin(MF) + 0.280606 * Sin(MD + MF)
+			//         G = G + 0.277693 * Sin(MD - MF) + 0.173238 * Sin(2 * ME1 - MF)
+			//         G = G + 0.055413 * Sin(2 * ME1 + MF - MD) + 0.046272 * Sin(2 * ME1 - MF - MD)
+			//         G = G + 0.032573 * Sin(2 * ME1 + MF) + 0.017198 * Sin(2 * MD + MF)
+			//         G = G + 0.009267 * Sin(2 * ME1 + MD - MF) + 0.008823 * Sin(2 * MD - MF)
+			//         G = G + E * 0.008247 * Sin(2 * ME1 - MS - MF) + 0.004323 * Sin(2 * (ME1 - MD) - MF)
+			//         G = G + 0.0042 * Sin(2 * ME1 + MF + MD) + E * 0.003372 * Sin(MF - MS - 2 * ME1)
+			//         G = G + E * 0.002472 * Sin(2 * ME1 + MF - MS - MD)
+			//         G = G + E * 0.002222 * Sin(2 * ME1 + MF - MS)
+			//         G = G + E * 0.002072 * Sin(2 * ME1 - MF - MS - MD)
+			//         G = G + E * 0.001877 * Sin(MF - MS + MD) + 0.001828 * Sin(4 * ME1 - MF - MD)
+			//         G = G - E * 0.001803 * Sin(MF + MS) - 0.00175 * Sin(3 * MF)
+			//         G = G + E * 0.00157 * Sin(MD - MS - MF) - 0.001487 * Sin(MF + ME1)
+			//         G = G - E * 0.001481 * Sin(MF + MS + MD) + E * 0.001417 * Sin(MF - MS - MD)
+			//         G = G + E * 0.00135 * Sin(MF - MS) + 0.00133 * Sin(MF - ME1)
+			//         G = G + 0.001106 * Sin(MF + 3 * MD) + 0.00102 * Sin(4 * ME1 - MF)
+			//         G = G + 0.000833 * Sin(MF + 4 * ME1 - MD) + 0.000781 * Sin(MD - 3 * MF)
+			//         G = G + 0.00067 * Sin(MF + 4 * ME1 - 2 * MD) + 0.000606 * Sin(2 * ME1 - 3 * MF)
+			//         G = G + 0.000597 * Sin(2 * (ME1 + MD) - MF)
+			//         G = G + E * 0.000492 * Sin(2 * ME1 + MD - MS - MF) + 0.00045 * Sin(2 * (MD - ME1) - MF)
+			//         G = G + 0.000439 * Sin(3 * MD - MF) + 0.000423 * Sin(MF + 2 * (ME1 + MD))
+			//         G = G + 0.000422 * Sin(2 * ME1 - MF - 3 * MD) - E * 0.000367 * Sin(MS + MF + 2 * ME1 - MD)
+			//         G = G - E * 0.000353 * Sin(MS + MF + 2 * ME1) + 0.000331 * Sin(MF + 4 * ME1)
+			//         G = G + E * 0.000317 * Sin(2 * ME1 + MF - MS + MD)
+			//         G = G + E2 * 0.000306 * Sin(2 * (ME1 - MS) - MF) - 0.000283 * Sin(MD + 3 * MF)
+			//         W1 = 0.0004664 * Cos(NA): W2 = 0.0000754 * Cos(C)
+			//         BM = Radians(G) * (1# - W1 - W2)
+
+			//         MoonLat = Degrees(BM)        
+			// End Function
+			Real MoonLat(GreenwichDateTime gdt) {
+				// Function MoonLat(LH As Double, LM As Double, LS As Double, DS As Double, ZC As Double, DY As Double, MN As Double, YR As Double) As Double
+
+				Real T = ((CDJD(gdt) - 2415020.0) / 36525.0) + (gdt.UT / 876600.0);
+				Real T2 = T * T;
+
+				Real M1 = 27.32158213; Real M2 = 365.2596407; Real M3 = 27.55455094;
+				Real M4 = 29.53058868; Real M5 = 27.21222039; Real M6 = 6798.363307;
+				Real Q = CDJD(gdt) - 2415020.0 + (gdt.UT / 24.0);
+				M1 = Q / M1; M2 = Q / M2; M3 = Q / M3;
+				M4 = Q / M4; M5 = Q / M5; M6 = Q / M6;
+				M1 = 360 * (M1 - Int(M1)); M2 = 360 * (M2 - Int(M2));
+				M3 = 360 * (M3 - Int(M3)); M4 = 360 * (M4 - Int(M4));
+				M5 = 360 * (M5 - Int(M5)); M6 = 360 * (M6 - Int(M6));
+
+				Real ML = 270.434164 + M1 - (0.001133 - 0.0000019 * T) * T2;
+				Real MS = 358.475833 + M2 - (0.00015 + 0.0000033 * T) * T2;
+				Real MD = 296.104608 + M3 + (0.009192 + 0.0000144 * T) * T2;
+				Real ME1 = 350.737486 + M4 - (0.001436 - 0.0000019 * T) * T2;
+				Real MF = 11.250889 + M5 - (0.003211 + 0.0000003 * T) * T2;
+				Real NA = 259.183275 - M6 + (0.002078 + 0.0000022 * T) * T2;
+				Real A = Radians(51.2 + 20.2 * T); Real S1 = Sin(A); Real S2 = Sin(Radians(NA));
+				Real B = 346.56 + (132.87 - 0.0091731 * T) * T;
+				Real S3 = 0.003964 * Sin(Radians(B));
+				Real C = Radians(NA + 275.05 - 2.3 * T); Real S4 = Sin(C);
+				ML = ML + 0.000233 * S1 + S3 + 0.001964 * S2;
+				MS = MS - 0.001778 * S1;
+				MD = MD + 0.000817 * S1 + S3 + 0.002541 * S2;
+				MF = MF + S3 - 0.024691 * S2 - 0.004328 * S4;
+				ME1 = ME1 + 0.002011 * S1 + S3 + 0.001964 * S2;
+				Real E = 1.0 - (0.002495 + 0.00000752 * T) * T; Real E2 = E * E;
+				ML = Radians(ML); MS = Radians(MS); NA = Radians(NA);
+				ME1 = Radians(ME1); MF = Radians(MF); MD = Radians(MD);
+
+				Real G = 5.128189 * Sin(MF) + 0.280606 * Sin(MD + MF);
+				G = G + 0.277693 * Sin(MD - MF) + 0.173238 * Sin(2 * ME1 - MF);
+				G = G + 0.055413 * Sin(2 * ME1 + MF - MD) + 0.046272 * Sin(2 * ME1 - MF - MD);
+				G = G + 0.032573 * Sin(2 * ME1 + MF) + 0.017198 * Sin(2 * MD + MF);
+				G = G + 0.009267 * Sin(2 * ME1 + MD - MF) + 0.008823 * Sin(2 * MD - MF);
+				G = G + E * 0.008247 * Sin(2 * ME1 - MS - MF) + 0.004323 * Sin(2 * (ME1 - MD) - MF);
+				G = G + 0.0042 * Sin(2 * ME1 + MF + MD) + E * 0.003372 * Sin(MF - MS - 2 * ME1);
+				G = G + E * 0.002472 * Sin(2 * ME1 + MF - MS - MD);
+				G = G + E * 0.002222 * Sin(2 * ME1 + MF - MS);
+				G = G + E * 0.002072 * Sin(2 * ME1 - MF - MS - MD);
+				G = G + E * 0.001877 * Sin(MF - MS + MD) + 0.001828 * Sin(4 * ME1 - MF - MD);
+				G = G - E * 0.001803 * Sin(MF + MS) - 0.00175 * Sin(3 * MF);
+				G = G + E * 0.00157 * Sin(MD - MS - MF) - 0.001487 * Sin(MF + ME1);
+				G = G - E * 0.001481 * Sin(MF + MS + MD) + E * 0.001417 * Sin(MF - MS - MD);
+				G = G + E * 0.00135 * Sin(MF - MS) + 0.00133 * Sin(MF - ME1);
+				G = G + 0.001106 * Sin(MF + 3 * MD) + 0.00102 * Sin(4 * ME1 - MF);
+				G = G + 0.000833 * Sin(MF + 4 * ME1 - MD) + 0.000781 * Sin(MD - 3 * MF);
+				G = G + 0.00067 * Sin(MF + 4 * ME1 - 2 * MD) + 0.000606 * Sin(2 * ME1 - 3 * MF);
+				G = G + 0.000597 * Sin(2 * (ME1 + MD) - MF);
+				G = G + E * 0.000492 * Sin(2 * ME1 + MD - MS - MF) + 0.00045 * Sin(2 * (MD - ME1) - MF);
+				G = G + 0.000439 * Sin(3 * MD - MF) + 0.000423 * Sin(MF + 2 * (ME1 + MD));
+				G = G + 0.000422 * Sin(2 * ME1 - MF - 3 * MD) - E * 0.000367 * Sin(MS + MF + 2 * ME1 - MD);
+				G = G - E * 0.000353 * Sin(MS + MF + 2 * ME1) + 0.000331 * Sin(MF + 4 * ME1);
+				G = G + E * 0.000317 * Sin(2 * ME1 + MF - MS + MD);
+				G = G + E2 * 0.000306 * Sin(2 * (ME1 - MS) - MF) - 0.000283 * Sin(MD + 3 * MF);
+				Real W1 = 0.0004664 * Cos(NA); Real W2 = 0.0000754 * Cos(C);
+				Real BM = Radians(G) * (1.0 - W1 - W2);
+
+				return Degrees(BM);
+			}
+
+			// Function MoonHP(LH As Double, LM As Double, LS As Double, DS As Double, ZC As Double, DY As Double, MN As Double, YR As Double) As Double
+
+			//         UT = LctUT(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GD = LctGDay(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GM = LctGMonth(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         GY = LctGYear(LH, LM, LS, DS, ZC, DY, MN, YR)
+			//         T = ((CDJD(GD, GM, GY) - 2415020#) / 36525#) + (UT / 876600#)
+			//         T2 = T * T
+
+			//         M1 = 27.32158213: M2 = 365.2596407: M3 = 27.55455094
+			//         M4 = 29.53058868: M5 = 27.21222039: M6 = 6798.363307
+			//         Q = CDJD(GD, GM, GY) - 2415020# + (UT / 24#)
+			//         M1 = Q / M1: M2 = Q / M2: M3 = Q / M3
+			//         M4 = Q / M4: M5 = Q / M5: M6 = Q / M6
+			//         M1 = 360 * (M1 - Int(M1)): M2 = 360 * (M2 - Int(M2))
+			//         M3 = 360 * (M3 - Int(M3)): M4 = 360 * (M4 - Int(M4))
+			//         M5 = 360 * (M5 - Int(M5)): M6 = 360 * (M6 - Int(M6))
+
+			//         ML = 270.434164 + M1 - (0.001133 - 0.0000019 * T) * T2
+			//         MS = 358.475833 + M2 - (0.00015 + 0.0000033 * T) * T2
+			//         MD = 296.104608 + M3 + (0.009192 + 0.0000144 * T) * T2
+			//         ME1 = 350.737486 + M4 - (0.001436 - 0.0000019 * T) * T2
+			//         MF = 11.250889 + M5 - (0.003211 + 0.0000003 * T) * T2
+			//         NA = 259.183275 - M6 + (0.002078 + 0.0000022 * T) * T2
+			//         A = Radians(51.2 + 20.2 * T): S1 = Sin(A): S2 = Sin(Radians(NA))
+			//         B = 346.56 + (132.87 - 0.0091731 * T) * T
+			//         S3 = 0.003964 * Sin(Radians(B))
+			//         C = Radians(NA + 275.05 - 2.3 * T): S4 = Sin(C)
+			//         ML = ML + 0.000233 * S1 + S3 + 0.001964 * S2
+			//         MS = MS - 0.001778 * S1
+			//         MD = MD + 0.000817 * S1 + S3 + 0.002541 * S2
+			//         MF = MF + S3 - 0.024691 * S2 - 0.004328 * S4
+			//         ME1 = ME1 + 0.002011 * S1 + S3 + 0.001964 * S2
+			//         E = 1# - (0.002495 + 0.00000752 * T) * T: E2 = E * E
+			//         ML = Radians(ML): MS = Radians(MS): NA = Radians(NA)
+			//         ME1 = Radians(ME1): MF = Radians(MF): MD = Radians(MD)
+
+			//         PM = 0.950724 + 0.051818 * Cos(MD) + 0.009531 * Cos(2 * ME1 - MD)
+			//         PM = PM + 0.007843 * Cos(2 * ME1) + 0.002824 * Cos(2 * MD)
+			//         PM = PM + 0.000857 * Cos(2 * ME1 + MD) + E * 0.000533 * Cos(2 * ME1 - MS)
+			//         PM = PM + E * 0.000401 * Cos(2 * ME1 - MD - MS)
+			//         PM = PM + E * 0.00032 * Cos(MD - MS) - 0.000271 * Cos(ME1)
+			//         PM = PM - E * 0.000264 * Cos(MS + MD) - 0.000198 * Cos(2 * MF - MD)
+			//         PM = PM + 0.000173 * Cos(3 * MD) + 0.000167 * Cos(4 * ME1 - MD)
+			//         PM = PM - E * 0.000111 * Cos(MS) + 0.000103 * Cos(4 * ME1 - 2 * MD)
+			//         PM = PM - 0.000084 * Cos(2 * MD - 2 * ME1) - E * 0.000083 * Cos(2 * ME1 + MS)
+			//         PM = PM + 0.000079 * Cos(2 * ME1 + 2 * MD) + 0.000072 * Cos(4 * ME1)
+			//         PM = PM + E * 0.000064 * Cos(2 * ME1 - MS + MD) - E * 0.000063 * Cos(2 * ME1 + MS - MD)
+			//         PM = PM + E * 0.000041 * Cos(MS + ME1) + E * 0.000035 * Cos(2 * MD - MS)
+			//         PM = PM - 0.000033 * Cos(3 * MD - 2 * ME1) - 0.00003 * Cos(MD + ME1)
+			//         PM = PM - 0.000029 * Cos(2 * (MF - ME1)) - E * 0.000029 * Cos(2 * MD + MS)
+			//         PM = PM + E2 * 0.000026 * Cos(2 * (ME1 - MS)) - 0.000023 * Cos(2 * (MF - ME1) + MD)
+			//         PM = PM + E * 0.000019 * Cos(4 * ME1 - MS - MD)
+
+			//         MoonHP = PM
+
+			// End Function
+			Real MoonHP(GreenwichDateTime gdt) {
+				Real T = ((CDJD(gdt) - 2415020.0) / 36525.0) + (gdt.UT / 876600.0);
+				Real T2 = T * T;
+
+				Real M1 = 27.32158213; Real M2 = 365.2596407; Real M3 = 27.55455094;
+				Real M4 = 29.53058868; Real M5 = 27.21222039; Real M6 = 6798.363307;
+				Real Q = CDJD(gdt) - 2415020.0 + (gdt.UT / 24.0);
+				M1 = Q / M1; M2 = Q / M2; M3 = Q / M3;
+				M4 = Q / M4; M5 = Q / M5; M6 = Q / M6;
+				M1 = 360 * (M1 - Int(M1)); M2 = 360 * (M2 - Int(M2));
+				M3 = 360 * (M3 - Int(M3)); M4 = 360 * (M4 - Int(M4));
+				M5 = 360 * (M5 - Int(M5)); M6 = 360 * (M6 - Int(M6));
+
+				Real ML = 270.434164 + M1 - (0.001133 - 0.0000019 * T) * T2;
+				Real MS = 358.475833 + M2 - (0.00015 + 0.0000033 * T) * T2;
+				Real MD = 296.104608 + M3 + (0.009192 + 0.0000144 * T) * T2;
+				Real ME1 = 350.737486 + M4 - (0.001436 - 0.0000019 * T) * T2;
+				Real MF = 11.250889 + M5 - (0.003211 + 0.0000003 * T) * T2;
+				Real NA = 259.183275 - M6 + (0.002078 + 0.0000022 * T) * T2;
+				Real A = Radians(51.2 + 20.2 * T); Real S1 = Sin(A); Real S2 = Sin(Radians(NA));
+				Real B = 346.56 + (132.87 - 0.0091731 * T) * T;
+				Real S3 = 0.003964 * Sin(Radians(B));
+				Real C = Radians(NA + 275.05 - 2.3 * T); Real S4 = Sin(C);
+				ML = ML + 0.000233 * S1 + S3 + 0.001964 * S2;
+				MS = MS - 0.001778 * S1;
+				MD = MD + 0.000817 * S1 + S3 + 0.002541 * S2;
+				MF = MF + S3 - 0.024691 * S2 - 0.004328 * S4;
+				ME1 = ME1 + 0.002011 * S1 + S3 + 0.001964 * S2;
+				Real E = 1.0 - (0.002495 + 0.00000752 * T) * T; Real E2 = E * E;
+				ML = Radians(ML); MS = Radians(MS); NA = Radians(NA);
+				ME1 = Radians(ME1); MF = Radians(MF); MD = Radians(MD);
+
+				Real PM = 0.950724 + 0.051818 * Cos(MD) + 0.009531 * Cos(2 * ME1 - MD);
+				PM = PM + 0.007843 * Cos(2 * ME1) + 0.002824 * Cos(2 * MD);
+				PM = PM + 0.000857 * Cos(2 * ME1 + MD) + E * 0.000533 * Cos(2 * ME1 - MS);
+				PM = PM + E * 0.000401 * Cos(2 * ME1 - MD - MS);
+				PM = PM + E * 0.00032 * Cos(MD - MS) - 0.000271 * Cos(ME1);
+				PM = PM - E * 0.000264 * Cos(MS + MD) - 0.000198 * Cos(2 * MF - MD);
+				PM = PM + 0.000173 * Cos(3 * MD) + 0.000167 * Cos(4 * ME1 - MD);
+				PM = PM - E * 0.000111 * Cos(MS) + 0.000103 * Cos(4 * ME1 - 2 * MD);
+				PM = PM - 0.000084 * Cos(2 * MD - 2 * ME1) - E * 0.000083 * Cos(2 * ME1 + MS);
+				PM = PM + 0.000079 * Cos(2 * ME1 + 2 * MD) + 0.000072 * Cos(4 * ME1);
+				PM = PM + E * 0.000064 * Cos(2 * ME1 - MS + MD) - E * 0.000063 * Cos(2 * ME1 + MS - MD);
+				PM = PM + E * 0.000041 * Cos(MS + ME1) + E * 0.000035 * Cos(2 * MD - MS);
+				PM = PM - 0.000033 * Cos(3 * MD - 2 * ME1) - 0.00003 * Cos(MD + ME1);
+				PM = PM - 0.000029 * Cos(2 * (MF - ME1)) - E * 0.000029 * Cos(2 * MD + MS);
+				PM = PM + E2 * 0.000026 * Cos(2 * (ME1 - MS)) - 0.000023 * Cos(2 * (MF - ME1) + MD);
+				PM = PM + E * 0.000019 * Cos(4 * ME1 - MS - MD);
+
+				return PM;
+			}
 		} // namespace PA
 
 		AstroCalc::AstroCalc() {
@@ -517,7 +1086,7 @@ namespace Fluxions {
 		}
 
 		time_t AstroCalc::GetTime() const {
-			return paTime.GetTime();
+			return paTime.getTime();
 		}
 
 		void AstroCalc::SetTime(time_t t, Real fractSeconds) {
@@ -565,7 +1134,7 @@ namespace Fluxions {
 				if (gmt_tm.tm_hour < lct_tm.tm_hour) {
 					timeZoneOffset -= 24;
 				}
-			}
+		}
 			else {
 				if (gmt_tm.tm_hour > lct_tm.tm_hour) {
 					timeZoneOffset += 24;
@@ -577,7 +1146,7 @@ namespace Fluxions {
 
 			SetDateTime(lct_tm.tm_mday, lct_tm.tm_mon + 1, lct_tm.tm_year + 1900, lct_tm.tm_isdst ? 1 : 0, timeZoneOffset, lct_tm.tm_hour, lct_tm.tm_min, lct_tm.tm_sec, fractSeconds);
 			computeTimesAndMatrices();
-		}
+	}
 
 		void AstroCalc::computeTimes() {
 			UT = paTime.UT();
@@ -811,6 +1380,19 @@ namespace Fluxions {
 			return sun;
 		}
 
+		EquatorialCoord AstroCalc::getMoon() const {
+			PA::GreenwichDateTime gdt = paTime.getGreenwich();
+			Real moonEclLong = PA::MoonLong(gdt);
+			Real moonEclLat = PA::MoonLat(gdt);
+			Real moonNutationLong = PA::NutatLong(gdt);
+			Real moonCorrectedLong = moonEclLong + moonNutationLong;
+			Real moonHorzParallax = PA::MoonHP(gdt);
+			Real earthMoonDistance = 6378.14 / std::sin(FX_DEGREES_TO_RADIANS * moonHorzParallax);
+			Real RA = PA::DDDH(PA::ECRA(moonCorrectedLong, 0, 0, moonEclLat, 0, 0, gdt.day, gdt.month, gdt.year));
+			Real dec = PA::ECdec(moonCorrectedLong, 0, 0, moonEclLat, 0, 0, gdt.day, gdt.month, gdt.year);
+			return { RA, dec };
+		}
+
 		Real AstroCalc::kepler(Real M, Real e) const {
 			Real E = M;
 			Real epsilon = 10e-6;
@@ -821,5 +1403,5 @@ namespace Fluxions {
 			} while (fabs(delta) >= epsilon);
 			return E;
 		}
-	} // namespace Astronomy
+} // namespace Astronomy
 } // namespace Fluxions

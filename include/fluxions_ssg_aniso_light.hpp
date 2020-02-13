@@ -11,7 +11,7 @@ namespace Fluxions {
 
 		const char* type() const override { return "SimpleAnisoLight"; }
 		const char* keyword() const override { return "anisoLight"; }
-		Color3f color() const override { return FxColors3::Yellow; }
+		Color3f color() const override { return { SH[0].r, SH[0].g, SH[0].b }; }
 
 		bool read(const std::string& keyword, std::istream& istr) override;
 		bool write(std::ostream& ostr) const override;

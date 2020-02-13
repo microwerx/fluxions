@@ -286,8 +286,9 @@ namespace Fluxions {
 		}
 
 		if (fpi.notFound()) {
-			HFLOGWARN("Map '%s' cannot be located", mapname.c_str());
+			HFLOGWARN("Map %s '%s' cannot be located", mapname.c_str(), pathToMap.c_str());
 			pathToMap = fpi.filename();
+			return false;
 		}
 		else {
 			pathToMap = fpi.shortestPath();

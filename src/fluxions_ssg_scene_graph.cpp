@@ -426,21 +426,7 @@ namespace Fluxions {
 			HFLOGERROR("OBJ file '%s' was not found.", path.c_str());
 			return false;
 		}
-		if (!ReadObjFile(fpi.shortestPath(), fpi.stem())) {
-			HFLOGERROR("OBJ file %s had an error while loading", path.c_str());
-			return false;
-		}
-		createGeometry(fpi.stem());
-		unsigned id = geometryGroups.lastId;
-
-		SimpleGeometryGroup& geometryGroup = geometryGroups[id];
-		geometryGroup.transform = currentTransform;
-		geometryGroup.bbox = staticMeshes[fpi.stem()].BoundingBox;
-		geometryGroup.objectId = 0;
-		geometryGroup.objectName = fpi.stem();
-
-		HFLOGINFO("OBJ file '%s' loaded.", path.c_str());
-		return true;
+		return addGeometryGroup(fpi.stem(), fpi.shortestPath());
 	}
 
 	void SimpleSceneGraph::calcBounds() {
@@ -546,22 +532,31 @@ namespace Fluxions {
 	bool SimpleSceneGraph::ReadOldDirectionalLight(const std::string& type, std::istream& istr) {
 		if (type != "dirTo")
 			return false;
-		std::string sunopt;
-		environment.hasSun = true;
-		sunopt = ReadString(istr);
-		if (sunopt == "dirTo") {
-			environment.sunDirTo = ReadVector3f(istr);
-		}
-		sunopt = ReadString(istr);
-		if (sunopt == "color") {
-			environment.sunColor = ReadVector3f(istr);
-		}
-		sunopt = ReadString(istr);
-		if (sunopt == "sizeMult") {
-			environment.sunSize = ReadFloat(istr);
-		}
-		environment.sunDirTo.normalize();
-		environment.curSunDirTo = environment.sunDirTo;
+
+		return true;
+		// THIS comment code needs to be handled differently
+		//std::string sunopt;
+		//environment.hasSun = true;
+		//sunopt = ReadString(istr);
+		//if (sunopt == "sunDirTo") {
+		//	environment.sunDirTo = ReadVector3f(istr);
+		//}
+		//if (sunopt == "moonDirTo") {
+		//	environment.moonDirTo = ReadVector3f(istr);
+		//}
+		//sunopt = ReadString(istr);
+		//if (sunopt == "color") {
+		//	environment.sunColor = ReadVector3f(istr);
+		//}
+		//sunopt = ReadString(istr);
+		//if (sunopt == "sizeMult") {
+		//	environment.sunSize = ReadFloat(istr);
+		//}
+		//environment.sunDirTo.normalize();
+		//environment.moonDirTo.normalize();
+		//environment.curSunDirTo = environment.sunDirTo;
+		//environment.curMoonDirTo = environment.moonDirTo;
+
 		//environment.sunShadowBiasMatrix.LoadIdentity();
 		//environment.sunShadowBiasMatrix.ShadowBias();
 		//environment.sunShadowProjectionMatrix.LoadIdentity();
@@ -666,6 +661,31 @@ namespace Fluxions {
 		}
 
 		return true;
+	}
+
+	bool SimpleSceneGraph::addGeometryGroup(const std::string name, const std::string& path) {
+		if (!ReadObjFile(path, name)) {
+			HFLOGERROR("OBJ file %s had an error while loading", path.c_str());
+			return false;
+		}
+		createGeometry(name);
+		unsigned id = geometryGroups.lastId;
+
+		SimpleGeometryGroup& geometryGroup = geometryGroups[id];
+		geometryGroup.transform = currentTransform;
+		geometryGroup.bbox = staticMeshes[name].BoundingBox;
+		geometryGroup.objectId = 0;
+		geometryGroup.objectName = name;
+
+		HFLOGINFO("OBJ file '%s' loaded.", path.c_str());
+		_assignIdsToMeshes();
+		return true;
+	}
+
+	bool SimpleSceneGraph::addDirToLight(const std::string& name) {
+		if (dirToLights.count(name)) return true;
+		auto node = createDirToLight(name);
+		return node != nullptr;
 	}
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createNode(const std::string& nodename_, SimpleSceneGraphNode* node) {

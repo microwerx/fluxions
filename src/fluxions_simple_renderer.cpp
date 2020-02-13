@@ -13,7 +13,7 @@ namespace Fluxions {
 
 	template <typename IndexType, GLenum GLIndexType>
 	SimpleRenderer<IndexType, GLIndexType>::~SimpleRenderer() {
-		reset();
+		reset(false);
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -45,7 +45,7 @@ namespace Fluxions {
 			surfaces[currentSurface].first = (int)slowVertices.size();
 			break;
 		}
-		surfaces[currentSurface].firstIndex = (int)Indices.size();
+		surfaces[currentSurface].firstIndex = (int)indices.size();
 		surfaces[currentSurface].firstZIndex = (int)zIndices.size();
 
 		// OBJECT, GROUP, MTLLIB, MTL
@@ -208,11 +208,11 @@ namespace Fluxions {
 		}
 
 		if (surfaces[currentSurface].vertexType == VertexType::FAST_VERTEX) {
-			Indices.push_back(baseFastIndex + index);
+			indices.push_back(baseFastIndex + index);
 			surfaces[currentSurface].count++;
 		}
 		else if (surfaces[currentSurface].vertexType == VertexType::SLOW_VERTEX) {
-			Indices.push_back(baseSlowIndex + index);
+			indices.push_back(baseSlowIndex + index);
 			surfaces[currentSurface].count++;
 		}
 
@@ -222,11 +222,11 @@ namespace Fluxions {
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
-	void SimpleRenderer<IndexType, GLIndexType>::Index(std::vector<IndexType> indices) {
+	void SimpleRenderer<IndexType, GLIndexType>::Index(std::vector<IndexType> _indices) {
 		// a baseIndex of < 0 means to use the current surface first vertex as 0
-		for_each(indices.begin(), indices.end(), [&](IndexType i) {
+		for_each(_indices.begin(), _indices.end(), [&](IndexType i) {
 			Index(i);
-				 });
+		});
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -354,11 +354,11 @@ namespace Fluxions {
 
 		bufferInfo.zIndexOffset = 0;
 		bufferInfo.zIndexSize = (int)zIndices.size() * sizeof(IndexType);
-		bufferInfo.IndexOffset = (int)bufferInfo.zIndexOffset + bufferInfo.zIndexSize;
-		bufferInfo.IndexSize = (int)Indices.size() * sizeof(IndexType);
+		bufferInfo.indexOffset = (int)bufferInfo.zIndexOffset + bufferInfo.zIndexSize;
+		bufferInfo.indexSize = (int)indices.size() * sizeof(IndexType);
 
 		bufferInfo.vertexBufferSizeInBytes = bufferInfo.zVertexSize + bufferInfo.fastVertexSize + bufferInfo.slowVertexSize;
-		bufferInfo.indexBufferSizeInBytes = bufferInfo.zIndexSize + bufferInfo.IndexSize;
+		bufferInfo.indexBufferSizeInBytes = bufferInfo.zIndexSize + bufferInfo.indexSize;
 
 		vertexMemoryBuffer.resize((size_t)bufferInfo.vertexBufferSizeInBytes + 1);
 		indexMemoryBuffer.resize((size_t)bufferInfo.indexBufferSizeInBytes + 1);
@@ -371,8 +371,8 @@ namespace Fluxions {
 			memcpy(&vertexMemoryBuffer[bufferInfo.slowVertexOffset], &slowVertices[0], bufferInfo.slowVertexSize);
 		if (!zIndices.empty())
 			memcpy(&indexMemoryBuffer[bufferInfo.zIndexOffset], &zIndices[0], bufferInfo.zIndexSize);
-		if (!Indices.empty())
-			memcpy(&indexMemoryBuffer[bufferInfo.IndexOffset], &Indices[0], bufferInfo.IndexSize);
+		if (!indices.empty())
+			memcpy(&indexMemoryBuffer[bufferInfo.indexOffset], &indices[0], bufferInfo.indexSize);
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
@@ -424,7 +424,7 @@ namespace Fluxions {
 			if (surface->vertexType == VertexType::UNDECIDED)
 				continue;
 			if (surface->isIndexed) {
-				surface->baseIndexBufferOffset = bufferInfo.IndexOffset + surface->firstIndex * sizeof(IndexType);
+				surface->baseIndexBufferOffset = bufferInfo.indexOffset + surface->firstIndex * sizeof(IndexType);
 				surface->baseZIndexBufferOffset = surface->firstZIndex * sizeof(IndexType);
 			}
 		}
@@ -433,19 +433,25 @@ namespace Fluxions {
 	}
 
 	template <typename IndexType, GLenum GLIndexType>
-	void SimpleRenderer<IndexType, GLIndexType>::reset() {
+	void SimpleRenderer<IndexType, GLIndexType>::reset(bool softReset) {
 		vertexCount = 0;
 		triangleCount = 0;
-		FxDeleteBuffer(&abo);
-		FxDeleteBuffer(&eabo);
-		FxDeleteVertexArray(&zVAO);
-		FxDeleteVertexArray(&fastVAO);
-		FxDeleteVertexArray(&slowVAO);
+		if (!softReset) {
+			FxDeleteBuffer(&abo);
+			FxDeleteBuffer(&eabo);
+			FxDeleteVertexArray(&zVAO);
+			FxDeleteVertexArray(&fastVAO);
+			FxDeleteVertexArray(&slowVAO);
+		}
 		slowVertices.clear();
 		fastVertices.clear();
 		zVertices.clear();
-		Indices.clear();
+		indices.clear();
 		zIndices.clear();
+		if (softReset) {
+			slowVertices.reserve(1000000);
+			indices.reserve(1000000);
+		}
 
 		vertexMemoryBuffer.clear();
 		indexMemoryBuffer.clear();

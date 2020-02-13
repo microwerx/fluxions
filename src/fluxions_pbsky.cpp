@@ -48,19 +48,19 @@ namespace Fluxions {
 		ArHosekSkyModelState* rgbRadianceState[3];
 		ArHosekSkyModelState* sunRadianceState; // 320nm to 720nm in steps of 40nm for wavelength
 
-		volatile Real minValue;
-		volatile Real maxValue;
-		volatile Real totalValue;
-		volatile int nSamples;
+		volatile Real minValue{ 0 };
+		volatile Real maxValue{ 0 };
+		volatile Real totalValue{ 0 };
+		volatile int nSamples{ 0 };
 
-		Real sunAltitude;
-		Real sunInclination;
-		Real sunAzimuth;
-		Real sun[3];
-		Real sunTheta;
-		Real sunGamma;
-		Real sunTurbidity = 1.0f;
-		Real sunElevation = 0.0f;
+		Real sunAltitude{ 0 };
+		Real sunInclination{ 0 };
+		Real sunAzimuth{ 0 };
+		Real sun[3]{ 0,0,0 };
+		Real sunTheta{ 0 };
+		Real sunGamma{ 0 };
+		Real sunTurbidity{ 1 };
+		Real sunElevation{ 0 };
 		Color4f albedo;
 
 		HosekWilkiePBSky();
@@ -84,7 +84,6 @@ namespace Fluxions {
 		Color4f GetSunDiskRadiance() const;
 		Color4f GetGroundRadiance() const;
 	};
-
 
 	HosekWilkiePBSky::HosekWilkiePBSky() {
 		for (int i = 0; i < 3; i++)
@@ -713,14 +712,15 @@ namespace Fluxions {
 	/////////////////////////////////////////////////////////////////////
 
 	PhysicallyBasedSky::PhysicallyBasedSky() {
-		hwpbsky = std::make_unique<HosekWilkiePBSky>();
+		hwSunPbsky = std::make_shared<HosekWilkiePBSky>();
+		hwMoonPbsky = std::make_shared<HosekWilkiePBSky>();
 	}
 
 	PhysicallyBasedSky::~PhysicallyBasedSky() {}
 
 	void PhysicallyBasedSky::SetLocation(float latitude, float longitude) {
 		astroCalc.SetLocation(latitude, longitude);
-		ComputeSunFromLocale();
+		computeAstroFromLocale();
 	}
 
 	time_t PhysicallyBasedSky::GetTime() const {
@@ -729,56 +729,78 @@ namespace Fluxions {
 
 	void PhysicallyBasedSky::SetTime(time_t t, float fractSeconds) {
 		astroCalc.SetTime(t, fractSeconds);
-		ComputeSunFromLocale();
+		computeAstroFromLocale();
 	}
 
 	void PhysicallyBasedSky::SetLocalDate(int day, int month, int year, bool isdst, int timeOffset) {
 		astroCalc.SetDate(day, month, year, isdst, timeOffset);
-		ComputeSunFromLocale();
+		computeAstroFromLocale();
 	}
 
 	void PhysicallyBasedSky::SetCivilDateTime(const Astronomy::PA::CivilDateTime& dtg) {
 		astroCalc.SetDateTime(dtg.day, dtg.month, dtg.year, dtg.isdst, dtg.timeZoneOffset, dtg.hh, dtg.mm, dtg.ss, dtg.ss_frac);
-		ComputeSunFromLocale();
+		computeAstroFromLocale();
 	}
 
 	void PhysicallyBasedSky::SetLocalTime(int hh, int mm, int ss, float ss_frac) {
 		astroCalc.SetTime(hh, mm, ss, ss_frac);
-		ComputeSunFromLocale();
+		computeAstroFromLocale();
 	}
 
-	void PhysicallyBasedSky::SetTurbidity(float T) noexcept {
+	void PhysicallyBasedSky::SetTurbidity(float T) {
 		turbidity = T;
 	}
 
-	float PhysicallyBasedSky::GetTurbidity() const noexcept {
+	float PhysicallyBasedSky::GetTurbidity() const {
 		return turbidity;
 	}
 
-	void PhysicallyBasedSky::SetSunPosition(double azimuth, double altitude) noexcept {
-		sunPosition.A = azimuth;
-		sunPosition.a = altitude;
+	void PhysicallyBasedSky::setSunPosition(double azimuth, double altitude) {
+		sunPosition_.A = azimuth;
+		sunPosition_.a = altitude;
 	}
 
-	void PhysicallyBasedSky::SetSunPosition(double sunLong) {
+	void PhysicallyBasedSky::setSunPosition(double sunLong) {
 		Astronomy::EclipticCoord sunCoord(sunLong, 0.0);
-		sunPosition = astroCalc.ecliptic_to_horizon(sunCoord);
-		Astronomy::Vector v = sunPosition.toOpenGLVector();
-		sunVector = Vector3f(static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z));
+		sunRADec_ = astroCalc.ecliptic_to_equatorial(sunCoord);
+		sunPosition_ = astroCalc.ecliptic_to_horizon(sunCoord);
+		Astronomy::Vector v = sunPosition_.toOpenGLVector();
+		sunVector_ = { (float)v.x, (float)v.y, (float)v.z };
 	}
 
-	float PhysicallyBasedSky::GetAverageRadiance() const noexcept {
-		return hwpbsky->totalValue / hwpbsky->nSamples;
+	void PhysicallyBasedSky::setMoonPosition(double RA, double dec) {
+		setMoonPosition({ RA, dec });
 	}
 
-	void PhysicallyBasedSky::ComputeSunFromLocale() noexcept {
-		double sunLong = wrap(astroCalc.getSun().lambda, 360.0);
-		SetSunPosition(sunLong);
+	void PhysicallyBasedSky::setMoonPosition(Astronomy::EquatorialCoord moonRADec) {
+		moonRADec_ = moonRADec;
+		Astronomy::HorizonCoord p = astroCalc.equatorial_to_horizon(moonRADec);
+		Astronomy::Vector v = p.toOpenGLVector();
+		moonVector_ = { (float)v.x, (float)v.y, (float)v.z };
 	}
 
-	void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sampleScale, bool flipY) noexcept {
+	float PhysicallyBasedSky::GetAverageRadiance() const {
+		return hwSunPbsky->totalValue / hwSunPbsky->nSamples;
+	}
+
+	void PhysicallyBasedSky::computeAstroFromLocale() {
+		_computeSunFromLocale();
+		_computeMoonFromLocale();
+	}
+
+	void PhysicallyBasedSky::_computeSunFromLocale() {
+		Astronomy::EclipticCoord sunEcl = astroCalc.getSun();
+		double sunLong = wrap(sunEcl.lambda, 360.0);
+		setSunPosition(sunLong);
+	}
+
+	void PhysicallyBasedSky::_computeMoonFromLocale() {
+		setMoonPosition(astroCalc.getMoon());
+	}
+
+	void PhysicallyBasedSky::ComputeCubeMap(int resolution, bool normalize, float sampleScale, bool flipY) {
 		prepareForCompute();
-		generatedCubeMap.resize(resolution, resolution, 6);
+		generatedSunCubeMap.resize(resolution, resolution, 6);
 
 		float sampleRadius = nSamples > 1 ? 0.5f / (float)resolution : 0.0f;
 
@@ -807,18 +829,18 @@ namespace Fluxions {
 
 						float theta;
 						float gamma;
-						hwpbsky->ComputeThetaGamma(v.x, -v.z, v.y, &theta, &gamma);
+						hwSunPbsky->ComputeThetaGamma(v.x, -v.z, v.y, &theta, &gamma);
 
 						if (theta >= 0.0f) {
-							hwpbsky->ComputeSunRadiance4(theta, gamma, sampleColor);
+							hwSunPbsky->ComputeSunRadiance4(theta, gamma, sampleColor);
 
 							sampleColor.r = flterrzero(sampleColor.r * sampleScale);
 							sampleColor.g = flterrzero(sampleColor.g * sampleScale);
 							sampleColor.b = flterrzero(sampleColor.b * sampleScale);
 
-							//float r = hwpbsky->ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
-							//float g = hwpbsky->ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
-							//float b = hwpbsky->ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
+							//float r = hwSunPbsky->ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
+							//float g = hwSunPbsky->ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
+							//float b = hwSunPbsky->ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
 
 							//if (std::finite(r) && std::isfinite(g) && std::isfinite(b))
 							//{
@@ -851,35 +873,35 @@ namespace Fluxions {
 
 					// flip the t axis
 					if (!flipY)
-						generatedCubeMap.setPixelUnsafe(is, (resolution - 1) - it, face, color);
+						generatedSunCubeMap.setPixelUnsafe(is, (resolution - 1) - it, face, color);
 					else
-						generatedCubeMap.setPixelUnsafe(is, it, face, color);
+						generatedSunCubeMap.setPixelUnsafe(is, it, face, color);
 				}
 			}
 		}
 
 		if (normalize) {
-			//float average = hwpbsky->totalValue / hwpbsky->nSamples;
-			float invScale = 1.0f / (sampleScale * hwpbsky->maxValue);
-			//generatedCubeMap.scaleColors(invScale);
-			invScale = 1.0f / hwpbsky->GetSunDiskRadiance().ToVector3().length();
-			generatedCubeMap.scaleColors(invScale);
+			//float average = hwSunPbsky->totalValue / hwSunPbsky->nSamples;
+			float invScale = 1.0f / (sampleScale * hwSunPbsky->maxValue);
+			//generatedSunCubeMap.scaleColors(invScale);
+			invScale = 1.0f / hwSunPbsky->GetSunDiskRadiance().ToVector3().length();
+			generatedSunCubeMap.scaleColors(invScale);
 		}
 		else {
-			// float average = hwpbsky->totalValue / hwpbsky->nSamples;
-			// float invScale = 1.0f / (sampleScale * hwpbsky->maxValue);
-			// generatedCubeMap.scaleColors(invScale);
-			// invScale = 1.0f / hwpbsky->GetSunDiskRadiance().ToVector3().length();
-			// generatedCubeMap.scaleColors(2.5f * powf(2.0f, -6.0f));
+			// float average = hwSunPbsky->totalValue / hwSunPbsky->nSamples;
+			// float invScale = 1.0f / (sampleScale * hwSunPbsky->maxValue);
+			// generatedSunCubeMap.scaleColors(invScale);
+			// invScale = 1.0f / hwSunPbsky->GetSunDiskRadiance().ToVector3().length();
+			// generatedSunCubeMap.scaleColors(2.5f * powf(2.0f, -6.0f));
 		}
 
-		minRgbValue = hwpbsky->minValue;
-		maxRgbValue = hwpbsky->maxValue;
+		minRgbValue = hwSunPbsky->minValue;
+		maxRgbValue = hwSunPbsky->maxValue;
 	}
 
-	void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normalize, float sampleScale) noexcept {
+	void PhysicallyBasedSky::ComputeCylinderMap(int width, int height, bool normalize, float sampleScale) {
 		prepareForCompute();
-		generatedCylMap.resize(width, height);
+		generatedSunCylMap.resize(width, height);
 
 		float sampleRadius = nSamples > 1 ? 0.5f : 0.0f;
 
@@ -889,8 +911,8 @@ namespace Fluxions {
 		// (theta, gamma) are the coordinates in the sky with (theta, phi) being (theta, pi/2 - gamma)
 		//
 		int i, j;
-		float du = 2.0f / (generatedCylMap.width() - 1.0f); // subtract 1.0 from width to ensure image covers -1.0 to 1.0
-		float dv = 2.0f / (generatedCylMap.height() - 1.0f);
+		float du = 2.0f / (generatedSunCylMap.width() - 1.0f); // subtract 1.0 from width to ensure image covers -1.0 to 1.0
+		float dv = 2.0f / (generatedSunCylMap.height() - 1.0f);
 
 		float u = -1.0f;
 		for (i = 0; i < width; i++) {
@@ -911,14 +933,14 @@ namespace Fluxions {
 
 					float theta;
 					float gamma;
-					hwpbsky->ComputeThetaGamma(inclination, azimuth, &theta, &gamma);
+					hwSunPbsky->ComputeThetaGamma(inclination, azimuth, &theta, &gamma);
 
 					if (theta >= 0.0f) {
-						//sampleColor.r = hwpbsky->ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
-						//sampleColor.g = hwpbsky->ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
-						//sampleColor.b = hwpbsky->ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
+						//sampleColor.r = hwSunPbsky->ComputeSunRadiance2(theta, gamma, 0) * sampleScale;
+						//sampleColor.g = hwSunPbsky->ComputeSunRadiance2(theta, gamma, 1) * sampleScale;
+						//sampleColor.b = hwSunPbsky->ComputeSunRadiance2(theta, gamma, 2) * sampleScale;
 
-						hwpbsky->ComputeSunRadiance4(theta, gamma, sampleColor);
+						hwSunPbsky->ComputeSunRadiance4(theta, gamma, sampleColor);
 
 						sampleColor.r = flterrzero(sampleColor.r * sampleScale);
 						sampleColor.g = flterrzero(sampleColor.g * sampleScale);
@@ -930,66 +952,88 @@ namespace Fluxions {
 				if (nSamples > 1)
 					color = color / (float)nSamples;
 
-				generatedCylMap.setPixel(i, j, color);
+				generatedSunCylMap.setPixel(i, j, color);
 				v += dv;
 			}
 			u += du;
 		}
 
 		if (normalize) {
-			float invScale = 1.0f / hwpbsky->maxValue;
+			float invScale = 1.0f / hwSunPbsky->maxValue;
 			for (i = 0; i < width; i++) {
 				for (j = 0; j < height; j++) {
-					Color4f color = generatedCylMap.getPixel(i, j);
+					Color4f color = generatedSunCylMap.getPixel(i, j);
 					color *= invScale;
 				}
 			}
 		}
 
-		minRgbValue = hwpbsky->minValue;
-		maxRgbValue = hwpbsky->maxValue;
+		minRgbValue = hwSunPbsky->minValue;
+		maxRgbValue = hwSunPbsky->maxValue;
 	}
 
 	//void PhysicallyBasedSky::ComputeSphereMap(int width, int height, bool normalize, float sampleScale)
 	//{
 	//}
 
-	void PhysicallyBasedSky::ComputeSunGroundRadiances() noexcept {
+	void PhysicallyBasedSky::ComputeSunGroundRadiances() {
 		prepareForCompute(false);
-		sunDiskRadiance = hwpbsky->GetSunDiskRadiance();
-		groundRadiance = hwpbsky->GetGroundRadiance();
+		sunDiskRadiance = hwSunPbsky->GetSunDiskRadiance();
+		groundRadiance = hwSunPbsky->GetGroundRadiance();
 	}
 
-	void PhysicallyBasedSky::prepareForCompute(bool resetStats) noexcept {
+	void PhysicallyBasedSky::prepareForCompute(bool resetStats) {
 		minRgbValue = FLT_MAX;
 		maxRgbValue = -FLT_MAX;
-		hwpbsky->Init(turbidity, groundAlbedo, static_cast<float>(sunPosition.a), static_cast<float>(sunPosition.A));
+		hwSunPbsky->Init(turbidity, groundAlbedo, static_cast<float>(sunPosition_.a), static_cast<float>(sunPosition_.A));
 		if (resetStats)
-			hwpbsky->resetStatisticSamples();
+			hwSunPbsky->resetStatisticSamples();
+		hwMoonPbsky->Init(turbidity, groundAlbedo, (float)moonPosition_.a, (float)moonPosition_.A);
+	}
+
+	Color3f PhysicallyBasedSky::computeModisAlbedo(bool recalc) const {
+		if (recalc || recalcModis_) {
+			computeModisAlbedo((float)astroCalc.getLatitude(), (float)astroCalc.getLongitude(), (float)astroCalc.getMonthOfYear());
+		}
+		return modisColor_;
 	}
 
 	Color3f PhysicallyBasedSky::computeModisAlbedo(float latitude, float longitude, float month) const {
+		constexpr bool hires = true;
 		static string_vector modis_data_294x196{
-			"world.200401x294x196.jpg",
-			"world.200402x294x196.jpg",
-			"world.200403x294x196.jpg",
-			"world.200404x294x196.jpg",
-			"world.200405x294x196.jpg",
-			"world.200406x294x196.jpg",
-			"world.200407x294x196.jpg",
-			"world.200408x294x196.jpg",
-			"world.200409x294x196.jpg",
-			"world.200410x294x196.jpg",
-			"world.200411x294x196.jpg",
-			"world.200412x294x196.jpg",
+			"resources/textures/world.200401x294x196.jpg",
+			"resources/textures/world.200402x294x196.jpg",
+			"resources/textures/world.200403x294x196.jpg",
+			"resources/textures/world.200404x294x196.jpg",
+			"resources/textures/world.200405x294x196.jpg",
+			"resources/textures/world.200406x294x196.jpg",
+			"resources/textures/world.200407x294x196.jpg",
+			"resources/textures/world.200408x294x196.jpg",
+			"resources/textures/world.200409x294x196.jpg",
+			"resources/textures/world.200410x294x196.jpg",
+			"resources/textures/world.200411x294x196.jpg",
+			"resources/textures/world.200412x294x196.jpg",
 		};
-		static constexpr int width = 294;
-		static constexpr int height = 196;
+		static string_vector modis_data_21600x10800{
+			"resources/textures/world.200401.3x21600x10800.jpg",
+			"resources/textures/world.200402.3x21600x10800.jpg",
+			"resources/textures/world.200403.3x21600x10800.jpg",
+			"resources/textures/world.200404.3x21600x10800.jpg",
+			"resources/textures/world.200406.3x21600x10800.jpg",
+			"resources/textures/world.200407.3x21600x10800.jpg",
+			"resources/textures/world.200408.3x21600x10800.jpg",
+			"resources/textures/world.200409.3x21600x10800.jpg",
+			"resources/textures/world.200410.3x21600x10800.jpg",
+			"resources/textures/world.200411.3x21600x10800.jpg",
+			"resources/textures/world.200412.3x21600x10800.jpg",
+		};
+		static constexpr int width = hires ? 21600 : 294;
+		static constexpr int height = hires ? 10800 : 196;
 		static constexpr int width_over_2 = width >> 1;
 		static constexpr int height_over_2 = height >> 1;
 		static std::vector<SDL_Surface*> surfaces(12, nullptr);
 		static std::vector<Image3f> modis(12);
-		float fract = std::trunc(month);
+		float fract = month - std::floor(month);
 		int month1 = (int)(month - fract - 1);
 		int month2 = month1 + 1;
 		month1 = month1 % 12;
@@ -1001,15 +1045,29 @@ namespace Fluxions {
 		Image3f& s1 = modis[month1];
 		Image3f& s2 = modis[month2];
 		if (!s1) {
-			LoadImage3f(modis_data_294x196[month1].c_str(), s1);
+			Hf::StopWatch stopwatch;
+			const char* file = hires ? modis_data_21600x10800[month1].c_str() : modis_data_294x196[month1].c_str();
+			if (hires)
+				LoadImage3f(file, s1);
+			else
+				LoadImage3f(file, s1);
+			HFLOGDEBUG("Loaded %s in %3.2fms", file, stopwatch.Stop_msf());
 		}
 		if (!s2) {
-			LoadImage3f(modis_data_294x196[month2].c_str(), s2);
+			Hf::StopWatch stopwatch;
+			const char* file = hires ? modis_data_21600x10800[month2].c_str() : modis_data_294x196[month2].c_str();
+			if (hires)
+				LoadImage3f(file, s2);
+			else
+				LoadImage3f(file, s2);
+			HFLOGDEBUG("Loaded %s in %3.2fms", file, stopwatch.Stop_msf());
 		}
 		if (!s1 || !s2) return { 0.0f, 0.0f, 0.0f };
 		Color3f p1 = s1.getPixel(s, t);
 		Color3f p2 = s2.getPixel(s, t);
-		return lerp(fract, p1, p2);
+		modisColor_ = lerp(fract, p1, p2);
+		recalcModis_ = false;
+		return modisColor_;
 	}
 
 } // namespace Fluxions
