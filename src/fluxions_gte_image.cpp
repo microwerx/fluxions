@@ -895,6 +895,54 @@ namespace Fluxions {
 	}
 
 	template <typename ColorType>
+	bool TImage<ColorType>::loadPGM(const std::string& path) {
+		std::ifstream fin(path, std::ios::binary);
+		if (!fin)
+			return false;
+		std::string input;
+		int newline_count = 0;
+		while (newline_count < 3) {
+			char c = 0;
+			fin.read(&c, 1);
+			if (c == 0x0a)
+				newline_count++;
+			input.push_back(c);
+			if (!fin) {
+				return false;
+			}
+		}
+		std::istringstream istr(input);
+		std::string type;
+		int xres = 0;
+		int yres = 0;
+		double byte_order = 0;
+		int stride = 0;
+		istr >> type >> xres >> yres >> byte_order;
+		if (type == "PF")
+			stride = 12;
+		else if (type == "Pf")
+			stride = 4;
+		else
+			return false;
+		const int count = (stride == 12 ? 3 : 1);
+		resize(xres, yres, 1);
+
+		auto rb = same_byte_order((int)byte_order) ? reverse_donothing : stride == 4 ? reverse_bytes1 : reverse_bytes3;
+
+		constexpr float to_scalar_type = color_from_float_factor<scalar_type>();
+		float v[3]{ 0.0f, 0.0f, 0.0f };
+		for (auto& p : pixels) {
+			fin.read((char*)v, stride);
+			rb(v);
+			p.r = (scalar_type)(v[0] * to_scalar_type);
+			p.g = (scalar_type)(v[1] * to_scalar_type);
+			p.b = (scalar_type)(v[2] * to_scalar_type);
+		}
+
+		return true;
+	}
+
+	template <typename ColorType>
 	bool TImage<ColorType>::savePFM(const std::string& path) const {
 		std::ofstream fout(path, std::ios::binary);
 		if (!fout)

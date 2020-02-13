@@ -228,6 +228,7 @@ namespace Fluxions {
 		// * saveCubeEXR
 		bool loadPPM(const std::string& path);
 		bool loadPFM(const std::string& path);
+		bool loadPGM(const std::string& path);
 		bool savePFM(const std::string& path) const;
 		bool loadEXR(const std::string& path);
 		bool saveEXR(const std::string& path) const;
