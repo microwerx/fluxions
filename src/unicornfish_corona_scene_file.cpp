@@ -10,7 +10,7 @@ namespace Uf {
 	namespace Fx = Fluxions;
 
 	CoronaSceneFile::CoronaSceneFile() {}
-
+	 
 	CoronaSceneFile::~CoronaSceneFile() {}
 
 	void CoronaSceneFile::writeSCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg) {

@@ -30,6 +30,7 @@ namespace Fluxions {
 	// XML SCENE GRAPH WRITER
 
 	bool make_path(const std::filesystem::path& path) {
+		if (path.empty()) return true;
 		if (!std::filesystem::exists(path)) {
 			if (!std::filesystem::is_directory(path)) {
 				std::filesystem::create_directory(path);
@@ -147,7 +148,7 @@ namespace Fluxions {
 		ostr << "\t<environment>1 1 1<map class=\"Reference\">Skylight_environment</map></environment>"
 			<< "\n\n";
 
-		constexpr float size = 1.0f/0.1f;
+		constexpr float size = 1.0f / 0.1f;
 		for (unsigned i = 0; i < ssg.pointLights.size(); i++) {
 			const SimplePointLight& pointLight = ssg.pointLights[i];
 			Fluxions::Matrix4f lightMatrix(
@@ -219,12 +220,13 @@ namespace Fluxions {
 		int obj_count = 0;
 		for (auto& [objname, mesh] : ssg.staticMeshes) {
 			for (auto& [mtlname, mtllib] : mesh.Materials) {
-				std::string idmtlname = mtlname;
-				toidentifier(idmtlname);
-				tolower(idmtlname);
-				std::string idobjname = ssg.staticMeshes.getNameFromHandle(objname);
-				toidentifier(idobjname);
-				tolower(idobjname);
+				std::string idmtlname = toloweridentifier(mtlname);
+				std::string idobjname = toloweridentifier(ssg.staticMeshes.getNameFromHandle(objname));
+
+				if (idmtlname.empty()) {
+					HFLOGWARN("Skipping empty material object '%s'", idobjname.c_str());
+					continue;
+				}
 
 				std::ostringstream obj_pathname;
 				obj_pathname << "geometry/";
@@ -235,13 +237,11 @@ namespace Fluxions {
 				std::string objectPath = export_path_prefix + obj_pathname.str();
 				if (!std::filesystem::exists(objectPath)) {
 					HFLOGINFO("Writing out '%s'", obj_pathname.str().c_str());
-					mesh.saveOBJByMaterial(objectPath, mtlname, 1);
+					mesh.saveOBJByMaterial(objectPath, idmtlname, 1);
 				}
 
 				auto& group = ssg.geometryGroups[objname];
-
-				Fluxions::Matrix4f transform = group.worldMatrix();
-				geometryGroups_.push_back(string_string_Matrix4f(obj_pathname.str(), mtlname, transform));
+				geometryGroups_.push_back({ obj_pathname.str(), idmtlname, group.worldMatrix() });
 
 				obj_count++;
 			}
@@ -272,7 +272,7 @@ namespace Fluxions {
 				try {
 					std::filesystem::copy_file(mappath, asset_path);
 				}
-				catch (const std::filesystem::filesystem_error & e) {
+				catch (const std::filesystem::filesystem_error& e) {
 					HFLOGERROR("file cannot be copied: '%s'", mappath.c_str());
 					HFLOGERROR("system reported '%s'", e.what());
 				}
@@ -296,12 +296,12 @@ namespace Fluxions {
 			XmlBeginTag(ostr, "geometryGroup", 1) << "\n";
 
 			XmlBeginTag(ostr, "instance", 2) << "\n";
-			XmlBeginTag(ostr, "material", "Reference", 3) << std::get<1>(gg);
+			XmlBeginTag(ostr, "material", "Reference", 3) << gg.mtlname;
 			XmlEndTag(ostr, "material", 0) << "\n";
-			XmlMatrix4f(ostr, "transform", std::get<2>(gg), 3) << "\n";
+			XmlMatrix4f(ostr, "transform", gg.transform, 3) << "\n";
 			XmlEndTag(ostr, "instance", 2) << "\n";
 
-			XmlBeginTag(ostr, "object", "file", 2) << std::get<0>(gg);
+			XmlBeginTag(ostr, "object", "file", 2) << gg.objpath;
 			XmlEndTag(ostr, "object") << "\n";
 
 			XmlEndTag(ostr, "geometryGroup", 1) << "\n\n";
