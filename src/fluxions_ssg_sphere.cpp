@@ -8,6 +8,13 @@ namespace Fluxions {
 			materialName = ReadString(istr);
 			return true;
 		}
+
+		Vector3f O = this->worldMatrix().origin();
+		bbox.reset();
+		bbox += O;
+		bbox += O + 0.5f;
+		bbox += O - 0.5f;
+
 		return false;
 	}
 

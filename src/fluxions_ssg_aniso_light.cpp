@@ -12,6 +12,13 @@ namespace Fluxions {
 			SH[0] = ReadColor3f(istr);
 			SH[0].a = 1.0f;
 			transform = Matrix4f::MakeTranslation(position.xyz());
+
+			Vector3f O = this->worldMatrix().origin();
+			bbox.reset();
+			bbox += O;
+			bbox += O + 0.5f;
+			bbox += O - 0.5f;
+
 			return true;
 		}
 		return false;

@@ -43,6 +43,12 @@ namespace Fluxions {
 		statusString_ = camtype;
 		recalcMatrices();
 
+		Vector3f O = this->worldMatrix().origin();
+		bbox.reset();
+		bbox += O;
+		bbox += O + 0.5f;
+		bbox += O - 0.5f;
+
 		return true;
 		//if (!isBadCamera) {
 		//	float fstop = 16.0f;
