@@ -16,8 +16,8 @@ namespace Fluxions {
 		TBoundingBox<T>& operator=(const TBoundingBox<T>& bbox);
 
 		// resets the bounds to:
-		// maxBounds(-1000000000, -1000000000, -1000000000)
-		// minBounds( 1000000000,  1000000000,  1000000000)
+		// maxBounds(0, 0, 0)
+		// minBounds(0, 0, 0)
 		void reset();
 
 		// adds the point (X, y, 0) to the box, expanding it if necessary
@@ -111,32 +111,28 @@ namespace Fluxions {
 
 	template <typename T>
 	void TBoundingBox<T>::operator+=(const TVector2<T>& point) {
-		minBounds.x = std::min(point.x, minBounds.x);
-		minBounds.y = std::min(point.y, minBounds.y);
-		minBounds.z = std::min((T)0, minBounds.z);
-		maxBounds.x = std::max(point.x, maxBounds.x);
-		maxBounds.y = std::max(point.y, maxBounds.y);
-		maxBounds.z = std::max((T)0, maxBounds.z);
+		*this += {point.x, point.y, 0};
 	}
 
 	template <typename T>
 	void TBoundingBox<T>::operator+=(const TVector3<T>& point) {
-		minBounds.x = std::min(point.x, minBounds.x);
-		minBounds.y = std::min(point.y, minBounds.y);
-		minBounds.z = std::min(point.z, minBounds.z);
-		maxBounds.x = std::max(point.x, maxBounds.x);
-		maxBounds.y = std::max(point.y, maxBounds.y);
-		maxBounds.z = std::max(point.z, maxBounds.z);
+		if (minBounds == TVector3<T>{0, 0, 0} && maxBounds == TVector3<T>{0, 0, 0}) {
+			minBounds = point;
+			maxBounds = point;
+		}
+		else {
+			minBounds.x = std::min(point.x, minBounds.x);
+			minBounds.y = std::min(point.y, minBounds.y);
+			minBounds.z = std::min(point.z, minBounds.z);
+			maxBounds.x = std::max(point.x, maxBounds.x);
+			maxBounds.y = std::max(point.y, maxBounds.y);
+			maxBounds.z = std::max(point.z, maxBounds.z);
+		}
 	}
 
 	template <typename T>
 	void TBoundingBox<T>::operator+=(const TVector4<T>& point) {
-		minBounds.x = std::min(point.x, minBounds.x);
-		minBounds.y = std::min(point.y, minBounds.y);
-		minBounds.z = std::min(point.z, minBounds.z);
-		maxBounds.x = std::max(point.x, maxBounds.x);
-		maxBounds.y = std::max(point.y, maxBounds.y);
-		maxBounds.z = std::max(point.z, maxBounds.z);
+		*this += {point.x, point.y, point.z};
 	}
 
 	template <typename T>
