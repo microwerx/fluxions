@@ -68,7 +68,13 @@ namespace Fluxions {
 		void _writeSun(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
 		void _writeGeometryGroups(std::ostream& ostr, const Fluxions::SimpleSceneGraph& ssg);
 
-		std::vector<string_string_Matrix4f> geometryGroups_;
+		struct GeometryGroupInfo {
+			std::string objpath;
+			std::string mtlname;
+			Matrix4f transform;
+		};
+
+		std::vector<GeometryGroupInfo> geometryGroups_;
 		std::string basePath_;
 		std::string basePathDir_;
 		void _clearCache();
