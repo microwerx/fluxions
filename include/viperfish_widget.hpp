@@ -118,6 +118,7 @@ namespace Vf {
 		// inline Df::JSONPtr jsonStyle() noexcept { return jsonStyle_; }
 		// inline Df::JSONPtr setStyle(const std::string &style) noexcept { processStyle(style); return jsonStyle_; }
 
+		virtual void OnInit();
 		virtual void OnInit(const std::vector<std::string>& args);
 		virtual void OnKill();
 		virtual void OnUpdate(double timeStamp);

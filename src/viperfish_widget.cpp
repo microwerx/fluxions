@@ -246,6 +246,10 @@ namespace Vf {
 		return true;
 	}
 
+	void Widget::OnInit() {
+		OnInit({});
+	}
+
 	void Widget::OnInit(const std::vector<std::string>& args) {
 		HFLOGDEBUGFIRSTRUNCOUNT(MAX_RUN_MESSAGES);
 		leaveMainLoop_ = false;
