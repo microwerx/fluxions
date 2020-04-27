@@ -45,6 +45,11 @@ namespace Fluxions {
 		return str;
 	}
 
+	inline std::string tolower(const std::string& str) {
+		std::string s = str;
+		return tolower(s);
+	}
+
 	inline std::string& toupper(std::string& str) {
 		for (auto& c : str) {
 			c = (char)std::toupper(c);
@@ -52,11 +57,47 @@ namespace Fluxions {
 		return str;
 	}
 
+	inline std::string toupper(const std::string& str) {
+		std::string s = str;
+		return toupper(s);
+	}
+
 	inline std::string& toidentifier(std::string& str) {
 		for (auto& c : str) {
 			if (!isalnum(c)) c = '_';
 		}
 		return str;
+	}
+
+	inline std::string toidentifier(const std::string& str) {
+		std::string s = str;
+		return toidentifier(s);
+	}
+
+	inline std::string& toloweridentifier(std::string& str) {
+		for (auto& c : str) {
+			if (!isalnum(c)) c = '_';
+			c = (char)std::tolower(c);
+		}
+		return str;
+	}
+
+	inline std::string toloweridentifier(const std::string& str) {
+		std::string s = str;
+		return toloweridentifier(s);
+	}
+
+	inline std::string& toupperidentifier(std::string& str) {
+		for (auto& c : str) {
+			if (!isalnum(c)) c = '_';
+			c = (char)std::toupper(c);
+		}
+		return str;
+	}
+
+	inline std::string toupperidentifier(const std::string& str) {
+		std::string s = str;
+		return toupperidentifier(s);
 	}
 
 	using string_string = std::pair<std::string, std::string>;
