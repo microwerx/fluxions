@@ -42,10 +42,10 @@ namespace Fluxions {
 		const FileTimeValue& lastWriteTime() const { return last_write_time_; }
 
 		// returns true if path was not found
-		bool notFound() const { return absolute_path_.empty(); }
+		bool notFound() const { return !absolute_path_exists_; }
 
 		// returns true if path exists
-		bool exists() const { return !absolute_path_.empty(); }
+		bool exists() const { return absolute_path_exists_; }
 
 		// returns true if path is a directory
 		bool isDirectory() const { return pathType_ == PathType::Directory; }
@@ -97,6 +97,8 @@ namespace Fluxions {
 		std::string relative_path_;
 		// The root name of the file (such as C: or //resource)
 		std::string root_name_;
+
+		bool absolute_path_exists_{ false };
 
 		void _clear();
 		bool _fill_stat_info();

@@ -50,8 +50,6 @@ namespace Fluxions {
 		std::regex path_replace("[/\\\\]+");
 		origpath = std::move(std::regex_replace(path, path_replace, "/"));
 
-		if (!fs::exists(origpath)) return false;
-
 		fs::path abs_path = fs::absolute(origpath, fpi_ec_);
 		fs::path rel_path = fs::relative(abs_path, fs::current_path(), fpi_ec_);
 
@@ -134,32 +132,30 @@ namespace Fluxions {
 	}
 
 	bool FilePathInfo::_fill_stat_info() {
-		if (absolute_path_.empty()) {
+		absolute_path_exists_ = fs::exists(absolute_path_);
+		if (!absolute_path_exists_) {
 			pathType_ = PathType::DoesNotExist;
 			last_write_time_ = FileTimeValue();
 			return false;
 		}
 
-		pathType_ = PathType::DoesNotExist;
-		if (fs::exists(absolute_path_)) {
-			fs::file_status status = fs::status(absolute_path_);
-			switch (status.type()) {
-			case fs::file_type::directory:
-				pathType_ = PathType::Directory;
-				relative_path_.push_back('/');
-				absolute_path_.push_back('/');
-				break;
-			case fs::file_type::regular:
-				pathType_ = PathType::File;
-				break;
-			case fs::file_type::not_found:
-				pathType_ = PathType::DoesNotExist;
-				break;
-			default:
-				pathType_ = PathType::Other;
-			}
-			last_write_time_ = fs::last_write_time(absolute_path_);
+		fs::file_status status = fs::status(absolute_path_);
+		switch (status.type()) {
+		case fs::file_type::directory:
+			pathType_ = PathType::Directory;
+			relative_path_.push_back('/');
+			absolute_path_.push_back('/');
+			break;
+		case fs::file_type::regular:
+			pathType_ = PathType::File;
+			break;
+		case fs::file_type::not_found:
+			pathType_ = PathType::DoesNotExist;
+			break;
+		default:
+			pathType_ = PathType::Other;
 		}
+		last_write_time_ = fs::last_write_time(absolute_path_);
 		return exists();
 	}
 
