@@ -418,7 +418,7 @@ namespace Fluxions {
 	}
 
 	template <typename Floating, typename T>
-	constexpr TColor4<T> operator*(const Floating rhs, const TColor4<T>& lhs) {
+	constexpr TColor4<T> operator*(const Floating lhs, const TColor4<T>& rhs) {
 		return TColor4<T>(
 			(T)(lhs * rhs.r),
 			(T)(lhs * rhs.g),
