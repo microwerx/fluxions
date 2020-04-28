@@ -989,7 +989,7 @@ namespace Fluxions {
 			}
 		}
 		t1 = HFLOG_MS_ELAPSED() - t1;
-		HFLOGINFO("TImage<>::loadEXR", "Read %dx%d image from %s (%3f ms) (min, max) = (%-2.3f, %-2.3f)", w, h, path.c_str(), t1, minC, maxC);
+		HFLOGINFO("Read %dx%d image from %s (%3f ms) (min, max) = (%-2.3f, %-2.3f)", w, h, path.c_str(), t1, minC, maxC);
 		return true;
 #else
 		return false;
@@ -1015,7 +1015,7 @@ namespace Fluxions {
 		file.setFrameBuffer(halfPixels.data(), 1, imageWidth);
 		file.writePixels((int)imageHeight);
 		t1 = HFLOG_MS_ELAPSED() - t1;
-		HFLOGINFO("TImage<>::saveEXR", "Wrote %dx%d image to %s (%3f ms)", imageWidth, imageHeight, path.c_str(), t1);
+		HFLOGINFO("Wrote %dx%d image to %s (%3f ms)", imageWidth, imageHeight, path.c_str(), t1);
 		return true;
 #else
 		return false;

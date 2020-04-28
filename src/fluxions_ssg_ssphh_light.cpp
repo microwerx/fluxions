@@ -159,8 +159,7 @@ namespace Fluxions {
 			{"numChannels", Df::JSON::MakeNumber(3)},
 			{"maxDegree", Df::JSON::MakeNumber((int)msph[0].GetMaxDegree())},
 			{"coefs", Df::JSON::MakeArray()},
-			{"meta", Df::JSON::MakeObject()}
-												});
+			{"meta", Df::JSON::MakeObject()} });
 
 		Df::JSONPtr coefs = json->getMember("coefs");
 		for (unsigned lm = 0; lm < msph->getMaxCoefficients(); lm++) {
@@ -170,7 +169,6 @@ namespace Fluxions {
 			coefs->PushBack(Df::JSON::MakeArray({ r, g, b }));
 		}
 
-		auto meta = json->getMember("meta");
 		Df::JSONPtr m_meta = Df::JSON::MakeObject({
 			{ "name", Df::JSON::MakeString(name()) },
 			{ "position", Df::JSON::MakeArray({
@@ -178,9 +176,10 @@ namespace Fluxions {
 				position.y,
 				position.z
 				})
-			}
-												  });
-		meta->PushBack(m_meta);
+			} });
+
+		Df::JSONPtr meta = json->getMember("meta");
+		meta->set(m_meta);
 
 		std::ofstream fout(fpi.shortestPath());
 		fout << json->Serialize();

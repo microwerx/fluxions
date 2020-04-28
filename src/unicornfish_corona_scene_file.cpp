@@ -111,7 +111,7 @@ namespace Uf {
 
 		if (!fpi.exists()) {
 			HFLOGINFO("Writing out sphlviz.mtl");
-			std::ofstream svout("sphlviz.mtl");
+			std::ofstream svout(writer.export_path_prefix + "sphlviz.mtl");
 			svout << "<mtlLib>"
 				"<materialDefinition name = \"sphlSphereLight\">"
 				"<material class = \"Native\">"
