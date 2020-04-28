@@ -115,7 +115,7 @@ namespace Df
 			}
 		}
 
-		JSON(const JSONPtr& json);
+		JSON(const JSONPtr json);
 		~JSON();
 
 		static JSONPtr MakeNull() { return std::make_shared<JSON>(Type::Null); }
@@ -137,7 +137,7 @@ namespace Df
 		static JSONPtr MakeObject(std::initializer_list<std::pair<std::string, JSONPtr>> members) { return std::make_shared<JSON>(members); }
 		static JSONPtr MakeObject(const std::map<std::string, JSONPtr> members) { return std::make_shared<JSON>(members); }
 
-		JSONPtr operator=(const JSONPtr& rhs);
+		JSONPtr operator=(const JSONPtr rhs);
 		inline JSONPtr operator=(int ival) {
 			Clear();
 			dval_ = ival;
@@ -160,7 +160,7 @@ namespace Df
 		inline const bool operator==(int ival) const { return IsNumber() && dval_ == (double)ival; }
 		inline const bool operator==(const std::string& sval) const { return IsString() && sval_ == sval; }
 		inline const bool operator==(bool bval) const { return (bval && IsTrue()) ? true : (!bval && IsFalse()) ? true : false; }
-		inline const bool operator==(const JSONPtr& rhs) const { return Equals(rhs); }
+		inline const bool operator==(const JSONPtr rhs) const { return Equals(rhs); }
 		inline const bool operator==(const void* ptr) const {
 			if (ptr == nullptr && IsNull())
 				return true;
@@ -189,7 +189,7 @@ namespace Df
 		static JSONPtr NewNumber(const double value) { return std::make_shared<JSON>(value); }
 		static JSONPtr NewBoolean(const bool value) { return std::make_shared<JSON>(value); }
 		static JSONPtr NewString(const std::string& value) { return std::make_shared<JSON>(value); }
-		static JSONPtr New(const JSONPtr& value) { return std::make_shared<JSON>(value); }
+		static JSONPtr New(const JSONPtr value) { return std::make_shared<JSON>(value); }
 		static JSONPtr New() { return std::make_shared<JSON>(Type::Null); }
 
 		inline int Size() const {
@@ -279,7 +279,7 @@ namespace Df
 				return array_.at(index);
 			throw std::runtime_error("JSON object is not an array");
 		}
-		inline const JSONPtr& operator[](int index) const {
+		inline const JSONPtr operator[](int index) const {
 			if (IsArray())
 				return array_.at(index);
 			throw std::runtime_error("JSON object is not an array");
@@ -289,12 +289,12 @@ namespace Df
 				return map_.at(key);
 			throw std::runtime_error("JSON object is not an object");
 		}
-		inline const JSONPtr& operator[](const std::string& key) const {
+		inline const JSONPtr operator[](const std::string& key) const {
 			if (IsObject())
 				return map_.at(key);
 			throw std::runtime_error("JSON object is not an object");
 		}
-		inline const JSONPtr& operator[](const char* key) const {
+		inline const JSONPtr operator[](const char* key) const {
 			if (IsObject())
 				return map_.at(key);
 			throw std::runtime_error("JSON object is not an object");
@@ -305,7 +305,7 @@ namespace Df
 				return array_.at(index);
 			throw std::runtime_error("JSON object is not an array");
 		}
-		inline const JSONPtr& getElement(int index) const {
+		inline const JSONPtr getElement(int index) const {
 			if (IsArray())
 				return array_.at(index);
 			throw std::runtime_error("JSON object is not an array");
@@ -490,7 +490,7 @@ namespace Df
 			return shared_from_this();
 		}
 
-		inline JSONPtr set(const JSONPtr& json) {
+		inline JSONPtr set(const JSONPtr json) {
 			Clear();
 			if (!json)
 				return shared_from_this();
@@ -508,7 +508,7 @@ namespace Df
 			return shared_from_this();
 		}
 
-		inline JSONPtr PushBack(JSONPtr& json) {
+		inline JSONPtr PushBack(JSONPtr json) {
 			if (!json || !IsArray())
 				throw std::runtime_error("JSON object is not an array");
 			array_.push_back(json);
@@ -534,7 +534,7 @@ namespace Df
 
 		inline Type GetType() const { return type_; }
 		inline bool InstanceOf(const Type t) const { return type_ == t; }
-		bool Equals(const JSONPtr& rhs) const;
+		bool Equals(const JSONPtr rhs) const;
 
 	private:
 		Type type_ = Type::Null;
@@ -549,13 +549,13 @@ namespace Df
 		static const std::string NullString;
 	};
 
-	inline bool operator==(const JSONPtr& lhs, const JSONPtr& rhs) {
+	inline bool operator==(const JSONPtr lhs, const JSONPtr rhs) {
 		if (!lhs || !rhs)
 			return false;
 		return lhs->Equals(rhs);
 	}
 
-	inline bool operator!=(const JSONPtr& lhs, const JSONPtr& rhs) {
+	inline bool operator!=(const JSONPtr lhs, const JSONPtr rhs) {
 		if (!lhs || !rhs)
 			return false;
 		return !lhs->Equals(rhs);

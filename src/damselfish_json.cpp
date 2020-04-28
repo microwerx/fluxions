@@ -21,7 +21,7 @@ namespace Df {
 			copyMap(json.map_);
 	}
 
-	JSON::JSON(const JSONPtr& json) {
+	JSON::JSON(const JSONPtr json) {
 		if (!json)
 			return;
 		type_ = json->type_;
@@ -41,7 +41,7 @@ namespace Df {
 		map_.clear();
 	}
 
-	JSONPtr JSON::operator=(const JSONPtr& rhs) {
+	JSONPtr JSON::operator=(const JSONPtr rhs) {
 		Clear();
 		if (!rhs)
 			return shared_from_this();
@@ -69,7 +69,7 @@ namespace Df {
 		return shared_from_this();
 	}
 
-	bool JSON::Equals(const JSONPtr& rhs) const {
+	bool JSON::Equals(const JSONPtr rhs) const {
 		if (!rhs || rhs->type_ != type_)
 			return false;
 
