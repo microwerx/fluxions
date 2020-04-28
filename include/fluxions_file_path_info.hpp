@@ -41,6 +41,12 @@ namespace Fluxions {
 		const std::string& extension() const { return extension_; }
 		const FileTimeValue& lastWriteTime() const { return last_write_time_; }
 
+		// returns true if this file is older than a reference time
+		bool olderThan(FileTimeValue reftime) const { return last_write_time_ < reftime; }
+
+		// returns true if this file is newer than a reference time
+		bool newerThan(FileTimeValue reftime) const { return last_write_time_ > reftime; }
+
 		// returns true if path was not found
 		bool notFound() const { return !absolute_path_exists_; }
 

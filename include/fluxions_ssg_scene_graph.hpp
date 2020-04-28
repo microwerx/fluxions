@@ -90,6 +90,8 @@ namespace Fluxions {
 		SimpleSceneGraph();
 		~SimpleSceneGraph();
 
+		FileTimeValue lastWriteTime;
+
 		// Resets scene graph to initial conditions.
 		void reset();
 

@@ -235,7 +235,9 @@ namespace Fluxions {
 				obj_pathname << "object_" << idobjname << "_";
 				obj_pathname << idmtlname << ".obj";
 				std::string objectPath = export_path_prefix + obj_pathname.str();
-				if (!std::filesystem::exists(objectPath)) {
+				auto lastWriteTime = std::filesystem::last_write_time(objectPath);
+				bool ssgNewer = lastWriteTime <= ssg.lastWriteTime;
+				if (!std::filesystem::exists(objectPath) || ssgNewer) {
 					HFLOGINFO("Writing out '%s'", obj_pathname.str().c_str());
 					mesh.saveOBJByMaterial(objectPath, idmtlname, 1);
 				}
@@ -263,13 +265,20 @@ namespace Fluxions {
 		ssg.materials.saveXml(CoronaMTLpath, mtl_flags);
 		ssg.materials.saveXml(CoronaMapsPath, SimpleMaterialLibrary::WRITE_MAPS);
 
+		std::error_code ec;
 		for (const auto& [mapname, mappath] : ssg.materials.maps) {
 			FilePathInfo fpi(mappath);
 			std::string asset_path = export_path_prefix + "assets/" + fpi.filename();
-			if (std::filesystem::exists(asset_path))
-				continue;
 			if (std::filesystem::exists(mappath)) {
+				if (std::filesystem::exists(asset_path)) {
+					auto dstlastWriteTime = std::filesystem::last_write_time(asset_path, ec);
+					auto srclastWriteTime = std::filesystem::last_write_time(mappath, ec);
+					if (srclastWriteTime.time_since_epoch() > dstlastWriteTime.time_since_epoch())
+						continue;
+					std::filesystem::remove(asset_path, ec);
+				}
 				try {
+					HFLOGINFO("Writing out '%s'", asset_path.c_str());
 					std::filesystem::copy_file(mappath, asset_path);
 				}
 				catch (const std::filesystem::filesystem_error& e) {

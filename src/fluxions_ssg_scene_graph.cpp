@@ -106,6 +106,8 @@ namespace Fluxions {
 		FilePathInfo scenefpi(filename);
 		if (!scenefpi.exists()) return false;
 
+		lastWriteTime = scenefpi.lastWriteTime();
+
 		HFLOGINFO("Loading '%s'", scenefpi.shortestPathC());
 		setName(scenefpi.stem());
 		std::ifstream fin(filename.c_str());
