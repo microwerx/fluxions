@@ -21,6 +21,8 @@ namespace Fluxions {
 		FilePathInfo fpi(filename);
 		if (mtllibs.count(fpi.stem())) return true;
 
+		HFLOGINFO("Loading MTL '%s'", fpi.shortestPathC());
+
 		std::string name = fpi.stem();
 		std::string pathToMTL = fpi.shortestPath();
 		mtllibs[name] = pathToMTL;
@@ -35,7 +37,7 @@ namespace Fluxions {
 
 			istr >> str;
 			if (str == "newmtl") {
-				curmtl = set_mtl(ReadString(istr));
+				curmtl = set_mtl(toloweridentifier(ReadString(istr)));
 				HFLOGINFO("newmtl '%s'", curmtl->name.c_str());
 			}
 			else if (curmtl == nullptr) {
@@ -295,7 +297,7 @@ namespace Fluxions {
 		}
 
 		// update the information in the map list
-		mapname = fpi.filename();
+		mapname = tolower(fpi.filename());
 		maps[mapname] = pathToMap;
 		return true;
 	}
@@ -303,9 +305,13 @@ namespace Fluxions {
 	std::ostream& SimpleMaterialLibrary::printMap(std::ostream& ostr,
 												  const std::string& maptype,
 												  const std::string& mapname) const {
-		if (!maptype.empty()) {
+		std::string lowerName = tolower(mapname);
+		if (!maptype.empty() && maps.count(lowerName)) {
 			WriteLabel(ostr, maptype);
-			WriteString(ostr, maps.at(mapname));
+			WriteString(ostr, maps.at(lowerName));
+		}
+		else {
+			HFLOGERROR("map '%s' not found", mapname.c_str());
 		}
 		return ostr;
 	}

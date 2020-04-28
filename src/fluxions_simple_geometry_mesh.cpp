@@ -86,11 +86,13 @@ namespace Fluxions {
 			if (str == "o") {
 				linecount = 0;
 				istr >> objectName;
+				toloweridentifier(objectName);
 				HFLOGINFO("'%s' ... adding new object %s", name.c_str(), objectName.c_str());
 			}
 			else if (str == "g") {
 				linecount = 0;
 				istr >> surfaceName;
+				toloweridentifier(surfaceName);
 				HFLOGINFO("'%s' ... changing surface name to %s", name.c_str(), surfaceName.c_str());
 				Surfaces[curSurface].surfaceName = surfaceName;
 			}
@@ -124,6 +126,7 @@ namespace Fluxions {
 				}
 
 				istr >> str;
+				toloweridentifier(str);
 				Surfaces[curSurface].materialLibrary = materialLibrary;
 				Surfaces[curSurface].materialName = str;
 				Materials[str] = materialLibrary;
