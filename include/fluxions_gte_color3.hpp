@@ -283,8 +283,8 @@ namespace Fluxions {
 
 		constexpr TColor3<T>& clamp() noexcept {
 			r = Fluxions::clamp(r, min_value, max_value);
-			g = Fluxions::clamp(r, min_value, max_value);
-			b = Fluxions::clamp(r, min_value, max_value);
+			g = Fluxions::clamp(g, min_value, max_value);
+			b = Fluxions::clamp(b, min_value, max_value);
 			return *this;
 		}
 
