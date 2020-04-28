@@ -515,13 +515,6 @@ namespace Df
 			return shared_from_this();
 		}
 
-		inline JSONPtr PushBack(JSONPtr&& json) {
-			if (!json || !IsArray())
-				throw std::runtime_error("JSON object is not an array");
-			array_.push_back(json);
-			return shared_from_this();
-		}
-
 		inline JSONPtr PopBack() {
 			if (!IsArray())
 				throw std::runtime_error("JSON object is not an array");
