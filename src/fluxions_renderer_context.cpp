@@ -102,6 +102,7 @@ namespace Fluxions {
 	}
 
 	bool RendererContext::loadConfig(const std::string& filename) {
+		HFLOGDEBUG("Loading render config '%s'", filename.c_str());
 		FilePathInfo fpi(filename);
 		if (fpi.notFound())
 			return false;
@@ -287,7 +288,7 @@ namespace Fluxions {
 	bool RendererContext::findPath(std::string& path) {
 		FilePathInfo fpi(path, paths);
 		if (fpi.notFound()) {
-			HFLOGWARN("file '%s' not found", fpi.shortestPathC());
+			HFLOGERROR("file '%s' not found", fpi.shortestPathC());
 			return false;
 		}
 		return true;
@@ -307,15 +308,21 @@ namespace Fluxions {
 	void RendererContext::loadTextures() {
 		HFLOGINFO("Loading textures from renderconfig");
 		for (auto& [k, t] : texture2Ds) {
-			HFLOGINFO("Trying to load texture 2d '%s' ... %s",
-					  k.c_str(),
-					  t.loadMap() ? "success" : "failed");
+			if (t.loadMap()) {
+				HFLOGINFO("Texture '%s' -> '%s' loaded", k.c_str(), t.mappath.c_str());
+			}
+			else {
+				HFLOGERROR("Texture '%s' -> '%s' failed", k.c_str(), t.mappath.c_str());
+			}
 		}
 
 		for (auto& [k, t] : textureCubes) {
-			HFLOGINFO("Trying to load texture cube '%s' ... %s",
-					  k.c_str(),
-					  t.loadMap() ? "success" : "failed");
+			if (t.loadMap()) {
+				HFLOGINFO("Texture '%s' -> '%s' loaded", k.c_str(), t.mappath.c_str());
+			}
+			else {
+				HFLOGERROR("Texture '%s' -> '%s' failed", k.c_str(), t.mappath.c_str());
+			}
 		}
 	}
 
@@ -455,6 +462,7 @@ namespace Fluxions {
 		std::string arg3;
 		bool svalarg1 = k_sval(args, 1, arg1);
 		bool svalarg2 = k_sval(args, 2, arg2);
+		bool svalarg3 = k_sval(args, 3, arg3);
 		static const std::string WRITEFBO{ "writefbo" };
 		static const std::string READFBO{ "readfbo" };
 		static const std::string PROGRAM{ "program" };

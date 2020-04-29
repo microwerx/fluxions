@@ -913,6 +913,8 @@ namespace Fluxions {
 		if (post.usable_) return true;
 		if (!pRendererConfig) return false;
 
+		post.program = pRendererConfig->rc_program_ptr->getProgram();
+
 		if (!post.abo) {
 			constexpr float w = 1.0f;
 			constexpr float h = 1.0f;
@@ -930,21 +932,6 @@ namespace Fluxions {
 				w, y, z, s2, t1, 0.0f
 			};
 			FxCreateBuffer(GL_ARRAY_BUFFER, &post.abo, sizeof(buffer), buffer, GL_STATIC_DRAW);
-		}
-
-		post.program = pRendererConfig->rc_program_ptr->getProgram();
-		post_units.clear();
-		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
-			if (fbo->unusable()) continue;
-			for (auto& [target, rt] : fbo->renderTargets) {
-				if (rt.mapName.empty() || !rt.pGpuTexture) continue;
-				if (!pRendererProgram->activeUniforms.count(rt.mapName)) continue;
-				post_units.add();
-				post_units.unit(getTexUnit());
-				post_units.target(rt.target);
-				post_units.texture(rt.pGpuTexture->getTexture());
-				post_units.uniform_location(pRendererProgram->activeUniforms[rt.mapName].index);
-			}
 		}
 
 		const std::string VERTEX_LOCATION{ "aPosition" };
