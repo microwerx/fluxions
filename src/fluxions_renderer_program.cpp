@@ -220,6 +220,48 @@ namespace Fluxions {
 		}
 	}
 
+	bool RendererProgram::uniform1i(const std::string& uniformName, int val) {
+		int loc = getUniformLocation(uniformName);
+		if (loc < 0) return false;
+		glUniform1i(loc, val);
+		return true;
+	}
+
+	bool RendererProgram::uniform1f(const std::string& uniformName, float val) {
+		int loc = getUniformLocation(uniformName);
+		if (loc < 0) return false;
+		glUniform1f(loc, val);
+		return true;
+	}
+
+	bool RendererProgram::uniform2f(const std::string& uniformName, const float* val) {
+		int loc = getUniformLocation(uniformName);
+		if (loc < 0) return false;
+		glUniform2fv(loc, 1, val);
+		return true;
+	}
+
+	bool RendererProgram::uniform3f(const std::string& uniformName, const float* val) {
+		int loc = getUniformLocation(uniformName);
+		if (loc < 0) return false;
+		glUniform3fv(loc, 1, val);
+		return true;
+	}
+
+	bool RendererProgram::uniform4f(const std::string& uniformName, const float* val) {
+		int loc = getUniformLocation(uniformName);
+		if (loc < 0) return false;
+		glUniform4fv(loc, 1, val);
+		return true;
+	}
+
+	bool RendererProgram::uniformMatrix4f(const std::string& uniformName, const Matrix4f& val) {
+		int loc = getUniformLocation(uniformName);
+		if (loc < 0) return false;
+		glUniformMatrix4fv(loc, 1, 0, val.const_ptr());
+		return true;
+	}
+
 	void RendererProgram::loadShader(const std::string& path, GLenum type) {
 		if (path.empty()) return;
 		FilePathInfo fpi(path);

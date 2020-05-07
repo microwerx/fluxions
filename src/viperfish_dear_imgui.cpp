@@ -299,8 +299,8 @@ namespace Vf {
 		aColorLoc = glGetAttribLocation(program, "aColor");
 
 		FxCreateVertexArray(&vao);
-		FxCreateBuffer(GL_ARRAY_BUFFER, &abo, 0, nullptr, GL_STREAM_DRAW);
-		FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, 0, nullptr, GL_STREAM_DRAW);
+		FxCreateBuffer(GL_ARRAY_BUFFER, &abo, 0, nullptr, GL_STATIC_DRAW);
+		FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, 0, nullptr, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(aPositionLoc);
 		glEnableVertexAttribArray(aTexcoordLoc);
@@ -381,8 +381,8 @@ namespace Vf {
 			const ImDrawList* cmd_list = draw_data->CmdLists[n];
 			const ImDrawIdx* idx_buffer_offset = 0;
 
-			FxCreateBuffer(GL_ARRAY_BUFFER, &abo, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
-			FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
+			FxCreateBuffer(GL_ARRAY_BUFFER, &abo, (GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STATIC_DRAW);
+			FxCreateBuffer(GL_ELEMENT_ARRAY_BUFFER, &eabo, (GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STATIC_DRAW);
 
 			for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
 				const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];

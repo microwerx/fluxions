@@ -14,6 +14,7 @@ extern std::string g_CurrentDebugMessage;
 
 void FxSetErrorMessage(const char* filename, int line, const char* format, ...);
 void FxSetDefaultErrorMessage();
+bool FxCheckLogErrors();
 
 GLint FxSetActiveTexture(GLint unit);
 bool FxBindDefaultTextureAndSampler(GLenum target);

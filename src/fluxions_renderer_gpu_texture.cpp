@@ -136,7 +136,7 @@ namespace Fluxions {
 			return;
 
 		glActiveTexture(GL_TEXTURE0 + lastUnitBound_);
-		glBindTexture(target_, *texture_);
+		glBindTexture(target_, 0);
 		glActiveTexture(GL_TEXTURE0);
 		lastUnitBound_ = -1;
 	}

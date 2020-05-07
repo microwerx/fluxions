@@ -149,6 +149,17 @@ void FxSetDefaultErrorMessage() {
 	FxSetErrorMessage("<unknown>", 0, "<nothing set for debugging>");
 }
 
+bool FxCheckLogErrors() {
+	GLenum glerror = glGetError();
+	bool result = false;
+	while (glerror != GL_NO_ERROR) {
+		HFLOGERROR("GL Error: %s", (const char*)glewGetErrorString(glerror));
+		result = true;
+		glerror = glGetError();
+	}
+	return result;
+}
+
 GLenum FxGetBaseType(GLenum type) {
 	int i = 0;
 	while (glutTypeInfo[i].type != 0xffff) {

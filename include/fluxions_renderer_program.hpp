@@ -62,6 +62,12 @@ namespace Fluxions {
 		void applyUniforms(const RendererUniformMap& uniforms) const;
 		bool applyUniform(const std::string& uniformName, RendererUniform uniform) const;
 		bool applyUniform(int loc, RendererUniform uniform) const;
+		bool uniform1i(const std::string& uniformName, int val);
+		bool uniform1f(const std::string& uniformName, float val);
+		bool uniform2f(const std::string& uniformName, const float* val);
+		bool uniform3f(const std::string& uniformName, const float* val);
+		bool uniform4f(const std::string& uniformName, const float* val);
+		bool uniformMatrix4f(const std::string& uniformName, const Matrix4f& val);
 
 		void detachShaders();
 		void loadShaders();

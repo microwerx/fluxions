@@ -79,6 +79,7 @@ namespace Fluxions {
 		struct UNIFORMS {
 			Matrix4f ProjectionMatrix;
 			Matrix4f CameraMatrix;
+			Vector4f CameraPosition;
 		} uniforms;
 	};
 

@@ -96,7 +96,7 @@ namespace Fluxions {
 				if (!pRendererProgram->activeUniforms.count(rt.mapName)) continue;
 				rt.unit = getTexUnit();
 				rt.pGpuTexture->bind(rt.unit);
-				pRendererProgram->applyUniform(rt.mapName, rt.unit);
+				pRendererProgram->uniform1i(rt.mapName, rt.unit);
 			}
 		}
 
@@ -174,6 +174,7 @@ namespace Fluxions {
 
 		ssgUbCamera.uniforms.ProjectionMatrix = projectionMatrix_;
 		ssgUbCamera.uniforms.CameraMatrix = cameraMatrix_;
+		ssgUbCamera.uniforms.CameraPosition = cameraMatrix_.AsInverse().col4();
 		ssgUbCamera.update();
 
 		updateUniformBlocks();
@@ -185,14 +186,14 @@ namespace Fluxions {
 		ssgUbPointLights.use(program);
 		ssgUbDirToLights.use(program);
 
-		pRendererProgram->applyUniform("ProjectionMatrix", (RendererUniform)projectionMatrix_);
-		pRendererProgram->applyUniform("CameraMatrix", (RendererUniform)cameraMatrix_);
-		pRendererProgram->applyUniform("CameraPosition", (RendererUniform)(cameraMatrix_.AsInverse()).col4());
-		pRendererProgram->applyUniform("WorldMatrix", (RendererUniform)worldMatrix_);
-		pRendererProgram->applyUniform("ToneMapExposure", pRendererConfig->renderPostToneMapExposure);
-		pRendererProgram->applyUniform("ToneMapGamma", pRendererConfig->renderPostToneMapGamma);
-		pRendererProgram->applyUniform("FilmicHighlights", pRendererConfig->renderPostFilmicHighlights);
-		pRendererProgram->applyUniform("FilmicShadows", pRendererConfig->renderPostFilmicShadows);
+		pRendererProgram->uniformMatrix4f("ProjectionMatrix", projectionMatrix_);
+		pRendererProgram->uniformMatrix4f("CameraMatrix", cameraMatrix_);
+		pRendererProgram->uniform4f("CameraPosition", (cameraMatrix_.AsInverse()).col4().ptr());
+		pRendererProgram->uniformMatrix4f("WorldMatrix", worldMatrix_);
+		pRendererProgram->uniform1f("ToneMapExposure", pRendererConfig->renderPostToneMapExposure);
+		pRendererProgram->uniform1f("ToneMapGamma", pRendererConfig->renderPostToneMapGamma);
+		pRendererProgram->uniform1f("FilmicHighlights", pRendererConfig->renderPostFilmicHighlights);
+		pRendererProgram->uniform1f("FilmicShadows", pRendererConfig->renderPostFilmicShadows);
 
 		for (auto& [map, t] : pRendererConfig->textures) {
 			if (!pRendererProgram->activeUniforms.count(map) || !t->usable()) {
@@ -201,7 +202,10 @@ namespace Fluxions {
 			}
 			t->unit = getTexUnit();
 			t->bind(t->unit);
-			pRendererProgram->applyUniform(map, t->unit);
+
+			FxBindSampler(t->unit, t->samplerId);
+
+			pRendererProgram->uniform1i(map, t->unit);
 		}
 		pRendererConfig->metrics_apply_ms = stopwatch.Stop_msf();
 		return true;
@@ -213,8 +217,6 @@ namespace Fluxions {
 	}
 
 	bool RendererGLES30::restoreGLState() {
-		pRendererProgram = nullptr;
-
 		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
 			fbo->unbind();
 		}
@@ -222,8 +224,10 @@ namespace Fluxions {
 		for (auto& [map, t] : pRendererConfig->textures) {
 			if (t->unit < 0) continue;
 			t->unbind();
+			FxBindSampler(t->unit, 0);
 			freeTexUnit(t->unit);
 			t->unit = -1;
+			pRendererProgram->uniform1i(map, 0);
 		}
 
 		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
@@ -233,6 +237,7 @@ namespace Fluxions {
 				rt.pGpuTexture->unbind();
 				freeTexUnit(rt.unit);
 				rt.unit = -1;
+				pRendererProgram->uniform1i(rt.mapName, 0);
 			}
 		}
 
@@ -430,7 +435,7 @@ namespace Fluxions {
 			return;
 
 		pRendererProgram->use();
-		pRendererProgram->applyUniform("WorldMatrix", (RendererUniform)modelViewMatrix);
+		pRendererProgram->uniformMatrix4f("WorldMatrix", modelViewMatrix);
 
 		// create a vbo
 		BufferObject abo_(GL_ARRAY_BUFFER, (GLsizei)mesh.getVertexDataSize(), mesh.getVertexData(), GL_STATIC_DRAW);
@@ -508,6 +513,10 @@ namespace Fluxions {
 	}
 
 	void RendererGLES30::applyGlobalSettingsToCurrentProgram() {
+		pRendererProgram->uniform1i("ShaderDebugChoice", this->pRendererConfig->shaderDebugChoice);
+		pRendererProgram->uniform1i("ShaderDebugLight", this->pRendererConfig->shaderDebugLight);
+		pRendererProgram->uniform1i("ShaderDebugSphl", this->pRendererConfig->shaderDebugSphl);
+
 		//if (scene.locs.enviroCubeMap >= 0)
 		//	glUniform1i(scene.locs.enviroCubeMap, pSSG->environment.enviroColorMapUnit);
 		//if (scene.locs.enviroCubeMapAmount >= 0)
@@ -572,6 +581,8 @@ namespace Fluxions {
 			return;
 		}
 
+		int drawCount = 0;
+		int errorCount = 0;
 		for (int i = 0; i < MaxMaterials; i++) {
 			_sceneEnableCurrentTextures(i);
 			for (auto& [id, group] : pSSG->geometryGroups) {
@@ -581,9 +592,21 @@ namespace Fluxions {
 					scene.worldMatrix = std::move(group.worldMatrix());
 					glUniformMatrix4fv(scene.worldMatrixLoc, 1, GL_FALSE, scene.worldMatrix.const_ptr());
 				}
-				scene.renderer.RenderIf(group.objectId, i, false);
+				int count = scene.renderer.RenderIf(group.objectId, i, false);
+				if (count) {
+					if (FxCheckLogErrors()) {
+						errorCount++;
+					}
+					drawCount += count;
+				}
 			}
 			_sceneDisableCurrentTextures(i);
+		}
+		if (!drawCount) {
+			HFLOGDEBUGFIRSTRUNCOUNTMSG(5, "0 objects drawn!");
+		}
+		if (errorCount) {
+			HFLOGDEBUGFIRSTRUNCOUNTMSG(5, "%d errors!", errorCount);
 		}
 		return;
 	}
@@ -744,26 +767,24 @@ namespace Fluxions {
 			bool use_renderconfig_textures = !pRendererConfig->textures.empty();
 			bool use_material_textures = !mtl.maps.empty();
 
+			if (use_renderconfig_textures) {
+				for (auto& [m, gput] : pRendererConfig->textures) {
+					int loc = pRendererProgram->getUniformLocation(m);
+					if (loc < 0) continue;
+					GLuint target = gput->getTarget();
+					GLuint texture = gput->getTexture();
+					GLuint sampler = gput->samplerId;
+					units.add();
+					units.target(target);
+					units.texture(texture);
+					units.sampler(sampler);
+					units.uniform_location(loc);
+				}
+			}
+
 			scene.locs.getMaterialProgramLocations(*pRendererProgram);
 			for (auto& shader_map_info : scene.locs.maps) {
 				if (shader_map_info.mapNameLoc < 0) continue;
-
-				if (use_renderconfig_textures) {
-					for (auto& [m, gput] : pRendererConfig->textures) {
-						if (m != shader_map_info.mapName &&
-							m != shader_map_info.altMtlMapName) continue;
-						GLuint target = gput->getTarget();
-						GLuint texture = gput->getTexture();
-						GLuint sampler = gput->samplerId;
-						GLint uniform = shader_map_info.mapNameLoc;
-						GLint mixloc = shader_map_info.mapNameMixLoc;
-						units.add();
-						units.target(target);
-						units.texture(texture);
-						units.sampler(sampler);
-						units.uniform_location(uniform);
-					}
-				}
 
 				if (use_material_textures) {
 					std::string mapName;
@@ -779,14 +800,25 @@ namespace Fluxions {
 						GLuint texture = tex2d.getTexture();
 						GLuint sampler = 0; // TODO: Assign sampler
 						GLint uniform = shader_map_info.mapNameLoc;
+
+						if (target == GL_TEXTURE_2D && !sampler && pRendererContext->samplers.count("default2dSampler")) {
+							sampler = pRendererContext->samplers["default2dsampler"].getId();
+						}
+
+						if (target == GL_TEXTURE_CUBE_MAP && !sampler && pRendererContext->samplers.count("defaultCubeSampler")) {
+							sampler = pRendererContext->samplers["defaultCubeSampler"].getId();
+						}
+
 						units.add();
 						units.target(target);
 						units.texture(texture);
 						units.uniform_location(uniform);
+						units.sampler(sampler);
 					}
 				}
 			}
 		}
+
 		units.first();
 		for (int i = 0; i < units.count; i++) {
 			units.unit(pRendererContext->getTexUnit());
@@ -805,6 +837,10 @@ namespace Fluxions {
 		for (int i = 0; i < units.count; i++) {
 			FxBindTextureAndSampler(units.unit(), units.target(), 0, 0);
 			pRendererContext->freeTexUnit(units.unit());
+			int loc = units.uniform_location();
+			if (loc >= 0) {
+				glUniform1i(loc, 0);
+			}
 			units.next();
 		}
 
@@ -887,8 +923,6 @@ namespace Fluxions {
 		Hf::StopWatch stopwatch;
 		if (!_initSkyBox()) return;
 
-		pRendererProgram->use();
-
 		static const std::string VERTEX_LOCATION{ "aPosition" };
 		static const std::string TEXCOORD_LOCATION{ "aTexCoord" };
 		int vloc = skybox.vloc >= 0 ? skybox.vloc : pRendererProgram->getAttribLocation(VERTEX_LOCATION);
@@ -905,7 +939,7 @@ namespace Fluxions {
 		if (tloc >= 0) glDisableVertexAttribArray(tloc);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glUseProgram(0);
+
 		pRendererConfig->metrics_skybox_ms = stopwatch.Stop_msf();
 	}
 
@@ -952,7 +986,6 @@ namespace Fluxions {
 		Hf::StopWatch stopwatch;
 		if (!_initPost()) return;
 
-		glUseProgram(post.program);
 		glBindBuffer(GL_ARRAY_BUFFER, post.abo);
 		glVertexAttribPointer(post.vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
 		if (post.tloc >= 0) glVertexAttribPointer(post.tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
@@ -962,15 +995,13 @@ namespace Fluxions {
 		if (post.vloc >= 0) glDisableVertexAttribArray(post.vloc);
 		if (post.tloc >= 0) glDisableVertexAttribArray(post.tloc);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glUseProgram(0);
+
 		pRendererConfig->metrics_posttime_ms = stopwatch.Stop_msf();
 	}
 
 	void RendererGLES30::_renderSceneGraph() {
 		Hf::StopWatch stopwatch;
 		if (!scene.buffersBuilt) buildBuffers();
-
-		pRendererProgram->use();
 
 		if (scene.mtlIdLoc < 0) scene.mtlIdLoc = pRendererProgram->getUniformLocation("MtlID");
 		if (scene.worldMatrixLoc < 0) scene.worldMatrixLoc = pRendererProgram->getUniformLocation("WorldMatrix");
@@ -1004,7 +1035,6 @@ namespace Fluxions {
 			render(pRendererProgram, pRendererConfig->useMaterials, pRendererConfig->useMaps, pRendererConfig->useZOnly);
 		}
 
-		glUseProgram(0);
 		pRendererConfig->metrics_scene_ms = stopwatch.Stop_msf();
 	}
 
@@ -1122,6 +1152,9 @@ namespace Fluxions {
 	void RendererGLES30::_renderVIZ() {
 		Hf::StopWatch stopwatch;
 		if (!_initVIZ()) return;
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		viz.renderer.Render();
 		pRendererConfig->metrics_viz_ms = stopwatch.Stop_msf();
 	}
