@@ -355,6 +355,12 @@ namespace Fluxions {
 		return &(it->second);
 	}
 
+	RendererFramebuffer* RendererContext::getFramebuffer(const std::string& name) {
+		auto it = fbos.find(name);
+		if (it == fbos.end()) return nullptr;
+		return &(it->second);
+	}
+
 	bool RendererContext::k_replaceVars(Df::TokenVector& args) {
 		bool replacedAny = false;
 		for (auto& arg : args) {
@@ -481,6 +487,7 @@ namespace Fluxions {
 		static const std::string VIEWPORT{ "viewport" };
 		static const std::string SCISSOR{ "scissor" };
 		static const std::string PERSPECTIVE{ "perspective" };
+		static const std::string ORTHOSQUARE{ "orthosquare" };
 		static const std::string AUTORESIZE{ "autoresize" };
 		static const std::string DRAW{ "draw" };
 		static const std::string VIZ{ "viz" };
@@ -593,6 +600,15 @@ namespace Fluxions {
 					pcurRendererConfig->updateViewport();
 					return true;
 				}
+			}
+			else if (arg1 == ORTHOSQUARE && count == 4) {
+				float znear = (float)k_dvalue(args, 2);
+				float zfar = (float)k_dvalue(args, 3);
+				pcurRendererConfig->useSceneProjection = false;
+				pcurRendererConfig->viewportFovInDegrees = 0.0f;
+				pcurRendererConfig->viewportZNear = znear;
+				pcurRendererConfig->viewportZFar = zfar;
+				pcurRendererConfig->updateViewport();
 			}
 			else if (arg1 == PRETRANSFORM && count == 18) {
 				pcurRendererConfig->useSceneCamera = false;

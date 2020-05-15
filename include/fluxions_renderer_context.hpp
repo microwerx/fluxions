@@ -71,6 +71,7 @@ namespace Fluxions {
 
 		RendererConfig* getRendererConfig(const std::string& name);
 		RendererGLES30* getRenderer(const std::string& name);
+		RendererFramebuffer* getFramebuffer(const std::string& name);
 
 		//RendererProgramPtr findProgram(const std::string& renderConfigName, const std::string& name);
 
