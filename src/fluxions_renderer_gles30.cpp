@@ -79,7 +79,7 @@ namespace Fluxions {
 
 		int writeFBOCount = 0;
 		Fluxions::RendererFramebuffer* fbo = pRendererConfig->writeFBO.second;
-		if (fbo->usable()) {
+		if (fbo && fbo->usable()) {
 			fbo->use();
 			glViewport(0, 0, fbo->width(), fbo->height());
 			writeFBOCount++;
@@ -151,6 +151,7 @@ namespace Fluxions {
 		else {
 			projectionMatrix_ = pRendererConfig->viewportProjectionMatrix;
 			fov = pRendererConfig->viewportFovInDegrees;
+			width = pRendererConfig->viewportWidth;
 		}
 
 		if (pRendererConfig->useSceneCamera) {

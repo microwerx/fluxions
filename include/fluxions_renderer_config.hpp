@@ -82,6 +82,7 @@ public:
 	bool viewportAutoresize = false;
 	Recti viewportRect = Recti(0, 0, 64, 64);
 	GLfloat viewportFovInDegrees = 45.0f;
+	GLfloat viewportWidth = 1.0;
 	GLfloat viewportZNear = 1.0f;
 	GLfloat viewportZFar = 100.0f;
 	Matrix4f viewportProjectionMatrix;
