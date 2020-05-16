@@ -432,7 +432,7 @@ GLuint FxCheckFramebufferStatus() {
 
 	if (fbo_status != GL_FRAMEBUFFER_COMPLETE) {
 		std::string msg = FxGetFramebufferStatusAsString(fbo_status);
-		if (debuggingLevel >= DEBUGGING_ERRORS) { HFLOGERROR("Framebuffer is not complete! --> %s", msg.c_str()); }
+		if constexpr (debuggingLevel >= DEBUGGING_ERRORS) { HFLOGERROR("Framebuffer is not complete! --> %s", msg.c_str()); }
 	}
 
 	return fbo_status;

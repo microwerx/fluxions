@@ -1129,7 +1129,7 @@ namespace Fluxions {
 		}
 
 		for (auto& [k, n] : pSSG->dirToLights) {
-			Vector3f N = n.ublock.ublock.xyz().normalize();
+			Vector3f N = n.ublock.dirTo.xyz().normalize();
 			Vector3f outThere = N * 95.0f;
 			viz.renderer.NewObject();
 			viz.renderer.Begin(GL_LINES);
