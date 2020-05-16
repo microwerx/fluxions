@@ -78,8 +78,8 @@ namespace Fluxions {
 			return false;
 
 		int writeFBOCount = 0;
-		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
-			if (fbo->unusable()) break;
+		Fluxions::RendererFramebuffer* fbo = pRendererConfig->writeFBO.second;
+		if (fbo->usable()) {
 			fbo->use();
 			glViewport(0, 0, fbo->width(), fbo->height());
 			writeFBOCount++;
@@ -217,7 +217,8 @@ namespace Fluxions {
 	}
 
 	bool RendererGLES30::restoreGLState() {
-		for (auto& [k, fbo] : pRendererConfig->writeFBOs) {
+		RendererFramebuffer* fbo = pRendererConfig->writeFBO.second;
+		if (fbo) {
 			fbo->unbind();
 		}
 

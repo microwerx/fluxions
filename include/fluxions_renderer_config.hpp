@@ -66,7 +66,8 @@ public:
 	//RendererFramebuffer fbo;
 	using string_fboptr_pair = std::pair<std::string, RendererFramebuffer *>;
 	using string_fboptr_vector = std::vector<string_fboptr_pair>;
-	string_fboptr_vector writeFBOs;
+	//string_fboptr_vector writeFBOs;
+	string_fboptr_pair writeFBO = { "", nullptr };
 	string_fboptr_vector readFBOs;
 
 	// textures

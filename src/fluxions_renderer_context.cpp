@@ -656,7 +656,7 @@ namespace Fluxions {
 				}
 				else if (arg1 == WRITEFBO) {
 					if (!fbos.count(arg2)) return false;
-					pcurRendererConfig->writeFBOs.push_back({ arg2, &fbos[arg2] });
+					pcurRendererConfig->writeFBO = { arg2, &fbos[arg2] };
 					HFLOGINFO("rendererconfig '%s' adding write fbo '%s'",
 							  pcurRendererConfig->name(),
 							  arg2.c_str());
