@@ -6,8 +6,8 @@ namespace Fluxions {
 	bool SimpleDirToLight::read(const std::string& keyword, std::istream& istr) {
 		if (keyword == this->keyword()) {
 			float _E0 = ReadFloat(istr);
-			E0.reset(_E0, _E0, _E0);
-			dirTo = ReadVector3f(istr);
+			ublock.E0.reset(_E0, _E0, _E0);
+			ublock.ublock = ReadVector3f(istr);
 			return true;
 		}
 		return false;
@@ -15,8 +15,8 @@ namespace Fluxions {
 
 	bool SimpleDirToLight::write(std::ostream& ostr) const {
 		SimpleSceneGraphNode::write(ostr);
-		WriteFloat(ostr, E0.r);
-		WriteVector3f(ostr, dirTo.xyz()) << "\n";
+		WriteFloat(ostr, ublock.E0.r);
+		WriteVector3f(ostr, ublock.ublock.xyz()) << "\n";
 		return true;
 	}
 } // namespace Fluxions
