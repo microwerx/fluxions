@@ -4,6 +4,10 @@
 #include <hatchetfish.hpp>
 
 namespace Fluxions {
+	namespace {
+		bool ro_debugging = false;
+	}
+
 	RendererObject::RendererObject() {}
 
 	RendererObject::~RendererObject() {
@@ -14,33 +18,33 @@ namespace Fluxions {
 		if (initialized_) kill();
 		name_ = newname;
 		setParent(pparent);
-		HFLOGDEBUG("Initializing renderer object (%s) --> [%s] '%s'",
-				   parent_ ? parent_->name() : "noparent",
-				   type(),
-				   name());
+		if (ro_debugging) HFLOGDEBUG("Initializing renderer object (%s) --> [%s] '%s'",
+									 parent_ ? parent_->name() : "noparent",
+									 type(),
+									 name());
 		initialized_ = true;
 	}
 
 	void RendererObject::kill() {
 		if (!initialized_) {
-			HFLOGERROR("NOT KILLING renderer object (%s) --> [%s] '%s'",
-					   parent_ ? parent_->name() : "noparent",
-					   type(),
-					   name());
+			if (ro_debugging) HFLOGERROR("NOT KILLING renderer object (%s) --> [%s] '%s'",
+										 parent_ ? parent_->name() : "noparent",
+										 type(),
+										 name());
 			return;
 		}
-		HFLOGDEBUG("Killing renderer object (%s) --> [%s] '%s'",
-				   parent_ ? parent_->name() : "noparent",
-				   type(),
-				   name());
+		if (ro_debugging) HFLOGDEBUG("Killing renderer object (%s) --> [%s] '%s'",
+									 parent_ ? parent_->name() : "noparent",
+									 type(),
+									 name());
 		initialized_ = false;
 	}
 
 	void RendererObject::reset() {
-		HFLOGDEBUG("Resetting renderer object (%s) --> [%s] '%s'",
-				   parent_ ? parent_->name() : "noparent",
-				   type(),
-				   name());
+		if (ro_debugging) HFLOGDEBUG("Resetting renderer object (%s) --> [%s] '%s'",
+									 parent_ ? parent_->name() : "noparent",
+									 type(),
+									 name());
 		kill();
 		init(name(), parent_);
 	}

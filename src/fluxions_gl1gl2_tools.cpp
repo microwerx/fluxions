@@ -153,7 +153,19 @@ bool FxCheckLogErrors() {
 	GLenum glerror = glGetError();
 	bool result = false;
 	while (glerror != GL_NO_ERROR) {
-		HFLOGERROR("GL Error: %s", (const char*)glewGetErrorString(glerror));
+		const char* error_str = "Unknown Error";
+		switch (glerror) {
+		case GL_NO_ERROR: error_str = "NO_ERROR"; break;
+		case GL_INVALID_ENUM: error_str = "INVALID_ENUM"; break;
+		case GL_INVALID_VALUE: error_str = "INVALID_VALUE"; break;
+		case GL_INVALID_OPERATION: error_str = "INVALID_OPERATION"; break;
+		case GL_INVALID_FRAMEBUFFER_OPERATION: error_str = "INVALID_FRAMEBUFFER_OPERATION"; break;
+		case GL_OUT_OF_MEMORY: error_str = "OUT_OF_MEMORY"; break;
+		case GL_STACK_UNDERFLOW: error_str = "STACK_UNDERFLOW"; break;
+		case GL_STACK_OVERFLOW: error_str = "STACK_OVERFLOW"; break;
+		default: break;
+		}
+		HFLOGERROR("GL Error: %4x / %s", glerror, error_str);
 		result = true;
 		glerror = glGetError();
 	}
@@ -274,7 +286,7 @@ bool FxDebugBindTexture(GLenum target, GLuint texture) {
 		glGetIntegerv(GL_TEXTURE_BINDING_2D, &id1);
 		glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &id2);
 		GLint id3 = glIsTexture(texture);
-		if (debuggingLevel >= DEBUGGING_ERRORS) { HFLOGERROR("could not bind %d to %s [2D: %d, CM: %d, is: %d]", texture, Fluxions::glNameTranslator.getString(target), id1, id2, id3); }
+		if constexpr (debuggingLevel >= DEBUGGING_ERRORS) { HFLOGERROR("could not bind %d to %s [2D: %d, CM: %d, is: %d]", texture, Fluxions::glNameTranslator.getString(target), id1, id2, id3); }
 		return false;
 	}
 
@@ -284,7 +296,7 @@ bool FxDebugBindTexture(GLenum target, GLuint texture) {
 bool FxCreateBuffer(GLenum target, unsigned* p, GLsizeiptr size, const void* data, unsigned usage) {
 	if (!*p) {
 		glGenBuffers(1, p);
-		if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("buffer %d created", *p); }
+		if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("buffer %d created", *p); }
 	}
 	if (*p) {
 		glBindBuffer(target, *p);
@@ -296,7 +308,7 @@ bool FxCreateBuffer(GLenum target, unsigned* p, GLsizeiptr size, const void* dat
 void FxDeleteBuffer(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteBuffers(1, p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("buffer %d deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("buffer %d deleted", *p); }
 	*p = 0;
 }
 
@@ -304,7 +316,7 @@ bool FxCreateProgram(GLuint* p) {
 	if (*p) FxDeleteProgram(p);
 	if (!*p) {
 		*p = glCreateProgram();
-		if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("program %d created", *p); }
+		if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("program %d created", *p); }
 	}
 	return *p != 0;
 }
@@ -312,7 +324,7 @@ bool FxCreateProgram(GLuint* p) {
 void FxDeleteProgram(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteProgram(*p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("program %d deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("program %d deleted", *p); }
 	*p = 0;
 }
 
@@ -320,7 +332,7 @@ bool FxCreateShader(GLenum shaderType, GLuint* p) {
 	if (*p) FxDeleteShader(p);
 	if (!*p) {
 		*p = glCreateShader(shaderType);
-		if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("shader %d created", *p); }
+		if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("shader %d created", *p); }
 	}
 	return *p != 0;
 }
@@ -328,7 +340,7 @@ bool FxCreateShader(GLenum shaderType, GLuint* p) {
 void FxDeleteShader(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteShader(*p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("shader %d deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("shader %d deleted", *p); }
 	*p = 0;
 }
 
@@ -337,7 +349,7 @@ bool FxCreateTexture(GLenum target, GLuint* p) {
 	if (!*p) {
 		glGenTextures(1, p);
 		glBindTexture(target, *p);
-		if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("texture %d created", *p); }
+		if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("texture %d created", *p); }
 	}
 	return *p != 0;
 }
@@ -345,7 +357,7 @@ bool FxCreateTexture(GLenum target, GLuint* p) {
 void FxDeleteTexture(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteTextures(1, p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("texture %d deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("texture %d deleted", *p); }
 	*p = 0;
 }
 
@@ -353,7 +365,7 @@ bool FxCreateSampler(GLuint* p) {
 	if (*p) FxDeleteSampler(p);
 	if (!*p) {
 		glGenSamplers(1, p);
-		if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("sampler %d created", *p); }
+		if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("sampler %d created", *p); }
 	}
 	return *p != 0;
 }
@@ -361,7 +373,7 @@ bool FxCreateSampler(GLuint* p) {
 void FxDeleteSampler(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteSamplers(1, p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("sampler %d deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("sampler %d deleted", *p); }
 	*p = 0;
 }
 
@@ -369,7 +381,7 @@ void FxDeleteSampler(GLuint* p) {
 bool FxCreateVertexArray(GLuint* p) {
 	if (*p) FxDeleteVertexArray(p);
 	glGenVertexArrays(1, p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("vao %d created", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("vao %d created", *p); }
 	glBindVertexArray(*p);
 	return *p != 0;
 }
@@ -377,7 +389,7 @@ bool FxCreateVertexArray(GLuint* p) {
 void FxDeleteVertexArray(GLuint* p) {
 	if (*p == 0) return;
 	glDeleteVertexArrays(1, p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("vao %d deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("vao %d deleted", *p); }
 	*p = 0;
 }
 
@@ -386,14 +398,14 @@ bool FxCreateRenderbuffer(GLuint* p) {
 		FxDeleteRenderbuffer(p);
 	}
 	glGenRenderbuffers(1, p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("renderbuffer %i created", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("renderbuffer %i created", *p); }
 	glBindRenderbuffer(GL_FRAMEBUFFER, *p);
 	return *p != 0;
 }
 
 void FxDeleteRenderbuffer(GLuint* p) {
 	if (*p == 0) return;
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("renderbuffer %i deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("renderbuffer %i deleted", *p); }
 	glDeleteRenderbuffers(1, p);
 	*p = 0;
 }
@@ -403,14 +415,14 @@ bool FxCreateFramebuffer(GLuint* p) {
 		FxDeleteFramebuffer(p);
 	}
 	glGenFramebuffers(1, p);
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("framebuffer %i created", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("framebuffer %i created", *p); }
 	glBindFramebuffer(GL_FRAMEBUFFER, *p);
 	return *p != 0;
 }
 
 void FxDeleteFramebuffer(GLuint* p) {
 	if (*p == 0) return;
-	if (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("framebuffer %i deleted", *p); }
+	if constexpr (debuggingLevel >= DEBUGGING_DEBUGS) { HFLOGDEBUG("framebuffer %i deleted", *p); }
 	glDeleteFramebuffers(1, p);
 	*p = 0;
 }

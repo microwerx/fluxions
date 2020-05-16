@@ -220,8 +220,8 @@ namespace Fluxions {
 				}
 			}
 
-			HFLOGDEBUG("(Line: %03i) [%s] %s", lineno, Df::TokenVectorJoin(tokens, " ").c_str(),
-					   result ? "" : "(FALSE)");
+			//HFLOGDEBUG("(Line: %03i) [%s] %s", lineno, Df::TokenVectorJoin(tokens, " ").c_str(),
+			//		   result ? "" : "(FALSE)");
 		}
 
 		return true;
