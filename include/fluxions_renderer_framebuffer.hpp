@@ -28,11 +28,14 @@ namespace Fluxions {
 		void use();
 		void generateMipmaps();
 		void setDimensions(GLsizei newWidth, GLsizei newHeight);
+		void setLayers(GLsizei newLayers);
 		void setMultisamples(GLsizei newSamples, bool newUseMultisamples);
 		void setProjectionViewMatrix(const Matrix4f& M);
 		void addRenderbuffer(GLenum attachment, GLenum internalformat);
 		void addTexture2D(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
 		void addTextureCubeMap(GLenum attachment, GLenum target, GLenum internalformat, bool generateMipmaps);
+		void addTexture2DArrays(GLenum attachment, GLenum textarget, GLenum internalformat, bool generateMipmaps);
+		void setCurrentLayer(GLint layer);
 		void setMapName(const std::string& mapName);
 
 		// Used by Renderer{GLES30, ...}
@@ -45,9 +48,9 @@ namespace Fluxions {
 		void bindTextures(int unit);
 		void unbindTextures();
 		void setAllProjectionViewMatrices(const Matrix4f& M);
-		void setCurrentCubeFace(GLenum face);
 		void enable(GLenum target) noexcept { enables.push_back(target); }
 
+		static constexpr int DefaultLayers = 1;
 		static constexpr int DefaultWidth = 64;
 		static constexpr int DefaultHeight = 64;
 		static constexpr int DefaultSamples = 4;
@@ -62,10 +65,11 @@ namespace Fluxions {
 		GLint quality = DefaultQuality;
 		GLint width_ = DefaultWidth;
 		GLint height_ = DefaultHeight;
+		GLint layers_ = DefaultLayers;
 		GLsizei samples = DefaultSamples;
 		bool useMultisamples = false;
 		GLenum internalformat = 0;
-		GLenum currentCubeFace = 0;
+		GLenum currentLayer = 0;
 		Matrix4f projectionViewMatrix;
 
 		struct RenderTarget {
@@ -81,8 +85,9 @@ namespace Fluxions {
 			GLenum format{ 0 };
 			GLenum type{ 0 };
 
-			GLint levels = 0;
-			GLenum currentCubeFace = 0;
+			GLint layers{ 1 };
+			GLint levels{ 0 };
+			GLint currentLayer{ 0 };
 			bool useMultisamples = false;
 			GLsizei samples = 0;
 			GLenum readBufferTarget = 0;

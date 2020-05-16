@@ -77,12 +77,10 @@ namespace Fluxions {
 		if (pRendererProgram->isLinked() == false)
 			return false;
 
-		int writeFBOCount = 0;
-		Fluxions::RendererFramebuffer* fbo = pRendererConfig->writeFBO.second;
-		if (fbo && fbo->usable()) {
-			fbo->use();
-			glViewport(0, 0, fbo->width(), fbo->height());
-			writeFBOCount++;
+		Fluxions::RendererFramebuffer* writeFBO = pRendererConfig->writeFBO;
+		if (writeFBO && writeFBO->usable()) {
+			writeFBO->use();
+			glViewport(0, 0, writeFBO->width(), writeFBO->height());
 		}
 
 		pRendererProgram->use();
@@ -100,7 +98,7 @@ namespace Fluxions {
 			}
 		}
 
-		if (!writeFBOCount) {
+		if (!writeFBO) {
 			glViewport(pRendererConfig->viewportRect.x,
 					   pRendererConfig->viewportRect.y,
 					   pRendererConfig->viewportRect.w,
@@ -218,9 +216,9 @@ namespace Fluxions {
 	}
 
 	bool RendererGLES30::restoreGLState() {
-		RendererFramebuffer* fbo = pRendererConfig->writeFBO.second;
-		if (fbo) {
-			fbo->unbind();
+		RendererFramebuffer* writeFBO = pRendererConfig->writeFBO;
+		if (writeFBO) {
+			writeFBO->unbind();
 		}
 
 		for (auto& [map, t] : pRendererConfig->textures) {
@@ -300,7 +298,7 @@ namespace Fluxions {
 			unsigned i = 0;
 			for (const auto& [k, dl] : pSSG->dirToLights) {
 				if (i >= ssgUbDirToLights.size()) break;
-				ssgUbDirToLights.uniforms[i++] = dl;
+				ssgUbDirToLights.uniforms[i++] = dl.ublock;
 			}
 			ssgUbDirToLights.update();
 		}
@@ -1131,7 +1129,7 @@ namespace Fluxions {
 		}
 
 		for (auto& [k, n] : pSSG->dirToLights) {
-			Vector3f N = n.dirTo.xyz().normalize();
+			Vector3f N = n.ublock.ublock.xyz().normalize();
 			Vector3f outThere = N * 95.0f;
 			viz.renderer.NewObject();
 			viz.renderer.Begin(GL_LINES);

@@ -40,11 +40,13 @@ namespace Fluxions {
 		void bind(int unit);
 		void unbind();
 		void create();
-		void createStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type);
+		void createStorage(GLenum internalformat, GLint width, GLint height, GLint depth, GLenum format, GLenum type);
 		void createTexture2D(GLsizei width = 64, GLsizei height = 64);
 		void createTextureShadow2D(GLsizei width = 64, GLsizei height = 64);
 		void createTextureCube(GLsizei size = 64);
 		void createTextureShadowCube(GLsizei size = 64);
+		void createTexture2DArray(GLsizei width = 64, GLsizei height = 64, GLsizei depth = 64);
+		void createTexture2DArrayShadow(GLsizei width = 64, GLsizei height = 64, GLsizei depth = 64);
 		void setTextureCube(const Image3f& image);
 		void setTextureCube(const Image3ub& image);
 		void setTextureCube(const Image3us& image);

@@ -656,7 +656,7 @@ namespace Fluxions {
 				}
 				else if (arg1 == WRITEFBO) {
 					if (!fbos.count(arg2)) return false;
-					pcurRendererConfig->writeFBO = { arg2, &fbos[arg2] };
+					pcurRendererConfig->writeFBO = &fbos[arg2];
 					HFLOGINFO("rendererconfig '%s' adding write fbo '%s'",
 							  pcurRendererConfig->name(),
 							  arg2.c_str());
@@ -858,6 +858,8 @@ namespace Fluxions {
 		static const std::string ATTACH{ "attach" };
 		static const std::string DIMENSIONS{ "dimensions" };
 		static const std::string AUTORESIZE{ "autoresize" };
+		static const std::string LAYERS{ "layers" };
+		static const std::string MAKE{ "make" };
 
 		if (pcurFBO && svalarg1) {
 			if (arg1 == AUTORESIZE) {
@@ -873,6 +875,11 @@ namespace Fluxions {
 							   pcurFBO->name());
 				}
 				pcurFBO->setDimensions(width, height);
+				return true;
+			}
+
+			else if (arg1 == LAYERS) {
+				pcurFBO->setLayers(k_ivalue(args, 2));
 				return true;
 			}
 
@@ -894,7 +901,8 @@ namespace Fluxions {
 				static const std::vector<GLenum> targets{
 					GL_RENDERBUFFER,
 					GL_TEXTURE_2D,
-					GL_TEXTURE_CUBE_MAP
+					GL_TEXTURE_CUBE_MAP,
+					GL_TEXTURE_2D_ARRAY
 				};
 
 				if (std::find(targets.begin(), targets.end(),
@@ -973,6 +981,13 @@ namespace Fluxions {
 								  pcurFBO->name(),
 								  mapName.c_str());
 						break;
+					case GL_TEXTURE_2D_ARRAY:
+						pcurFBO->addTexture2DArrays(attachment, target, internalformat, generateMipmaps);
+						pcurFBO->setMapName(mapName);
+						HFLOGINFO("attaching texture2D to fbo '%s' for map '%s'",
+								  pcurFBO->name(),
+								  mapName.c_str());
+						break;
 					case GL_TEXTURE_CUBE_MAP:
 						pcurFBO->addTextureCubeMap(attachment, target, internalformat, generateMipmaps);
 						pcurFBO->setMapName(mapName);
@@ -982,6 +997,14 @@ namespace Fluxions {
 						break;
 					}
 					return true;
+				}
+			}
+			else if (arg1 == MAKE) {
+				if (pcurFBO->make()) {
+					HFLOGINFO("FBO '%s' is %s", pcurFBO->name(), pcurFBO->status());
+				}
+				else {
+					HFLOGERROR("FBO '%s' is not complete: %s", pcurFBO->name(), pcurFBO->status());
 				}
 			}
 		}

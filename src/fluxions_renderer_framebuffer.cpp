@@ -96,7 +96,7 @@ namespace Fluxions {
 		samples = DefaultSamples;
 		useMultisamples = false;
 		internalformat = GL_RGBA8;
-		currentCubeFace = 0;
+		currentLayer = 0;
 	}
 
 	void RendererFramebuffer::deleteBuffers() {
@@ -130,15 +130,23 @@ namespace Fluxions {
 			}
 			else {
 				rt.pGpuTexture->create();
-				rt.pGpuTexture->createStorage(rt.internalformat, width_, height_, rt.format, rt.type);
+				rt.pGpuTexture->createStorage(rt.internalformat, width_, height_, rt.layers, rt.format, rt.type);
 				rt.pGpuTexture->setDefaultParameters();
 				rt.object = rt.pGpuTexture->getTexture();
-				if (rt.target == GL_TEXTURE_CUBE_MAP) {
-					glFramebufferTexture(GL_FRAMEBUFFER, rt.attachment, rt.object, 0);
-				}
-				else {
+				bool hadErrors = FxCheckLogErrors();
+				switch (rt.target) {
+				case GL_TEXTURE_2D_ARRAY:
+					glFramebufferTextureLayer(GL_FRAMEBUFFER, rt.attachment, rt.object, 0, rt.currentLayer);
+					break;
+				case GL_TEXTURE_CUBE_MAP:
+					glFramebufferTextureLayer(GL_FRAMEBUFFER, rt.attachment, rt.object, 0, rt.currentLayer);
+					break;
+				case GL_TEXTURE_2D:
+				default:
 					glFramebufferTexture2D(GL_FRAMEBUFFER, rt.attachment, rt.target, rt.object, 0);
+					break;
 				}
+				hadErrors = FxCheckLogErrors();
 			}
 		}
 
@@ -205,6 +213,12 @@ namespace Fluxions {
 		dirty = true;
 	}
 
+	void RendererFramebuffer::setLayers(GLsizei newLayers) {
+		layers_ = newLayers;
+		if (renderTargets.empty()) return;
+		dirty = true;
+	}
+
 	void RendererFramebuffer::setMapName(const std::string& mapName) {
 		if (renderTargets.empty()) return;
 		renderTargets.back().second.mapName = mapName;
@@ -226,24 +240,25 @@ namespace Fluxions {
 		}
 	}
 
-	void RendererFramebuffer::setCurrentCubeFace(GLenum face) {
-		if (face < GL_TEXTURE_CUBE_MAP_POSITIVE_X || face > GL_TEXTURE_CUBE_MAP_NEGATIVE_Z) {
-			return;
-		}
-		currentCubeFace = face;
+	void RendererFramebuffer::setCurrentLayer(GLint face) {
+		if (face < 0 || face > 16) throw std::out_of_range("face should be in the range 0 to 15");
+		currentLayer = face;
 
 		if (fbo != 0) {
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-			for (auto it = renderTargets.begin(); it != renderTargets.end(); it++) {
-				if (it->second.target != GL_TEXTURE_CUBE_MAP)
-					continue;
-
-				RenderTarget& rt = it->second;
-
-				rt.currentCubeFace = face;
-				glFramebufferTexture2D(GL_FRAMEBUFFER, rt.attachment, rt.currentCubeFace, rt.object, 0);
+			for (auto& [k, rt] : renderTargets) {
+				switch (rt.target) {
+				case GL_TEXTURE_2D_ARRAY:
+				case GL_TEXTURE_CUBE_MAP:
+					rt.currentLayer = face;
+					glFramebufferTextureLayer(GL_FRAMEBUFFER, rt.attachment, rt.object, 0, rt.currentLayer);
+					break;
+				default:
+					break;
+				}
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			FxCheckLogErrors();
 		}
 	}
 
@@ -264,7 +279,7 @@ namespace Fluxions {
 	void RendererFramebuffer::addTexture2D(GLenum attachment, GLenum target, GLenum whichInternalformat, bool generateMipmaps) {
 		RenderTarget rt;
 		rt.attachment = attachment;
-		rt.pGpuTexture = new RendererGpuTexture(GL_TEXTURE_2D);
+		rt.pGpuTexture = new RendererGpuTexture(target);
 		rt.pGpuTexture->init("fbo", this);
 		rt.internalformat = whichInternalformat;
 		_setFormats(rt);
@@ -273,7 +288,7 @@ namespace Fluxions {
 		rt.levels = std::max(1, rt.levels);
 		rt.object = 0;
 		rt.samples = samples;
-		rt.currentCubeFace = currentCubeFace;
+		rt.currentLayer = currentLayer;
 		rt.useMultisamples = useMultisamples;
 		rt.target = target;
 		rt.projectionViewMatrix = projectionViewMatrix;
@@ -284,7 +299,7 @@ namespace Fluxions {
 	void RendererFramebuffer::addTextureCubeMap(GLenum attachment, GLenum target, GLenum whichInternalformat, bool generateMipmaps) {
 		RenderTarget rt;
 		rt.attachment = attachment;
-		rt.pGpuTexture = new RendererGpuTexture(GL_TEXTURE_CUBE_MAP);
+		rt.pGpuTexture = new RendererGpuTexture(target);
 		rt.internalformat = whichInternalformat;
 		_setFormats(rt);
 		rt.generateMipmaps = generateMipmaps;
@@ -292,7 +307,28 @@ namespace Fluxions {
 		rt.levels = std::max(1, rt.levels);
 		rt.object = 0;
 		rt.samples = samples;
-		rt.currentCubeFace = currentCubeFace;
+		rt.currentLayer = currentLayer;
+		rt.useMultisamples = useMultisamples;
+		rt.target = target;
+		rt.projectionViewMatrix = projectionViewMatrix;
+		renderTargets.push_back(std::pair<GLenum, RenderTarget>(whichInternalformat, rt));
+		dirty = true;
+	}
+
+
+	void RendererFramebuffer::addTexture2DArrays(GLenum attachment, GLenum target, GLenum whichInternalformat, bool generateMipmaps) {
+		RenderTarget rt;
+		rt.attachment = attachment;
+		rt.pGpuTexture = new RendererGpuTexture(target);
+		rt.internalformat = whichInternalformat;
+		_setFormats(rt);
+		rt.generateMipmaps = generateMipmaps;
+		rt.levels = generateMipmaps ? (int)(log(std::max(width_, height_)) / log(2.0)) : 1;
+		rt.levels = std::max(1, rt.levels);
+		rt.object = 0;
+		rt.samples = samples;
+		rt.layers = layers_;
+		rt.currentLayer = currentLayer;
 		rt.useMultisamples = useMultisamples;
 		rt.target = target;
 		rt.projectionViewMatrix = projectionViewMatrix;

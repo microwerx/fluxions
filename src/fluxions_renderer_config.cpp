@@ -17,7 +17,7 @@ namespace Fluxions {
 		//shaderProgram.reset();
 		//zShaderProgram.reset();
 		readFBOs.clear();
-		writeFBO = { "",nullptr };
+		writeFBO = nullptr;
 		textures.clear();
 		rc_program = "";
 		rc_program_ptr = nullptr;

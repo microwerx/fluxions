@@ -76,7 +76,8 @@ namespace Fluxions {
 	RendererGpuTexture::RendererGpuTexture(GLenum target) {
 		if (target != GL_TEXTURE_CUBE_MAP
 			&& target != GL_TEXTURE_2D
-			&& target != GL_TEXTURE_RECTANGLE)
+			&& target != GL_TEXTURE_RECTANGLE
+			&& target != GL_TEXTURE_2D_ARRAY)
 			throw "Unsupported Texture Target";
 		target_ = target;
 	}
@@ -152,44 +153,65 @@ namespace Fluxions {
 		//HFLOGINFO("Created texture %i", *texture_);
 	}
 
-	void RendererGpuTexture::createStorage(GLenum internalformat, GLint width, GLint height, GLenum format, GLenum type) {
+	void RendererGpuTexture::createStorage(GLenum internalformat, GLint width, GLint height, GLint depth, GLenum format, GLenum type) {
 		if (!texture_)
 			return;
 		while (glGetError() != GL_NO_ERROR);
-		if (target_ == GL_TEXTURE_2D) {
+		switch (target_) {
+		case GL_TEXTURE_2D:
 			usable_ = created_ = true;
 			bind(0);
 			glTexImage2D(target_, 0, internalformat, width, height, 0, format, type, nullptr);
 			unbind();
-		}
-		else if (target_ == GL_TEXTURE_CUBE_MAP) {
+			break;
+		case GL_TEXTURE_CUBE_MAP:
 			usable_ = created_ = true;
 			bind(0);
 			for (int i = 0; i < 6; i++) {
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalformat, width, height, 0, format, type, nullptr);
 			}
 			unbind();
+			break;
+		case GL_TEXTURE_3D:
+		case GL_TEXTURE_2D_ARRAY:
+			usable_ = created_ = true;
+			bind(0);
+			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalformat, width, height, depth, 0, format, type, nullptr);
+			unbind();
+			break;
+		default:
+			break;
 		}
 		while (glGetError() != GL_NO_ERROR) { usable_ = false; }
 	}
 
 	void RendererGpuTexture::createTexture2D(GLsizei width, GLsizei height) {
-		createStorage(GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE);
+		createStorage(GL_RGB, width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
 		setDefaultParameters(GL_LINEAR, GL_LINEAR, GL_REPEAT);
 	}
 
 	void RendererGpuTexture::createTextureShadow2D(GLsizei width, GLsizei height) {
-		createStorage(GL_DEPTH_COMPONENT, width, height, GL_DEPTH_COMPONENT, GL_FLOAT);
+		createStorage(GL_DEPTH_COMPONENT, width, height, 1, GL_DEPTH_COMPONENT, GL_FLOAT);
 		setDefaultParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	}
 
 	void RendererGpuTexture::createTextureCube(GLsizei size) {
-		createStorage(GL_RGB, size, size, GL_RGB, GL_UNSIGNED_BYTE);
+		createStorage(GL_RGB, size, size, 1, GL_RGB, GL_UNSIGNED_BYTE);
 		setDefaultParameters(GL_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	}
 
 	void RendererGpuTexture::createTextureShadowCube(GLsizei size) {
-		createStorage(GL_DEPTH_COMPONENT, size, size, GL_DEPTH_COMPONENT, GL_FLOAT);
+		createStorage(GL_DEPTH_COMPONENT, size, size, 1, GL_DEPTH_COMPONENT, GL_FLOAT);
+		setDefaultParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	}
+
+	void RendererGpuTexture::createTexture2DArray(GLsizei width, GLsizei height, GLsizei depth) {
+		createStorage(GL_DEPTH_COMPONENT, width, height, depth, GL_RGB, GL_UNSIGNED_BYTE);
+		setDefaultParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
+	}
+
+	void RendererGpuTexture::createTexture2DArrayShadow(GLsizei width, GLsizei height, GLsizei depth) {
+		createStorage(GL_DEPTH_COMPONENT, width, height, depth, GL_DEPTH_COMPONENT, GL_FLOAT);
 		setDefaultParameters(GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	}
 
