@@ -152,9 +152,9 @@ namespace Fluxions {
 		for (unsigned i = 0; i < ssg.pointLights.size(); i++) {
 			const SimplePointLight& pointLight = ssg.pointLights[i];
 			Fluxions::Matrix4f lightMatrix(
-				size, 0.0f, 0.0f, pointLight.position.x,
-				0.0f, size, 0.0f, -pointLight.position.z,
-				0.0f, 0.0f, size, pointLight.position.y,
+				size, 0.0f, 0.0f, pointLight.ublock.position.x,
+				0.0f, size, 0.0f, -pointLight.ublock.position.z,
+				0.0f, 0.0f, size, pointLight.ublock.position.y,
 				0.0f, 0.0f, 0.0f, 1.0f);
 			// int tab = 0;
 			std::ostringstream name;
@@ -191,7 +191,7 @@ namespace Fluxions {
 			XmlBeginTag(lights_mtllib_fout, "materialDefinition", "name", name.str(), 1) << "\n";
 			XmlBeginTag(lights_mtllib_fout, "material", "Native", 2) << "\n";
 			XmlBeginTag(lights_mtllib_fout, "emission", 3) << "\n";
-			XmlVector3f(lights_mtllib_fout, "color", Fluxions::Vector3f(ssg.pointLights[i].E0.ToVector3() * size), 4) << "\n";
+			XmlVector3f(lights_mtllib_fout, "color", Fluxions::Vector3f(ssg.pointLights[i].ublock.E0.ToVector3() * size), 4) << "\n";
 			XmlEndTag(lights_mtllib_fout, "emission", 3) << "\n";
 			XmlEndTag(lights_mtllib_fout, "material", 2) << "\n";
 			XmlEndTag(lights_mtllib_fout, "materialDefinition", 1) << "\n";

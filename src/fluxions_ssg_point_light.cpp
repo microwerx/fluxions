@@ -5,11 +5,11 @@
 namespace Fluxions {
 	bool SimplePointLight::read(const std::string& keyword, std::istream& istr) {
 		if (keyword == this->keyword()) {
-			E0.r = ReadFloat(istr);
-			E0.g = ReadFloat(istr);
-			E0.b = ReadFloat(istr);
-			E0.a = luma709(E0);
-			position = ReadVector4f(istr);
+			ublock.E0.r = ReadFloat(istr);
+			ublock.E0.g = ReadFloat(istr);
+			ublock.E0.b = ReadFloat(istr);
+			ublock.E0.a = luma709(ublock.E0);
+			ublock.position = ReadVector4f(istr);
 
 			Vector3f O = this->worldMatrix().origin();
 			bbox.reset();
@@ -24,8 +24,8 @@ namespace Fluxions {
 
 	bool SimplePointLight::write(std::ostream& ostr) const {
 		SimpleSceneGraphNode::write(ostr);
-		WriteColor3f(ostr, E0);
-		WriteVector4f(ostr, position);
+		WriteColor3f(ostr, ublock.E0);
+		WriteVector4f(ostr, ublock.position);
 		return true;
 	}
 } // namespace Fluxions

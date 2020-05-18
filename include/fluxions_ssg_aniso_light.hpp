@@ -5,13 +5,17 @@
 #include <fluxions_ssg_node.hpp>
 
 namespace Fluxions {
-	class SimpleAnisoLight : public BaseAnisoLight, public SimpleSceneGraphNode {
-	public:
+	struct SimpleAnisoLight : public SimpleSceneGraphNode {
+		BaseAnisoLight ublock;
+		Matrix4f viewMatrix;
+		Matrix4f projMatrix;
+		Matrix4f projviewMatrix;
+
 		SimpleAnisoLight();
 
 		const char* type() const override { return "SimpleAnisoLight"; }
 		const char* keyword() const override { return "anisoLight"; }
-		Color3f color() const override { return { SH[0].r, SH[0].g, SH[0].b }; }
+		Color3f color() const override { return { ublock.SH[0].r, ublock.SH[0].g, ublock.SH[0].b }; }
 
 		bool read(const std::string& keyword, std::istream& istr) override;
 		bool write(std::ostream& ostr) const override;

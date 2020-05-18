@@ -8,10 +8,10 @@ namespace Fluxions {
 
 	bool SimpleAnisoLight::read(const std::string& keyword_, std::istream& istr) {
 		if (keyword_ == this->keyword()) {
-			position = ReadVector4f(istr);
-			SH[0] = ReadColor3f(istr);
-			SH[0].a = 1.0f;
-			transform = Matrix4f::MakeTranslation(position.xyz());
+			ublock.position = ReadVector4f(istr);
+			ublock.SH[0] = ReadColor3f(istr);
+			ublock.SH[0].a = 1.0f;
+			transform = Matrix4f::MakeTranslation(ublock.position.xyz());
 
 			Vector3f O = this->worldMatrix().origin();
 			bbox.reset();
@@ -26,8 +26,8 @@ namespace Fluxions {
 
 	bool SimpleAnisoLight::write(std::ostream& ostr) const {
 		SimpleSceneGraphNode::write(ostr);
-		WriteVector4f(ostr, position);
-		WriteColor3f(ostr, SH[0].rgb());
+		WriteVector4f(ostr, ublock.position);
+		WriteColor3f(ostr, ublock.SH[0].rgb());
 		return true;
 	}
 }

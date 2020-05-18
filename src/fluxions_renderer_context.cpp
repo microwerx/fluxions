@@ -501,6 +501,8 @@ namespace Fluxions {
 		static const std::string OPTIONS{ "options" };
 		static const std::string NOMAPS{ "nomaps" };
 		static const std::string NOMATS{ "nomats" };
+		static const std::string CULLFRONT{ "cullfront" };
+		static const std::string CULLBACK{ "cullback" };
 
 		if (svalarg1 && pcurRendererConfig) {
 			if (arg1 == ZONLY) {
@@ -514,6 +516,14 @@ namespace Fluxions {
 			else if (arg1 == SRGB) {
 				pcurRendererConfig->enableSRGB = true;
 				return true;
+			}
+			else if (arg1 == CULLFRONT) {
+				pcurRendererConfig->cullFaceMode = GL_FRONT;
+				pcurRendererConfig->enableCullFace = true;
+			}
+			else if (arg1 == CULLBACK) {
+				pcurRendererConfig->cullFaceMode = GL_BACK;
+				pcurRendererConfig->enableCullFace = true;
 			}
 			else if (arg1 == AUTORESIZE) {
 				pcurRendererConfig->viewportAutoresize = true;
@@ -664,7 +674,7 @@ namespace Fluxions {
 				}
 				else if (arg1 == READFBO) {
 					if (!fbos.count(arg2)) return false;
-					pcurRendererConfig->readFBOs.push_back({ arg2, &fbos[arg2] });
+					pcurRendererConfig->readFBOs.push_back(&fbos[arg2]);
 					HFLOGINFO("rendererconfig '%s' adding read fbo '%s'",
 							  pcurRendererConfig->name(),
 							  arg2.c_str());

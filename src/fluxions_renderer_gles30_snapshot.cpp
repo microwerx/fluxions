@@ -64,6 +64,7 @@ namespace Fluxions {
 		glActiveTexture(GL_TEXTURE0 + activeTexture);
 		glBindTexture(GL_TEXTURE_2D, texture2D);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, textureCubeMap);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 		glBindVertexArray(vertexArray);
 		glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);

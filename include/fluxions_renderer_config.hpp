@@ -70,7 +70,7 @@ namespace Fluxions {
 		//using string_fboptr_vector = std::vector<string_fboptr_pair>;
 		//string_fboptr_vector writeFBOs;
 		RendererFramebuffer* writeFBO{ nullptr };
-		std::vector<MapFbo> readFBOs;
+		std::vector<RendererFramebuffer*> readFBOs;
 
 		// textures
 		std::vector<std::pair<std::string, RendererGpuTexture*>> textures;

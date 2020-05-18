@@ -71,7 +71,7 @@ namespace Uf {
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.parentPath();
 
-		Fluxions::Vector3f origin = light.position.xyz();
+		Fluxions::Vector3f origin = light.ublock.position.xyz();
 		Fluxions::Vector3f target = origin - Fluxions::Vector3f(0.0f, 0.0f, 1.0f);
 		Fluxions::Vector3f roll = { 0.0f, 1.0f, 0.0f };
 		writer.setCubeMapCamera(origin, target, roll);
@@ -97,7 +97,7 @@ namespace Uf {
 		writer.export_path_prefix = fpi.parentPath();
 		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "sphlviz.conf" });
 
-		Fluxions::Vector3f src_sphl_position = src_sphl.position.xyz();
+		Fluxions::Vector3f src_sphl_position = src_sphl.ublock.position.xyz();
 		Fluxions::Vector3f src_sphl_target = src_sphl_position - Fluxions::Vector3f(0.0f, 0.0f, 1.0f);
 		Fluxions::Vector3f src_sphl_roll = { 0.0f, 1.0f, 0.0f };
 		writer.setCubeMapCamera(src_sphl_position,
@@ -106,7 +106,7 @@ namespace Uf {
 
 		writer.write_sun = false;
 
-		Fluxions::Vector3f rcv_sphl_position = rcv_sphl.position.xyz();
+		Fluxions::Vector3f rcv_sphl_position = rcv_sphl.ublock.position.xyz();
 		Fluxions::Matrix4f lightMatrix = Fluxions::Matrix4f::MakeTranslation(rcv_sphl_position);
 
 		if (!fpi.exists()) {

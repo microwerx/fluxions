@@ -132,6 +132,7 @@ namespace Fluxions {
 		UbDirToLightBlock ssgUbDirToLights;
 		UbPointLightBlock ssgUbPointLights;
 		UbAnisoLightBlock ssgUbAnisoLights;
+		UbDirToShadowMatrixBlock ssgUbDirToShadowMatrices;
 
 		void updateUniformBlocks();
 

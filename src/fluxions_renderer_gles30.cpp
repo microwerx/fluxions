@@ -85,7 +85,7 @@ namespace Fluxions {
 
 		pRendererProgram->use();
 
-		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
+		for (RendererFramebuffer* fbo : pRendererConfig->readFBOs) {
 			if (fbo->unusable()) continue;
 			for (auto& [type, rt] : fbo->renderTargets) {
 				rt.unit = -1;
@@ -95,6 +95,9 @@ namespace Fluxions {
 				rt.unit = getTexUnit();
 				rt.pGpuTexture->bind(rt.unit);
 				pRendererProgram->uniform1i(rt.mapName, rt.unit);
+			}
+			if (FxCheckLogErrors()) {
+				HFLOGERROR("Could not configure READ FBO textures");
 			}
 		}
 
@@ -184,6 +187,7 @@ namespace Fluxions {
 		ssgUbMaterials.use(program);
 		ssgUbPointLights.use(program);
 		ssgUbDirToLights.use(program);
+		ssgUbDirToShadowMatrices.use(program);
 
 		pRendererProgram->uniformMatrix4f("ProjectionMatrix", projectionMatrix_);
 		pRendererProgram->uniformMatrix4f("CameraMatrix", cameraMatrix_);
@@ -194,18 +198,18 @@ namespace Fluxions {
 		pRendererProgram->uniform1f("FilmicHighlights", pRendererConfig->renderPostFilmicHighlights);
 		pRendererProgram->uniform1f("FilmicShadows", pRendererConfig->renderPostFilmicShadows);
 
-		for (auto& [map, t] : pRendererConfig->textures) {
-			if (!pRendererProgram->activeUniforms.count(map) || !t->usable()) {
-				t->unit = -1;
-				continue;
-			}
-			t->unit = getTexUnit();
-			t->bind(t->unit);
+		//for (auto& [map, t] : pRendererConfig->textures) {
+		//	if (!pRendererProgram->activeUniforms.count(map) || !t->usable()) {
+		//		t->unit = -1;
+		//		continue;
+		//	}
+		//	t->unit = getTexUnit();
+		//	t->bind(t->unit);
 
-			FxBindSampler(t->unit, t->samplerId);
+		//	FxBindSampler(t->unit, t->samplerId);
 
-			pRendererProgram->uniform1i(map, t->unit);
-		}
+		//	pRendererProgram->uniform1i(map, t->unit);
+		//}
 		pRendererConfig->metrics_apply_ms = stopwatch.Stop_msf();
 		return true;
 	}
@@ -221,16 +225,16 @@ namespace Fluxions {
 			writeFBO->unbind();
 		}
 
-		for (auto& [map, t] : pRendererConfig->textures) {
-			if (t->unit < 0) continue;
-			t->unbind();
-			FxBindSampler(t->unit, 0);
-			freeTexUnit(t->unit);
-			t->unit = -1;
-			pRendererProgram->uniform1i(map, 0);
-		}
+		//for (auto& [map, t] : pRendererConfig->textures) {
+		//	if (t->unit < 0) continue;
+		//	t->unbind();
+		//	FxBindSampler(t->unit, 0);
+		//	freeTexUnit(t->unit);
+		//	t->unit = -1;
+		//	pRendererProgram->uniform1i(map, 0);
+		//}
 
-		for (auto& [k, fbo] : pRendererConfig->readFBOs) {
+		for (RendererFramebuffer* fbo : pRendererConfig->readFBOs) {
 			if (fbo->unusable()) continue;
 			for (auto& [type, rt] : fbo->renderTargets) {
 				if (rt.unit < 0) continue;
@@ -303,15 +307,36 @@ namespace Fluxions {
 			ssgUbDirToLights.update();
 		}
 
+		blockname = ssgUbDirToShadowMatrices.uniformBlockName();
+		if (pRendererProgram->activeUniformBlocks.count(blockname)) {
+			unsigned i = 0;
+			for (const auto& [k, dl] : pSSG->dirToLights) {
+				if (i >= ssgUbDirToShadowMatrices.size()) break;
+				ssgUbDirToShadowMatrices.uniforms[i++] = dl.projMatrix * dl.viewMatrix;
+			}
+			ssgUbDirToShadowMatrices.update();
+		}
+
 		blockname = ssgUbPointLights.uniformBlockName();
 		if (pRendererProgram->activeUniformBlocks.count(blockname)) {
 			unsigned i = 0;
 			for (const auto& [k, pl] : pSSG->pointLights) {
 				if (i >= ssgUbPointLights.size()) break;
-				const BasePointLight* bPointLight = &pl;
+				const BasePointLight* bPointLight = &pl.ublock;
 				ssgUbPointLights.uniforms[i++] = *bPointLight;
 			}
 			ssgUbPointLights.update();
+		}
+
+		blockname = ssgUbAnisoLights.uniformBlockName();
+		if (pRendererProgram->activeUniformBlocks.count(blockname)) {
+			unsigned i = 0;
+			for (const auto& [k, pl] : pSSG->anisoLights) {
+				if (i >= ssgUbAnisoLights.size()) break;
+				const BaseAnisoLight* bAnisoLight = &pl.ublock;
+				ssgUbAnisoLights.uniforms[i++] = *bAnisoLight;
+			}
+			ssgUbAnisoLights.update();
 		}
 	}
 
@@ -821,7 +846,7 @@ namespace Fluxions {
 
 		units.first();
 		for (int i = 0; i < units.count; i++) {
-			units.unit(pRendererContext->getTexUnit());
+			units.unit(getTexUnit());
 			int loc = units.uniform_location();
 			if (loc >= 0) {
 				glUniform1i(loc, units.unit());
@@ -836,7 +861,7 @@ namespace Fluxions {
 		units.first();
 		for (int i = 0; i < units.count; i++) {
 			FxBindTextureAndSampler(units.unit(), units.target(), 0, 0);
-			pRendererContext->freeTexUnit(units.unit());
+			freeTexUnit(units.unit());
 			int loc = units.uniform_location();
 			if (loc >= 0) {
 				glUniform1i(loc, 0);
@@ -1125,7 +1150,7 @@ namespace Fluxions {
 		}
 
 		for (auto& [k, n] : pSSG->pointLights) {
-			_vizBall(n.position.xyz(), 0.5f, FxColors3::Yellow);
+			_vizBall(n.ublock.position.xyz(), 0.5f, FxColors3::Yellow);
 		}
 
 		for (auto& [k, n] : pSSG->dirToLights) {

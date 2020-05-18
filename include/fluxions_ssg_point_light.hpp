@@ -6,7 +6,8 @@
 #include <fluxions_renderer_texture_cube.hpp>
 
 namespace Fluxions {
-	struct SimplePointLight : public BasePointLight, public SimpleSceneGraphNode {
+	struct SimplePointLight : public SimpleSceneGraphNode {
+		BasePointLight ublock;
 		unsigned index;
 		//float E0;
 		//float falloffRadius;
@@ -14,7 +15,7 @@ namespace Fluxions {
 
 		const char* type() const override { return "SimplePointLight"; }
 		const char* keyword() const override { return "pointLight"; }
-		Color3f color() const override { return { E0.r, E0.g, E0.b }; }
+		Color3f color() const override { return { ublock.E0.r, ublock.E0.g, ublock.E0.b }; }
 
 		bool read(const std::string& keyword, std::istream& istr) override;
 		bool write(std::ostream& ostr) const override;

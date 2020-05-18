@@ -110,6 +110,19 @@ namespace Fluxions {
 	};
 
 
+	class UbDirToShadowMatrixBlock : public RendererUniformBlock {
+	public:
+		UbDirToShadowMatrixBlock() :
+			RendererUniformBlock((GLsizeiptr)sizeof(uniforms), (const GLvoid*)&uniforms[0]) {}
+
+		const char* uniformBlockName() const override { return "DirToShadowMatrixBlock"; }
+		unsigned uniformBinding() const override { return (unsigned)UbBindings::DirToLights; }
+
+		unsigned size() const override { return MaxLights; }
+		Matrix4f uniforms[MaxLights];
+	};
+
+
 	class UbPointLightBlock : public RendererUniformBlock {
 	public:
 		UbPointLightBlock() :
