@@ -13,8 +13,11 @@ namespace Fluxions {
 		Camera = 2,
 		Materials = 3,
 		DirToLights = 4,
-		PointLights = 5,
-		AnisoLights = 6,
+		DirtoLightShadowMatrices = 5,
+		PointLights = 6,
+		PointLightShadowMatrices = 7,
+		AnisoLights = 8,
+		AnisoLightShadowMatrices = 9,
 		MaxBindingPoints,
 		UserBindingPoints
 	};
@@ -70,17 +73,14 @@ namespace Fluxions {
 	class UbCameraBlock : public RendererUniformBlock {
 	public:
 		UbCameraBlock() :
-			RendererUniformBlock((GLsizeiptr)sizeof(uniforms), (const GLvoid*)&uniforms) {}
+			RendererUniformBlock((GLsizeiptr)sizeof(ublock), (const GLvoid*)&ublock) {}
 
 		const char* uniformBlockName() const override { return "CameraBlock"; }
 		unsigned uniformBinding() const override { return (unsigned)UbBindings::Camera; }
 
 		unsigned size() const override { return 1; }
-		struct UNIFORMS {
-			Matrix4f ProjectionMatrix;
-			Matrix4f CameraMatrix;
-			Vector4f CameraPosition;
-		} uniforms;
+
+		BaseCamera ublock;
 	};
 
 
@@ -116,7 +116,7 @@ namespace Fluxions {
 			RendererUniformBlock((GLsizeiptr)sizeof(uniforms), (const GLvoid*)&uniforms[0]) {}
 
 		const char* uniformBlockName() const override { return "DirToShadowMatrixBlock"; }
-		unsigned uniformBinding() const override { return (unsigned)UbBindings::DirToLights; }
+		unsigned uniformBinding() const override { return (unsigned)UbBindings::DirtoLightShadowMatrices; }
 
 		unsigned size() const override { return MaxLights; }
 		Matrix4f uniforms[MaxLights];
@@ -136,6 +136,19 @@ namespace Fluxions {
 	};
 
 
+	class UbPointShadowMatrixBlock : public RendererUniformBlock {
+	public:
+		UbPointShadowMatrixBlock() :
+			RendererUniformBlock((GLsizeiptr)sizeof(uniforms), (const GLvoid*)&uniforms[0]) {}
+
+		const char* uniformBlockName() const override { return "PointLightShadowMatrixBlock"; }
+		unsigned uniformBinding() const override { return (unsigned)UbBindings::AnisoLightShadowMatrices; }
+
+		unsigned size() const override { return MaxLights; }
+		Matrix4f uniforms[MaxLights];
+	};
+
+
 	class UbAnisoLightBlock : public RendererUniformBlock {
 	public:
 		UbAnisoLightBlock() :
@@ -146,6 +159,19 @@ namespace Fluxions {
 
 		unsigned size() const override { return MaxLights; }
 		BaseAnisoLight uniforms[MaxLights];
+	};
+
+
+	class UbAnisoShadowMatrixBlock : public RendererUniformBlock {
+	public:
+		UbAnisoShadowMatrixBlock() :
+			RendererUniformBlock((GLsizeiptr)sizeof(uniforms), (const GLvoid*)&uniforms[0]) {}
+
+		const char* uniformBlockName() const override { return "AnisoLightShadowMatrixBlock"; }
+		unsigned uniformBinding() const override { return (unsigned)UbBindings::AnisoLightShadowMatrices; }
+
+		unsigned size() const override { return MaxLights; }
+		Matrix4f uniforms[MaxLights];
 	};
 }
 

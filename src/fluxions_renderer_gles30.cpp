@@ -174,9 +174,10 @@ namespace Fluxions {
 		pRendererConfig->projectionMatrix = projectionMatrix_;
 		pRendererConfig->cameraMatrix = cameraMatrix_;
 
-		ssgUbCamera.uniforms.ProjectionMatrix = projectionMatrix_;
-		ssgUbCamera.uniforms.CameraMatrix = cameraMatrix_;
-		ssgUbCamera.uniforms.CameraPosition = cameraMatrix_.AsInverse().col4();
+		ssgUbCamera.ublock.ProjectionCameraMatrix = projectionMatrix_ * cameraMatrix_;
+		ssgUbCamera.ublock.ProjectionMatrix = projectionMatrix_;
+		ssgUbCamera.ublock.CameraMatrix = cameraMatrix_;
+		ssgUbCamera.ublock.CameraPosition = cameraMatrix_.AsInverse().col4();
 		ssgUbCamera.update();
 
 		updateUniformBlocks();
@@ -188,6 +189,8 @@ namespace Fluxions {
 		ssgUbPointLights.use(program);
 		ssgUbDirToLights.use(program);
 		ssgUbDirToShadowMatrices.use(program);
+		ssgUbPointShadowMatrices.use(program);
+		ssgUbAnisoShadowMatrices.use(program);
 
 		pRendererProgram->uniformMatrix4f("ProjectionMatrix", projectionMatrix_);
 		pRendererProgram->uniformMatrix4f("CameraMatrix", cameraMatrix_);
@@ -312,7 +315,7 @@ namespace Fluxions {
 			unsigned i = 0;
 			for (const auto& [k, dl] : pSSG->dirToLights) {
 				if (i >= ssgUbDirToShadowMatrices.size()) break;
-				ssgUbDirToShadowMatrices.uniforms[i++] = dl.projMatrix * dl.viewMatrix;
+				ssgUbDirToShadowMatrices.uniforms[i++] = dl.projviewMatrix;
 			}
 			ssgUbDirToShadowMatrices.update();
 		}
@@ -337,6 +340,16 @@ namespace Fluxions {
 				ssgUbAnisoLights.uniforms[i++] = *bAnisoLight;
 			}
 			ssgUbAnisoLights.update();
+		}
+
+		blockname = ssgUbAnisoShadowMatrices.uniformBlockName();
+		if (pRendererProgram->activeUniformBlocks.count(blockname)) {
+			unsigned i = 0;
+			for (const auto& [k, al] : pSSG->anisoLights) {
+				if (i >= ssgUbAnisoShadowMatrices.size()) break;
+				ssgUbAnisoShadowMatrices.uniforms[i++] = al.projviewMatrix;
+			}
+			ssgUbAnisoShadowMatrices.update();
 		}
 	}
 
@@ -1097,6 +1110,40 @@ namespace Fluxions {
 		viz.renderer.End();
 	}
 
+	void RendererGLES30::_vizBBoxCubeMap(const BoundingBoxf& bbox, Matrix4f& worldMatrix) {
+		Vector3f a = bbox.minBounds;
+		Vector3f b = bbox.maxBounds;
+		Vector3f vertices[8] = {
+			{a.x, a.y, a.z},
+			{b.x, a.y, a.z},
+			{b.x, b.y, a.z},
+			{a.x, b.y, a.z},
+			{a.x, a.y, b.z},
+			{b.x, a.y, b.z},
+			{b.x, b.y, b.z},
+			{a.x, b.y, b.z}
+		};
+
+		for (int i = 0; i < 8; i++) {
+			vertices[i] = worldMatrix * vertices[i];
+		}
+
+		int indices[24] = {
+			0, 1, 1, 2, 2, 3, 3, 0, // front
+			4, 5, 5, 6, 6, 7, 7, 4, // back
+			1, 5, 6, 2, 4, 0, 3, 7, // remaining lines
+		};
+
+		viz.renderer.NewObject();
+		viz.renderer.Begin(GL_TRIANGLES);
+		viz.renderer.Normal3f({ 0.0f, 0.0f, 0.0f });
+		viz.renderer.TexCoord2f({ 0.0f, 0.0f });
+		for (int i = 0; i < 24; i++) {
+			viz.renderer.Position3f(vertices[indices[i]]);
+		}
+		viz.renderer.End();
+	}
+
 	void RendererGLES30::_vizBall(const Vector3f& center, float radius, Color3f color) {
 		viz.renderer.NewObject();
 		viz.renderer.Begin(GL_LINES);
@@ -1135,6 +1182,17 @@ namespace Fluxions {
 		Matrix4f identity;
 		_vizBBox(bbox, identity, FxColors3::White);
 
+		const static std::string maps[8] = {
+			"AnisoLightColorMap0",
+			"AnisoLightColorMap1",
+			"AnisoLightColorMap2",
+			"AnisoLightColorMap3",
+			"AnisoLightColorMap4",
+			"AnisoLightColorMap5",
+			"AnisoLightColorMap6",
+			"AnisoLightColorMap7"
+		};
+		int i = 0;
 		for (auto& [k, n] : pSSG->nodes) {
 			if (n->keyword() == std::string("sphl")) {
 				_vizBall(n->transform.col4().xyz(), 1.0f, FxColors3::Yellow);
@@ -1142,6 +1200,12 @@ namespace Fluxions {
 			}
 			Matrix4f transform = n->transform * n->addlTransform;
 			_vizBBox(n->bbox, transform, FxColors3::Cyan);
+			if (pRendererContext->textureCubes.count(maps[i])) {
+				pRendererContext->textureCubes[maps[i]].bind(0);
+				pRendererProgram->uniform1i("MapKd", 0);
+				_vizBBoxCubeMap(n->bbox, transform);
+				pRendererContext->textureCubes[maps[i]].unbind();
+			}
 		}
 
 		for (auto& [k, n] : pSSG->geometryGroups) {

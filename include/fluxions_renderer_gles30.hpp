@@ -133,6 +133,8 @@ namespace Fluxions {
 		UbPointLightBlock ssgUbPointLights;
 		UbAnisoLightBlock ssgUbAnisoLights;
 		UbDirToShadowMatrixBlock ssgUbDirToShadowMatrices;
+		UbPointShadowMatrixBlock ssgUbPointShadowMatrices;
+		UbAnisoShadowMatrixBlock ssgUbAnisoShadowMatrices;
 
 		void updateUniformBlocks();
 
@@ -192,6 +194,7 @@ namespace Fluxions {
 		void _renderSceneGraph();
 		bool _initVIZ();
 		void _vizBBox(const BoundingBoxf& bbox, Matrix4f& worldMatrix, Color3f color);
+		void _vizBBoxCubeMap(const BoundingBoxf& bbox, Matrix4f& worldMatrix);
 		void _vizBall(const Vector3f& center, float radius, Color3f color);
 		void _renderVIZ();
 	};

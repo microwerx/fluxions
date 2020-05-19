@@ -325,7 +325,14 @@ namespace Fluxions {
 		if (target_ == GL_TEXTURE_CUBE_MAP) {
 			target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + arrayElement;
 		}
-		glTexImage2D(target, 0, format, width, height, 0, format, type, data);
+		GLenum internalformat = format;
+		if (type == GL_FLOAT) {
+			internalformat = (format == GL_RGB) ? GL_RGB16F : GL_RGBA16F;
+		}
+		else if (type == GL_UNSIGNED_BYTE) {
+			internalformat = (format == GL_RGB) ? GL_SRGB8 : GL_SRGB8_ALPHA8;
+		}
+		glTexImage2D(target, 0, internalformat, width, height, 0, format, type, data);
 
 		while (glGetError() != GL_NO_ERROR) {
 			usable_ = false;

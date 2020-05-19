@@ -139,7 +139,7 @@ namespace Fluxions {
 					glFramebufferTextureLayer(GL_FRAMEBUFFER, rt.attachment, rt.object, 0, rt.currentLayer);
 					break;
 				case GL_TEXTURE_CUBE_MAP:
-					glFramebufferTextureLayer(GL_FRAMEBUFFER, rt.attachment, rt.object, 0, rt.currentLayer);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, rt.attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X + rt.currentLayer, rt.object, 0);
 					break;
 				case GL_TEXTURE_2D:
 				default:
@@ -249,16 +249,19 @@ namespace Fluxions {
 			for (auto& [k, rt] : renderTargets) {
 				switch (rt.target) {
 				case GL_TEXTURE_2D_ARRAY:
-				case GL_TEXTURE_CUBE_MAP:
 					rt.currentLayer = face;
 					glFramebufferTextureLayer(GL_FRAMEBUFFER, rt.attachment, rt.object, 0, rt.currentLayer);
+					break;
+				case GL_TEXTURE_CUBE_MAP:
+					rt.currentLayer = face;
+					glFramebufferTexture2D(GL_FRAMEBUFFER, rt.attachment, GL_TEXTURE_CUBE_MAP_POSITIVE_X + rt.currentLayer, rt.object, 0);
 					break;
 				default:
 					break;
 				}
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			FxCheckLogErrors();
+			//FxCheckLogErrors();
 		}
 	}
 

@@ -9,6 +9,7 @@ namespace Fluxions {
 		BaseDirToLight ublock;
 		Matrix4f viewMatrix;
 		Matrix4f projMatrix;
+		Matrix4f projviewMatrix;
 
 		const char* type() const override { return "SimpleDirToLight"; }
 		const char* keyword() const override { return "dirtoLight"; }

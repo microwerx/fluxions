@@ -34,6 +34,17 @@ namespace Fluxions {
 
 	using FileTypeStringPair = std::pair<SceneGraphFileType, std::string>;
 
+	// 64 bytes
+	struct BaseCamera {
+		Matrix4f ProjectionCameraMatrix;
+		Matrix4f ProjectionMatrix;
+		Matrix4f CameraMatrix;
+		Vector4f CameraPosition;
+		Vector4f reserved1;
+		Vector4f reserved2;
+		Vector4f reserved3;
+	};
+
 	// 128 bytes
 	struct BaseEnvironment {
 		Vector4f toneMap;		// {r} = exposure, {g} = gamma, {b} = filmic highlight, {a} = filmic shadows

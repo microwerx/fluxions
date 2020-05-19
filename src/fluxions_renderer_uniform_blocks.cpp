@@ -9,8 +9,11 @@ namespace Fluxions {
 		"CameraBlock",
 		"MaterialBlock",
 		"DirToLightBlock",
+		"DirToShadowMatrixBlock",
 		"PointLightBlock",
-		"AnisoLightBlock"
+		"PointLightShadowMatrixBlock",
+		"AnisoLightBlock",
+		"AnisoLightShadowMatrixBlock",
 	};
 
 	RendererUniformBlock::RendererUniformBlock(GLsizeiptr size, const GLvoid* data) :
