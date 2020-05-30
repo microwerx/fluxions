@@ -854,6 +854,19 @@ namespace Fluxions {
 				0, 0, -1, 0);
 		}
 
+		static constexpr TMatrix4<T> MakeLookAtInverse(TVector3<T> eye, TVector3<T> center, TVector3<T> up) noexcept {
+			TVector3<T> F = (center - eye).unit();
+			TVector3<T> S = F.cross(up).unit();
+			TVector3<T> U = S.cross(F).unit();
+
+			return TMatrix4<T>::multiply(TMatrix4<T>(
+				S.x, S.y, S.z, 0.0,
+				U.x, U.y, U.z, 0.0,
+				-F.x, -F.y, -F.z, 0.0,
+				0.0, 0.0, 0.0, 1.0),
+				TMatrix4<T>::MakeTranslation(-eye.x, -eye.y, -eye.z));
+		}
+
 		static constexpr TMatrix4<T> MakeLookAt(TVector3<T> eye, TVector3<T> center, TVector3<T> up) noexcept {
 			TVector3<T> F = (center - eye).unit();
 			TVector3<T> S = F.cross(up).unit();

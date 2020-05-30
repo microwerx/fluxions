@@ -117,6 +117,7 @@ namespace Fluxions {
 		void End();
 		void NewObject();
 		void DrawOBJ(const SimpleGeometryMesh& obj);
+		int surfaceCount() { return (int)surfaces.size(); }
 
 		void Index(IndexType index);
 		void Index(std::vector<IndexType> indices);
@@ -140,6 +141,7 @@ namespace Fluxions {
 		void Position3f(Vector3f position) { VertexAttrib4f(POSITION, position.x, position.y, position.z, 1.0); }
 		void Normal3f(Vector3f normal) { VertexAttrib4f(NORMAL, normal.x, normal.y, normal.z, 0.0f); }
 		void TexCoord2f(Vector2f st) { VertexAttrib4f(TEXCOORD, st.x, st.y, 0.0f, 0.0f); }
+		void TexCoord3f(Vector3f uvw) { VertexAttrib4f(TEXCOORD, uvw.x, uvw.y, uvw.z, 0.0f); }
 		void Color3f(Color3f color) { VertexAttrib4f(COLOR, color.r, color.g, color.b, 1.0f); }
 		void Attrib14f(Vector4f v) { VertexAttrib4f(ATTRIB1, v.x, v.y, v.z, v.w); }
 		void BoneIndex4f(Vector4f v) { VertexAttrib4f(BONEINDEX, v.x, v.y, v.z, v.w); }
@@ -160,6 +162,7 @@ namespace Fluxions {
 		//void Configure(RendererContext *pRenderer);
 		int vertexCount = 0;
 		int triangleCount = 0;
+		std::map<int, int> surface_map;
 	}; // template class SimpleRenderer
 
 #ifndef FLUXIONS_NO_EXTERN_TEMPLATES

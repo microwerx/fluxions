@@ -195,6 +195,7 @@ namespace Fluxions {
 		bool _initVIZ();
 		void _vizBBox(const BoundingBoxf& bbox, Matrix4f& worldMatrix, Color3f color);
 		void _vizBBoxCubeMap(const BoundingBoxf& bbox, Matrix4f& worldMatrix);
+		void _vizDirToLight(Vector3f center, Vector3f dir, float radius, Color3f color);
 		void _vizBall(const Vector3f& center, float radius, Color3f color);
 		void _renderVIZ();
 	};

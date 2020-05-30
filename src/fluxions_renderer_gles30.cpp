@@ -1124,22 +1124,92 @@ namespace Fluxions {
 			{a.x, b.y, b.z}
 		};
 
+		Vector3f texcoords[8] = {
+			{-1.0f, -1.0f, -1.0f },
+			{ 1.0f, -1.0f, -1.0f },
+			{ 1.0f,  1.0f, -1.0f },
+			{-1.0f,  1.0f, -1.0f },
+			{-1.0f, -1.0f,  1.0f },
+			{ 1.0f, -1.0f,  1.0f },
+			{ 1.0f,  1.0f,  1.0f },
+			{-1.0f,  1.0f,  1.0f }
+		};
+
+		constexpr float lo = 0.2f;
+		constexpr float hi = 1.0f;
+		Color3f colors[6] = {
+			{ hi, lo, lo },
+			{ lo, hi, hi },
+			{ lo, hi, lo },
+			{ hi, lo, hi },
+			{ lo, lo, hi },
+			{ hi, hi, lo },
+		};
+
+		Vector3f normals[6] = {
+			{ 1.0f,  0.0f,  0.0f},
+			{-1.0f,  0.0f,  0.0f},
+			{ 0.0f,  1.0f,  0.0f},
+			{ 0.0f, -1.0f,  0.0f},
+			{ 0.0f,  0.0f,  1.0f},
+			{ 0.0f,  0.0f, -1.0f}
+		};
+
 		for (int i = 0; i < 8; i++) {
 			vertices[i] = worldMatrix * vertices[i];
 		}
 
-		int indices[24] = {
-			0, 1, 1, 2, 2, 3, 3, 0, // front
-			4, 5, 5, 6, 6, 7, 7, 4, // back
-			1, 5, 6, 2, 4, 0, 3, 7, // remaining lines
+		int indices[36] = {
+			1, 5, 6, 6, 2, 1, // +X right
+			0, 3, 7, 7, 4, 0, // -X left
+			3, 2, 6, 6, 7, 3, // +Y up
+			0, 4, 5, 5, 1, 0, // -Y down
+			0, 1, 2, 2, 3, 0, // +Z front
+			6, 5, 4, 4, 7, 6, // -Z back
 		};
 
 		viz.renderer.NewObject();
 		viz.renderer.Begin(GL_TRIANGLES);
 		viz.renderer.Normal3f({ 0.0f, 0.0f, 0.0f });
+		int v = 0;
+		for (int face = 0; face < 6; face++) {
+			viz.renderer.Normal3f(normals[face]);
+			viz.renderer.Color3f(colors[face]);
+			for (int i = 0; i < 6; i++, v++) {
+				viz.renderer.TexCoord3f(texcoords[indices[v]]);
+				viz.renderer.Position3f(vertices[indices[v]]);
+			}
+		}
+		viz.renderer.End();
+	}
+
+	void RendererGLES30::_vizDirToLight(Vector3f center, Vector3f dir, float radius, Color3f color) {
+		viz.renderer.NewObject();
+		viz.renderer.Begin(GL_LINES);
+		viz.renderer.Color3f(color);
+		viz.renderer.Normal3f({ 0.0f, 0.0f, 0.0f });
 		viz.renderer.TexCoord2f({ 0.0f, 0.0f });
-		for (int i = 0; i < 24; i++) {
-			viz.renderer.Position3f(vertices[indices[i]]);
+		const int SLICES = 16;
+		const int STACKS = 8;
+		float theta = 0.0f;
+		const float dtheta = FX_F32_TWOPI / SLICES;
+		const float dphi = FX_F32_PI / STACKS;
+		Matrix4f invLookAt = Matrix4f::MakeLookAt(center + dir, center, { 0.0f, 1.0f, 0.0f });
+		for (int stack = 0; stack < STACKS; stack++) {
+			float phi = 0.0f;
+			for (int slice = 0; slice <= SLICES; slice++) {
+				Vector3f p;
+				p.from_straight_theta_phi(theta, phi);
+				viz.renderer.Position3f((radius * p) + center);
+				p.from_straight_theta_phi(theta + dtheta, phi);
+				viz.renderer.Position3f((radius * p) + center);
+				p.from_straight_theta_phi(theta, phi);
+				viz.renderer.Position3f((radius * p) + center);
+				p.from_straight_theta_phi(theta, phi + dphi);
+				viz.renderer.Position3f((radius * p) + center);
+				phi += dphi;
+			}
+			theta += dtheta;
 		}
 		viz.renderer.End();
 	}
@@ -1177,10 +1247,24 @@ namespace Fluxions {
 	bool RendererGLES30::_initVIZ() {
 		if (viz.buffersBuilt) return true;
 
+		viz.buffersBuilt = true;
+
+		return viz.buffersBuilt;
+	}
+
+	void RendererGLES30::_renderVIZ() {
+		Hf::StopWatch stopwatch;
+		if (!_initVIZ()) return;
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		//viz.renderer.Render();
 		viz.renderer.reset(true);
 		BoundingBoxf bbox = pSSG->getBoundingBox();
 		Matrix4f identity;
 		_vizBBox(bbox, identity, FxColors3::White);
+		viz.renderer.surface_map[0] = viz.renderer.surfaceCount();
 
 		const static std::string maps[8] = {
 			"AnisoLightColorMap0",
@@ -1192,29 +1276,44 @@ namespace Fluxions {
 			"AnisoLightColorMap6",
 			"AnisoLightColorMap7"
 		};
-		int i = 0;
+		std::vector<int> sphlIds;
+		int node = 1;
 		for (auto& [k, n] : pSSG->nodes) {
 			if (n->keyword() == std::string("sphl")) {
 				_vizBall(n->transform.col4().xyz(), 1.0f, FxColors3::Yellow);
+				viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 				continue;
 			}
 			Matrix4f transform = n->transform * n->addlTransform;
-			_vizBBox(n->bbox, transform, FxColors3::Cyan);
-			if (pRendererContext->textureCubes.count(maps[i])) {
-				pRendererContext->textureCubes[maps[i]].bind(0);
-				pRendererProgram->uniform1i("MapKd", 0);
-				_vizBBoxCubeMap(n->bbox, transform);
-				pRendererContext->textureCubes[maps[i]].unbind();
+			if (n->keyword() == std::string("anisoLight")) {
+				int i = n->name_str().back() - '0';
+				if (i < 0) i = 0;
+				if (pRendererContext->textureCubes.count(maps[i])) {
+					pRendererContext->textureCubes[maps[i]].bind(0);
+					pRendererProgram->uniform1i("MapEnviroCube", 0);
+					pRendererProgram->uniform1i("ShaderDebugChoice", 5);
+					_vizBBoxCubeMap(n->bbox, transform);
+					sphlIds.push_back(node);
+					viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
+					pRendererContext->textureCubes[maps[i]].unbind();
+					pRendererProgram->uniform1i("ShaderDebugChoice", 0);
+				}
+			}
+			else {
+				_vizBBox(n->bbox, transform, FxColors3::Cyan);
+				viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 			}
 		}
 
 		for (auto& [k, n] : pSSG->geometryGroups) {
 			Matrix4f transform = n.transform * n.addlTransform;
 			_vizBBox(n.bbox, transform, FxColors3::Rose);
+			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 		}
 
 		for (auto& [k, n] : pSSG->pointLights) {
 			_vizBall(n.ublock.position.xyz(), 0.5f, FxColors3::Yellow);
+			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 		}
 
 		for (auto& [k, n] : pSSG->dirToLights) {
@@ -1226,25 +1325,16 @@ namespace Fluxions {
 			viz.renderer.Position3f({ 0.0f, 0.0f, 0.0f });
 			viz.renderer.Position3f(outThere);
 			viz.renderer.End();
+			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 			_vizBall(outThere, 0.5f, n.color());
+			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 		}
 
 		for (auto& [k, n] : pSSG->spheres) {
 			_vizBall(n.transform.col4().xyz(), 0.5f, FxColors3::Yellow);
+			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 		}
 
-		viz.buffersBuilt = true;
-
-		return viz.buffersBuilt;
-	}
-
-	void RendererGLES30::_renderVIZ() {
-		Hf::StopWatch stopwatch;
-		if (!_initVIZ()) return;
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		viz.renderer.Render();
 		pRendererConfig->metrics_viz_ms = stopwatch.Stop_msf();
 	}
 

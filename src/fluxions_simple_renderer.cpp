@@ -456,6 +456,7 @@ namespace Fluxions {
 		vertexMemoryBuffer.clear();
 		indexMemoryBuffer.clear();
 		surfaces.clear();
+		surfaces_map.clear();
 		currentSurface = 0;
 
 		memset(&currentSlowVertex, 0, sizeof(SimpleSlowVertex));
