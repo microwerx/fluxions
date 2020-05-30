@@ -192,7 +192,7 @@ namespace Vf {
 			result = false;
 		}
 		else {
-			unsigned char* pixels;
+			unsigned char* pixels{ nullptr };
 			int w;
 			int h;
 			pIO->Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);

@@ -427,15 +427,19 @@ namespace Fluxions {
 	}
 
 	bool SimpleGeometryMesh::saveCache(const std::string& filename) const {
-		// save a cache
-		HFLOGINFO("Writing cache %s", filename.c_str());
-
-		std::ofstream fout(filename, std::ios::binary);
-
 		unsigned vertexCount = (unsigned)Vertices.size();
 		unsigned indexCount = (unsigned)Indices.size();
 		unsigned surfaceCount = (unsigned)Surfaces.size();
 
+		if (!vertexCount || !indexCount) {
+			HFLOGWARN("mesh has no vertices or indices");
+			return false;
+		}
+
+		// save a cache
+		HFLOGINFO("Writing cache %s", filename.c_str());
+
+		std::ofstream fout(filename, std::ios::binary);
 		WriteBinaryElement(fout, vertexCount);
 		WriteBinaryElement(fout, indexCount);
 		WriteBinaryElement(fout, surfaceCount);
@@ -474,6 +478,11 @@ namespace Fluxions {
 		ReadBinaryElement(fin, vertexCount);
 		ReadBinaryElement(fin, indexCount);
 		ReadBinaryElement(fin, surfaceCount);
+
+		if (!vertexCount || !indexCount) {
+			HFLOGWARN("Mesh has no vertices or indices");
+			return false;
+		}
 
 		mtllibs.clear();
 		ReadBinaryStringMap(fin, mtllibs);
