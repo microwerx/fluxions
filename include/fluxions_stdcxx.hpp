@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <set>
 #include <functional>
 #include <regex>
 #include <random>

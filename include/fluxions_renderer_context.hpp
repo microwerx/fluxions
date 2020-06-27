@@ -69,6 +69,7 @@ namespace Fluxions {
 		std::map<std::string, RendererTextureCube> textureCubes;
 		std::map<std::string, RendererGLES30> renderers;
 
+		RendererProgram* getRendererProgram(const std::string& name);
 		RendererConfig* getRendererConfig(const std::string& name);
 		RendererGLES30* getRenderer(const std::string& name);
 		RendererFramebuffer* getFramebuffer(const std::string& name);

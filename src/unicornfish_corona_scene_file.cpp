@@ -50,8 +50,8 @@ namespace Uf {
 	void CoronaSceneFile::writeSkySCN(const std::string& filename, const Fluxions::SimpleSceneGraph& ssg) {
 		Fluxions::XmlSceneGraphWriter writer;
 		writer.setCubeMapCamera(Fluxions::Vector3f(0.0f, 0.0f, 0.0f),
-								Fluxions::Vector3f(0.0f, 1.0f, 0.0f),
-								Fluxions::Vector3f(0.0f, 0.0f, 1.0f));
+								Fluxions::Vector3f(0.0f, 0.0f, 1.0f),
+								Fluxions::Vector3f(0.0f, 1.0f, 0.0f));
 		Fx::FilePathInfo fpi(filename);
 		writer.export_path_prefix = fpi.parentPath();
 		writer.extra_tags.push_back({ "conffile", Uf::CoronaJob::confPathPrefix + "ssphh_sky.conf" });

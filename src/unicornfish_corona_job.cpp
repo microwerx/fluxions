@@ -175,8 +175,15 @@ namespace Uf {
 	}
 
 	std::string CoronaJob::MakeCoronaCommandLine() {
+		const std::string path1 = "C:\\Program Files\\Corona\\Standalone\\Corona.exe";
+		const std::string path2 = "C:\\Program Files\\Corona\\Corona Renderer for 3ds Max\\Standalone\\Corona.exe";
+		std::string path;
+		if (std::filesystem::exists(path1)) path = path1;
+		else if (std::filesystem::exists(path2)) path = path2;
+		else HFLOGERROR("Corona.exe not found");
+
 		std::ostringstream cmd;
-		cmd << "\"C:\\Program Files\\Corona\\Standalone\\Corona.exe\" " << scene_path << " -silent";
+		cmd << "\"" << path << "\" " << scene_path << " -silent";
 
 		if (isHDR) {
 			cmd << " -oR " << (isHQ ? hq_output_path_exr : output_path_exr);

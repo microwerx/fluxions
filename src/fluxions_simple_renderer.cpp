@@ -70,6 +70,8 @@ namespace Fluxions {
 
 	template <typename IndexType, GLenum GLIndexType>
 	void SimpleRenderer<IndexType, GLIndexType>::NewObject() {
+		object_set.insert(currentObjectId);
+
 		// this creates a break in the vertex buffer
 		if (isMakingSurface)
 			return;
@@ -456,7 +458,7 @@ namespace Fluxions {
 		vertexMemoryBuffer.clear();
 		indexMemoryBuffer.clear();
 		surfaces.clear();
-		surfaces_map.clear();
+		object_set.clear();
 		currentSurface = 0;
 
 		memset(&currentSlowVertex, 0, sizeof(SimpleSlowVertex));

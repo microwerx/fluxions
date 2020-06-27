@@ -117,7 +117,7 @@ namespace Fluxions {
 			ptrcLightProbeImage.loadEXR(path);
 		else
 			HFLOGERROR("Path %s is not a PPM or EXR", path.c_str());
-		ptrcLightProbeImage.convertRectToCubeMap();
+		ptrcLightProbeImage.convertRectToCubeMapEx(Image4f::SwizzleCorona);
 		double intensity = ptrcLightProbeImage.getTotalIntensity();
 		double numPixels = ptrcLightProbeImage.getNumPixels();
 		ptrcLightProbePercent = (float)(intensity / numPixels);

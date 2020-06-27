@@ -251,6 +251,21 @@ namespace Fluxions {
 					int dx, int dy, int dz,
 					TImage<ColorType>& dst) const;
 
+		static constexpr int SwizzleDefault = 0;
+		static constexpr int SwizzleCorona = 1;
+		static constexpr int SwizzleRotateZUp = 2;
+
+		// option = 0, do default
+		// option = 1, do Corona swizzle
+		// option = 2, do Z up
+		bool convertRectToCubeMapEx(TImage<ColorType>& dst, int swizzle);
+		bool convertCubeMapToRectEx(TImage<ColorType>& dst, int swizzle);
+
+		// Converts 6x1 rectangle to cube map
+		bool convertRectToCubeMapEx(int swizzle);
+		// Converts cube map to 6x1 rectangle
+		bool convertCubeMapToRectEx(int swizzle);
+
 		// Converts Corona style 6x1 rectangle to cube map
 		bool convertRectToCubeMap();
 		// Converts cube map to Corona style 6x1 rectangle

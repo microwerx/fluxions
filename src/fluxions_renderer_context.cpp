@@ -343,6 +343,12 @@ namespace Fluxions {
 		invalidate_caches();
 	}
 
+	RendererProgram* RendererContext::getRendererProgram(const std::string& name) {
+		auto it = programs.find(name);
+		if (it == programs.end()) return nullptr;
+		return &(it->second);
+	}
+
 	RendererConfig* RendererContext::getRendererConfig(const std::string& name) {
 		auto it = rendererConfigs.find(name);
 		if (it == rendererConfigs.end()) return nullptr;
@@ -1062,6 +1068,10 @@ namespace Fluxions {
 				pcurTexture2D->samplerId = samplers[arg2].getId();
 				return true;
 			}
+			if (arg1 == "onload" && arg2 == "flipy") {
+				pcurTexture2D->onloadFlipY = true;
+				return true;
+			}
 		}
 		if (svalarg1 && count == 2) {
 			texture2Ds[arg1].init(arg1, this);
@@ -1103,6 +1113,25 @@ namespace Fluxions {
 			else if (arg1 == "sampler" && samplers.count(arg2)) {
 				pcurTextureCube->samplername = arg2;
 				pcurTextureCube->samplerId = samplers[arg2].getId();
+				return true;
+			}
+			else if (arg1 == "swizzle") {
+				if (arg2 == "default") {
+					pcurTextureCube->onloadSwizzle = Image4f::SwizzleDefault;
+					return true;
+				}
+				if (arg2 == "corona") {
+					pcurTextureCube->onloadSwizzle = Image4f::SwizzleCorona;
+					return true;
+				}
+				if (arg2 == "zup") {
+					pcurTextureCube->onloadSwizzle = Image4f::SwizzleRotateZUp;
+					return true;
+				}
+				return false;
+			}
+			if (arg1 == "onload" && arg2 == "flipy") {
+				pcurTextureCube->onloadFlipY = true;
 				return true;
 			}
 		}

@@ -45,10 +45,14 @@ namespace Fluxions {
 			return false;
 		}
 
+		if (t.onloadFlipY) {
+			image4.flipY();
+		}
+
 		bool isCube = false;
 		if (image4.isLikely61CubeMap()) {
 			isCube = true;
-			image4.convertRectToCubeMap();
+			image4.convertRectToCubeMapEx(t.onloadSwizzle);
 			//saveCubeMapVariations(path, image4);
 		}
 		else if (image4.isLikelyCross()) {

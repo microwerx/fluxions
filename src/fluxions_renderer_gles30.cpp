@@ -966,6 +966,11 @@ namespace Fluxions {
 		int vloc = skybox.vloc >= 0 ? skybox.vloc : pRendererProgram->getAttribLocation(VERTEX_LOCATION);
 		int tloc = skybox.tloc >= 0 ? skybox.tloc : pRendererProgram->getAttribLocation(TEXCOORD_LOCATION);
 
+		if (!pRendererConfig->textures.empty()) {
+			pRendererConfig->textures[0].second->bind(0);
+			pRendererProgram->uniform1i("MapEnviroCube", 0);
+		}
+
 		glBindBuffer(GL_ARRAY_BUFFER, skybox.abo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skybox.eabo);
 		if (vloc >= 0) glVertexAttribPointer(vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
@@ -977,6 +982,11 @@ namespace Fluxions {
 		if (tloc >= 0) glDisableVertexAttribArray(tloc);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		if (!pRendererConfig->textures.empty()) {
+			pRendererConfig->textures[0].second->unbind();
+			pRendererProgram->uniform1i("MapEnviroCube", 0);
+		}
 
 		pRendererConfig->metrics_skybox_ms = stopwatch.Stop_msf();
 	}
@@ -1024,6 +1034,13 @@ namespace Fluxions {
 		Hf::StopWatch stopwatch;
 		if (!_initPost()) return;
 
+		int i = 0;
+		for (auto& [k, tex] : pRendererConfig->textures) {
+			tex->bind(i);
+			pRendererProgram->uniform1i(k, i);
+			i++;
+		}
+
 		glBindBuffer(GL_ARRAY_BUFFER, post.abo);
 		glVertexAttribPointer(post.vloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)0);
 		if (post.tloc >= 0) glVertexAttribPointer(post.tloc, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (const void*)12);
@@ -1033,6 +1050,13 @@ namespace Fluxions {
 		if (post.vloc >= 0) glDisableVertexAttribArray(post.vloc);
 		if (post.tloc >= 0) glDisableVertexAttribArray(post.tloc);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		i = 0;
+		for (auto& [k, tex] : pRendererConfig->textures) {
+			tex->unbind();
+			pRendererProgram->uniform1i(k, 0);
+			i++;
+		}
 
 		pRendererConfig->metrics_posttime_ms = stopwatch.Stop_msf();
 	}
@@ -1253,6 +1277,8 @@ namespace Fluxions {
 	}
 
 	void RendererGLES30::_renderVIZ() {
+		constexpr unsigned VizSceneBoundingBoxId = 1;
+		constexpr unsigned VizStartingId = 2;
 		Hf::StopWatch stopwatch;
 		if (!_initVIZ()) return;
 		glActiveTexture(GL_TEXTURE0);
@@ -1261,11 +1287,13 @@ namespace Fluxions {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		//viz.renderer.Render();
 		viz.renderer.reset(true);
+
+		// Render scene bounding box
 		BoundingBoxf bbox = pSSG->getBoundingBox();
 		Matrix4f identity;
+		viz.renderer.SetCurrentObjectId(VizSceneBoundingBoxId);
 		_vizBBox(bbox, identity, FxColors3::White);
-		viz.renderer.surface_map[0] = viz.renderer.surfaceCount();
-
+		
 		const static std::string maps[8] = {
 			"AnisoLightColorMap0",
 			"AnisoLightColorMap1",
@@ -1276,12 +1304,14 @@ namespace Fluxions {
 			"AnisoLightColorMap6",
 			"AnisoLightColorMap7"
 		};
-		std::vector<int> sphlIds;
+		unsigned objectId = VizStartingId;
+		std::set<unsigned> sphlIds;
 		int node = 1;
 		for (auto& [k, n] : pSSG->nodes) {
 			if (n->keyword() == std::string("sphl")) {
+				viz.renderer.SetCurrentObjectId(objectId);
+				objectId++;
 				_vizBall(n->transform.col4().xyz(), 1.0f, FxColors3::Yellow);
-				viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 				continue;
 			}
 			Matrix4f transform = n->transform * n->addlTransform;
@@ -1289,50 +1319,68 @@ namespace Fluxions {
 				int i = n->name_str().back() - '0';
 				if (i < 0) i = 0;
 				if (pRendererContext->textureCubes.count(maps[i])) {
-					pRendererContext->textureCubes[maps[i]].bind(0);
-					pRendererProgram->uniform1i("MapEnviroCube", 0);
-					pRendererProgram->uniform1i("ShaderDebugChoice", 5);
+					viz.renderer.SetCurrentObjectId(objectId);
+					sphlIds.insert(objectId);
+					objectId++;
 					_vizBBoxCubeMap(n->bbox, transform);
-					sphlIds.push_back(node);
-					viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
-					pRendererContext->textureCubes[maps[i]].unbind();
-					pRendererProgram->uniform1i("ShaderDebugChoice", 0);
 				}
 			}
 			else {
+				viz.renderer.SetCurrentObjectId(objectId);
+				objectId++;
 				_vizBBox(n->bbox, transform, FxColors3::Cyan);
-				viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 			}
 		}
 
 		for (auto& [k, n] : pSSG->geometryGroups) {
 			Matrix4f transform = n.transform * n.addlTransform;
+			viz.renderer.SetCurrentObjectId(objectId);
+			objectId++;
 			_vizBBox(n.bbox, transform, FxColors3::Rose);
-			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 		}
 
 		for (auto& [k, n] : pSSG->pointLights) {
+			viz.renderer.SetCurrentObjectId(objectId);
+			objectId++;
 			_vizBall(n.ublock.position.xyz(), 0.5f, FxColors3::Yellow);
-			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 		}
 
 		for (auto& [k, n] : pSSG->dirToLights) {
 			Vector3f N = n.ublock.dirTo.xyz().normalize();
 			Vector3f outThere = N * 95.0f;
+			viz.renderer.SetCurrentObjectId(objectId);
+			objectId++;
 			viz.renderer.NewObject();
 			viz.renderer.Begin(GL_LINES);
 			viz.renderer.Color3f(n.color());
 			viz.renderer.Position3f({ 0.0f, 0.0f, 0.0f });
 			viz.renderer.Position3f(outThere);
 			viz.renderer.End();
-			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 			_vizBall(outThere, 0.5f, n.color());
-			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
 		}
 
 		for (auto& [k, n] : pSSG->spheres) {
+			viz.renderer.SetCurrentObjectId(objectId);
+			objectId++;
 			_vizBall(n.transform.col4().xyz(), 0.5f, FxColors3::Yellow);
-			viz.renderer.surface_map[node++] = viz.renderer.surfaceCount();
+		}
+
+		viz.renderer.BuildBuffers();
+		int sphlId = 0;
+		for (unsigned i = 0; i < objectId; i++) {
+			if (!viz.renderer.objectExists(i)) continue;
+
+			if (sphlIds.count(i)) {
+				pRendererContext->textureCubes[maps[sphlId]].bind(0);
+				pRendererProgram->uniform1i("MapEnviroCube", 0);
+				pRendererProgram->uniform1i("ShaderDebugChoice", 5);
+				viz.renderer.RenderIf(i, -1, false);
+				pRendererContext->textureCubes[maps[sphlId]].unbind();
+				pRendererProgram->uniform1i("ShaderDebugChoice", 0);
+				sphlId++;
+			} else {
+				viz.renderer.RenderIf(i, -1, false);
+			}
 		}
 
 		pRendererConfig->metrics_viz_ms = stopwatch.Stop_msf();

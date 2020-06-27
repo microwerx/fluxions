@@ -20,6 +20,10 @@ namespace Fluxions {
 		bool useMipMaps = true;
 		// This flag is used to determine whether to load the image every time
 		bool alwaysLoad{ false };
+		// This option is used to determine how the input image should be swizzled
+		int onloadSwizzle{ 0 };
+		// This option is used to determine if the image should be flipped when uploaded
+		bool onloadFlipY{ false };
 
 		std::string mappath;
 		bool maploaded{ false };

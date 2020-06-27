@@ -28,6 +28,7 @@ namespace Fluxions {
 		std::vector<IndexType> indices;
 		std::vector<IndexType> zIndices;
 		std::vector<SimpleSurface> surfaces;
+		std::set<unsigned> object_set; // used to tell whether an object exists in the renderer or not (for external purposes)
 
 		struct BUFFERINFO {
 			GLsizeiptr zVertexOffset = 0;
@@ -162,7 +163,9 @@ namespace Fluxions {
 		//void Configure(RendererContext *pRenderer);
 		int vertexCount = 0;
 		int triangleCount = 0;
-		std::map<int, int> surface_map;
+
+		bool objectExists(unsigned id) { return object_set.count(id); }
+		void insertObject(unsigned id) { object_set.insert(id); }
 	}; // template class SimpleRenderer
 
 #ifndef FLUXIONS_NO_EXTERN_TEMPLATES

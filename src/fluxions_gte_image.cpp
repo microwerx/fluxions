@@ -1352,46 +1352,134 @@ namespace Fluxions {
 		}
 	}
 
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertRectToCubeMapEx(TImage<ColorType>& dst, int swizzle) {
+		if (empty() || imageWidth != 6 * imageHeight)
+			return false;
+
+		int corona_swizzle[6] = {
+			4, // POSITIVE Z
+			5, // NEGATIVE Z
+			2, // POSITIVE Y
+			3, // NEGATIVE Y
+			1, // POSITIVE X
+			0, // NEGATIVE X
+		};
+
+		int normal_swizzle[6] = {
+			0, // POSITIVE X
+			1, // NEGATIVE X
+			2, // POSITIVE Y
+			3, // NEGATIVE Y
+			4, // POSITIVE Z
+			5, // NEGATIVE Z
+		};
+
+		int zup_swizzle[6] = {
+			0, // POSITIVE X
+			1, // NEGATIVE X
+			2, // POSITIVE Y
+			3, // NEGATIVE Y
+			4, // POSITIVE Z
+			5, // NEGATIVE Z
+		};
+
+		int size = (int)imageHeight;
+		dst.resize(size, size, 6);
+
+		switch (swizzle) {
+		case SwizzleDefault:
+		{
+			int h[6] = { 0, 1, 2, 3, 4, 5 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
+			}
+		}
+		break;
+		case SwizzleCorona:
+		{
+			int h[6] = { 4, 5, 2, 3, 1, 0 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
+			}
+			dst.rotateLeft90(2);
+			dst.rotateRight90(3);
+		}
+		break;
+		case SwizzleRotateZUp:
+		{
+			int h[6] = { 0, 1, 4, 5, 3, 2 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(h[i] * size, v[i] * size, 0, size, size, 0, 0, i, dst);
+			}
+		}
+		break;
+		}
+
+		return true;
+	}
+
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertCubeMapToRectEx(TImage<ColorType>& dst, int swizzle) {
+		if (empty() || ((imageWidth != imageHeight) && (imageDepth != 6)))
+			return false;
+
+		unsigned size = imageWidth;
+		std::vector<ColorType> tmp = pixels;
+		dst.resize(size * 6, size, 1);
+
+		switch (swizzle) {
+		case SwizzleDefault:
+		{
+			int h[6] = { 0, 1, 2, 3, 4, 5 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
+			}
+		}
+		break;
+		case SwizzleCorona:
+		{
+			rotateRight90(2);
+			rotateLeft90(3);
+			int h[6] = { 4, 5, 2, 3, 1, 0 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
+			}
+		}
+		break;
+		case SwizzleRotateZUp:
+		{
+			int h[6] = { 0, 1, 2, 3, 4, 5 };
+			int v[6] = { 0, 0, 0, 0, 0, 0 };
+			for (int i = 0; i < 6; i++) {
+				blit2D(0, 0, i, size, size, h[i] * size, v[i] * size, 0, dst);
+			}
+		}
+		break;
+		}
+
+		return true;
+	}
+
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertRectToCubeMapEx(int swizzle) {
+		TImage<ColorType> tmp = *this;
+		return tmp.convertRectToCubeMapEx(*this, swizzle);
+	}
+
+
 	template <typename ColorType>
 	bool TImage<ColorType>::convertRectToCubeMap() {
-		// savePPMi("blah.ppm", 255.99f, 0, 255, 0);
 		TImage<ColorType> tmp = *this;
-		return tmp.convertRectToCubeMap(*this);
-
-		//if (empty() || imageWidth != 6 * imageHeight)
-		//	return false;
-
-		//int swizzle[6] = {
-		//	4, // POSITIVE Z
-		//	5, // NEGATIVE Z
-		//	2, // POSITIVE Y
-		//	3, // NEGATIVE Y
-		//	1, // POSITIVE X
-		//	0, // NEGATIVE X
-		//};
-		//int size = (int)imageHeight;
-		//std::vector<ColorType> src = pixels;
-		//resize(size, size, 6);
-
-		//for (unsigned i = 0; i < 6; i++) {
-		//	unsigned k = swizzle[i];
-		//	// demultiplex the data
-		//	unsigned dst_offset = i * zstride;
-		//	unsigned src_offset = k * size;
-		//	for (int y = 0; y < size; y++) {
-		//		void* pdst = &pixels[dst_offset];
-		//		void* psrc = &src[src_offset];
-		//		unsigned n = size * sizeof(ColorType);
-		//		memcpy(pdst, psrc, n);
-		//		dst_offset += size;
-		//		src_offset += 6 * size;
-		//	}
-		//}
-
-		//rotateRight90(3);
-		//rotateLeft90(2);
-
-		//return true;
+		return tmp.convertRectToCubeMapEx(*this, SwizzleDefault);
 	}
 
 	template <typename ColorType>
@@ -1455,11 +1543,20 @@ namespace Fluxions {
 		return true;
 	}
 
+
+	template <typename ColorType>
+	bool TImage<ColorType>::convertCubeMapToRectEx(int swizzle) {
+		TImage<ColorType> tmp(*this);
+		return tmp.convertCubeMapToRectEx(*this, swizzle);
+	}
+
+
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCubeMapToRect() {
 		TImage<ColorType> tmp(*this);
-		return tmp.convertCubeMapToRect(*this);
+		return tmp.convertCubeMapToRectEx(*this, SwizzleDefault);
 	}
+
 
 	template <typename ColorType>
 	bool TImage<ColorType>::convertCubeMapToRect(TImage<ColorType>& dst) const {

@@ -165,6 +165,7 @@ namespace Fluxions {
 			int kdLoc = -1;
 			int worldMatrixLoc = -1;
 			SimpleRenderer_GLuint renderer;
+			std::set<int> viz_surfaces;
 		} viz;
 
 		struct POSTINFO {
