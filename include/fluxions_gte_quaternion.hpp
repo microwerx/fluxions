@@ -46,6 +46,10 @@ namespace Fluxions {
 			return *this;
 		}
 
+		static TQuaternion<T> makeQuaternion(T a, T b, T c, T d) noexcept {
+			return { a, b, c, d };
+		}
+
 		static TQuaternion<T> makeFromLookDir(Vector3d dirTo, Vector3d rollDir) noexcept;
 		static TQuaternion<T> makeFromAngles(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
 		static TQuaternion<T> makeFromEulerXYZ(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept;
@@ -205,12 +209,18 @@ namespace Fluxions {
 
 	template <typename T>
 	TQuaternion<T> TQuaternion<T>::makeFromAngles(double yawInDegrees, double pitchInDegrees, double rollInDegrees) noexcept {
-		TQuaternion<T> qX = TQuaternion<T>::makeFromAngleAxis(pitchInDegrees, 1.0, 0.0, 0.0);
-		TQuaternion<T> qY = TQuaternion<T>::makeFromAngleAxis(yawInDegrees, 0.0, 1.0, 0.0);
-		TQuaternion<T> qZ = TQuaternion<T>::makeFromAngleAxis(rollInDegrees, 0.0, 0.0, 1.0);
-
-		return (qZ * qY * qX).normalized();
-		// return (qZ * qX * qY).normalized();
+		float cos_phi = cosf(yawInDegrees * 0.5f * FX_F32_DEGREES_TO_RADIANS);
+		float cos_theta = cosf(pitchInDegrees * 0.5f * FX_F32_DEGREES_TO_RADIANS);
+		float cos_psi = cosf(rollInDegrees * 0.5f * FX_F32_DEGREES_TO_RADIANS);
+		float sin_phi = sinf(yawInDegrees * 0.5f * FX_F32_DEGREES_TO_RADIANS);
+		float sin_theta = sinf(pitchInDegrees * 0.5f * FX_F32_DEGREES_TO_RADIANS);
+		float sin_psi = sinf(rollInDegrees * 0.5f * FX_F32_DEGREES_TO_RADIANS);
+		return TQuaternion<T>(
+			cos_phi * cos_theta * cos_psi + sin_phi * sin_theta * sin_psi,
+			sin_phi * cos_theta * cos_psi - cos_phi * sin_theta * sin_psi,
+			cos_phi * sin_theta * cos_psi + sin_phi * cos_theta * sin_psi,
+			cos_phi * cos_theta * sin_psi - sin_phi * sin_theta * cos_psi
+		);
 	}
 
 	template <typename T>
