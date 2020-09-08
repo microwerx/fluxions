@@ -32,9 +32,9 @@ namespace Vf {
 		pIO->DeltaTime = 0.0f;
 
 		std::vector<std::string> fontpaths{
-			"resources/fonts/ibmplexsanscond-medium.otf",
-			"resources/fonts/dock-medium.otf",
-			"resources/fonts/inconsolata.otf" };
+			"ssphh-data/resources/fonts/ibmplexsanscond-medium.otf",
+			"ssphh-data/resources/fonts/dock-medium.otf",
+			"ssphh-data/resources/fonts/inconsolata.otf" };
 		FilePathInfo fontfpi;
 		ImFont* font{ nullptr };
 		for (auto fontpath : fontpaths) {

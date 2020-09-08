@@ -253,7 +253,7 @@ namespace Fluxions {
 
 	bool SimpleSSPHHLight::saveOBJ(const std::string& path, const std::string& gname) {
 		FilePathInfo fpi(path);
-		static const char* icos_path = "resources/models/icos4.txt";
+		static const char* icos_path = "ssphh-data/resources/models/icos4.txt";
 		static unsigned numVertices = 0;
 		static unsigned numTriangles = 0;
 		static std::vector<Vector3f> vertices;
