@@ -44,13 +44,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)../vcpkg/installed/x64-windows/include;$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)../vcpkg/installed/x64-windows/include;$(ProjectDir)include;$(SolutionDir)hatchetfish\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)../vcpkg/installed/x64-windows/lib;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)../vcpkg/installed/x64-windows/include;$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)../vcpkg/installed/x64-windows/include;$(ProjectDir)include;$(SolutionDir)hatchetfish\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)../vcpkg/installed/x64-windows/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
