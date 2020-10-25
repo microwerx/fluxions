@@ -28,75 +28,6 @@
     <ClCompile Include="src\fluxions_fileio_iostream.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_gte_bounding_box.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_color_tests.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_color3.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_color4.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_geometric_algebra.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_image.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_image_operations.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_iostream.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_math.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix_extra.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix_stack.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix2.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix3.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_matrix4.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_quaternion.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_ray.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_rect.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_scalar.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_spherical_harmonic.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_superquadric.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_vector2.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_vector3.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_vector4.cpp">
-      <Filter>src\fluxions-gte</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_opengl.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
@@ -105,9 +36,6 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_xml.cpp">
       <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\hatchetfish_stopwatch.cpp">
-      <Filter>src\hatchetfish</Filter>
     </ClCompile>
     <ClCompile Include="src\unicornfish.cpp">
       <Filter>src\unicornfish</Filter>
@@ -174,9 +102,6 @@
     </ClCompile>
     <ClCompile Include="src\viperfish_stats_window.cpp">
       <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte_transformation.cpp">
-      <Filter>src\fluxions-gte</Filter>
     </ClCompile>
     <ClCompile Include="src\viperfish_animation_window.cpp">
       <Filter>src\viperfish</Filter>
@@ -247,14 +172,8 @@
     <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\hatchetfish_log.cpp">
-      <Filter>src\hatchetfish</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_gl1gl2_tools.cpp">
       <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gte.cpp">
-      <Filter>src\fluxions-gte</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_reader.cpp">
       <Filter>src\fluxions-ssg</Filter>
@@ -393,93 +312,6 @@
     <ClInclude Include="include\fluxions_es2_state_info.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_gte.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_bounding_box.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_color_math.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_color3.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_color4.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_common_vector.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_extra.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_geometric_algebra.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_image.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_image_operations.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_iostream.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix_extra.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix_math.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix_stack.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix2.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix3.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_matrix4.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_plane.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_quaternion.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_ray.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_rect.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_scalar.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_scalar_math.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_spherical_harmonic.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_superquadric.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_vector_math.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_vector2.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_vector3.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_vector4.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_irenderer.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
@@ -506,9 +338,6 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_utilities.hpp">
       <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\hatchetfish_stopwatch.hpp">
-      <Filter>include\hatchetfish</Filter>
     </ClInclude>
     <ClInclude Include="include\unicornfish.hpp">
       <Filter>include\unicornfish</Filter>
@@ -579,12 +408,6 @@
     <ClInclude Include="include\viperfish_loading_window.hpp">
       <Filter>include\viperfish</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_gte_transformation.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_noise.hpp">
-      <Filter>include\fluxions-gte</Filter>
-    </ClInclude>
     <ClInclude Include="include\viperfish_animation_window.hpp">
       <Filter>include\viperfish</Filter>
     </ClInclude>
@@ -593,9 +416,6 @@
     </ClInclude>
     <ClInclude Include="include\viperfish_window.hpp">
       <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_catmull_rom.hpp">
-      <Filter>include\fluxions-gte</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
       <Filter>include\fluxions-renderer</Filter>
@@ -681,12 +501,6 @@
     <ClInclude Include="include\viperfish_base.hpp">
       <Filter>include\viperfish</Filter>
     </ClInclude>
-    <ClInclude Include="include\hatchetfish_log.hpp">
-      <Filter>include\hatchetfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\hatchetfish.hpp">
-      <Filter>include\hatchetfish</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_gl1gl2_tools.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
@@ -710,9 +524,6 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_xml.hpp">
       <Filter>include\fluxions-file-system</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gte_base.hpp">
-      <Filter>include\fluxions-gte</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_ssg_ssphh_light.hpp">
       <Filter>include\fluxions-ssphh</Filter>
@@ -842,14 +653,8 @@
     <Filter Include="include\fluxions-deps">
       <UniqueIdentifier>{7b0abd57-10d9-4bcf-9111-4512a27d8dc8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\fluxions-gte">
-      <UniqueIdentifier>{d7a70412-4378-4a2c-b4b9-33c0aba46c54}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\damselfish">
       <UniqueIdentifier>{66188a2c-7639-4738-9a40-dc9116798198}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\hatchetfish">
-      <UniqueIdentifier>{6ee8498d-0fbe-4ce1-941e-e1da6a4b0978}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\unicornfish">
       <UniqueIdentifier>{cba7d453-2d80-4398-98c1-f4165b85bafd}</UniqueIdentifier>
@@ -863,14 +668,8 @@
     <Filter Include="src\fluxions-deps">
       <UniqueIdentifier>{55522885-5a5a-4cbb-8bd6-26e63a02686b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\fluxions-gte">
-      <UniqueIdentifier>{0f4af680-0c35-47bc-857f-ef40b9677c4e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\damselfish">
       <UniqueIdentifier>{e3bfb85a-4ab6-4a5d-9660-8e30ca811834}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\hatchetfish">
-      <UniqueIdentifier>{9c7bae7f-55e4-4740-aca1-2cc80c27275f}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\unicornfish">
       <UniqueIdentifier>{6d897102-767e-414e-9dfb-cc1ed1f5a85d}</UniqueIdentifier>
