@@ -25,16 +25,10 @@
     <ClCompile Include="src\fluxions_es2_renderer.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_fileio_iostream.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_opengl.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_pbsky.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_xml.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\unicornfish.cpp">
@@ -112,9 +106,6 @@
     <ClCompile Include="src\fluxions_simple_renderer.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_file_path_info.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_renderer_texture_object.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
@@ -171,9 +162,6 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp">
       <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_gl1gl2_tools.cpp">
-      <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_reader.cpp">
       <Filter>src\fluxions-ssg</Filter>
@@ -235,9 +223,6 @@
     <ClCompile Include="src\unicornfish_pch.cpp">
       <Filter>src\pch</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_pch.cpp">
-      <Filter>src\pch</Filter>
-    </ClCompile>
     <ClCompile Include="src\viperfish_pch.cpp">
       <Filter>src\pch</Filter>
     </ClCompile>
@@ -255,9 +240,6 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_scene_graph.cpp">
       <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_base.cpp">
-      <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_ssphh.cpp">
       <Filter>src\fluxions-ssphh</Filter>
@@ -510,21 +492,6 @@
     <ClInclude Include="include\fluxions_renderer_base.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_file_system.hpp">
-      <Filter>include\fluxions-file-system</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_file_path_info.hpp">
-      <Filter>include\fluxions-file-system</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_file_reader_writer.hpp">
-      <Filter>include\fluxions-file-system</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_fileio_iostream.hpp">
-      <Filter>include\fluxions-file-system</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_xml.hpp">
-      <Filter>include\fluxions-file-system</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_ssg_ssphh_light.hpp">
       <Filter>include\fluxions-ssphh</Filter>
     </ClInclude>
@@ -589,9 +556,6 @@
       <Filter>src\pch</Filter>
     </ClInclude>
     <ClInclude Include="src\unicornfish_pch.hpp">
-      <Filter>src\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fluxions_pch.hpp">
       <Filter>src\pch</Filter>
     </ClInclude>
     <ClInclude Include="src\viperfish_pch.hpp">
@@ -688,9 +652,6 @@
     </Filter>
     <Filter Include="include\fluxions-ssphh">
       <UniqueIdentifier>{7b634a8e-9bf0-44cf-811e-55e3146d6048}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\fluxions-file-system">
-      <UniqueIdentifier>{9a28a89a-9603-401d-a578-1a3827bcaff9}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\fluxions-ssg">
       <UniqueIdentifier>{356329fc-9cd5-45dd-b4c5-91d96bac03db}</UniqueIdentifier>
