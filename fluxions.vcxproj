@@ -133,10 +133,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_gte_pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_image_loader.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
     <ClCompile Include="src\fluxions_renderer_gles30_snapshot.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_renderer_pch.hpp</PrecompiledHeaderFile>
@@ -469,90 +465,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">unicornfish_pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">unicornfish_pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\viperfish_analog_bitset.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_animation_window.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_dear_imgui.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_gamepad.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_keyboard.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_loading_window.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_animpath_window.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_mouse.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_root_window.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_stats_window.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_widget.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_window.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_xinput.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">viperfish_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ArHosekSkyModel.h" />
@@ -567,21 +479,16 @@
     <ClInclude Include="include\damselfish_variable_list.hpp" />
     <ClInclude Include="include\fluxions.hpp" />
     <ClInclude Include="include\fluxions_astronomy.hpp" />
-    <ClInclude Include="include\fluxions_base.hpp" />
-    <ClInclude Include="include\fluxions_colors.hpp" />
-    <ClInclude Include="include\fluxions_ibase_object.hpp" />
     <ClInclude Include="include\fluxions_bbox.hpp" />
     <ClInclude Include="include\fluxions_common_test.hpp" />
     <ClInclude Include="include\fluxions_config.hpp" />
     <ClInclude Include="include\fluxions_es2_renderer.hpp" />
     <ClInclude Include="include\fluxions_es2_state_info.hpp" />
-    <ClInclude Include="include\fluxions_image_loader.hpp" />
     <ClInclude Include="include\fluxions_irenderer.hpp" />
     <ClInclude Include="include\fluxions_iscene.hpp" />
     <ClInclude Include="include\fluxions_renderer.hpp" />
     <ClInclude Include="include\fluxions_renderer_base.hpp" />
     <ClInclude Include="include\fluxions_renderer_framebuffer.hpp" />
-    <ClInclude Include="include\fluxions_opengl.hpp" />
     <ClInclude Include="include\fluxions_pbsky.hpp" />
     <ClInclude Include="include\fluxions_precompiled_models.hpp" />
     <ClInclude Include="include\fluxions_renderer_object.hpp" />
@@ -631,10 +538,8 @@
     <ClInclude Include="include\fluxions_ssg_ssphh_renderer_plugin.hpp" />
     <ClInclude Include="include\fluxions_ssphh.hpp" />
     <ClInclude Include="include\fluxions_ssphh_utilities.hpp" />
-    <ClInclude Include="include\fluxions_stdcxx.hpp" />
     <ClInclude Include="include\fluxions_types.hpp" />
     <ClInclude Include="include\fluxions_utilities.hpp" />
-    <ClInclude Include="include\fluxions_gl1gl2_tools.hpp" />
     <ClInclude Include="include\fluxions_ssg_reader.hpp" />
     <ClInclude Include="include\fluxions_ssg_writer.hpp" />
     <ClInclude Include="include\fluxions_ssg_aniso_light.hpp" />
@@ -651,27 +556,11 @@
     <ClInclude Include="include\unicornfish_message.hpp" />
     <ClInclude Include="include\unicornfish_socket.hpp" />
     <ClInclude Include="include\unicornfish_worker.hpp" />
-    <ClInclude Include="include\viperfish.hpp" />
-    <ClInclude Include="include\viperfish_animation_window.hpp" />
-    <ClInclude Include="include\viperfish_base.hpp" />
-    <ClInclude Include="include\viperfish_dear_imgui.hpp" />
-    <ClInclude Include="include\viperfish_gamepad.hpp" />
-    <ClInclude Include="include\viperfish_keyboard.hpp" />
-    <ClInclude Include="include\viperfish_loading_window.hpp" />
-    <ClInclude Include="include\viperfish_animpath_window.hpp" />
-    <ClInclude Include="include\viperfish_mouse.hpp" />
-    <ClInclude Include="include\viperfish_root_window.hpp" />
-    <ClInclude Include="include\viperfish_stats_window.hpp" />
-    <ClInclude Include="include\viperfish_utilities.hpp" />
-    <ClInclude Include="include\viperfish_widget.hpp" />
-    <ClInclude Include="include\viperfish_window.hpp" />
-    <ClInclude Include="include\viperfish_xinput.hpp" />
     <ClInclude Include="src\damselfish_pch.hpp" />
     <ClInclude Include="src\fluxions_gte_pch.hpp" />
     <ClInclude Include="src\fluxions_renderer_pch.hpp" />
     <ClInclude Include="src\fluxions_ssg_pch.hpp" />
     <ClInclude Include="src\unicornfish_pch.hpp" />
-    <ClInclude Include="src\viperfish_pch.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

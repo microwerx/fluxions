@@ -67,42 +67,6 @@
     <ClCompile Include="src\unicornfish_worker.cpp">
       <Filter>src\unicornfish</Filter>
     </ClCompile>
-    <ClCompile Include="src\viperfish_analog_bitset.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_dear_imgui.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_gamepad.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_keyboard.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_mouse.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_widget.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_xinput.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_root_window.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_loading_window.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_stats_window.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_animation_window.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_window.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_simple_renderer.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
@@ -151,14 +115,8 @@
     <ClCompile Include="src\fluxions_renderer_framebuffer.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\viperfish_animpath_window.cpp">
-      <Filter>src\viperfish</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_renderer_utilities.cpp">
       <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_image_loader.cpp">
-      <Filter>src\fluxions</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp">
       <Filter>src\fluxions-renderer</Filter>
@@ -221,9 +179,6 @@
       <Filter>src\pch</Filter>
     </ClCompile>
     <ClCompile Include="src\unicornfish_pch.cpp">
-      <Filter>src\pch</Filter>
-    </ClCompile>
-    <ClCompile Include="src\viperfish_pch.cpp">
       <Filter>src\pch</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_pch.cpp">
@@ -300,9 +255,6 @@
     <ClInclude Include="include\fluxions_iscene.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_opengl.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_pbsky.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
@@ -310,9 +262,6 @@
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_resource_manager.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_stdcxx.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_types.hpp">
@@ -357,47 +306,8 @@
     <ClInclude Include="include\unicornfish_worker.hpp">
       <Filter>include\unicornfish</Filter>
     </ClInclude>
-    <ClInclude Include="include\viperfish.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_dear_imgui.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_gamepad.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_keyboard.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_mouse.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_utilities.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_widget.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_xinput.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_stats_window.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_root_window.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_loading_window.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_animation_window.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_common_test.hpp">
       <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_window.hpp">
-      <Filter>include\viperfish</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
       <Filter>include\fluxions-renderer</Filter>
@@ -465,29 +375,8 @@
     <ClInclude Include="include\fluxions_renderer_framebuffer.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\viperfish_animpath_window.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_image_loader.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ibase_object.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_colors.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_renderer_uniform_blocks.hpp">
       <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\viperfish_base.hpp">
-      <Filter>include\viperfish</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_gl1gl2_tools.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_base.hpp">
-      <Filter>include\fluxions</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_renderer_base.hpp">
       <Filter>include\fluxions-renderer</Filter>
@@ -558,9 +447,6 @@
     <ClInclude Include="src\unicornfish_pch.hpp">
       <Filter>src\pch</Filter>
     </ClInclude>
-    <ClInclude Include="src\viperfish_pch.hpp">
-      <Filter>src\pch</Filter>
-    </ClInclude>
     <ClInclude Include="src\fluxions_ssg_pch.hpp">
       <Filter>src\pch</Filter>
     </ClInclude>
@@ -623,9 +509,6 @@
     <Filter Include="include\unicornfish">
       <UniqueIdentifier>{cba7d453-2d80-4398-98c1-f4165b85bafd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\viperfish">
-      <UniqueIdentifier>{2163ad4f-cd14-4dde-8671-aa68fa163e4e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\fluxions">
       <UniqueIdentifier>{fcd8b35f-e43d-45ec-b298-ec3a7a5829bc}</UniqueIdentifier>
     </Filter>
@@ -637,9 +520,6 @@
     </Filter>
     <Filter Include="src\unicornfish">
       <UniqueIdentifier>{6d897102-767e-414e-9dfb-cc1ed1f5a85d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\viperfish">
-      <UniqueIdentifier>{3575abc3-b5f3-446e-a652-fdd465647547}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\fluxions-ssg">
       <UniqueIdentifier>{5620d350-8a55-43ae-aad5-8948d2482b61}</UniqueIdentifier>
