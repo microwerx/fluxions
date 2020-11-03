@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\ArHosekSkyModel.cpp">
-      <Filter>src\fluxions-deps</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_astronomy.cpp">
       <Filter>src\fluxions</Filter>
     </ClCompile>
@@ -147,18 +144,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\ArHosekSkyModel.h">
-      <Filter>include\fluxions-deps</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ArHosekSkyModelData_CIEXYZ.h">
-      <Filter>include\fluxions-deps</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ArHosekSkyModelData_RGB.h">
-      <Filter>include\fluxions-deps</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ArHosekSkyModelData_Spectral.h">
-      <Filter>include\fluxions-deps</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions.hpp">
       <Filter>include\fluxions</Filter>
     </ClInclude>
@@ -374,14 +359,8 @@
     <Filter Include="include\fluxions">
       <UniqueIdentifier>{c98ba60b-cb86-4990-90f0-bb4dcd39422e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\fluxions-deps">
-      <UniqueIdentifier>{7b0abd57-10d9-4bcf-9111-4512a27d8dc8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\fluxions">
       <UniqueIdentifier>{fcd8b35f-e43d-45ec-b298-ec3a7a5829bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\fluxions-deps">
-      <UniqueIdentifier>{55522885-5a5a-4cbb-8bd6-26e63a02686b}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\fluxions-ssg">
       <UniqueIdentifier>{5620d350-8a55-43ae-aad5-8948d2482b61}</UniqueIdentifier>
