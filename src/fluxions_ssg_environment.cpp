@@ -158,6 +158,11 @@ namespace Fluxions {
 	}
 
 
+	Color4f SimpleEnvironment::getPixelCubeMap(Vector3f uvw) const {
+		return pvt->pbsky.generatedSunCubeMap.getPixelCubeMap(uvw);
+	}
+
+
 	void SimpleEnvironment::setTime(time_t t, float fractSeconds) {
 		pvt->pbsky.setTime(t, fractSeconds);
 	}

@@ -75,6 +75,7 @@ namespace Fluxions {
 
 		void computeAstroFromLocale();
 		Color3f computeModisAlbedo() const;
+		Color4f getPixelCubeMap(Vector3f uvw) const;
 
 		void setCivilDateTime(const Sf::PA::CivilDateTime& dtg);
 		Sf::PA::CivilDateTime& getCivilDateTime() const;
