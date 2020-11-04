@@ -216,8 +216,9 @@ namespace Fluxions {
 				environment.toneMapFilmicShadows() = clamp(ReadFloat(istr), 0.0f, 1.0f);
 			}
 			else if (token == "sun" || token == "moon") {
-				currentTransform.LoadIdentity();
-				ReadOldDirectionalLight(token, istr);
+				//currentTransform.LoadIdentity();
+				//ReadOldDirectionalLight(token, istr);
+				HFLOGERROR("%s token is not supported", token.c_str());
 			}
 			else if (token == "sphere") {
 				ReadSphere(token, istr);
@@ -529,7 +530,7 @@ namespace Fluxions {
 		istr >> seconds;
 		istr >> isdst;
 
-		Sf::PA::CivilDateTime dtg{ day,month, year, isdst, 0, hours, minutes, seconds, 0.0f };
+		Sf::PA::CivilDateTime dtg{ day, month, year, (bool)isdst, 0, hours, minutes, seconds, 0.0f };
 		environment.setCivilDateTime(dtg);
 		HFLOGINFO("Setting date to %04d-%02d-%02dT%02d:%02d:%02d",
 				  year, month, day,
@@ -547,48 +548,48 @@ namespace Fluxions {
 	}
 
 
-	bool SimpleSceneGraph::ReadOldDirectionalLight(const std::string& type, std::istream& istr) {
-		if (type != "dirTo")
-			return false;
+	//bool SimpleSceneGraph::ReadOldDirectionalLight(const std::string& type, std::istream& istr) {
+	//	if (type != "dirTo")
+	//		return false;
 
-		return true;
-		// THIS comment code needs to be handled differently
-		//std::string sunopt;
-		//environment.hasSun = true;
-		//sunopt = ReadString(istr);
-		//if (sunopt == "sunDirTo") {
-		//	environment.sunDirTo = ReadVector3f(istr);
-		//}
-		//if (sunopt == "moonDirTo") {
-		//	environment.moonDirTo = ReadVector3f(istr);
-		//}
-		//sunopt = ReadString(istr);
-		//if (sunopt == "color") {
-		//	environment.sunColor = ReadVector3f(istr);
-		//}
-		//sunopt = ReadString(istr);
-		//if (sunopt == "sizeMult") {
-		//	environment.sunSize = ReadFloat(istr);
-		//}
-		//environment.sunDirTo.normalize();
-		//environment.moonDirTo.normalize();
-		//environment.curSunDirTo = environment.sunDirTo;
-		//environment.curMoonDirTo = environment.moonDirTo;
+	//	return true;
+	//	// THIS comment code needs to be handled differently
+	//	//std::string sunopt;
+	//	//environment.hasSun = true;
+	//	//sunopt = ReadString(istr);
+	//	//if (sunopt == "sunDirTo") {
+	//	//	environment.sunDirTo = ReadVector3f(istr);
+	//	//}
+	//	//if (sunopt == "moonDirTo") {
+	//	//	environment.moonDirTo = ReadVector3f(istr);
+	//	//}
+	//	//sunopt = ReadString(istr);
+	//	//if (sunopt == "color") {
+	//	//	environment.sunColor = ReadVector3f(istr);
+	//	//}
+	//	//sunopt = ReadString(istr);
+	//	//if (sunopt == "sizeMult") {
+	//	//	environment.sunSize = ReadFloat(istr);
+	//	//}
+	//	//environment.sunDirTo.normalize();
+	//	//environment.moonDirTo.normalize();
+	//	//environment.curSunDirTo = environment.sunDirTo;
+	//	//environment.curMoonDirTo = environment.moonDirTo;
 
-		//environment.sunShadowBiasMatrix.LoadIdentity();
-		//environment.sunShadowBiasMatrix.ShadowBias();
-		//environment.sunShadowProjectionMatrix.LoadIdentity();
-		//environment.sunShadowProjectionMatrix.Perspective(90.0, 1.0, 1.0, 100.0);
-		//// environment.sunShadowProjectionMatrix.Ortho(-200, 200, -200, 200, -200,
-		//// 200);
-		//environment.sunShadowViewMatrix.LoadIdentity();
-		//environment.sunShadowViewMatrix.LookAt(
-		//	environment.curSunDirTo * environment.sunSize, Vector3f(0, 0, 0),
-		//	Vector3f(0, 1, 0));
-		//environment.sunShadowInverseViewMatrix =
-		//	environment.sunShadowViewMatrix.AsInverse();
-		return true;
-	}
+	//	//environment.sunShadowBiasMatrix.LoadIdentity();
+	//	//environment.sunShadowBiasMatrix.ShadowBias();
+	//	//environment.sunShadowProjectionMatrix.LoadIdentity();
+	//	//environment.sunShadowProjectionMatrix.Perspective(90.0, 1.0, 1.0, 100.0);
+	//	//// environment.sunShadowProjectionMatrix.Ortho(-200, 200, -200, 200, -200,
+	//	//// 200);
+	//	//environment.sunShadowViewMatrix.LoadIdentity();
+	//	//environment.sunShadowViewMatrix.LookAt(
+	//	//	environment.curSunDirTo * environment.sunSize, Vector3f(0, 0, 0),
+	//	//	Vector3f(0, 1, 0));
+	//	//environment.sunShadowInverseViewMatrix =
+	//	//	environment.sunShadowViewMatrix.AsInverse();
+	//	return true;
+	//}
 
 
 	bool SimpleSceneGraph::ReadPointLight(const std::string& keyword, std::istream& istr) {

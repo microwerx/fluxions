@@ -53,7 +53,7 @@ namespace Fluxions {
 		bool ReadEnviroPbsky(const std::string& type, std::istream& istr);
 		bool ReadEnviroDatetime(const std::string& type, std::istream& istr);
 		bool ReadCamera(const std::string& type, std::istream& istr);
-		bool ReadOldDirectionalLight(const std::string& type, std::istream& istr);
+		//bool ReadOldDirectionalLight(const std::string& type, std::istream& istr);
 		bool ReadDirToLight(const std::string& type, std::istream& istr);
 		bool ReadPointLight(const std::string& type, std::istream& istr);
 		bool ReadAnisoLight(const std::string& type, std::istream& istr);
