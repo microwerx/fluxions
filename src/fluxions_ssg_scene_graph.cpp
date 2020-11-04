@@ -59,9 +59,11 @@ namespace Fluxions {
 
 	SimpleSceneGraph::SimpleSceneGraph() {}
 
+
 	SimpleSceneGraph::~SimpleSceneGraph() {
 		reset();
 	}
+
 
 	void SimpleSceneGraph::reset() {
 		boundingBox.reset();
@@ -80,12 +82,12 @@ namespace Fluxions {
 		}
 
 		// set time to longest time of the day
-		environment.pbsky.SetLocalDate(1, 7, 2017, true, 0);
-		environment.pbsky.SetLocalTime(16, 0, 0, 0.0f);
-		environment.pbsky_dtg = environment.pbsky.GetCivilDateTime();
+		Sf::PA::CivilDateTime dtg{ 1, 7, 2017, true, 0, 16, 0, 0, 0.0f };
+		environment.setCivilDateTime(dtg);
 		// shaderMaps.clear();
 		// geometryGroups_.clear();
 	}
+
 
 	std::string SimpleSceneGraph::_findPath(std::string path) const {
 		std::string p;
@@ -94,6 +96,7 @@ namespace Fluxions {
 		return fpi.shortestPath();
 	}
 
+
 	void SimpleSceneGraph::addPath(const std::string& path) {
 		FilePathInfo fpi(path);
 		if (!fpi.isDirectory()) return;
@@ -101,6 +104,7 @@ namespace Fluxions {
 			pathsToTry.push_back(path);
 		}
 	}
+
 
 	bool SimpleSceneGraph::Load(const std::string& filename) {
 		FilePathInfo scenefpi(filename);
@@ -252,6 +256,7 @@ namespace Fluxions {
 		return true;
 	}
 
+
 	bool SimpleSceneGraph::Save(const std::string& filename) {
 		FilePathInfo fpi(filename);
 
@@ -362,6 +367,7 @@ namespace Fluxions {
 		//return true;
 	}
 
+
 	bool SimpleSceneGraph::Load(const char* path, SceneGraphReader* reader) {
 		if (!reader)
 			return false;
@@ -374,6 +380,7 @@ namespace Fluxions {
 		return result;
 	}
 
+
 	bool SimpleSceneGraph::Save(const char* path, SceneGraphWriter* writer) const {
 		if (!writer)
 			return false;
@@ -385,6 +392,7 @@ namespace Fluxions {
 		writer->close();
 		return result;
 	}
+
 
 	bool SimpleSceneGraph::ReadObjFile(const std::string& filename,
 									   const std::string& geometryName) {
@@ -403,6 +411,7 @@ namespace Fluxions {
 		return true;
 	}
 
+
 	bool SimpleSceneGraph::ReadMaterialLibrary(const std::string& type, std::istream& istr) {
 		if (type != "mtllib")
 			return false;
@@ -418,6 +427,7 @@ namespace Fluxions {
 		return false;
 	}
 
+
 	bool SimpleSceneGraph::ReadGeometryGroup(const std::string& type, std::istream& istr) {
 		if (type != "geometryGroup")
 			return false;
@@ -431,6 +441,7 @@ namespace Fluxions {
 		return addGeometryGroup(fpi.stem(), fpi.shortestPath());
 	}
 
+
 	void SimpleSceneGraph::calcBounds() {
 		boundingBox.reset();
 
@@ -443,6 +454,7 @@ namespace Fluxions {
 			boundingBox += tmaxBound;
 		}
 	}
+
 
 	bool SimpleSceneGraph::ReadEnviro(const std::string& type, std::istream& istr) {
 		if (type != "enviro")
@@ -460,10 +472,11 @@ namespace Fluxions {
 		return true;
 	}
 
+
 	bool SimpleSceneGraph::ReadEnviroPbsky(const std::string& type, std::istream& istr) {
 		if (type != "pbsky")
 			return false;
-		Color4f groundAlbedo;
+		Color3f groundAlbedo;
 		float turbidity;
 		float latitude;
 		float longitude;
@@ -476,16 +489,16 @@ namespace Fluxions {
 		istr >> groundAlbedo.g;
 		istr >> groundAlbedo.b;
 
+		environment.setNumSamples(samples);
+		environment.setLocation(latitude, longitude);
+		environment.setTurbidity(turbidity);
+		environment.setGroundAlbedo(groundAlbedo);
+
 		if (groundAlbedo.maxrgb() == 0) {
-			groundAlbedo = environment.pbsky.computeModisAlbedo(latitude, longitude, environment.pbsky.getMonthOfYear());
+			// TODO: Test if this gets the value according to the month
+			groundAlbedo = environment.computeModisAlbedo();
 		}
 
-		environment.pbsky.SetNumSamples(samples);
-		environment.pbsky.SetLocation(latitude, longitude);
-		environment.pbsky.SetTurbidity(turbidity);
-		environment.pbsky.SetGroundAlbedo(groundAlbedo.r,
-										  groundAlbedo.g,
-										  groundAlbedo.b);
 		HFLOGINFO("PBSKY: numSamples=%f, lat/lon=(% 3.2f, % 3.2f), T=%2.1f, A=(%1.2f, %1.2f, %1.2f)",
 				  samples,
 				  latitude,
@@ -496,6 +509,7 @@ namespace Fluxions {
 				  groundAlbedo.b);
 		return true;
 	}
+
 
 	bool SimpleSceneGraph::ReadEnviroDatetime(const std::string& type, std::istream& istr) {
 		if (type != "datetime")
@@ -515,13 +529,14 @@ namespace Fluxions {
 		istr >> seconds;
 		istr >> isdst;
 
-		environment.pbsky.SetLocalDate(day, month, year, isdst != 0, 0);
-		environment.pbsky.SetLocalTime(hours, minutes, seconds, 0.0f);
+		Sf::PA::CivilDateTime dtg{ day,month, year, isdst, 0, hours, minutes, seconds, 0.0f };
+		environment.setCivilDateTime(dtg);
 		HFLOGINFO("Setting date to %04d-%02d-%02dT%02d:%02d:%02d",
 				  year, month, day,
 				  hours, minutes, seconds);
 		return true;
 	}
+
 
 	bool SimpleSceneGraph::ReadCamera(const std::string& keyword, std::istream& istr) {
 		if (keyword == "camera") {
@@ -530,6 +545,7 @@ namespace Fluxions {
 		}
 		return false;
 	}
+
 
 	bool SimpleSceneGraph::ReadOldDirectionalLight(const std::string& type, std::istream& istr) {
 		if (type != "dirTo")
@@ -574,6 +590,7 @@ namespace Fluxions {
 		return true;
 	}
 
+
 	bool SimpleSceneGraph::ReadPointLight(const std::string& keyword, std::istream& istr) {
 		if (keyword == "pointLight") {
 			auto node = createPointLight(ReadString(istr));
@@ -581,6 +598,7 @@ namespace Fluxions {
 		}
 		return false;
 	}
+
 
 	bool SimpleSceneGraph::ReadAnisoLight(const std::string& keyword, std::istream& istr) {
 		if (keyword == "anisoLight") {
@@ -590,6 +608,7 @@ namespace Fluxions {
 		return false;
 	}
 
+
 	bool SimpleSceneGraph::ReadDirToLight(const std::string& keyword, std::istream& istr) {
 		if (keyword == "dirtoLight") {
 			auto node = createDirToLight(ReadString(istr));
@@ -598,6 +617,7 @@ namespace Fluxions {
 		return false;
 	}
 
+
 	bool SimpleSceneGraph::ReadSphere(const std::string& keyword, std::istream& istr) {
 		if (keyword == "sphere") {
 			auto node = createSphere(ReadString(istr));
@@ -605,6 +625,7 @@ namespace Fluxions {
 		}
 		return false;
 	}
+
 
 	bool SimpleSceneGraph::ReadPath(const std::string& keyword, std::istream& istr) {
 		if (keyword == "pathanim") {
@@ -617,10 +638,12 @@ namespace Fluxions {
 		return false;
 	}
 
+
 	bool SimpleSceneGraph::read(const std::string& keyword, std::istream& istr) {
 		if (keyword.empty() || !istr) return false;
 		return false;
 	}
+
 
 	bool SimpleSceneGraph::write(std::ostream& ostr) const {
 		WriteLabel(ostr, "mtllib");
@@ -665,6 +688,7 @@ namespace Fluxions {
 		return true;
 	}
 
+
 	bool SimpleSceneGraph::addGeometryGroup(const std::string name, const std::string& path) {
 		if (!ReadObjFile(path, name)) {
 			HFLOGERROR("OBJ file %s had an error while loading", path.c_str());
@@ -684,11 +708,13 @@ namespace Fluxions {
 		return true;
 	}
 
+
 	bool SimpleSceneGraph::addDirToLight(const std::string& name) {
 		if (dirToLights.count(name)) return true;
 		auto node = createDirToLight(name);
 		return node != nullptr;
 	}
+
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createNode(const std::string& nodename_, SimpleSceneGraphNode* node) {
 		node->setName(nodename_);
@@ -697,11 +723,13 @@ namespace Fluxions {
 		return node;
 	}
 
+
 	SimpleSceneGraphNode* SimpleSceneGraph::createCamera(const std::string& nodename_) {
 		unsigned id = cameras.create(nodename_);
 		cameras.lastId = id;
 		return createNode(nodename_, &cameras[id]);
 	}
+
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createSphere(const std::string& nodename_) {
 		unsigned id = spheres.create(nodename_);
@@ -709,11 +737,13 @@ namespace Fluxions {
 		return createNode(nodename_, &spheres[id]);
 	}
 
+
 	SimpleSceneGraphNode* SimpleSceneGraph::createDirToLight(const std::string& nodename_) {
 		unsigned id = dirToLights.create(nodename_);
 		dirToLights.lastId = id;
 		return createNode(nodename_, &dirToLights[id]);
 	}
+
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createPointLight(const std::string& nodename_) {
 		unsigned id = pointLights.create(nodename_);
@@ -721,11 +751,13 @@ namespace Fluxions {
 		return createNode(nodename_, &pointLights[id]);
 	}
 
+
 	SimpleSceneGraphNode* SimpleSceneGraph::createAnisoLight(const std::string& nodename_) {
 		unsigned id = anisoLights.create(nodename_);
 		anisoLights.lastId = id;
 		return createNode(nodename_, &anisoLights[id]);
 	}
+
 
 	SimpleSceneGraphNode* SimpleSceneGraph::createPathAnim(const std::string& nodename_) {
 		unsigned id = pathanims.create(nodename_);
@@ -733,11 +765,13 @@ namespace Fluxions {
 		return createNode(nodename_, &pathanims[id]);
 	}
 
+
 	SimpleSceneGraphNode* SimpleSceneGraph::createGeometry(const std::string& nodename_) {
 		unsigned id = geometryGroups.create(nodename_);
 		geometryGroups.lastId = id;
 		return createNode(nodename_, &geometryGroups[id]);
 	}
+
 
 	void SimpleSceneGraph::_assignIdsToMeshes() {
 		for (auto& [mid, mesh] : staticMeshes) {

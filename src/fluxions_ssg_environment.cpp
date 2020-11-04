@@ -1,35 +1,55 @@
 #include "fluxions_ssg_pch.hpp"
 #include <fluxions_ssg_environment.hpp>
+#include <starfish.hpp>
+
 
 namespace Fluxions {
-	void async_pbsky_compute(Fluxions::PhysicallyBasedSky* pbsky, bool genCubeMap,
-							 bool genCylMap, bool* completed,
-							 double* timeElapsed = nullptr) {
+	struct SimpleEnvironmentPrivate {
+		Sf::PhysicallyBasedSky pbsky;
+		Sf::PA::CivilDateTime pbsky_dtg;
+		bool genCubeMap{ true };
+		bool genCylMap{ false };
+		bool isSkyComputing{ false };
+		bool isSkyComputed{ false };
+		double lastSkyGenTime{ 0.0 };
+	};
+
+
+	//void async_pbsky_compute(Sf::PhysicallyBasedSky* pbsky, bool genCubeMap,
+	//						 bool genCylMap, bool* completed,
+	//						 double* timeElapsed = nullptr) {
+	void async_pbsky_compute(SimpleEnvironmentPrivate* pvt) {
 		Hf::StopWatch stopwatch;
 
-		if (genCubeMap) {
-			pbsky->ComputeCubeMap(64, false, 1.0f);
+		if (pvt->genCubeMap) {
+			pvt->pbsky.computeCubeMap(64, false, 1.0f);
 		}
-		if (genCylMap) {
-			pbsky->ComputeCylinderMap(128, 32);
-			// pbsky.generatedSunCylMap.savePPM("pbsky.ppm");
+		if (pvt->genCylMap) {
+			pvt->pbsky.computeCylinderMap(128, 32);
+			// pvt->pbsky.generatedSunCylMap.savePPM("pbsky.ppm");
 		}
 
 		stopwatch.Stop();
-		if (timeElapsed != nullptr) {
-			*timeElapsed = stopwatch.GetMillisecondsElapsed();
-		}
-		if (completed != nullptr) {
-			*completed = true;
-		}
+		pvt->lastSkyGenTime = stopwatch.GetMillisecondsElapsed();
+		pvt->isSkyComputed = true;
 	}
 
-	void SimpleEnvironment::Update(const BoundingBoxf& bbox) {
-		pbsky.ComputeSunGroundRadiances();
-		sunDirTo = pbsky.sunDirTo().normalize();
-		moonDirTo = pbsky.moonDirTo().normalize();
-		curGroundRadiance = pbsky.GetGroundRadiance();
-		curSunDiskRadiance = pbsky.GetSunDiskRadiance();
+
+	SimpleEnvironment::SimpleEnvironment() :
+		pvt(new SimpleEnvironmentPrivate) {}
+
+
+	SimpleEnvironment::~SimpleEnvironment() {
+		delete pvt;
+	}
+
+
+	void SimpleEnvironment::update(const BoundingBoxf& bbox) {
+		pvt->pbsky.computeSunGroundRadiances();
+		sunDirTo = pvt->pbsky.sunDirTo().normalize();
+		moonDirTo = pvt->pbsky.moonDirTo().normalize();
+		curGroundRadiance = pvt->pbsky.getGroundRadiance();
+		curSunDiskRadiance = pvt->pbsky.getSunDiskRadiance();
 
 		if (hasSun) {
 			curSunDirTo = sunDirTo.normalize();
@@ -100,15 +120,112 @@ namespace Fluxions {
 		//}
 	}
 
-	void SimpleEnvironment::ComputePBSky() {
-		if (isSkyComputing)
+
+	void SimpleEnvironment::computePBSky() {
+		if (pvt->isSkyComputing)
 			return;
 
-		isSkyComputed = false;
-		isSkyComputing = true;
-		lastSkyGenTime = 0.0;
-		auto handle =
-			async(std::launch::async, async_pbsky_compute, &pbsky, pbskyGenCubeMap,
-				  pbskyGenCylMap, &isSkyComputed, &lastSkyGenTime);
+		pvt->isSkyComputed = false;
+		pvt->isSkyComputing = true;
+		pvt->lastSkyGenTime = 0.0;
+		auto handle = async(std::launch::async, async_pbsky_compute, pvt);
+		//async(std::launch::async, async_pbsky_compute,
+			//	  &pvt->pbsky,
+			//	  pvt->pbskyGenCubeMap,
+			//	  pvt->pbskyGenCylMap,
+			//	  &pvt->isSkyComputed,
+			//	  &pvt->lastSkyGenTime);
+	}
+
+
+	bool SimpleEnvironment::isSkyComputed() const {
+		return pvt->isSkyComputed;
+	}
+
+
+	double SimpleEnvironment::lastSkyGenTime() const {
+		return pvt->lastSkyGenTime;
+	}
+
+
+	void SimpleEnvironment::computeAstroFromLocale() {
+		pvt->pbsky.computeAstroFromLocale();
+	}
+
+
+	Color3f SimpleEnvironment::computeModisAlbedo() const {
+		return pvt->pbsky.computeModisAlbedo(true);
+	}
+
+
+	void SimpleEnvironment::setTime(time_t t, float fractSeconds) {
+		pvt->pbsky.setTime(t, fractSeconds);
+	}
+
+
+	void SimpleEnvironment::setCivilDateTime(const Sf::PA::CivilDateTime& dtg) {
+		pvt->pbsky.setCivilDateTime(dtg);
+	}
+
+
+	Sf::PA::CivilDateTime& SimpleEnvironment::getCivilDateTime() const {
+		return pvt->pbsky_dtg;
+	}
+
+
+	void SimpleEnvironment::setNumSamples(int samples) {
+		pvt->pbsky.setNumSamples(samples);
+	}
+
+
+	float SimpleEnvironment::getTurbidity() const {
+		return pvt->pbsky.getTurbidity();
+	}
+
+
+	void SimpleEnvironment::setTurbidity(float turbidity) {
+		pvt->pbsky.setTurbidity(turbidity);
+	}
+
+
+	Color4f SimpleEnvironment::getGroundAlbedo() const {
+		return pvt->pbsky.getGroundAlbedo();
+	}
+
+
+	void SimpleEnvironment::setGroundAlbedo(Color3f albedo) {
+		pvt->pbsky.setGroundAlbedo(albedo.r,
+								   albedo.g,
+								   albedo.b);
+	}
+
+
+	time_t SimpleEnvironment::getTime() const {
+		return pvt->pbsky.getTime();
+	}
+
+
+	float SimpleEnvironment::getLatitude() const {
+		return pvt->pbsky.getLatitude();
+	}
+
+
+	float SimpleEnvironment::getLongitude() const {
+		return pvt->pbsky.getLongitude();
+	}
+
+
+	void SimpleEnvironment::setLocation(float latitude, float longitude) {
+		pvt->pbsky.setLocation(latitude, longitude);
+	}
+
+
+	Color4f SimpleEnvironment::getSunDiskRadiance() const {
+		return pvt->pbsky.getSunDiskRadiance();
+	}
+
+
+	Color4f SimpleEnvironment::getGroundRadiance() const {
+		return pvt->pbsky.getGroundRadiance();
 	}
 }

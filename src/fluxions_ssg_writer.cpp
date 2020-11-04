@@ -142,7 +142,7 @@ namespace Fluxions {
 		Vector3f sunDirTo(ssg.environment.curSunDirTo.x, ssg.environment.curSunDirTo.y, ssg.environment.curSunDirTo.z);
 		XmlVector3f(ostr, "dirTo", sunDirTo, 2) << "\n";
 		XmlVector3f(ostr, "dirUp", { 0.0f, 1.0f, 0.0f }, 2) << "\n";
-		XmlFloat(ostr, "turbidity", ssg.environment.pbsky.GetTurbidity(), 2) << "\n";
+		XmlFloat(ostr, "turbidity", ssg.environment.getTurbidity(), 2) << "\n";
 		XmlEndTag(ostr, "sun", 1) << "\n\n";
 
 		ostr << "\t<environment>1 1 1<map class=\"Reference\">Skylight_environment</map></environment>"
@@ -181,7 +181,7 @@ namespace Fluxions {
 		XmlBeginTag(lights_mtllib_fout, "mtlLib") << "\n";
 		XmlBeginTag(lights_mtllib_fout, "mapDefinition", "name", "Skylight_environment", 1) << "\n";
 		lights_mtllib_fout << "\t<map class = \"Sky\" originalMapClass = \"SkyShader\">\n";
-		XmlVector3f(lights_mtllib_fout, "groundColor", ssg.environment.pbsky.GetGroundAlbedo().ToVector3(), 2) << "\n";
+		XmlVector3f(lights_mtllib_fout, "groundColor", ssg.environment.getGroundAlbedo().ToVector3(), 2) << "\n";
 		XmlEndTag(lights_mtllib_fout, "map", 1) << "\n";
 		XmlEndTag(lights_mtllib_fout, "mapDefinition", 1) << "\n";
 

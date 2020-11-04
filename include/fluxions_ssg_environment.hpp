@@ -2,8 +2,11 @@
 #define FLUXIONS_SSG_ENVIRONMENT_HPP
 
 #include <fluxions_ssg_base.hpp>
+#include <starfish-astronomy.hpp>
 
 namespace Fluxions {
+	struct SimpleEnvironmentPrivate;
+
 	struct SimpleEnvironment : BaseEnvironment {
 		bool hasColor = false;
 		bool hasTexmap = false;
@@ -41,11 +44,6 @@ namespace Fluxions {
 		//float sunShadowMapFarZ = 100.0f;
 		//float sunShadowMapTime = 0.0;
 
-		PhysicallyBasedSky pbsky;
-		Astronomy::PA::CivilDateTime pbsky_dtg;
-		bool pbskyGenCubeMap = true;
-		bool pbskyGenCylMap = false;
-
 		//Matrix4f sunShadowBiasMatrix;
 		//Matrix4f sunShadowProjectionMatrix;
 		//Matrix4f sunShadowViewMatrix;
@@ -67,15 +65,40 @@ namespace Fluxions {
 		//GLuint pbskyColorMapId = 0;
 		//GLuint pbskyColorMapSamplerId = 0;
 
-		void Update(const BoundingBoxf& bbox);
-		void ComputePBSky();
-		bool IsSkyComputed() const { return isSkyComputed; }
-		double LastSkyGenTime() const { return lastSkyGenTime; }
+		SimpleEnvironment();
+		~SimpleEnvironment();
+
+		void update(const BoundingBoxf& bbox);
+		void computePBSky();
+		bool isSkyComputed() const;
+		double lastSkyGenTime() const;
+
+		void computeAstroFromLocale();
+		Color3f computeModisAlbedo() const;
+
+		void setCivilDateTime(const Sf::PA::CivilDateTime& dtg);
+		Sf::PA::CivilDateTime& getCivilDateTime() const;
+		time_t getTime() const;
+		void setTime(time_t t, float fractSeconds);
+
+		float getLatitude() const;
+		float getLongitude() const;
+		void setLocation(float latitude, float longitude);
+
+		void setNumSamples(int samples);
+
+		float getTurbidity() const;
+		void setTurbidity(float turbidity);
+
+		Color4f getGroundAlbedo() const;
+		void setGroundAlbedo(Color3f albedo);
+
+		Color4f getSunDiskRadiance() const;
+		Color4f getGroundRadiance() const;
 
 	private:
-		bool isSkyComputing = false;
-		bool isSkyComputed = false;
-		double lastSkyGenTime = 0.0;
+		SimpleEnvironmentPrivate* pvt{ nullptr };
+
 	};
 } // namespace Fluxions
 
