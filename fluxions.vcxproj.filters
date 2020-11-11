@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\fluxions_bbox.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_es2_renderer.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_opengl.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_renderer.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_renderer_texture_object.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
@@ -133,47 +121,8 @@
     <ClCompile Include="src\fluxions_ssg_ssphh_light.cpp">
       <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
-      <Filter>src\fluxions</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\fluxions.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_bbox.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_config.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_es2_renderer.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_es2_state_info.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_irenderer.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_iscene.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_precompiled_models.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_resource_manager.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_types.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_utilities.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_common_test.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
@@ -318,23 +267,17 @@
     <ClInclude Include="include\fluxions_renderer.hpp">
       <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_simple_vertex.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_renderer.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_surface.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp">
-      <Filter>include\fluxions</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_ssg_scene_graph.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_ssg.hpp">
       <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions.hpp">
+      <Filter>include\fluxions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_resource_manager.hpp">
+      <Filter>include\fluxions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

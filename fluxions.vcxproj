@@ -177,29 +177,11 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_bbox.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_es2_renderer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
     <ClCompile Include="src\fluxions_renderer_framebuffer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_renderer_pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_renderer_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_opengl.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\fluxions_renderer_context.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -247,12 +229,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\fluxions_simple_renderer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
     <ClCompile Include="src\fluxions_renderer_config.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_renderer_pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_renderer_pch.hpp</PrecompiledHeaderFile>
@@ -268,10 +244,6 @@
     <ClCompile Include="src\fluxions_ssg_scene_graph.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_simple_geometry_mesh.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fluxions_ssg_pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
@@ -328,17 +300,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\fluxions.hpp" />
-    <ClInclude Include="include\fluxions_bbox.hpp" />
-    <ClInclude Include="include\fluxions_common_test.hpp" />
-    <ClInclude Include="include\fluxions_config.hpp" />
-    <ClInclude Include="include\fluxions_es2_renderer.hpp" />
-    <ClInclude Include="include\fluxions_es2_state_info.hpp" />
-    <ClInclude Include="include\fluxions_irenderer.hpp" />
-    <ClInclude Include="include\fluxions_iscene.hpp" />
     <ClInclude Include="include\fluxions_renderer.hpp" />
     <ClInclude Include="include\fluxions_renderer_base.hpp" />
     <ClInclude Include="include\fluxions_renderer_framebuffer.hpp" />
-    <ClInclude Include="include\fluxions_precompiled_models.hpp" />
     <ClInclude Include="include\fluxions_renderer_object.hpp" />
     <ClInclude Include="include\fluxions_renderer_context.hpp" />
     <ClInclude Include="include\fluxions_renderer_gles30_snapshot.hpp" />
@@ -364,30 +328,24 @@
     <ClInclude Include="include\fluxions_ssg_point_light.hpp" />
     <ClInclude Include="include\fluxions_renderer_program.hpp" />
     <ClInclude Include="include\fluxions_ssg_property.hpp" />
-    <ClInclude Include="include\fluxions_simple_renderer.hpp" />
     <ClInclude Include="include\fluxions_ssg_renderer_plugin.hpp" />
     <ClInclude Include="include\fluxions_renderer_config.hpp" />
     <ClInclude Include="include\fluxions_renderer_sampler.hpp" />
     <ClInclude Include="include\fluxions_ssg_scene_graph.hpp" />
-    <ClInclude Include="include\fluxions_simple_geometry_mesh.hpp" />
     <ClInclude Include="include\fluxions_renderer_shader.hpp" />
     <ClInclude Include="include\fluxions_ssg_base.hpp" />
     <ClInclude Include="include\fluxions_ssg_node.hpp" />
     <ClInclude Include="include\fluxions_ssg_sphere.hpp" />
     <ClInclude Include="include\fluxions_ssg_ssphh.hpp" />
     <ClInclude Include="include\fluxions_ssg_ssphh_light.hpp" />
-    <ClInclude Include="include\fluxions_simple_surface.hpp" />
     <ClInclude Include="include\fluxions_renderer_texture_object.hpp" />
     <ClInclude Include="include\fluxions_renderer_uniform.hpp" />
-    <ClInclude Include="include\fluxions_simple_vertex.hpp" />
     <ClInclude Include="include\fluxions_sphl.hpp" />
     <ClInclude Include="include\fluxions_sphl_image_texture.hpp" />
     <ClInclude Include="include\fluxions_sphl_sampler.hpp" />
     <ClInclude Include="include\fluxions_ssg_ssphh_renderer_plugin.hpp" />
     <ClInclude Include="include\fluxions_ssphh.hpp" />
     <ClInclude Include="include\fluxions_ssphh_utilities.hpp" />
-    <ClInclude Include="include\fluxions_types.hpp" />
-    <ClInclude Include="include\fluxions_utilities.hpp" />
     <ClInclude Include="include\fluxions_ssg_reader.hpp" />
     <ClInclude Include="include\fluxions_ssg_writer.hpp" />
     <ClInclude Include="include\fluxions_ssg_aniso_light.hpp" />
