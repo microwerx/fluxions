@@ -24,8 +24,8 @@ Some files are copyright from other authors, used with permission under their re
 
 ## TODO
 
--[ ] TImage::loadPFM
--[ ] TImage::savePFM
--[ ] TSH::saveJSON
--[ ] TSH::loadJSON
--[ ] 
+- [ ] Redesign Scene Graph to use SQLite Database
+- [ ] Redesign Material to support a common physically based BRDF
+- [ ] Redesign Scene Graph to better support a variety of renderers
+- [ ] Decouple Scene Graph from Renderer and move into Base Library
+- [ ] Redesign Renderer interface to better support a variety of APIs
