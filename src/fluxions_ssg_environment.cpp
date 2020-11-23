@@ -58,7 +58,7 @@ namespace Fluxions {
 			curMoonDirTo = moonDirTo.normalize();
 		}
 
-		if (within(bbox.MaxSize(), 0.0f, 1000.0f)) {
+		if (within(bbox.maxSize(), 0.0f, 1000.0f)) {
 			// const float padding = 1.0f;
 			// const float size = bbox.MaxSize();
 			// float correctRadius = sqrtf(0.75f) * boundingBox.MaxSize();
@@ -66,7 +66,7 @@ namespace Fluxions {
 			// float correctHeight = sqrt(1.0f - powf(sinf(fov / 2.0f), 2.0f)) * 4.0f *
 			// correctRadius; float fov = 45.0f * FX_F32_DEGREES_TO_RADIANS;
 
-			const float radius = bbox.RadiusRounded();
+			const float radius = bbox.radiusRounded();
 			//sunShadowMapTarget = bbox.Center();
 			//sunShadowMapDistance =
 			//	radius; // calculation for perspective: sqrt(1.0f - powf(sinf(fov
