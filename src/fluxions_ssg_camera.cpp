@@ -129,6 +129,8 @@ namespace Fluxions {
 			WriteFloat(ostr, width);
 			WriteAffineMatrix4f(ostr, viewMatrix_);
 			break;
+		case CameraType::Other:
+			break;
 		}
 		ostr << "\n";
 		return true;
@@ -149,6 +151,8 @@ namespace Fluxions {
 			break;
 		case CameraType::OrthoTMW:
 			projectionMatrix_ = Matrix4f::MakeOrtho2D(0, width, 0, width / imageAspect);
+			break;
+		case CameraType::Other:
 			break;
 		}
 		transform = viewMatrix_.AsInverse();
