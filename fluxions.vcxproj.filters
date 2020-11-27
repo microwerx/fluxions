@@ -22,9 +22,6 @@
     <ClCompile Include="src\fluxions_renderer_gpu_texture.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_ssphh_renderer_plugin.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_renderer_texture_2d.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
@@ -121,6 +118,9 @@
     <ClCompile Include="src\fluxions_ssg_ssphh_light.cpp">
       <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
+    <ClCompile Include="src\fluxions_ssg_ssphh_renderer_plugin.cpp">
+      <Filter>src\fluxions-ssphh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
@@ -198,13 +198,28 @@
     <ClInclude Include="include\fluxions_ssg_ssphh_light.hpp">
       <Filter>include\fluxions-ssphh</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_reader.hpp">
-      <Filter>include\fluxions-ssg</Filter>
+    <ClInclude Include="src\fluxions_renderer_pch.hpp">
+      <Filter>src\pch</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_writer.hpp">
+    <ClInclude Include="src\fluxions_ssg_pch.hpp">
+      <Filter>src\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_renderer.hpp">
+      <Filter>include\fluxions-renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions.hpp">
+      <Filter>include\fluxions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssg_ssphh.hpp">
+      <Filter>include\fluxions-ssphh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssg.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_ssg_aniso_light.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssg_base.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_ssg_camera.hpp">
@@ -231,6 +246,9 @@
     <ClInclude Include="include\fluxions_ssg_materials.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
+    <ClInclude Include="include\fluxions_ssg_node.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
     <ClInclude Include="include\fluxions_ssg_path_animation.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
@@ -240,38 +258,20 @@
     <ClInclude Include="include\fluxions_ssg_property.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
+    <ClInclude Include="include\fluxions_ssg_reader.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
     <ClInclude Include="include\fluxions_ssg_renderer_plugin.hpp">
+      <Filter>include\fluxions-ssg</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fluxions_ssg_scene_graph.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions_ssg_sphere.hpp">
       <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_ssphh.hpp">
+    <ClInclude Include="include\fluxions_ssg_writer.hpp">
       <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fluxions_renderer_pch.hpp">
-      <Filter>src\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fluxions_ssg_pch.hpp">
-      <Filter>src\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_node.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_base.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_scene_graph.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions.hpp">
-      <Filter>include\fluxions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
