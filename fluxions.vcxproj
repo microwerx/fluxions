@@ -62,6 +62,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <EnablePREfast>false</EnablePREfast>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,6 +77,7 @@
       <SupportJustMyCode>true</SupportJustMyCode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -309,7 +311,6 @@
     <ClInclude Include="include\fluxions_renderer_texture_2d.hpp" />
     <ClInclude Include="include\fluxions_renderer_uniform_blocks.hpp" />
     <ClInclude Include="include\fluxions_renderer_utilities.hpp" />
-    <ClInclude Include="include\fluxions_resource_manager.hpp" />
     <ClInclude Include="include\fluxions_shader_program_locations.hpp" />
     <ClInclude Include="include\fluxions_ssg.hpp" />
     <ClInclude Include="include\fluxions_ssg_camera.hpp" />
@@ -322,7 +323,6 @@
     <ClInclude Include="include\fluxions_ssg_map.hpp" />
     <ClInclude Include="include\fluxions_ssg_material.hpp" />
     <ClInclude Include="include\fluxions_ssg_materials.hpp" />
-    <ClInclude Include="include\fluxions_ssg_unfinished_geometry_mesh.hpp" />
     <ClInclude Include="include\fluxions_ssg_material_library.hpp" />
     <ClInclude Include="include\fluxions_ssg_path_animation.hpp" />
     <ClInclude Include="include\fluxions_ssg_point_light.hpp" />
