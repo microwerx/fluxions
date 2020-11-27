@@ -1,4 +1,5 @@
 #include "fluxions_ssg_pch.hpp"
+#include <hatchetfish.hpp>
 #include <fluxions_sphl_sampler.hpp>
 
 namespace Fluxions {

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <fluxions_gte.hpp>
-#include <fluxions_ssg_scene_graph.hpp>
-#include <fluxions_sphl.hpp>
+#include <fluxions_gte_image.hpp>
+#include <fluxions_gte_spherical_harmonic.hpp>
 
 namespace Fluxions {
 	class SphlSampler {
