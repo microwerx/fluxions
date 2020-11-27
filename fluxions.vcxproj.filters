@@ -49,45 +49,6 @@
     <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp">
       <Filter>src\fluxions-renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_reader.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_writer.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_aniso_light.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_camera.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_dirto_light.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_environment.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_material_library.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_materials.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_path_animation.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_point_light.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_property.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_renderer_plugin.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_sphere.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_ssphh_utilities.cpp">
       <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
@@ -105,12 +66,6 @@
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_pch.cpp">
       <Filter>src\pch</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_node.cpp">
-      <Filter>src\fluxions-ssg</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_scene_graph.cpp">
-      <Filter>src\fluxions-ssg</Filter>
     </ClCompile>
     <ClCompile Include="src\fluxions_ssg_ssphh.cpp">
       <Filter>src\fluxions-ssphh</Filter>
@@ -212,66 +167,6 @@
     </ClInclude>
     <ClInclude Include="include\fluxions_ssg_ssphh.hpp">
       <Filter>include\fluxions-ssphh</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_aniso_light.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_base.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_camera.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_dirto_light.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_environment.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_geometry_group.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_map.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_material.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_material_library.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_materials.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_node.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_path_animation.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_point_light.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_property.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_reader.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_renderer_plugin.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_scene_graph.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_sphere.hpp">
-      <Filter>include\fluxions-ssg</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_ssg_writer.hpp">
-      <Filter>include\fluxions-ssg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 #include <fluxions_renderer_base.hpp>
 #include <fluxions_renderer_config.hpp>
 #include <fluxions_renderer_gles30_snapshot.hpp>
+#include <fluxions_renderer_texture_cube.hpp>
 #include <fluxions_shader_program_locations.hpp>
 
 namespace Fluxions {
