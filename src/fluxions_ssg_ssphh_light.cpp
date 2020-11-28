@@ -1,4 +1,3 @@
-#include "fluxions_ssg_pch.hpp"
 #include <damselfish.hpp>
 #include <fluxions_ssg_ssphh_light.hpp>
 #include <fluxions_renderer_base.hpp>

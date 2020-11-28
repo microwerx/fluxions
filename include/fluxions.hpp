@@ -28,11 +28,4 @@
 #include <fluxions_ssg.hpp>
 #include <fluxions_renderer.hpp>
 
-namespace Fluxions {
-	std::string GetPathTracerName(const std::string& sceneName, bool ks, int mrd, int pl);
-	std::string GetSphlRenderName(const std::string& sceneName, int md);
-	std::string GetPathTracerSphlRenderName(const std::string& sceneName, bool ks, int mrd, int pl, int md);
-	std::string GetStatsName(const std::string& sceneName, bool ks, int mrd, int pl, int md);
-} // namespace Fluxions
-
 #endif

@@ -1,54 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\fluxions_renderer_texture_object.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_gles30_snapshot.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_gles30.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_context.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_config.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_program.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_gpu_texture.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_texture_2d.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_object.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_texture_cube.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_shader_program_locations.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_shader.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_sampler.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_framebuffer.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_utilities.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_uniform_blocks.cpp">
-      <Filter>src\fluxions-renderer</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_ssphh_utilities.cpp">
       <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
@@ -61,12 +13,6 @@
     <ClCompile Include="src\fluxions_sphl.cpp">
       <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
-    <ClCompile Include="src\fluxions_renderer_pch.cpp">
-      <Filter>src\pch</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fluxions_ssg_pch.cpp">
-      <Filter>src\pch</Filter>
-    </ClCompile>
     <ClCompile Include="src\fluxions_ssg_ssphh.cpp">
       <Filter>src\fluxions-ssphh</Filter>
     </ClCompile>
@@ -78,48 +24,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\fluxions_renderer_texture_object.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_gles30_snapshot.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_shader_program_locations.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_object.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_context.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_config.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_gles30.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_program.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_shader.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_uniform.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_utilities.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_gpu_texture.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_texture_cube.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_texture_2d.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_sphl.hpp">
       <Filter>include\fluxions-ssphh</Filter>
     </ClInclude>
@@ -138,29 +42,8 @@
     <ClInclude Include="include\fluxions_ssphh_utilities.hpp">
       <Filter>include\fluxions-ssphh</Filter>
     </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_sampler.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_framebuffer.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_uniform_blocks.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer_base.hpp">
-      <Filter>include\fluxions-renderer</Filter>
-    </ClInclude>
     <ClInclude Include="include\fluxions_ssg_ssphh_light.hpp">
       <Filter>include\fluxions-ssphh</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fluxions_renderer_pch.hpp">
-      <Filter>src\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fluxions_ssg_pch.hpp">
-      <Filter>src\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fluxions_renderer.hpp">
-      <Filter>include\fluxions-renderer</Filter>
     </ClInclude>
     <ClInclude Include="include\fluxions.hpp">
       <Filter>include\fluxions</Filter>
