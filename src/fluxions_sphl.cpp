@@ -1,4 +1,3 @@
-#include "fluxions_ssg_pch.hpp"
 #include <fstream>
 #include <fluxions_gte.hpp>
 #include <fluxions_gte_spherical_harmonic.hpp>

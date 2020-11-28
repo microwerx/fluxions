@@ -1,4 +1,3 @@
-#include "fluxions_ssg_pch.hpp"
 #include <fluxions_renderer_gles30.hpp>
 #include <fluxions_ssg_ssphh_renderer_plugin.hpp>
 
