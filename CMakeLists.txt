@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 if (APPLE)
     include_directories(/usr/local/include)
-    set(STD_CXX_FS c++fs)
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -32,8 +31,7 @@ add_library(${PROJECT_NAME} STATIC
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
     message("Fluxions using precompiled headers")
-    target_precompile_headers(${PROJECT_NAME} PRIVATE src/fluxions_renderer_pch.cpp)
-    target_precompile_headers(${PROJECT_NAME} PRIVATE src/fluxions_ssg_pch.cpp)
+    # target_precompile_headers(${PROJECT_NAME} PRIVATE src/fluxions_ssg_pch.cpp)
 endif()
 
 find_package(GLEW REQUIRED)
