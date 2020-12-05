@@ -17,6 +17,17 @@ namespace Fluxions {
 		if (!ssphh) {
 			HFLOGERROR("ssphh pointer is nullptr");
 		}
+		// TODO: Replace this with anisolight support directly
+		if (ssphh->ssphhLights.empty()) {
+			for (auto& [id,al] : ssg.anisoLights) {
+				SimpleSSPHHLight sphl;
+				sphl.transform = al.transform;
+				sphl.addlTransform = al.addlTransform;
+				sphl.bbox = al.bbox;
+				sphl.resizeHierarchies(9);
+				ssphh->ssphhLights.push_back(sphl);
+			}
+		}
 		HFLOGINFO("SSPHH INIT");
 		sceneName = ssg.name_str();
 		sphls_ = &ssphh->ssphhLights;
