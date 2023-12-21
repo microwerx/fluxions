@@ -19,6 +19,7 @@
 #ifdef FLUXIONS_GTE_USEOPENEXR
 #ifdef _WIN32
 #define OPENEXR_DLL
+#define IMATH_HALF_NO_LOOKUP_TABLE
 #endif
 #include <OpenEXR/ImfRgbaFile.h>
 #endif
